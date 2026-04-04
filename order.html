@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Eggless Custom Cakes Sydney | Num Num\'s Bakery</title>
-  <meta name="description" content="Order a 100% eggless custom cake from Num Num\'s Bakery. Pick up from Harris Park or Riverstone. Just 48 hours notice needed. Order via WhatsApp or call us directly.">
+  <title>Order Eggless Custom Cakes Sydney | Num Num's Bakery</title>
+  <meta name="description" content="Order a 100% eggless custom cake from Num Num's Bakery. Pick up from Harris Park or Riverstone. Just 48 hours notice needed. Order via WhatsApp or call us directly.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -840,7 +840,7 @@
         label.textContent = MONTHS[viewMonth] + ' ' + viewYear;
         var html = '';
         DAYS_SHORT.forEach(function(d) {
-          html += '<div style="font-family:\'Jost\',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:rgba(44,26,14,0.35);text-align:center;padding:2px 0 5px;">' + d + '</div>';
+          html += '<div style="font-family:'Jost',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:rgba(44,26,14,0.35);text-align:center;padding:2px 0 5px;">' + d + '</div>';
         });
         var first = new Date(viewYear, viewMonth, 1);
         var startDow = (first.getDay() + 6) % 7;
@@ -857,7 +857,7 @@
           var dot = (isToday && !isSel) ? '<span style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:#C85478;display:block;"></span>' : '';
           html += '<button type="button" class="cal-day-btn"' + (isBlocked ? ' disabled' : '') +
             ' data-y="' + viewYear + '" data-m="' + viewMonth + '" data-d="' + day + '"' +
-            ' style="position:relative;width:100%;aspect-ratio:1;border-radius:50%;border:none;background:' + bg + ';color:' + col + ';font-weight:' + fw + ';font-family:\'Jost\',sans-serif;font-size:0.77rem;cursor:' + (isBlocked ? 'not-allowed' : 'pointer') + ';display:flex;align-items:center;justify-content:center;outline:none;padding:0;">' +
+            ' style="position:relative;width:100%;aspect-ratio:1;border-radius:50%;border:none;background:' + bg + ';color:' + col + ';font-weight:' + fw + ';font-family:'Jost',sans-serif;font-size:0.77rem;cursor:' + (isBlocked ? 'not-allowed' : 'pointer') + ';display:flex;align-items:center;justify-content:center;outline:none;padding:0;">' +
             day + dot + '</button>';
         }
         grid.innerHTML = html;
