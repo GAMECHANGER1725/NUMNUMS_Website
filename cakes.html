@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eggless Custom Cakes Sydney | Wedding, Birthday & Kids Cakes | Num Num\'s Bakery</title>
+  <meta name="description" content="Browse 100% eggless custom cakes at Num Num\'s Bakery in Sydney. Wedding cakes, kids birthday cakes, baby shower cakes and 15 flavours. Pick up Harris Park or Riverstone.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=block" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cream: '#FFF8F2', linen: '#F5EBE0', pink: '#C85478',
+              'pink-light': '#E8A4B5', 'pink-dark': '#A03D5E',
+              teal: '#4EC4D8', espresso: '#2C1A0E', 'espresso-mid': '#5C3A22'
+            }
+          },
+          fontFamily: {
+            display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            body: ['"Jost"', '"Helvetica Neue"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background-color: #FFF8F2; color: #2C1A0E; font-family: 'Jost', 'Helvetica Neue', sans-serif; line-height: 1.7; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: hidden; }
+    .font-display { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.55s cubic-bezier(0.34,1.56,0.64,1), transform 0.55s cubic-bezier(0.34,1.56,0.64,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.07s; }
+    .reveal-d2 { transition-delay: 0.14s; }
+    .reveal-d3 { transition-delay: 0.21s; }
+    .reveal-d4 { transition-delay: 0.28s; }
+
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease; }
+    #navbar.scrolled { background-color: rgba(255,248,242,0.94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 2px 20px rgba(44,26,14,0.10); }
+    .nav-link { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 0.875rem; letter-spacing: 0.02em; color: rgba(44,26,14,0.75); text-decoration: none; padding: 8px 20px; border-radius: 9999px; position: relative; z-index: 1; transition: color 0.2s ease; white-space: nowrap; }
+    .nav-link:hover, .nav-link.nav-active { color: #C85478; }
+    .nav-link:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; border-radius: 9999px; }
+    #nav-pill { background: rgba(200,84,120,0.05); border-color: rgba(200,84,120,0.22); }
+    #nav-indicator > div { opacity: 0; transition: opacity 0.2s ease; }
+    #nav-pill:has(.nav-link:hover) #nav-indicator > div { opacity: 1; }
+    .btn-hover-interactive { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; padding: 10px 28px; border-radius: 9999px; border: 2px solid #C85478; background: transparent; color: #C85478; font-family: 'Jost', sans-serif; font-weight: 600; font-size: 0.875rem; letter-spacing: 0.02em; text-decoration: none; cursor: pointer; min-width: 148px; }
+    .btn-hover-interactive .bhi-text { position: relative; z-index: 1; transform: translateX(4px); transition: transform 0.3s ease, opacity 0.3s ease; white-space: nowrap; }
+    .btn-hover-interactive .bhi-hover { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; color: #fff; z-index: 1; transform: translateX(48px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; white-space: nowrap; }
+    .btn-hover-interactive .bhi-bg { position: absolute; left: 12px; top: calc(50% - 4px); width: 8px; height: 8px; border-radius: 9999px; background: #C85478; transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease, transform 0.3s ease; pointer-events: none; }
+    .btn-hover-interactive:hover .bhi-text { transform: translateX(48px); opacity: 0; }
+    .btn-hover-interactive:hover .bhi-hover { transform: translateX(-4px); opacity: 1; }
+    .btn-hover-interactive:hover .bhi-bg { left: 0; top: 0; width: 100%; height: 100%; transform: scale(1.8); }
+    .btn-hover-interactive:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
+    .nav-wordmark { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 1.5rem; color: #2C1A0E; letter-spacing: -0.01em; }
+
+    .btn-cta { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; border-radius: 9999px; font-family: 'Jost', sans-serif; font-weight: 600; font-size: 0.875rem; letter-spacing: 0.02em; color: #fff; background: #C85478; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s cubic-bezier(0.34,1.56,0.64,1), transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; box-shadow: 0 4px 14px rgba(200,84,120,0.30); }
+    .btn-cta:hover { background: #A03D5E; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,84,120,0.35); }
+    .btn-cta:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
+    .btn-cta:active { transform: scale(0.97); }
+
+    /* Filter tabs */
+    .filter-tab { display: inline-flex; align-items: center; padding: 8px 20px; border-radius: 9999px; font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; border: 2px solid rgba(200,84,120,0.2); color: #5C3A22; background: transparent; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; }
+    .filter-tab:hover { border-color: #C85478; color: #C85478; }
+    .filter-tab.active { background: #C85478; color: #fff; border-color: #C85478; box-shadow: 0 4px 14px rgba(200,84,120,0.28); }
+    .filter-tab:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
+    .filter-tab:active { transform: scale(0.97); }
+
+    /* Gallery card */
+    .gallery-card { background: #2C1A0E; border-radius: 1.5rem; overflow: hidden; border: 1px solid rgba(200,84,120,0.10); box-shadow: 0 4px 20px rgba(44,26,14,0.10), 0 1px 4px rgba(44,26,14,0.06); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; }
+    .gallery-card:hover { transform: translateY(-7px); box-shadow: 0 16px 44px -6px rgba(200,84,120,0.22), 0 6px 16px -2px rgba(44,26,14,0.12); }
+    .gallery-card:focus-visible { outline: 2px solid #C85478; outline-offset: 4px; }
+    .gallery-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .gallery-card:hover img { transform: scale(1.07); }
+
+    /* Category heading */
+    .category-heading { display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; }
+    .category-heading::after { content: ''; flex: 1; height: 1px; background: rgba(200,84,120,0.15); }
+
+    /* Section label */
+    .section-label { display: inline-flex; align-items: center; gap: 12px; font-family: 'Jost', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #C85478; }
+    .section-label::before { content: ''; display: block; width: 28px; height: 2px; background: #C85478; border-radius: 2px; }
+
+
+    /* No scrollbar */
+    .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* Material Symbols */
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; display: inline-block; line-height: 1; text-transform: none; letter-spacing: normal; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; font-variation-settings: 'FILL' 0, 'wght' 300, 'OPSZ' 24, 'GRAD' 0; }
+
+    /* Grain */
+    .grain-bg::before { content: ''; position: fixed; inset: 0; opacity: 0.025; pointer-events: none; z-index: 100; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 200px 200px; }
+
+    /* Gallery category section hide/show */
+    .gallery-category { transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+
+    /* Individual card filter hide */
+    .cake-item.hidden { display: none; }
+
+    /* Page hero (non-video) */
+    .page-hero { background: linear-gradient(135deg, #2C1A0E 0%, #5C3A22 60%, #2C1A0E 100%); position: relative; overflow: hidden; padding: 140px 1.5rem 80px; }
+    .page-hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(200,84,120,0.18) 0%, transparent 65%); pointer-events: none; }
+
+    /* Order CTA strip */
+    .order-strip { background: #FFF8F2; border: 1px solid rgba(200,84,120,0.15); border-radius: 1.5rem; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-top: 3rem; }
+
+    @media (max-width: 640px) {
+      .page-hero { padding: 120px 1.5rem 60px; }
+    }
+
+    /* Footer */
+    .footer-social-btn{width:38px;height:38px;border-radius:10px;background:rgba(255,248,242,0.07);border:1px solid rgba(255,248,242,0.10);display:flex;align-items:center;justify-content:center;color:rgba(255,248,242,0.55);text-decoration:none;transition:background 0.25s ease,color 0.25s ease,border-color 0.25s ease,transform 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+    .footer-social-btn:hover{background:#C85478;color:#fff;border-color:#C85478;transform:translateY(-2px);}
+    .footer-social-btn:focus-visible{outline:2px solid #C85478;outline-offset:3px;}
+    .footer-nav-link{font-family:'Jost',sans-serif;font-size:0.875rem;color:rgba(255,248,242,0.55);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s ease;}
+    .footer-nav-link::before{content:'';display:block;width:5px;height:5px;border-radius:50%;background:#C85478;opacity:0;transition:opacity 0.2s ease;}
+    .footer-nav-link:hover{color:#E8A4B5;}
+    .footer-nav-link:hover::before{opacity:1;}
+  </style>
+</head>
+<body class="grain-bg">
+
+  <!-- ═══════════════════════════════════════════ NAVBAR ═══ -->
+  <nav id="navbar" style="background-color:rgba(255,248,242,0.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:0 2px 20px rgba(44,26,14,0.10);">
+    <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem;">
+      <div style="display:flex; align-items:center; justify-content:space-between; height:68px;">
+        <a href="index.html" style="display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0;" aria-label="Num Num's Bakery home">
+          <img src="brand_assets/Logo_TParent.png" alt="" width="56" height="56" style="border-radius:50%; overflow:hidden; width:56px; height:56px; object-fit:cover; flex-shrink:0;">
+        </a>
+        <div id="nav-pill" style="display:flex; align-items:center; gap:0; background:rgba(200,84,120,0.05); border:1px solid rgba(200,84,120,0.22); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:9999px; padding:4px; overflow:visible;">
+          <div id="nav-indicator" style="position:absolute; border-radius:9999px; background:rgba(200,84,120,0.08); top:4px; height:calc(100% - 8px); left:0; width:0; pointer-events:none; z-index:0; overflow:visible;">
+            <div style="position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:32px; height:4px; background:#C85478; border-radius:4px 4px 0 0; overflow:visible;">
+              <div style="position:absolute; width:48px; height:24px; background:rgba(200,84,120,0.20); border-radius:50%; filter:blur(8px); top:-8px; left:-8px; pointer-events:none;"></div>
+              <div style="position:absolute; width:32px; height:24px; background:rgba(200,84,120,0.20); border-radius:50%; filter:blur(6px); top:-4px; left:0; pointer-events:none;"></div>
+              <div style="position:absolute; width:16px; height:16px; background:rgba(200,84,120,0.20); border-radius:50%; filter:blur(4px); top:0; left:8px; pointer-events:none;"></div>
+            </div>
+          </div>
+          <a href="cakes.html"     class="nav-link" data-page="cakes">Our Cakes</a>
+          <a href="about.html"     class="nav-link" data-page="about">About</a>
+          <a href="order.html"     class="nav-link" data-page="order">Order Online</a>
+          <a href="locations.html" class="nav-link" data-page="locations">Locations</a>
+          <a href="order.html" class="btn-hover-interactive" style="margin-left:8px; padding:8px 20px; font-size:0.8rem; position:relative; z-index:1; min-width:auto;">
+            <span class="bhi-text">Order Now</span>
+            <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+            <span class="bhi-bg"></span>
+          </a>
+          <button id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" style="display:none; flex-direction:column; justify-content:center; align-items:center; gap:6px; width:40px; height:40px; background:transparent; border:none; cursor:pointer; padding:0; margin-left:8px; flex-shrink:0;">
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div id="mobile-menu" aria-hidden="true" style="display:none; position:fixed; top:68px; left:0; right:0; z-index:90; background:#FFF8F2; border-bottom:3px solid rgba(200,84,120,0.12); padding:1.5rem 2rem 2rem; flex-direction:column; gap:0; opacity:0; transform:translateY(-8px); transition:opacity 0.25s ease, transform 0.25s ease; box-shadow:0 8px 32px rgba(44,26,14,0.10);">
+    <a href="cakes.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">Our Cakes</a>
+    <a href="about.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">About</a>
+    <a href="order.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">Order Online</a>
+    <a href="locations.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border:none !important;display:block;">Locations</a>
+    <div style="margin-top:1.75rem;"><a href="order.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:#C85478 !important;color:#fff !important;font-family:'Jost',sans-serif;font-weight:600;font-size:1rem;border-radius:9999px !important;border:none !important;text-decoration:none;box-shadow:0 4px 14px rgba(200,84,120,0.30);">Order Now →</a></div>
+  </div>
+
+  <!-- ══════════════════════════════════════ PAGE HERO ═══ -->
+  <div class="page-hero">
+    <div style="position:relative; z-index:1; max-width:1280px; margin:0 auto;">
+      <div class="section-label" style="color:rgba(232,164,181,0.8); margin-bottom:1rem;">
+        <span style="background:rgba(232,164,181,0.8); height:2px; width:28px; border-radius:2px; display:block;"></span>
+        Gallery
+      </div>
+      <h1 class="font-display" style="font-size:clamp(2.8rem,5vw,4.5rem);font-weight:600;letter-spacing:-0.03em;color:#fff;margin:0 0 1rem;line-height:1.05;">100% Eggless Custom Cakes in Sydney</h1>
+      <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:1.05rem; color:rgba(255,255,255,0.7); max-width:480px; margin:0;">
+        Every cake here is 100% eggless and made to order. This gallery is just inspiration. Bring us any photo, any design, and we will recreate it for your celebration. Pick up from Harris Park or Riverstone.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ FILTER TABS ═══ -->
+  <div style="background:#fff; border-bottom:1px solid rgba(200,84,120,0.10); position:sticky; top:68px; z-index:40;">
+    <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem;">
+      <div class="no-scrollbar" style="overflow-x:auto; padding:14px 0; display:flex; align-items:center; gap:8px;">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="wedding">Wedding</button>
+        <button class="filter-tab" data-filter="kids">Kids</button>
+        <button class="filter-tab" data-filter="baby-shower">Baby Shower</button>
+        <button class="filter-tab" data-filter="flavours">15 Eggless Cake Flavours to Choose From</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ GALLERY ═══ -->
+  <main style="max-width:1280px; margin:0 auto; padding:1.5rem 1.5rem 6rem;">
+
+    <!-- ── WEDDING CAKES ── -->
+    <div class="gallery-category" data-category="wedding" style="margin-top:1.5rem;">
+      <div class="category-heading reveal">
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Eggless Wedding Cakes in Sydney</h2>
+      </div>
+      <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.9rem; color:#5C3A22; margin:0 0 2rem; line-height:1.6;" class="reveal">
+        Multi-tier, fondant-finished or fresh cream. All completely egg-free. Share a photo of the design you love and we will build it for your day.
+      </p>
+      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
+
+        <div class="gallery-card cake-item reveal" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Wedding%20Cakes/Wedding_White_1.jpg" alt="eggless white wedding cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Classic White Tier</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Elegant white fondant, multi-tier. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Wedding%20Cakes/Wedding_White_2.jpg" alt="eggless ivory floral wedding cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Ivory Floral Tier</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Handcrafted floral details, ivory finish. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Wedding%20Cakes/Wedding_Red_1.jpg" alt="eggless red wedding cake Harris Park" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Crimson Romance</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Bold red accents with floral crown. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Wedding%20Cakes/Wedding_White_3.jpg" alt="eggless two-tier red velvet wedding cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Red Velvet Celebration</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Dramatic two-tier with red velvet crumb. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="order-strip reveal">
+        <div>
+          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Love this style?</p>
+          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">All wedding cakes are custom made to order. WhatsApp us your vision.</p>
+        </div>
+        <a href="order.html" class="btn-cta">Order a Custom Wedding Cake</a>
+      </div>
+    </div>
+
+    <!-- ── KIDS CAKES ── -->
+    <div class="gallery-category" data-category="kids" style="margin-top:1.5rem;">
+      <div class="category-heading reveal">
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Eggless Kids Birthday Cakes in Sydney</h2>
+      </div>
+      <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.9rem; color:#5C3A22; margin:0 0 2rem; line-height:1.6;" class="reveal">
+        Any character, any colour, any theme. We have made Dinosaurs, Frozen, Spiderman and everything in between. All 100% eggless, all made to order.
+      </p>
+      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
+
+        <div class="gallery-card cake-item reveal" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Kids%20Cakes/Dinosaur_1.jpg" alt="eggless dinosaur birthday cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Dinosaur Adventure</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Roar into birthdays with this dino favourite. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Kids%20Cakes/Elsa_1.jpg" alt="eggless Frozen Elsa birthday cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Frozen Fantasy</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Icy-cool Elsa design for little royalty. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Kids%20Cakes/Pink_1.jpg" alt="eggless pink kids birthday cake Riverstone" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Pretty in Pink</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Dreamy pink layers perfect for any little one. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Kids%20Cakes/Spiderman_1.jpg" alt="eggless Spiderman birthday cake Harris Park" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Spider-Man Hero</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Your little superhero's dream cake. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="order-strip reveal">
+        <div>
+          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Any character, any theme.</p>
+          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">Send us a photo of your child's favourite character and we'll make the magic happen.</p>
+        </div>
+        <a href="order.html" class="btn-cta">Order a Custom Kids Cake</a>
+      </div>
+    </div>
+
+    <!-- ── BABY SHOWER ── -->
+    <div class="gallery-category" data-category="baby-shower" style="margin-top:1.5rem;">
+      <div class="category-heading reveal">
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Eggless Baby Shower Cakes in Sydney</h2>
+      </div>
+      <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.9rem; color:#5C3A22; margin:0 0 2rem; line-height:1.6;" class="reveal">
+        Soft pastels, floral details and custom toppers. Made completely without eggs for families celebrating a new arrival.
+      </p>
+      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
+
+        <div class="gallery-card cake-item reveal" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Baby%20Shower/Baby_Shower_1.jpg" alt="eggless baby shower cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Sweet Arrival</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Delicate pastel design for welcoming a new baby. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Baby%20Shower/Baby_Shower_2.jpg" alt="eggless blush floral baby shower cake" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Blush & Bloom</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Soft blush with florals — timeless baby shower style. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Baby%20Shower/Baby_Shower_3.jpg" alt="eggless teddy bear baby shower cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Teddy &amp; Twinkles</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Adorable teddy detail, gold stars. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img src="cake_photos/Baby%20Shower/Baby_Shower_4.jpg" alt="eggless custom baby shower cake Riverstone" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Oh Baby!</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Classic baby shower cake with a modern finish. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="order-strip reveal">
+        <div>
+          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Welcoming a new arrival?</p>
+          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">Custom baby shower cakes made with love. Order at least 48 hours in advance.</p>
+        </div>
+        <a href="order.html" class="btn-cta">Order a Custom Baby Shower Cake</a>
+      </div>
+    </div>
+
+    <!-- ── FLAVOURS ── -->
+    <div class="gallery-category" data-category="flavours" style="margin-top:1.5rem;">
+      <div class="category-heading reveal">
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">15 Eggless Cake Flavours to Choose From</h2>
+      </div>
+      <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.9rem; color:#5C3A22; margin:0 0 2rem; line-height:1.6;" class="reveal">
+        Every flavour below is available in any size and with any design. Pick your favourite or ask us to recommend one for your occasion.
+      </p>
+      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1rem;">
+
+        <div class="gallery-card cake-item reveal" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Chocolate.jpg" alt="eggless chocolate cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Chocolate</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Red_Velvet.jpg" alt="eggless red velvet cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Red Velvet</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Vanilla.jpg" alt="eggless vanilla cake Num Num\'s Bakery" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Vanilla</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Black_Forest.jpg" alt="eggless black forest cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Black Forest</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Strawberry.png" alt="eggless strawberry cake Riverstone" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Strawberry</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Ferrero_Rocher.png" alt="eggless Ferrero Rocher cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Ferrero Rocher</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Mango.jpg" alt="eggless mango cake Harris Park" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Mango</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Cookies_And_Cream.jpg" alt="eggless cookies and cream cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Cookies &amp; Cream</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Butter_Scotch.png" alt="eggless butterscotch cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Butterscotch</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/White_Forest.jpg" alt="eggless white forest cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">White Forest</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Tiramisu.jpg" alt="eggless tiramisu cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Tiramisu</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Pineapple.jpg" alt="eggless pineapple cake Riverstone" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Pineapple</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Rasmalai.png" alt="eggless rasmalai cake Harris Park" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Rasmalai</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Blueberry.png" alt="eggless blueberry cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Blueberry</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
+          <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
+            <img src="cake_photos/Product%20Images/Lychee.jpg" alt="eggless lychee cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Lychee</h3>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="order-strip reveal">
+        <div>
+          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Want a specific flavour?</p>
+          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">All flavours available in any size. Bring us a photo — we'll make any design you can imagine.</p>
+        </div>
+        <a href="order.html" class="btn-cta">Order a Custom Cake →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer style="position:relative;background:#2C1A0E;padding:5rem 1.5rem 2.5rem;overflow:hidden;">
+    <div style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(to right,rgba(255,248,242,0.03) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,248,242,0.03) 1px,transparent 1px);background-size:3rem 3rem;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 60%,transparent 100%);mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 60%,transparent 100%);"></div>
+    <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:600px;height:200px;background:radial-gradient(ellipse,rgba(200,84,120,0.10) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:1;max-width:1280px;margin:0 auto;">
+      <div id="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:4rem;">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;">
+            <img src="brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="48" height="48" style="width:48px;height:48px;object-fit:cover;border-radius:50%;">
+            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.2rem;font-weight:600;color:#FFF8F2;letter-spacing:-0.01em;">Num Num's Bakery</span>
+          </div>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:rgba(255,248,242,0.55);line-height:1.75;margin:0 0 1.5rem;max-width:260px;">100% eggless cakes and sweets made fresh to order in Sydney. Pick up from Harris Park or Riverstone.</p>
+          <div style="display:flex;gap:8px;">
+            <a href="https://www.instagram.com/numnumsbakery/" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg></a>
+            <a href="https://www.facebook.com/Numnumsbakeryharrispark/" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" class="footer-social-btn" aria-label="WhatsApp"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
+            <a href="tel:+61425697725" class="footer-social-btn" aria-label="Phone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.5 2 2 0 0 1 3.6 1.32h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+          </div>
+          <a href="mailto:info.numnumsbakery@gmail.com" style="display:inline-flex;align-items:center;gap:6px;margin-top:0.75rem;font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:400;color:rgba(255,248,242,0.5);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#E8A4B5'" onmouseleave="this.style.color='rgba(255,248,242,0.5)'"><span class="material-symbols-outlined" style="font-size:1rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">mail</span>info.numnumsbakery@gmail.com</a>
+        </div>
+        <div>
+          <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Our Cakes</h4>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="cakes.html" class="footer-nav-link">Wedding Cakes</a>
+            <a href="cakes.html" class="footer-nav-link">Kids Cakes</a>
+            <a href="cakes.html" class="footer-nav-link">Baby Shower</a>
+            <a href="cakes.html" class="footer-nav-link">Birthday Cakes</a>
+          </div>
+        </div>
+        <div>
+          <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Visit Us</h4>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram St NSW 2150<br>Daily 11 am – 10 pm</div></div>
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8 Riverstone SC NSW 2765<br>Mon–Fri 6 am – 8 pm</div></div>
+          </div>
+        </div>
+        <div>
+          <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Company</h4>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="about.html" class="footer-nav-link">About Us</a>
+            <a href="locations.html" class="footer-nav-link">Locations</a>
+            <a href="order.html" class="footer-nav-link">Order Online</a>
+            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" class="footer-nav-link">WhatsApp Order</a>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,248,242,0.08);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);">© 2025 GNT Ventures Pty Ltd. All rights reserved.</span>
+        <span style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);">100% Eggless · Made with Love · Sydney, Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    @media(max-width:768px){#footer-grid{grid-template-columns:1fr 1fr !important;gap:2rem !important;}}
+    @media(max-width:480px){#footer-grid{grid-template-columns:1fr !important;}}
+    .ham-bar { display:block; width:22px; height:2px; background:#2C1A0E; border-radius:9999px; transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease; }
+    #navbar:not(.scrolled) .ham-bar { background:#fff; }
+    @media (max-width: 640px) {
+      .nav-link      { display: none !important; }
+      #nav-indicator { display: none !important; }
+      #nav-pill      { background: transparent !important; border: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; }
+      #mobile-menu-btn { display: flex !important; }
+      .btn-hover-interactive { display: none !important; }
+      #mobile-menu-btn.open .ham-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      #mobile-menu-btn.open .ham-bar:nth-child(2) { opacity: 0; }
+      #mobile-menu-btn.open .ham-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    }
+    @media (max-width: 768px) {
+      .gallery-grid { display: flex !important; overflow-x: auto !important; scroll-snap-type: x mandatory !important; -webkit-overflow-scrolling: touch !important; grid-template-columns: unset !important; gap: 1rem !important; padding-bottom: 1rem !important; }
+      .gallery-grid .gallery-card { flex: 0 0 78vw !important; max-width: 300px !important; scroll-snap-align: start !important; }
+      .gallery-grid .reveal { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+
+  <script>
+    // Navbar (always scrolled state on interior pages)
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) nav.classList.add('scrolled');
+    }, { passive: true });
+
+
+    // Filter tabs
+    const tabs = document.querySelectorAll('.filter-tab');
+    const categories = document.querySelectorAll('.gallery-category');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const filter = tab.dataset.filter;
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        categories.forEach(cat => {
+          const show = filter === 'all' || cat.dataset.category === filter;
+          if (show) {
+            cat.style.display = '';
+            requestAnimationFrame(() => {
+              cat.style.opacity = '1';
+              cat.style.transform = 'translateY(0)';
+            });
+          } else {
+            cat.style.opacity = '0';
+            cat.style.transform = 'translateY(12px)';
+            setTimeout(() => { cat.style.display = 'none'; }, 300);
+          }
+        });
+      });
+    });
+
+    // Scroll reveal
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ── Tubelight indicator ──────────────────────────────────────
+    (function () {
+      const pill      = document.getElementById('nav-pill');
+      const indicator = document.getElementById('nav-indicator');
+      if (!pill || !indicator) return;
+      const links = Array.from(pill.querySelectorAll('a.nav-link'));
+      const stem = window.location.pathname.split('/').pop().replace('.html','') || 'index';
+      const activeLink = links.find(l => l.dataset.page === stem) || null;
+      if (activeLink) activeLink.classList.add('nav-active');
+      function moveIndicator(target) {
+        if (!target) { indicator.style.width = '0'; return; }
+        const pillRect = pill.getBoundingClientRect();
+        const linkRect = target.getBoundingClientRect();
+        indicator.style.left  = (linkRect.left - pillRect.left - 4) + 'px';
+        indicator.style.width = linkRect.width + 'px';
+      }
+      indicator.style.transition = 'none';
+      requestAnimationFrame(() => {
+        moveIndicator(activeLink);
+        requestAnimationFrame(() => {
+          indicator.style.transition = 'left 0.4s cubic-bezier(0.34,1.56,0.64,1), width 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+        });
+      });
+      links.forEach(link => {
+        link.addEventListener('mouseenter', () => moveIndicator(link));
+        link.addEventListener('mouseleave', () => moveIndicator(activeLink));
+      });
+    })();
+  </script>
+  <script>
+    (function() {
+      var btn=document.getElementById('mobile-menu-btn'),menu=document.getElementById('mobile-menu');
+      if(!btn||!menu)return;
+      function openMenu(){btn.classList.add('open');btn.setAttribute('aria-expanded','true');menu.setAttribute('aria-hidden','false');menu.style.display='flex';requestAnimationFrame(function(){menu.style.opacity='1';menu.style.transform='translateY(0)';});}
+      function closeMenu(){btn.classList.remove('open');btn.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');menu.style.opacity='0';menu.style.transform='translateY(-8px)';setTimeout(function(){menu.style.display='none';},250);}
+      btn.addEventListener('click',function(){btn.classList.contains('open')?closeMenu():openMenu();});
+      document.addEventListener('click',function(e){if(menu.style.display!=='none'&&!menu.contains(e.target)&&!btn.contains(e.target))closeMenu();});
+    })();
+  </script>
+
+</body>
+</html>

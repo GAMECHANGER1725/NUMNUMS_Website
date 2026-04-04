@@ -1,0 +1,286 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .bg { background: #FFF8F2; font-family: 'Jost', sans-serif; color: #2C1A0E; padding: 2.5rem 2rem; max-width: 860px; margin: 0 auto; }
+
+  .cover { text-align: center; padding: 3rem 0 2.5rem; border-bottom: 1px solid #F5EBE0; margin-bottom: 2.5rem; }
+  .cover-eyebrow { font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #C85478; margin-bottom: 1rem; }
+  .cover-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300; color: #2C1A0E; line-height: 1.1; margin-bottom: 0.5rem; }
+  .cover-sub { font-family: 'Jost', sans-serif; font-size: 13px; color: #5C3A22; letter-spacing: 0.08em; }
+
+  .section { margin-bottom: 3rem; }
+  .section-label { font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #C85478; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #F5EBE0; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; color: #2C1A0E; margin-bottom: 0.25rem; }
+  .section-body { font-size: 13px; color: #5C3A22; line-height: 1.7; }
+
+  .palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 1.25rem; }
+  .swatch { border-radius: 10px; overflow: hidden; border: 1px solid rgba(44,26,14,0.08); }
+  .swatch-color { height: 72px; }
+  .swatch-info { background: #fff; padding: 10px 10px 12px; }
+  .swatch-name { font-size: 11px; font-weight: 500; color: #2C1A0E; margin-bottom: 2px; }
+  .swatch-hex { font-size: 10px; color: #5C3A22; font-family: monospace; margin-bottom: 4px; }
+  .swatch-role { font-size: 10px; color: #8B6A5A; line-height: 1.4; }
+
+  .usage-tag { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 4px; margin: 2px 2px 0 0; }
+
+  .type-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
+  .type-card { background: #fff; border: 1px solid #F5EBE0; border-radius: 10px; padding: 1.25rem; }
+  .type-specimen { margin-bottom: 0.75rem; }
+  .type-meta { font-size: 11px; color: #8B6A5A; line-height: 1.7; border-top: 1px solid #F5EBE0; padding-top: 0.75rem; }
+  .type-meta b { color: #5C3A22; font-weight: 500; }
+
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 1.25rem; }
+  .rule-card { border-radius: 10px; padding: 1rem 1.1rem; font-size: 12px; line-height: 1.6; }
+  .rule-do { background: #fff; border: 1px solid #C85478; }
+  .rule-dont { background: #fff; border: 1px solid #F5EBE0; }
+  .rule-badge { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; margin-bottom: 0.4rem; }
+  .rule-badge-do { color: #C85478; }
+  .rule-badge-dont { color: #8B6A5A; }
+  .rule-text { color: #5C3A22; }
+
+  .voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 1.25rem; }
+  .voice-card { background: #fff; border: 1px solid #F5EBE0; border-radius: 10px; padding: 1rem 1.1rem; }
+  .voice-heading { font-size: 11px; font-weight: 500; color: #C85478; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+  .voice-body { font-size: 12px; color: #5C3A22; line-height: 1.6; }
+  .voice-example { font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 14px; color: #2C1A0E; margin-top: 0.5rem; border-left: 2px solid #C85478; padding-left: 0.75rem; }
+
+  .logo-zone { margin-top: 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .logo-card { border-radius: 10px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; border: 1px solid #F5EBE0; }
+  .logo-card-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8B6A5A; text-align: center; }
+  .logo-preview { width: 80px; height: 80px; object-fit: contain; }
+  .logo-note { font-size: 11px; color: #5C3A22; text-align: center; line-height: 1.5; }
+
+  .hierarchy-row { display: flex; flex-direction: column; gap: 6px; margin-top: 1.25rem; }
+  .hier-item { display: flex; align-items: baseline; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid #F5EBE0; }
+  .hier-label { font-size: 10px; color: #8B6A5A; min-width: 80px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .teal-note { background: #E8F8FA; border: 1px solid #4EC4D8; border-radius: 8px; padding: 0.75rem 1rem; font-size: 12px; color: #1A6B75; margin-top: 1rem; line-height: 1.6; }
+  .teal-note b { color: #0F5560; }
+
+  .footer-strip { border-top: 1px solid #F5EBE0; margin-top: 2rem; padding-top: 1rem; text-align: center; font-size: 11px; color: #8B6A5A; letter-spacing: 0.08em; }
+</style>
+
+<div class="bg">
+
+  <div class="cover">
+    <div class="cover-eyebrow">Brand Identity System</div>
+    <div class="cover-title">Num Num's Bakery</div>
+    <div class="cover-sub">GNT Ventures Pty Ltd · Sydney, NSW · Version 1.0</div>
+  </div>
+
+  <!-- COLOUR PALETTE -->
+  <div class="section">
+    <div class="section-label">01 — Colour Palette</div>
+    <div class="section-title">The Palette</div>
+    <p class="section-body">Pink-first. Warm cream backgrounds. Brown for depth. Teal is reserved exclusively for the Riverstone location.</p>
+
+    <div class="palette-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#C85478;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Rose Petal</div>
+          <div class="swatch-hex">#C85478</div>
+          <div class="swatch-role">Primary pink — CTAs, nav, icons, accents</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#2C1A0E;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Dark Espresso</div>
+          <div class="swatch-hex">#2C1A0E</div>
+          <div class="swatch-role">Primary text, footer background</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#5C3A22;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Warm Chestnut</div>
+          <div class="swatch-hex">#5C3A22</div>
+          <div class="swatch-role">Body text, secondary text</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFF8F2;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Vanilla Cream</div>
+          <div class="swatch-hex">#FFF8F2</div>
+          <div class="swatch-role">Primary background</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F5EBE0; border-bottom: 1px solid #ede0d4;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Soft Dough</div>
+          <div class="swatch-hex">#F5EBE0</div>
+          <div class="swatch-role">Section backgrounds, dividers</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#4A2518;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Bitter Cocoa</div>
+          <div class="swatch-hex">#4A2518</div>
+          <div class="swatch-role">Nav hamburger bars, deep contrast</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#4EC4D8;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Riverstone Teal</div>
+          <div class="swatch-hex">#4EC4D8</div>
+          <div class="swatch-role">Riverstone location only — not global</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teal-note">
+      <b>Teal usage rule:</b> #4EC4D8 (Riverstone Teal) is pulled directly from the logo's circle. It is permitted only in Riverstone-specific materials — location badge, local signage, store-specific digital content. It must never appear in global brand materials, the main website palette, or Harris Park content.
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section">
+    <div class="section-label">02 — Typography</div>
+    <div class="section-title">Type System</div>
+    <p class="section-body">Two fonts only. Cormorant Garamond for elegance and ceremony. Jost for clarity and precision. Never substitute.</p>
+
+    <div class="type-row">
+      <div class="type-card">
+        <div class="type-specimen">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:#2C1A0E; line-height:1.15;">Crafted with<br><em>love.</em></div>
+        </div>
+        <div class="type-meta">
+          <b>Cormorant Garamond</b><br>
+          Display font · Headings, hero text, pull quotes<br>
+          Weights: 300 Light, 400 Regular, 600 SemiBold<br>
+          Use italic for warmth and ceremony
+        </div>
+      </div>
+      <div class="type-card">
+        <div class="type-specimen">
+          <div style="font-family:'Jost',sans-serif; font-size:14px; font-weight:400; color:#5C3A22; line-height:1.7;">100% eggless. Made fresh daily. Available for custom orders with 48 hours notice.</div>
+        </div>
+        <div class="type-meta">
+          <b>Jost</b><br>
+          Body font · UI text, body copy, labels, buttons<br>
+          Weights: 300 Light, 400 Regular, 500 Medium<br>
+          Never use bold or heavy weights
+        </div>
+      </div>
+    </div>
+
+    <div class="hierarchy-row">
+      <div class="hier-item">
+        <div class="hier-label">H1 — Hero</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:300; color:#2C1A0E;">Celebrate every moment</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-label">H2 — Section</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:400; color:#2C1A0E;">Our Signature Cakes</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-label">H3 — Sub</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400; color:#2C1A0E;">Custom & Celebration</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-label">Body</div>
+        <div style="font-family:'Jost',sans-serif; font-size:15px; font-weight:400; color:#5C3A22;">Order via WhatsApp or phone. Minimum 48 hours notice required.</div>
+      </div>
+      <div class="hier-item">
+        <div class="hier-label">Caption / Label</div>
+        <div style="font-family:'Jost',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; color:#C85478;">Most Popular</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGO USAGE -->
+  <div class="section">
+    <div class="section-label">03 — Logo Usage</div>
+    <div class="section-title">Logo Rules</div>
+    <p class="section-body">Two approved logo files. Use them correctly. Never recreate, recolour, or distort them.</p>
+
+    <div class="logo-zone">
+      <div class="logo-card" style="background:#FFF8F2;">
+        <div class="logo-card-label">Primary — with name</div>
+        <img src="/mnt/user-data/uploads/Logo_WithName.png" class="logo-preview" style="width:120px; height:auto;" alt="Logo with name" />
+        <div class="logo-note">Use on light cream or white backgrounds. Minimum width: 120px.</div>
+      </div>
+      <div class="logo-card" style="background:#2C1A0E;">
+        <div class="logo-card-label" style="color:#F5EBE0;">Icon only — transparent</div>
+        <img src="/mnt/user-data/uploads/Logo_Transparent.png" class="logo-preview" style="width:80px; height:auto;" alt="Logo transparent" />
+        <div class="logo-note" style="color:#F5EBE0;">Use on dark backgrounds, favicon, app icon, social avatar. Minimum: 64px.</div>
+      </div>
+    </div>
+
+    <div class="rules-grid" style="margin-top:1rem;">
+      <div class="rule-card rule-do">
+        <div class="rule-badge rule-badge-do">✓ Do</div>
+        <ul class="rule-text" style="padding-left:1rem; font-size:12px; line-height:1.8;">
+          <li>Use on #FFF8F2 or white backgrounds</li>
+          <li>Maintain clear space equal to the chef's hat height on all sides</li>
+          <li>Use icon-only version for small sizes (under 80px)</li>
+          <li>Use full logo on all primary marketing materials</li>
+        </ul>
+      </div>
+      <div class="rule-card rule-dont">
+        <div class="rule-badge rule-badge-dont">✗ Don't</div>
+        <ul class="rule-text" style="padding-left:1rem; font-size:12px; line-height:1.8;">
+          <li>Don't place on busy photographs without overlay</li>
+          <li>Don't stretch, skew, or rotate the logo</li>
+          <li>Don't recolour — the teal circle is fixed to the logo only</li>
+          <li>Don't use the teal logo colour as a brand colour elsewhere</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRAND VOICE -->
+  <div class="section">
+    <div class="section-label">04 — Brand Voice</div>
+    <div class="section-title">How We Speak</div>
+    <p class="section-body">Num Num's is warm but premium. Never loud. Never corporate. We celebrate real moments for real families.</p>
+
+    <div class="voice-grid">
+      <div class="voice-card">
+        <div class="voice-heading">Warm, not gushing</div>
+        <div class="voice-body">We're genuinely joyful — but we don't over-exclaim. No three exclamation marks. No ALL CAPS hype.</div>
+        <div class="voice-example">"Your cake, made exactly as you imagined it."</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-heading">Premium, not pretentious</div>
+        <div class="voice-body">We're a local family business. We speak plainly. No French pastry-chef language. No unnecessary jargon.</div>
+        <div class="voice-example">"Fresh, eggless cakes — crafted for your occasion."</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-heading">Community-aware</div>
+        <div class="voice-body">We serve South Asian, Muslim, and vegetarian families. Reference shared values — celebration, family, festivals — not demographics.</div>
+        <div class="voice-example">"Diwali deserves something special. We've got you."</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-heading">Confident, not pushy</div>
+        <div class="voice-body">We don't beg for orders. We state what we offer clearly. The product sells itself. Our job is to make it easy to say yes.</div>
+        <div class="voice-example">"Order via WhatsApp. Ready in 48 hours."</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem; background:#fff; border:1px solid #F5EBE0; border-radius:10px; padding:1rem 1.1rem;">
+      <div style="font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:#C85478; margin-bottom:0.6rem; font-weight:500;">Non-negotiables</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; color:#5C3A22; line-height:1.7;">
+        <div>→ Always mention 100% eggless in cake copy</div>
+        <div>→ Never mention delivery platforms for custom cakes</div>
+        <div>→ Never reference supplier names</div>
+        <div>→ Custom cakes: WhatsApp or phone only</div>
+        <div>→ Minimum 48hrs notice on every custom cake mention</div>
+        <div>→ "Adult Cakes" must never appear anywhere</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-strip">
+    © 2025 GNT Ventures Pty Ltd — Trading as Num Num's Bakery · Brand Guidelines v1.0
+  </div>
+
+</div>

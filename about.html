@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Num Num\'s Bakery | Eggless Bakery Sydney Since 2019</title>
+  <meta name="description" content="Num Num\'s Bakery has been making 100% eggless cakes in Sydney since 2019. Family-owned stores in Harris Park and Riverstone. Our story, our values, our community.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=block" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { brand: { cream:'#FFF8F2', linen:'#F5EBE0', pink:'#C85478', 'pink-light':'#E8A4B5', 'pink-dark':'#A03D5E', teal:'#4EC4D8', espresso:'#2C1A0E', 'espresso-mid':'#5C3A22' } },
+          fontFamily: { display:['"Cormorant Garamond"','Georgia','serif'], body:['"Jost"','"Helvetica Neue"','sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    *{box-sizing:border-box;}
+    body{background-color:#FFF8F2;color:#2C1A0E;font-family:'Jost','Helvetica Neue',sans-serif;line-height:1.7;-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:hidden;}
+    .font-display{font-family:'Cormorant Garamond',Georgia,serif;}
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.55s cubic-bezier(0.34,1.56,0.64,1),transform 0.55s cubic-bezier(0.34,1.56,0.64,1);}
+    .reveal.visible{opacity:1;transform:translateY(0);}
+    .reveal-d1{transition-delay:0.08s;}.reveal-d2{transition-delay:0.16s;}.reveal-d3{transition-delay:0.24s;}
+
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:50;background-color:rgba(255,248,242,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(44,26,14,0.10);}
+    .nav-link{font-family:'Jost',sans-serif;font-weight:500;font-size:0.875rem;letter-spacing:0.02em;color:rgba(44,26,14,0.75);text-decoration:none;padding:8px 20px;border-radius:9999px;position:relative;z-index:1;transition:color 0.2s ease;white-space:nowrap;}
+    .nav-link:hover,.nav-link.nav-active{color:#C85478;}
+    .nav-link:focus-visible{outline:2px solid #C85478;outline-offset:2px;border-radius:9999px;}
+    #nav-pill{background:rgba(200,84,120,0.05);border-color:rgba(200,84,120,0.22);}
+    #nav-indicator > div{opacity:0;transition:opacity 0.2s ease;}
+    #nav-pill:has(.nav-link:hover) #nav-indicator > div{opacity:1;}
+    .btn-hover-interactive{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;padding:10px 28px;border-radius:9999px;border:2px solid #C85478;background:transparent;color:#C85478;font-family:'Jost',sans-serif;font-weight:600;font-size:0.875rem;letter-spacing:0.02em;text-decoration:none;cursor:pointer;min-width:148px;}
+    .btn-hover-interactive .bhi-text{position:relative;z-index:1;transform:translateX(4px);transition:transform 0.3s ease,opacity 0.3s ease;white-space:nowrap;}
+    .btn-hover-interactive .bhi-hover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;z-index:1;transform:translateX(48px);opacity:0;transition:transform 0.3s ease,opacity 0.3s ease;white-space:nowrap;}
+    .btn-hover-interactive .bhi-bg{position:absolute;left:12px;top:calc(50% - 4px);width:8px;height:8px;border-radius:9999px;background:#C85478;transition:left 0.3s ease,top 0.3s ease,width 0.3s ease,height 0.3s ease,transform 0.3s ease;pointer-events:none;}
+    .btn-hover-interactive:hover .bhi-text{transform:translateX(48px);opacity:0;}
+    .btn-hover-interactive:hover .bhi-hover{transform:translateX(-4px);opacity:1;}
+    .btn-hover-interactive:hover .bhi-bg{left:0;top:0;width:100%;height:100%;transform:scale(1.8);}
+    .btn-hover-interactive:focus-visible{outline:2px solid #C85478;outline-offset:3px;}
+    .nav-wordmark{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:1.5rem;color:#2C1A0E;letter-spacing:-0.01em;}
+    .btn-cta{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:9999px;font-family:'Jost',sans-serif;font-weight:600;font-size:0.875rem;color:#fff;background:#C85478;text-decoration:none;border:none;cursor:pointer;transition:background 0.2s cubic-bezier(0.34,1.56,0.64,1),transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease;box-shadow:0 4px 14px rgba(200,84,120,0.28);}
+    .btn-cta:hover{background:#A03D5E;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,84,120,0.35);}
+    .btn-cta:focus-visible{outline:2px solid #C85478;outline-offset:3px;}
+    .btn-cta:active{transform:scale(0.97);}
+
+
+    .section-label{display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#C85478;}
+    .section-label::before{content:'';display:block;width:28px;height:2px;background:#C85478;border-radius:2px;}
+
+    .page-hero{background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%);position:relative;overflow:hidden;padding:140px 1.5rem 80px;}
+    .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 30%,rgba(200,84,120,0.15) 0%,transparent 65%);pointer-events:none;}
+
+    .value-card{background:#fff;border-radius:1.25rem;padding:2rem;border:1px solid rgba(200,84,120,0.10);box-shadow:0 2px 12px rgba(44,26,14,0.06);transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);}
+    .value-card:hover{transform:translateY(-3px);}
+
+    /* Timeline */
+    .timeline-item{display:flex;gap:1.5rem;position:relative;}
+    .timeline-dot{width:16px;height:16px;border-radius:50%;background:#C85478;flex-shrink:0;margin-top:6px;box-shadow:0 0 0 4px rgba(200,84,120,0.15);}
+    .timeline-line{position:absolute;left:7px;top:22px;bottom:-24px;width:2px;background:rgba(200,84,120,0.15);}
+
+    .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;display:inline-block;line-height:1;text-transform:none;letter-spacing:normal;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 24,'GRAD' 0;}
+    .grain-bg::before{content:'';position:fixed;inset:0;opacity:0.025;pointer-events:none;z-index:100;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;}
+    /* Footer */
+    .footer-social-btn{width:38px;height:38px;border-radius:10px;background:rgba(255,248,242,0.07);border:1px solid rgba(255,248,242,0.10);display:flex;align-items:center;justify-content:center;color:rgba(255,248,242,0.55);text-decoration:none;transition:background 0.25s ease,color 0.25s ease,border-color 0.25s ease,transform 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+    .footer-social-btn:hover{background:#C85478;color:#fff;border-color:#C85478;transform:translateY(-2px);}
+    .footer-social-btn:focus-visible{outline:2px solid #C85478;outline-offset:3px;}
+    .footer-nav-link{font-family:'Jost',sans-serif;font-size:0.875rem;color:rgba(255,248,242,0.55);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s ease;}
+    .footer-nav-link::before{content:'';display:block;width:5px;height:5px;border-radius:50%;background:#C85478;opacity:0;transition:opacity 0.2s ease;}
+    .footer-nav-link:hover{color:#E8A4B5;}
+    .footer-nav-link:hover::before{opacity:1;}
+  </style>
+</head>
+<body class="grain-bg">
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div style="max-width:1280px;margin:0 auto;padding:0 1.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;height:68px;">
+        <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;" aria-label="Num Num's Bakery home">
+          <img src="brand_assets/Logo_TParent.png" alt="" width="56" height="56" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;">
+        </a>
+        <div id="nav-pill" style="display:flex;align-items:center;gap:0;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:9999px;padding:4px;overflow:visible;">
+          <div id="nav-indicator" style="position:absolute; border-radius:9999px; background:rgba(200,84,120,0.08); top:4px; height:calc(100% - 8px); left:0; width:0; pointer-events:none; z-index:0; overflow:visible;">
+            <div style="position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:32px; height:4px; background:#C85478; border-radius:4px 4px 0 0; overflow:visible;">
+              <div style="position:absolute; width:48px; height:24px; background:rgba(200,84,120,0.20); border-radius:50%; filter:blur(8px); top:-8px; left:-8px; pointer-events:none;"></div>
+              <div style="position:absolute; width:32px; height:24px; background:rgba(200,84,120,0.20); border-radius:50%; filter:blur(6px); top:-4px; left:0; pointer-events:none;"></div>
+              <div style="position:absolute; width:16px; height:16px; background:rgba(200,84,120,0.20); border-radius:50%; filter:blur(4px); top:0; left:8px; pointer-events:none;"></div>
+            </div>
+          </div>
+          <a href="cakes.html"     class="nav-link" data-page="cakes">Our Cakes</a>
+          <a href="about.html"     class="nav-link" data-page="about">About</a>
+          <a href="order.html"     class="nav-link" data-page="order">Order Online</a>
+          <a href="locations.html" class="nav-link" data-page="locations">Locations</a>
+          <a href="order.html" class="btn-hover-interactive" style="margin-left:8px; padding:8px 20px; font-size:0.8rem; position:relative; z-index:1; min-width:auto;">
+            <span class="bhi-text">Order Now</span>
+            <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+            <span class="bhi-bg"></span>
+          </a>
+          <button id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" style="display:none; flex-direction:column; justify-content:center; align-items:center; gap:6px; width:40px; height:40px; background:transparent; border:none; cursor:pointer; padding:0; margin-left:8px; flex-shrink:0;">
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div id="mobile-menu" aria-hidden="true" style="display:none; position:fixed; top:68px; left:0; right:0; z-index:90; background:#FFF8F2; border-bottom:3px solid rgba(200,84,120,0.12); padding:1.5rem 2rem 2rem; flex-direction:column; gap:0; opacity:0; transform:translateY(-8px); transition:opacity 0.25s ease, transform 0.25s ease; box-shadow:0 8px 32px rgba(44,26,14,0.10);">
+    <a href="cakes.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">Our Cakes</a>
+    <a href="about.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">About</a>
+    <a href="order.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">Order Online</a>
+    <a href="locations.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border:none !important;display:block;">Locations</a>
+    <div style="margin-top:1.75rem;"><a href="order.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:#C85478 !important;color:#fff !important;font-family:'Jost',sans-serif;font-weight:600;font-size:1rem;border-radius:9999px !important;border:none !important;text-decoration:none;box-shadow:0 4px 14px rgba(200,84,120,0.30);">Order Now →</a></div>
+  </div>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div style="position:relative;z-index:1;max-width:1280px;margin:0 auto;">
+      <div class="section-label" style="color:rgba(232,164,181,0.8);margin-bottom:1rem;"><span style="background:rgba(232,164,181,0.8);height:2px;width:28px;border-radius:2px;display:block;"></span>About Us</div>
+      <h1 class="font-display" style="font-size:clamp(2.8rem,5vw,4.5rem);font-weight:600;letter-spacing:-0.03em;color:#fff;margin:0 0 1rem;line-height:1.05;">A Family Bakery.<br><em style="font-weight:300;font-style:italic;">A Sydney Story.</em></h1>
+      <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:1.05rem;color:rgba(255,255,255,0.7);max-width:520px;margin:0;">A family-owned eggless bakery serving Sydney since 2019. Two stores, one commitment: no eggs in any cake we make.</p>
+    </div>
+  </div>
+
+  <!-- OUR STORY -->
+  <section style="padding:6rem 1.5rem;background:#FFF8F2;">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;" id="story-grid">
+      <div class="reveal">
+        <div class="section-label" style="margin-bottom:1rem;">Our Story</div>
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.6rem);font-weight:600;letter-spacing:-0.03em;color:#2C1A0E;margin:0 0 1.5rem;line-height:1.1;">
+          Where It All Began
+        </h2>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <p style="font-family:'Jost',sans-serif;font-weight:300;color:#5C3A22;margin:0;line-height:1.8;">
+            Tarun Patel opened Num Num\'s Bakery on Wigram Street, Harris Park in 2019 with one rule: every cake we sell will be 100% eggless.</p>
+
+        <p style="font-family:\'Jost\',sans-serif; font-weight:300; font-size:1.1rem; color:#5C3A22; margin:0 0 1.5rem; line-height:1.75;">
+          Harris Park is home to one of Sydney\'s largest South Asian communities. For the families who live here, vegetarian and Jain-friendly food is not a special request. It is just how people eat. Num Num\'s was built with that in mind from the start.</p>
+
+        <p style="font-family:\'Jost\',sans-serif; font-weight:300; font-size:1.1rem; color:#5C3A22; margin:0 0 1.5rem; line-height:1.75;">
+          In December 2024, we opened our second store at Riverstone Shopping Centre, bringing the same cakes to Sydney\'s northwest.
+          </p>
+        </div>
+        <div style="margin-top:2rem;">
+          <a href="order.html" class="btn-cta">Order a Cake →</a>
+        </div>
+      </div>
+      <div class="reveal reveal-d1" style="position:relative;">
+        <div style="position:relative;border-radius:1.75rem;overflow:hidden;aspect-ratio:4/5;">
+          <img src="brand_assets/num_nums_HPphoto.jpeg" alt="Num Num's Bakery — Harris Park" loading="lazy"
+               style="width:100%;height:100%;object-fit:cover;display:block;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.40) 0%,transparent 60%);pointer-events:none;"></div>
+          <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+        </div>
+        <!-- Floating badge -->
+        <div style="position:absolute;bottom:-1.5rem;left:2rem;background:#fff;border-radius:1rem;padding:1rem 1.5rem;box-shadow:0 8px 28px rgba(44,26,14,0.12);border:1px solid rgba(200,84,120,0.10);">
+          <div class="font-display" style="font-size:2rem;font-weight:700;color:#C85478;line-height:1;">Est. 2019</div>
+          <div style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5C3A22;">Harris Park, Sydney</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY 100% EGGLESS -->
+  <section style="background:#fff;padding:6rem 1.5rem;">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:3.5rem;" class="reveal">
+        <div class="section-label" style="justify-content:center;margin-bottom:1rem;">Our Commitment</div>
+        <h2 class="font-display" style="font-size:clamp(2rem,3.5vw,3rem);font-weight:600;letter-spacing:-0.03em;color:#2C1A0E;margin:0 0 1rem;">What 100% Eggless Actually Means for Your Family</h2>
+        <p style="font-family:'Jost',sans-serif;font-weight:300;color:#5C3A22;max-width:520px;margin:0 auto;line-height:1.7;">Not as a novelty, not as a niche — but as a commitment to inclusive baking for every community.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem;">
+        <div class="value-card reveal">
+          <div style="font-size:2rem;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:#C85478;">eco</span></div>
+          <h3 style="font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Vegetarian Families</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0;line-height:1.6;">No egg in any recipe, on any day. Vegetarian families can order any cake on our menu without checking the fine print.</p>
+        </div>
+        <div class="value-card reveal reveal-d1">
+          <div style="font-size:2rem;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:#C85478;">self_improvement</span></div>
+          <h3 style="font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Jain-Friendly</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0;line-height:1.6;">Every cake is strictly egg-free, in line with Jain dietary principles. No exceptions based on the occasion or design.</p>
+        </div>
+        <div class="value-card reveal reveal-d2">
+          <div style="font-size:2rem;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:#C85478;">nightlight</span></div>
+          <h3 style="font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Halal-Friendly</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0;line-height:1.6;">Suitable for halal dietary requirements. Our full range is available to Sydney\'s Muslim community without modification.</p>
+        </div>
+        <div class="value-card reveal reveal-d3">
+          <div style="font-size:2rem;margin-bottom:1rem;"><span class="material-symbols-outlined" style="color:#C85478;">health_and_safety</span></div>
+          <h3 style="font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Great Taste Without the Egg</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0;line-height:1.6;">Eggless cakes made well taste just as good. Our recipes are developed to match the texture and flavour of traditional cakes, without the egg.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section style="padding:6rem 1.5rem;background:#FFF8F2;">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:3.5rem;" class="reveal">
+        <div class="section-label" style="justify-content:center;margin-bottom:1rem;">What We Stand For</div>
+        <h2 class="font-display" style="font-size:clamp(2rem,3.5vw,2.8rem);font-weight:600;letter-spacing:-0.03em;color:#2C1A0E;margin:0;">Our Values</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;" id="values-grid">
+        <div class="value-card reveal" style="text-align:center;padding:2.5rem 2rem;">
+          <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,84,120,0.10);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;"><span class="material-symbols-outlined" style="font-size:1.8rem;color:#C85478;">star</span></div>
+          <h3 class="font-display" style="font-size:1.6rem;font-weight:600;color:#2C1A0E;margin:0 0 0.5rem;">Quality</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0;line-height:1.6;">Every cake is made fresh to order with premium ingredients. No shortcuts, no compromises.</p>
+        </div>
+        <div class="value-card reveal reveal-d1" style="text-align:center;padding:2.5rem 2rem;">
+          <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,84,120,0.10);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;"><span class="material-symbols-outlined" style="font-size:1.8rem;color:#C85478;">handshake</span></div>
+          <h3 class="font-display" style="font-size:1.6rem;font-weight:600;color:#2C1A0E;margin:0 0 0.5rem;">Community</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0;line-height:1.6;">We exist for our community. Built in Harris Park, growing with Sydney's South Asian families and beyond.</p>
+        </div>
+        <div class="value-card reveal reveal-d2" style="text-align:center;padding:2.5rem 2rem;">
+          <div style="width:64px;height:64px;border-radius:50%;background:rgba(200,84,120,0.10);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;"><span class="material-symbols-outlined" style="font-size:1.8rem;color:#C85478;">palette</span></div>
+          <h3 class="font-display" style="font-size:1.6rem;font-weight:600;color:#2C1A0E;margin:0 0 0.5rem;">Craft</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0;line-height:1.6;">Baking is an art. Every design, every tier, every flower is placed with intention and care.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section style="background:#fff;padding:6rem 1.5rem;">
+    <div style="max-width:700px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:3.5rem;" class="reveal">
+        <div class="section-label" style="justify-content:center;margin-bottom:1rem;">Our Journey</div>
+        <h2 class="font-display" style="font-size:clamp(2rem,3.5vw,2.8rem);font-weight:600;letter-spacing:-0.03em;color:#2C1A0E;margin:0;">A Timeline of Milestones</h2>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:2.5rem;">
+        <div class="timeline-item reveal">
+          <div style="position:relative;">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div style="padding-bottom:0.5rem;">
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.8rem;font-weight:700;color:#C85478;line-height:1;margin-bottom:4px;">2019</div>
+            <h3 style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Harris Park Opens</h3>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0;line-height:1.6;">Tarun Patel opens the first Num Num's Bakery at 96/96 Wigram Street, Harris Park. 100% eggless from day one.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <div style="position:relative;">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div style="padding-bottom:0.5rem;">
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.8rem;font-weight:700;color:#C85478;line-height:1;margin-bottom:4px;">2020</div>
+            <h3 style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Custom Cakes Take Off</h3>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0;line-height:1.6;">Word spreads through the South Asian community. Custom wedding and birthday cakes become the bakery's signature offering.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <div style="position:relative;">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div style="padding-bottom:0.5rem;">
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.8rem;font-weight:700;color:#C85478;line-height:1;margin-bottom:4px;">2022</div>
+            <h3 style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Online Ordering Expands</h3>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0;line-height:1.6;">Num Num's joins Uber Eats, Menulog, and DoorDash — bringing ready-made sweets to all of Sydney.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <div style="position:relative;">
+            <div class="timeline-dot" style="background:#2C1A0E;box-shadow:0 0 0 4px rgba(44,26,14,0.12);"></div>
+          </div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.8rem;font-weight:700;color:#2C1A0E;line-height:1;margin-bottom:4px;">2024</div>
+            <h3 style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;color:#2C1A0E;margin:0 0 6px;">Riverstone Opens</h3>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0;line-height:1.6;">Shop 8, Riverstone Shopping Centre opens in December 2024. Num Num\'s now serves both Harris Park and Sydney\'s northwest.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="position:relative;background:#2C1A0E;padding:5rem 1.5rem 2.5rem;overflow:hidden;">
+    <div style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(to right,rgba(255,248,242,0.03) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,248,242,0.03) 1px,transparent 1px);background-size:3rem 3rem;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 60%,transparent 100%);mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 60%,transparent 100%);"></div>
+    <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:600px;height:200px;background:radial-gradient(ellipse,rgba(200,84,120,0.10) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:1;max-width:1280px;margin:0 auto;">
+      <div id="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:4rem;">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;">
+            <img src="brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="48" height="48" style="width:48px;height:48px;object-fit:cover;border-radius:50%;">
+            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.2rem;font-weight:600;color:#FFF8F2;letter-spacing:-0.01em;">Num Num's Bakery</span>
+          </div>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:rgba(255,248,242,0.55);line-height:1.75;margin:0 0 1.5rem;max-width:260px;">100% eggless cakes and sweets made fresh to order in Sydney. Pick up from Harris Park or Riverstone.</p>
+          <div style="display:flex;gap:8px;">
+            <a href="https://www.instagram.com/numnumsbakery/" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg></a>
+            <a href="https://www.facebook.com/Numnumsbakeryharrispark/" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" class="footer-social-btn" aria-label="WhatsApp"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
+            <a href="tel:+61425697725" class="footer-social-btn" aria-label="Phone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.5 2 2 0 0 1 3.6 1.32h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+          </div>
+          <a href="mailto:info.numnumsbakery@gmail.com" style="display:inline-flex;align-items:center;gap:6px;margin-top:0.75rem;font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:400;color:rgba(255,248,242,0.5);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#E8A4B5'" onmouseleave="this.style.color='rgba(255,248,242,0.5)'"><span class="material-symbols-outlined" style="font-size:1rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">mail</span>info.numnumsbakery@gmail.com</a>
+        </div>
+        <div>
+          <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Our Cakes</h4>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="cakes.html" class="footer-nav-link">Wedding Cakes</a>
+            <a href="cakes.html" class="footer-nav-link">Kids Cakes</a>
+            <a href="cakes.html" class="footer-nav-link">Baby Shower</a>
+            <a href="cakes.html" class="footer-nav-link">Birthday Cakes</a>
+          </div>
+        </div>
+        <div>
+          <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Visit Us</h4>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram St NSW 2150<br>Daily 11 am – 10 pm</div></div>
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8 Riverstone SC NSW 2765<br>Mon–Fri 6 am – 8 pm</div></div>
+          </div>
+        </div>
+        <div>
+          <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Company</h4>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="about.html" class="footer-nav-link">About Us</a>
+            <a href="locations.html" class="footer-nav-link">Locations</a>
+            <a href="order.html" class="footer-nav-link">Order Online</a>
+            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" class="footer-nav-link">WhatsApp Order</a>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,248,242,0.08);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);">© 2025 GNT Ventures Pty Ltd. All rights reserved.</span>
+        <span style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);">100% Eggless · Made with Love · Sydney, Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    @media(max-width:768px){#story-grid{grid-template-columns:1fr !important;gap:2.5rem !important;}#values-grid{grid-template-columns:1fr !important;}#footer-grid{grid-template-columns:1fr 1fr !important;gap:2rem !important;}}
+    @media(max-width:480px){#footer-grid{grid-template-columns:1fr !important;}}
+    .ham-bar { display:block; width:22px; height:2px; background:#2C1A0E; border-radius:9999px; transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease; }
+    #navbar:not(.scrolled) .ham-bar { background:#fff; }
+    @media (max-width: 640px) {
+      .nav-link      { display: none !important; }
+      #nav-indicator { display: none !important; }
+      #nav-pill      { background: transparent !important; border: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; }
+      #mobile-menu-btn { display: flex !important; }
+      .btn-hover-interactive { display: none !important; }
+      #mobile-menu-btn.open .ham-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      #mobile-menu-btn.open .ham-bar:nth-child(2) { opacity: 0; }
+      #mobile-menu-btn.open .ham-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    }
+  </style>
+
+  <script>
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.10 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ── Tubelight indicator ──────────────────────────────────────
+    (function () {
+      const pill      = document.getElementById('nav-pill');
+      const indicator = document.getElementById('nav-indicator');
+      if (!pill || !indicator) return;
+      const links = Array.from(pill.querySelectorAll('a.nav-link'));
+      const stem = window.location.pathname.split('/').pop().replace('.html','') || 'index';
+      const activeLink = links.find(l => l.dataset.page === stem) || null;
+      if (activeLink) activeLink.classList.add('nav-active');
+      function moveIndicator(target) {
+        if (!target) { indicator.style.width = '0'; return; }
+        const pillRect = pill.getBoundingClientRect();
+        const linkRect = target.getBoundingClientRect();
+        indicator.style.left  = (linkRect.left - pillRect.left - 4) + 'px';
+        indicator.style.width = linkRect.width + 'px';
+      }
+      indicator.style.transition = 'none';
+      requestAnimationFrame(() => {
+        moveIndicator(activeLink);
+        requestAnimationFrame(() => {
+          indicator.style.transition = 'left 0.4s cubic-bezier(0.34,1.56,0.64,1), width 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+        });
+      });
+      links.forEach(link => {
+        link.addEventListener('mouseenter', () => moveIndicator(link));
+        link.addEventListener('mouseleave', () => moveIndicator(activeLink));
+      });
+    })();
+  </script>
+  <script>
+    (function() {
+      var btn=document.getElementById('mobile-menu-btn'),menu=document.getElementById('mobile-menu');
+      if(!btn||!menu)return;
+      function openMenu(){btn.classList.add('open');btn.setAttribute('aria-expanded','true');menu.setAttribute('aria-hidden','false');menu.style.display='flex';requestAnimationFrame(function(){menu.style.opacity='1';menu.style.transform='translateY(0)';});}
+      function closeMenu(){btn.classList.remove('open');btn.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');menu.style.opacity='0';menu.style.transform='translateY(-8px)';setTimeout(function(){menu.style.display='none';},250);}
+      btn.addEventListener('click',function(){btn.classList.contains('open')?closeMenu():openMenu();});
+      document.addEventListener('click',function(e){if(menu.style.display!=='none'&&!menu.contains(e.target)&&!btn.contains(e.target))closeMenu();});
+    })();
+  </script>
+
+</body>
+</html>

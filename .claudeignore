@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Screenshot debugging folder (60+ PNGs - biggest context hog)
+temporary screenshots/
+
+# Package lock (large, not needed for code edits)
+package-lock.json
+
+# OS files
+.DS_Store
+
+# Image/video assets (Claude doesn't need binary data)
+brand_assets/*.png
+brand_assets/*.jpeg
+brand_assets/review_photos/*.png
+cake_photos/**/*.jpg
+*.mp4
