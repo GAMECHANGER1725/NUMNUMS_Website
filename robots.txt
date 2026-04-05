@@ -22,4 +22,4 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
-Sitemap: https://num-nums-bakery-test.netlify.app/sitemap.xml
+Sitemap: https://numnumsbakery.com.au/sitemap.xml
