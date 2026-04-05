@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="brand_assets/Logo_TParent.png">
-  <title>Num Num's Bakery Locations | Harris Park &amp; Riverstone, Sydney</title>
+  <link rel="icon" type="image/png" href="brand_assets/favicon-32.png">
+  <title>Num Num's Bakery Locations | Harris Park &amp; Riverstone</title>
   <meta name="description" content="Visit Num Num's Bakery in Sydney. Harris Park: daily 11am–10pm. Riverstone: Mon–Fri 6am–8pm, Sat–Sun 7am–7pm. 100% eggless cakes, pick-up only.">
   <link rel="canonical" href="https://numnumsbakery.com.au/locations.html">
+  <link rel="alternate" hreflang="en-AU" href="https://numnumsbakery.com.au/locations.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Num Num's Bakery Locations | Harris Park &amp; Riverstone, Sydney">
   <meta property="og:description" content="Visit Num Num's Bakery in Sydney. Harris Park: 96/96 Wigram Street, daily 11am–10pm. Riverstone: Shop 8 Riverstone SC, Mon–Fri 6am–8pm, Sat–Sun 7am–7pm.">
@@ -116,11 +117,18 @@
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
+          {"@type": "ListItem", "position": 2, "name": "Locations", "item": "https://numnumsbakery.com.au/locations.html"}
+        ]
+      },
+      {
         "@type": "BakeryOrCafe",
         "@id": "https://numnumsbakery.com.au/#harris-park",
         "name": "Num Num's Bakery — Harris Park",
         "url": "https://numnumsbakery.com.au/locations.html",
-        "image": "https://num-nums-bakery-test.netlify.app/brand_assets/num_nums_HPphoto.jpeg",
+        "image": "https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg",
         "description": "100% eggless custom cakes and sweets in Harris Park, Sydney. Jain-friendly, vegetarian, birthday, wedding and kids cakes. No eggs in any cake.",
         "servesCuisine": ["Eggless", "Vegetarian", "Jain-friendly"],
         "priceRange": "$$",
@@ -153,6 +161,29 @@
           "bestRating": "5",
           "worstRating": "1"
         },
+        "review": [
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Naina Goyal" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-09-12",
+            "reviewBody": "I've purchased around 5 customised cakes for special occasions and always received the perfect eggless cake at a reasonable price. Consistently excellent quality every single time. Highly recommended!"
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Surbhi Sharma" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-11-03",
+            "reviewBody": "Would really recommend Num Num's Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake. All my guests loved it and praised the customization."
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Patel Hirendra" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2025-03-02",
+            "reviewBody": "We ordered a cookies and cream cake for my son's 5th birthday. It looked so beautiful, was nicely presented, and tasted amazing — exactly what we wanted."
+          }
+        ],
         "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521"
       },
       {
@@ -191,7 +222,7 @@
             "closes": "19:00"
           }
         ],
-        "image": "https://num-nums-bakery-test.netlify.app/brand_assets/num_nums_HPphoto.jpeg",
+        "image": "https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg",
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "4.6",
@@ -199,6 +230,29 @@
           "bestRating": "5",
           "worstRating": "1"
         },
+        "review": [
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Vijit Desai" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-08-20",
+            "reviewBody": "Absolutely love Num Num's Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety — every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Nilesh Patel" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-10-05",
+            "reviewBody": "Excellent Mango flavour cake, great customer service, and value for money. Thank you for making our day."
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Varuni Bottu" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2025-01-30",
+            "reviewBody": "I always order from Num Num's and the cakes are so yum and eggless — always fresh and juicy. My personal favourites are pineapple and mango flavours. Highly recommend!"
+          }
+        ],
         "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698"
       }
     ]
@@ -252,8 +306,8 @@
   <div class="page-hero">
     <div style="position:relative;z-index:1;max-width:1280px;margin:0 auto;text-align:center;">
       <div class="section-label" style="color:rgba(232,164,181,0.8);margin-bottom:1rem;justify-content:center;"><span style="background:rgba(232,164,181,0.8);height:2px;width:28px;border-radius:2px;display:block;"></span>Visit Us</div>
-      <h1 class="font-display" style="font-size:clamp(2.8rem,5vw,4.5rem);font-weight:600;letter-spacing:-0.03em;color:#fff;margin:0 0 1rem;line-height:1.05;">Find Us in Sydney</h1>
-      <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:1.05rem;color:rgba(255,255,255,0.7);max-width:480px;margin:0 auto;">Two locations across Sydney — Harris Park and Riverstone. Both stores carry 100% eggless cakes and sweets.</p>
+      <h1 class="font-display" style="font-size:clamp(2.8rem,5vw,4.5rem);font-weight:600;letter-spacing:-0.03em;color:#fff;margin:0 0 1rem;line-height:1.05;">Visit Num Num's Bakery — Harris Park &amp; Riverstone</h1>
+      <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:1.05rem;color:rgba(255,255,255,0.7);max-width:480px;margin:0 auto;">Two Sydney locations — Harris Park in Parramatta and Riverstone in the northwest. Both stores carry 100% eggless cakes and sweets, made fresh to order.</p>
     </div>
   </div>
 
@@ -350,6 +404,26 @@
         </div>
 
       </div>
+
+      <!-- LOCATION PROSE — for SEO and AI indexing -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem;" id="location-prose-grid">
+
+        <div style="background:#fff;border-radius:1.25rem;padding:2rem;border:1px solid rgba(200,84,120,0.10);">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.4rem;font-weight:600;color:#C85478;margin:0 0 0.75rem;">About Our Harris Park Store</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;line-height:1.75;margin:0 0 0.75rem;">Our original store at 96/96 Wigram Street sits right on the main strip of Harris Park — one of Sydney's most vibrant South Asian neighbourhoods, just a few minutes walk from Harris Park train station and less than 2 km from Parramatta CBD. The strip is well known for its authentic restaurants, grocers, and sweet shops, and Num Num's has been part of it since 2019.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;line-height:1.75;margin:0 0 0.75rem;">We are open every day from 11:00 AM to 10:00 PM, making us one of the later-closing bakeries in the area — ideal if you need to pick up after work or following an evening out. Street parking is available on Wigram Street and the surrounding blocks. You will find us in the row of shops between the roundabout and the park.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;line-height:1.75;margin:0;">When you visit, you can browse our display cakes, discuss a custom design in person, or simply pick up your pre-ordered cake. The team speaks English, Hindi, and Gujarati — so feel free to ask questions about any flavour or design. Phone: <a href="tel:+61425697725" style="color:#C85478;font-weight:500;">+61 425 697 725</a></p>
+        </div>
+
+        <div style="background:#fff;border-radius:1.25rem;padding:2rem;border:1px solid rgba(78,196,216,0.18);">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.4rem;font-weight:600;color:#2a8fa3;margin:0 0 0.75rem;">About Our Riverstone Store</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;line-height:1.75;margin:0 0 0.75rem;">Our Riverstone store opened in December 2024 at Shop 8, Riverstone Shopping Centre — bringing Num Num's eggless cakes to Sydney's northwest for the first time. Riverstone Shopping Centre is a neighbourhood retail hub on Riverstone Parade, serviced by the Richmond bus routes and within easy reach of Riverstone train station on the Richmond line.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;line-height:1.75;margin:0 0 0.75rem;">The Riverstone store keeps extended morning hours — open from 6:00 AM Monday to Friday — making it the go-to stop for commuters and early risers in the Hills and Hawkesbury areas. Weekend hours are 7:00 AM to 7:00 PM. Free parking is available throughout the shopping centre car park directly outside.</p>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;line-height:1.75;margin:0;">Serving suburbs including Riverstone, Box Hill, Marsden Park, Schofields, Rouse Hill, and Vineyard, this store stocks the same full range of 15 eggless cake flavours and takes the same WhatsApp custom orders. Phone: <a href="tel:+61425697725" style="color:#C85478;font-weight:500;">+61 425 697 725</a></p>
+        </div>
+
+      </div>
+      <style>@media(max-width:768px){#location-prose-grid{grid-template-columns:1fr !important;}}</style>
 
       <!-- FACTORY CARD — centred below the two store cards -->
       <div style="display:flex;justify-content:center;margin-top:2rem;">
@@ -454,11 +528,11 @@
           <div style="display:flex;flex-direction:column;gap:14px;">
             <div>
               <div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div>
-              <div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram St NSW 2150<br>Daily 11 am – 10 pm</div>
+              <div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram Street, Harris Park NSW 2150<br>Daily 11 am – 10 pm<br><a href="tel:+61425697725" style="color:rgba(255,248,242,0.45);text-decoration:none;">+61 425 697 725</a></div>
             </div>
             <div>
               <div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div>
-              <div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8 Riverstone SC NSW 2765<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div>
+              <div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div>
             </div>
             <div>
               <div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Factory</div>

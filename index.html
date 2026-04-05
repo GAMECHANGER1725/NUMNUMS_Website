@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="brand_assets/Logo_TParent.png">
-  <title>Eggless Custom Cakes Sydney | Num Num's Bakery</title>
-  <meta name="description" content="Order 100% eggless custom cakes in Sydney. Birthday, wedding and celebration cakes made fresh to order. Pick up Harris Park or Riverstone.">
+  <link rel="icon" type="image/png" href="brand_assets/favicon-32.png">
+  <title>Eggless Custom Cakes Sydney | Num Num's Bakery NSW</title>
+  <meta name="description" content="Sydney's 100% eggless custom cake shop. Birthday, wedding &amp; celebration cakes made to order. Pick up Harris Park or Riverstone.">
   <link rel="canonical" href="https://numnumsbakery.com.au/">
+  <link rel="alternate" hreflang="en-AU" href="https://numnumsbakery.com.au/">
+  <link rel="preload" as="image" href="brand_assets/num_nums_HPphoto.jpeg" fetchpriority="high">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Eggless Custom Cakes Sydney | Num Num's Bakery | Harris Park &amp; Riverstone">
   <meta property="og:description" content="Order 100% eggless custom cakes in Sydney from Num Num's Bakery. Birthday, wedding and celebration cakes made fresh to order. Pick up from Harris Park or Riverstone.">
@@ -464,7 +466,9 @@
           "url": "https://numnumsbakery.com.au/brand_assets/Logo_TParent.png"
         },
         "telephone": "+61425697725",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/"],
+        "foundingDate": "2019",
+        "founder": { "@type": "Person", "name": "Tarun Patel" },
+        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/"],
         "description": "100% eggless custom cakes made to order in Sydney. Jain-friendly, vegetarian, birthday, wedding and celebration cakes. Pick up from Harris Park or Riverstone."
       },
       {
@@ -472,14 +476,22 @@
         "@id": "https://numnumsbakery.com.au/#website",
         "url": "https://numnumsbakery.com.au/",
         "name": "Num Num's Bakery",
-        "publisher": { "@id": "https://numnumsbakery.com.au/#organization" }
+        "publisher": { "@id": "https://numnumsbakery.com.au/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://numnumsbakery.com.au/?s={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
       },
       {
         "@type": "BakeryOrCafe",
         "@id": "https://numnumsbakery.com.au/#harris-park",
         "name": "Num Num's Bakery — Harris Park",
         "url": "https://numnumsbakery.com.au/",
-        "image": "https://num-nums-bakery-test.netlify.app/brand_assets/num_nums_HPphoto.jpeg",
+        "image": "https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg",
         "description": "100% eggless custom cakes and sweets in Harris Park, Sydney. Jain-friendly, vegetarian, birthday cakes, wedding cakes, kids cakes. No eggs in any cake.",
         "servesCuisine": ["Eggless", "Vegetarian", "Jain-friendly"],
         "priceRange": "$$",
@@ -509,7 +521,8 @@
           "@type": "AggregateRating",
           "ratingValue": "4.6",
           "reviewCount": "50",
-          "bestRating": "5"
+          "bestRating": "5",
+          "worstRating": "1"
         },
         "review": [
           {
@@ -524,14 +537,14 @@
             "author": { "@type": "Person", "name": "Surbhi Sharma" },
             "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
             "datePublished": "2024-11-03",
-            "reviewBody": "Would really recommend Num Num Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake. All my guests loved it and praised the customization."
+            "reviewBody": "Would really recommend Num Num's Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake. All my guests loved it and praised the customization."
           },
           {
             "@type": "Review",
             "author": { "@type": "Person", "name": "Karunesh Singh" },
             "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
             "datePublished": "2025-01-18",
-            "reviewBody": "Num Nums Bakery delivered a fantastic experience! I ordered a 14\" Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it."
+            "reviewBody": "Num Num's Bakery delivered a fantastic experience! I ordered a 14\" Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it."
           },
           {
             "@type": "Review",
@@ -545,7 +558,7 @@
             "author": { "@type": "Person", "name": "Ankit Aggarwal" },
             "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
             "datePublished": "2025-02-14",
-            "reviewBody": "The cake was absolutely delightful — beautifully made and delicious. The best part was how closely it matched the picture we shared. We're always impressed by Num Num Bakery and have never been disappointed."
+            "reviewBody": "The cake was absolutely delightful — beautifully made and delicious. The best part was how closely it matched the picture we shared. We're always impressed by Num Num's Bakery and have never been disappointed."
           },
           {
             "@type": "Review",
@@ -562,6 +575,7 @@
         "@id": "https://numnumsbakery.com.au/#riverstone",
         "name": "Num Num's Bakery — Riverstone",
         "url": "https://numnumsbakery.com.au/",
+        "image": "https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg",
         "description": "100% eggless custom cakes and sweets at Riverstone Shopping Centre, Sydney northwest. Jain-friendly, vegetarian, birthday, wedding and kids cakes.",
         "servesCuisine": ["Eggless", "Vegetarian", "Jain-friendly"],
         "priceRange": "$$",
@@ -597,7 +611,8 @@
           "@type": "AggregateRating",
           "ratingValue": "4.6",
           "reviewCount": "50",
-          "bestRating": "5"
+          "bestRating": "5",
+          "worstRating": "1"
         },
         "review": [
           {
@@ -605,7 +620,7 @@
             "author": { "@type": "Person", "name": "Vijit Desai" },
             "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
             "datePublished": "2024-08-20",
-            "reviewBody": "Absolutely love Num Num Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety — every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"
+            "reviewBody": "Absolutely love Num Num's Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety — every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"
           },
           {
             "@type": "Review",
@@ -706,7 +721,7 @@
 
       <!-- Subheading -->
       <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:clamp(1rem,1.8vw,1.2rem); color:rgba(255,255,255,0.85); max-width:520px; line-height:1.65; margin:0 0 1.5rem;">
-        Custom celebration cakes made fresh to order in Harris Park and Riverstone. No eggs. Ever. In any cake we make.
+        Num Num's Bakery makes 100% eggless custom cakes in Sydney, with stores in Harris Park and Riverstone. Every cake — birthday, wedding, baby shower, and kids — is made without eggs, making them naturally vegetarian and Jain-friendly. Orders are placed via WhatsApp with just 48 hours notice.
       </p>
 
       <!-- CTAs -->
@@ -1084,6 +1099,7 @@
             <div>
               <div style="color:#F4B400; font-size:1.3rem; line-height:1;">★★★★★</div>
               <div style="font-family:'Jost',sans-serif; font-size:0.75rem; font-weight:500; color:#5C3A22; letter-spacing:0.06em; text-transform:uppercase; margin-top:3px;">Google Rating</div>
+              <div style="font-family:'Jost',sans-serif; font-size:0.72rem; color:#5C3A22; opacity:0.65; margin-top:2px;">Based on 50+ reviews</div>
             </div>
           </div>
         </div>
@@ -1108,7 +1124,7 @@
                 <span style="margin-left:auto; font-size:0.6rem; color:#4285F4; font-weight:700; font-family:'Jost',sans-serif; letter-spacing:0.05em; flex-shrink:0;">GOOGLE</span>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
-              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"Absolutely love Num Num Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety — every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"</p>
+              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"Absolutely love Num Num's Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety — every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"</p>
             </div>
           </div>
 
@@ -1173,7 +1189,7 @@
                 <span style="margin-left:auto; font-size:0.6rem; color:#4285F4; font-weight:700; font-family:'Jost',sans-serif; letter-spacing:0.05em; flex-shrink:0;">GOOGLE</span>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
-              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0 0 1rem;">"Would really recommend Num Num Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake and special thanks for taking my order. All my guests loved it and praised the customization. Thanks a lot for making our son's special day more special with your cake."</p>
+              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0 0 1rem;">"Would really recommend Num Num's Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake and special thanks for taking my order. All my guests loved it and praised the customization. Thanks a lot for making our son's special day more special with your cake."</p>
               <button class="ts-thumb-btn" data-src="brand_assets/review_photos/Surbhi_Jungle.png" style="background-image:url('brand_assets/review_photos/Surbhi_Jungle.png');" aria-label="View jungle birthday cake photo"></button>
             </div>
           </div>
@@ -1190,7 +1206,7 @@
                 <span style="margin-left:auto; font-size:0.6rem; color:#4285F4; font-weight:700; font-family:'Jost',sans-serif; letter-spacing:0.05em; flex-shrink:0;">GOOGLE</span>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
-              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"Num Nums Bakery delivered a fantastic experience! I ordered a 14&quot; Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it. Thank you!"</p>
+              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"Num Num's Bakery delivered a fantastic experience! I ordered a 14&quot; Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it. Thank you!"</p>
             </div>
           </div>
 
@@ -1223,7 +1239,7 @@
                 <span style="margin-left:auto; font-size:0.6rem; color:#4285F4; font-weight:700; font-family:'Jost',sans-serif; letter-spacing:0.05em; flex-shrink:0;">GOOGLE</span>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
-              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"The cake was absolutely delightful — beautifully made and delicious. The best part was how closely it matched the picture we shared. We're always impressed by Num Num Bakery and have never been disappointed. Thanks again!"</p>
+              <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"The cake was absolutely delightful — beautifully made and delicious. The best part was how closely it matched the picture we shared. We're always impressed by Num Num's Bakery and have never been disappointed. Thanks again!"</p>
             </div>
           </div>
 
@@ -1332,8 +1348,9 @@
         <div>
           <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Visit Us</h4>
           <div style="display:flex;flex-direction:column;gap:14px;">
-            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram St NSW 2150<br>Daily 11 am – 10 pm</div></div>
-            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8 Riverstone SC NSW 2765<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div></div>
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram Street, Harris Park NSW 2150<br>Daily 11 am – 10 pm</div></div>
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div></div>
+            <div><a href="tel:+61425697725" style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:rgba(255,248,242,0.45);text-decoration:none;">+61 425 697 725</a></div>
           </div>
         </div>
         <div>

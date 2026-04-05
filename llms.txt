@@ -46,3 +46,7 @@ Address: 2/4 Nelson Road, Yennora NSW 2161
 - WhatsApp / Phone: +61 425 697 725
 - Instagram: https://www.instagram.com/numnumsbakery/
 - Order link: https://wa.me/61425697725
+
+## License
+
+https://rsl.ai/1.0/allow-search-only

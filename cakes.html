@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="brand_assets/Logo_TParent.png">
+  <link rel="icon" type="image/png" href="brand_assets/favicon-32.png">
   <title>Eggless Cakes Sydney | Wedding, Birthday &amp; Kids | Num Num's</title>
-  <meta name="description" content="Browse 100% eggless custom cakes at Num Num's Bakery in Sydney. Wedding cakes, kids birthday cakes, baby shower cakes and 15 flavours. Pick up Harris Park or Riverstone.">
+  <meta name="description" content="Browse 100% eggless custom cakes at Num Num's Bakery Sydney. Wedding, birthday &amp; kids cakes. 15 flavours. Pick up Harris Park or Riverstone.">
   <link rel="canonical" href="https://numnumsbakery.com.au/cakes.html">
+  <link rel="alternate" hreflang="en-AU" href="https://numnumsbakery.com.au/cakes.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Eggless Custom Cakes Sydney | Wedding, Birthday &amp; Kids Cakes | Num Num's Bakery">
   <meta property="og:description" content="Browse 100% eggless custom cakes at Num Num's Bakery in Sydney. Wedding cakes, kids birthday cakes, baby shower cakes and 15 flavours. Pick up Harris Park or Riverstone.">
@@ -142,14 +143,24 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
+          {"@type": "ListItem", "position": 2, "name": "Our Cakes", "item": "https://numnumsbakery.com.au/cakes.html"}
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "publisher": {"@id": "https://numnumsbakery.com.au/#organization"},
+        "mainEntity": [
       {
         "@type": "Question",
         "name": "Are all cake flavours at Num Num's Bakery eggless?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes — every single one of our 15 flavours is 100% eggless, all the time, with no exceptions. This is not a special option or a subset of the menu — it is simply how we bake. Our flavours include Chocolate, Red Velvet, Vanilla, Mango, Strawberry, Blueberry, Butter Scotch, Ferrero Rocher, Rasmalai, Lychee Rose, Caramel, Pistachio, Paan, and more. We developed every recipe from scratch to deliver the same moist, flavourful result you would expect from a traditional cake. Whether you are ordering a simple two-tier birthday cake or an elaborate multi-tier wedding cake, the flavour stays completely eggless. This makes our cakes ideal for families, community events, and anyone celebrating where eggs are not a dietary option."
+          "text": "Yes — every single one of our 15 flavours is 100% eggless, all the time, with no exceptions. This is not a special option or a subset of the menu — it is simply how we bake. Our flavours include Chocolate, Red Velvet, Vanilla, Mango, Strawberry, Blueberry, Butterscotch, Ferrero Rocher, Rasmalai, Lychee, Pineapple, Tiramisu, Black Forest, White Forest, and Cookies &amp; Cream. We developed every recipe from scratch to deliver the same moist, flavourful result you would expect from a traditional cake. Whether you are ordering a simple two-tier birthday cake or an elaborate multi-tier wedding cake, the flavour stays completely eggless. This makes our cakes ideal for families, community events, and anyone celebrating where eggs are not a dietary option."
         }
       },
       {
@@ -183,6 +194,8 @@
           "@type": "Answer",
           "text": "Our cakes are 100% eggless and fully vegetarian, which means they already meet the core dietary requirements followed by many Jain customers. We do not use eggs, gelatine, or animal rennet in our recipes. Many of our regular customers follow Jain dietary principles and order with complete confidence. If you have more specific requirements — for example, confirming that a particular decoration or flavouring is free from certain ingredients — we are happy to go through the details before you commit to an order. Just send us a message on WhatsApp with your requirements and we will confirm in writing what is and is not in your cake. We take dietary requests seriously because we understand the trust our community places in us."
         }
+      }
+        ]
       }
     ]
   }
@@ -238,11 +251,12 @@
         <span style="background:rgba(232,164,181,0.8); height:2px; width:28px; border-radius:2px; display:block;"></span>
         Gallery
       </div>
-      <h1 class="font-display" style="font-size:clamp(2rem,5vw,4.5rem); font-weight:600; letter-spacing:-0.03em; color:#fff; margin:0 0 1rem; line-height:1.05;">
+      <h1 class="font-display" style="font-size:clamp(2rem,5vw,4.5rem); font-weight:600; letter-spacing:-0.03em; color:#fff; margin:0 0 0.5rem; line-height:1.05;">
         100% Eggless Custom Cakes in Sydney
       </h1>
+      <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.10em; text-transform:uppercase; color:rgba(232,164,181,0.85); margin:0 0 0.75rem;">Pick up from Harris Park &amp; Riverstone</p>
       <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:1.05rem; color:rgba(255,255,255,0.7); max-width:480px; margin:0;">
-        Every cake here is 100% eggless and made to order. This gallery is just inspiration. Bring us any photo, any design, and we will recreate it for your celebration. Pick up from Harris Park or Riverstone.
+        Every cake here is 100% eggless and made to order. This gallery is just inspiration. Bring us any photo, any design, and we will recreate it for your celebration.
       </p>
     </div>
   </div>
@@ -461,7 +475,7 @@
     <!-- ── FLAVOURS ── -->
     <div class="gallery-category" data-category="flavours" style="margin-top:1.5rem;">
       <div class="category-heading reveal">
-        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">15 Flavours</h2>
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; margin:0;">What Eggless Cake Flavours Does Num Num's Bakery Offer?</h2>
       </div>
       <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.9rem; color:#5C3A22; margin:0 0 2rem; line-height:1.6;" class="reveal">
         Every flavour below is available in any size and with any design. Pick your favourite or ask us to recommend one for your occasion.
@@ -470,7 +484,7 @@
 
         <div class="gallery-card cake-item reveal" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Chocolate.jpg" alt="eggless chocolate cake Sydney" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Chocolate.webp" type="image/webp"><img src="cake_photos/Product%20Images/Chocolate.jpg" alt="eggless chocolate cake Sydney" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Chocolate</h3>
@@ -480,7 +494,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d1" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Red_Velvet.jpg" alt="eggless red velvet cake Sydney" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Red_Velvet.webp" type="image/webp"><img src="cake_photos/Product%20Images/Red_Velvet.jpg" alt="eggless red velvet cake Sydney" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Red Velvet</h3>
@@ -490,7 +504,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Vanilla.jpg" alt="eggless vanilla cake Num Num's Bakery" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Vanilla.webp" type="image/webp"><img src="cake_photos/Product%20Images/Vanilla.jpg" alt="eggless vanilla cake Num Num's Bakery" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Vanilla</h3>
@@ -500,7 +514,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d3" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Black_Forest.jpg" alt="eggless black forest cake Sydney" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Black_Forest.webp" type="image/webp"><img src="cake_photos/Product%20Images/Black_Forest.jpg" alt="eggless black forest cake Sydney" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Black Forest</h3>
@@ -530,7 +544,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Mango.jpg" alt="eggless mango cake Harris Park" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Mango.webp" type="image/webp"><img src="cake_photos/Product%20Images/Mango.jpg" alt="eggless mango cake Harris Park" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Mango</h3>
@@ -540,7 +554,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d3" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Cookies_And_Cream.jpg" alt="eggless cookies and cream cake Sydney" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Cookies_And_Cream.webp" type="image/webp"><img src="cake_photos/Product%20Images/Cookies_And_Cream.jpg" alt="eggless cookies and cream cake Sydney" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Cookies &amp; Cream</h3>
@@ -560,7 +574,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d1" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/White_Forest.jpg" alt="eggless white forest cake Sydney" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/White_Forest.webp" type="image/webp"><img src="cake_photos/Product%20Images/White_Forest.jpg" alt="eggless white forest cake Sydney" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">White Forest</h3>
@@ -570,7 +584,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Tiramisu.jpg" alt="eggless tiramisu cake Sydney" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Tiramisu.webp" type="image/webp"><img src="cake_photos/Product%20Images/Tiramisu.jpg" alt="eggless tiramisu cake Sydney" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Tiramisu</h3>
@@ -580,7 +594,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d3" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Pineapple.jpg" alt="eggless pineapple cake Riverstone" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Pineapple.webp" type="image/webp"><img src="cake_photos/Product%20Images/Pineapple.jpg" alt="eggless pineapple cake Riverstone" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Pineapple</h3>
@@ -610,7 +624,7 @@
 
         <div class="gallery-card cake-item reveal reveal-d2" data-category="flavours">
           <div style="position:relative; aspect-ratio:1/1; overflow:hidden;">
-            <img src="cake_photos/Product%20Images/Lychee.jpg" alt="eggless lychee cake Sydney" loading="lazy">
+            <picture><source srcset="cake_photos/Product%20Images/Lychee.webp" type="image/webp"><img src="cake_photos/Product%20Images/Lychee.jpg" alt="eggless lychee cake Sydney" loading="lazy"></picture>
             <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.82) 0%,rgba(44,26,14,0.18) 55%,transparent 100%);pointer-events:none;"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;padding:0.85rem 1rem;">
               <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Lychee</h3>
@@ -736,7 +750,7 @@
               Are all flavours available eggless?
               <span style="color:#C85478;font-size:1.2rem;flex-shrink:0;">+</span>
             </summary>
-            <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0.75rem 0 0;line-height:1.7;">Yes — every single one of our 15 flavours is 100% eggless, all the time, with no exceptions. This is not a special option or a subset of the menu — it is simply how we bake. Our flavours include Chocolate, Red Velvet, Vanilla, Mango, Strawberry, Blueberry, Butter Scotch, Ferrero Rocher, Rasmalai, Lychee Rose, Caramel, Pistachio, Paan, and more. We developed every recipe from scratch to deliver the same moist, flavourful result you would expect from a traditional cake. Whether you are ordering a simple two-tier birthday cake or an elaborate multi-tier wedding cake, the flavour stays completely eggless. This makes our cakes ideal for families, community events, and anyone celebrating where eggs are not a dietary option.</p>
+            <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:#5C3A22;margin:0.75rem 0 0;line-height:1.7;">Yes — every single one of our 15 flavours is 100% eggless, all the time, with no exceptions. This is not a special option or a subset of the menu — it is simply how we bake. Our flavours include Chocolate, Red Velvet, Vanilla, Mango, Strawberry, Blueberry, Butterscotch, Ferrero Rocher, Rasmalai, Lychee, Pineapple, Tiramisu, Black Forest, White Forest, and Cookies &amp; Cream. We developed every recipe from scratch to deliver the same moist, flavourful result you would expect from a traditional cake. Whether you are ordering a simple two-tier birthday cake or an elaborate multi-tier wedding cake, the flavour stays completely eggless. This makes our cakes ideal for families, community events, and anyone celebrating where eggs are not a dietary option.</p>
           </details>
 
           <details style="border-top:1px solid rgba(200,84,120,0.12);padding:1.25rem 0;">
@@ -819,8 +833,9 @@
         <div>
           <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Visit Us</h4>
           <div style="display:flex;flex-direction:column;gap:14px;">
-            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram St NSW 2150<br>Daily 11 am – 10 pm</div></div>
-            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8 Riverstone SC NSW 2765<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div></div>
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">96/96 Wigram Street, Harris Park NSW 2150<br>Daily 11 am – 10 pm</div></div>
+            <div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.55;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div></div>
+            <div><a href="tel:+61425697725" style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:rgba(255,248,242,0.45);text-decoration:none;">+61 425 697 725</a></div>
           </div>
         </div>
         <div>
