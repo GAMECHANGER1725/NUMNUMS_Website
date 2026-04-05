@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://num-nums-bakery-test.netlify.app/sitemap.xml
+Sitemap: https://num-nums-bakery-test-2.netlify.app/sitemap.xml
