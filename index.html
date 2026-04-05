@@ -196,12 +196,15 @@
     @media (max-width: 640px) {
       .hero-section { height: 100vh; height: 100dvh; min-height: 600px; }
       .hero-content {
-        justify-content: flex-start;
-        padding-top: calc(68px + 0.75rem) !important;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
+        justify-content: center;
+        padding-top: calc(68px + 2.5rem) !important;
+        padding-bottom: 2.5rem !important;
+        padding-left: 1.75rem;
+        padding-right: 1.75rem;
+        row-gap: 0.15rem;
       }
       .btn-cta, .btn-secondary { flex: 1 !important; min-width: 0 !important; padding-left: 10px !important; padding-right: 10px !important; justify-content: center !important; }
+      #hero-badge { font-size: 0.62rem !important; letter-spacing: 0.06em !important; }
     }
     .hero-video {
       position: absolute;
@@ -219,7 +222,10 @@
     }
     @media (max-width: 640px) {
       .hero-overlay-1 {
-        background: linear-gradient(to top, rgba(44,26,14,0.70) 0%, rgba(44,26,14,0.38) 55%, rgba(44,26,14,0.12) 100%);
+        background: linear-gradient(to top, rgba(44,26,14,0.85) 0%, rgba(44,26,14,0.55) 50%, rgba(44,26,14,0.28) 100%);
+      }
+      .hero-overlay-3 {
+        background: rgba(20,10,5,0.42);
       }
     }
     .hero-overlay-2 {
@@ -327,8 +333,7 @@
     @media (max-width: 480px) {
       #footer-grid { grid-template-columns: 1fr !important; }
     }
-    .ham-bar { display:block; width:22px; height:2px; background:#C85478; border-radius:9999px; transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease; }
-    #navbar:not(.scrolled) .ham-bar { background:#C85478; }
+    .ham-bar { display:block; width:22px; height:2px; background:#2C1A0E; border-radius:9999px; transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease; }
     @keyframes trust-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
     @media (max-width: 640px) {
       .nav-link      { display: none !important; }
@@ -506,6 +511,50 @@
           "reviewCount": "50",
           "bestRating": "5"
         },
+        "review": [
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Naina Goyal" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-09-12",
+            "reviewBody": "I've purchased around 5 customised cakes for special occasions and always received the perfect eggless cake at a reasonable price. Consistently excellent quality every single time. Highly recommended!"
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Surbhi Sharma" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-11-03",
+            "reviewBody": "Would really recommend Num Num Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake. All my guests loved it and praised the customization."
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Karunesh Singh" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2025-01-18",
+            "reviewBody": "Num Nums Bakery delivered a fantastic experience! I ordered a 14\" Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it."
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Sivasankar Kuttalingam" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-12-07",
+            "reviewBody": "We ordered a custom racing-theme cake for our little one's 2nd birthday — it turned out far beyond our expectations! The design was incredibly detailed, from the checkered pattern to the miniature cars and vibrant colours."
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Ankit Aggarwal" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2025-02-14",
+            "reviewBody": "The cake was absolutely delightful — beautifully made and delicious. The best part was how closely it matched the picture we shared. We're always impressed by Num Num Bakery and have never been disappointed."
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Patel Hirendra" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2025-03-02",
+            "reviewBody": "We ordered a cookies and cream cake for my son's 5th birthday. It looked so beautiful, was nicely presented, and tasted amazing — exactly what we wanted."
+          }
+        ],
         "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521"
       },
       {
@@ -542,6 +591,35 @@
             "dayOfWeek": ["Saturday","Sunday"],
             "opens": "07:00",
             "closes": "19:00"
+          }
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.6",
+          "reviewCount": "50",
+          "bestRating": "5"
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Vijit Desai" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-08-20",
+            "reviewBody": "Absolutely love Num Num Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety — every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Nilesh Patel" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2024-10-05",
+            "reviewBody": "Excellent Mango flavour cake, great customer service, and value for money. Thank you for making our day."
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Varuni Bottu" },
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+            "datePublished": "2025-01-30",
+            "reviewBody": "I always order from Num Nums and the cakes are so yum and eggless — always fresh and juicy. My personal favourites are pineapple and mango flavours. Highly recommend!"
           }
         ],
         "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698"
@@ -614,7 +692,7 @@
     <div class="hero-content">
       <!-- Badge -->
       <div style="margin-bottom:1rem;">
-        <span style="display:inline-block; padding:6px 16px; border-radius:9999px; border:1px solid rgba(255,255,255,0.35); background:rgba(255,255,255,0.10); font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.10em; text-transform:uppercase; color:rgba(255,255,255,0.92);">
+        <span id="hero-badge" style="display:inline-block; padding:6px 16px; border-radius:9999px; border:1px solid rgba(255,255,255,0.35); background:rgba(255,255,255,0.10); font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.10em; text-transform:uppercase; color:rgba(255,255,255,0.92); white-space:nowrap;">
           100% Eggless &nbsp;·&nbsp; Vegetarian Friendly &nbsp;·&nbsp; Est. 2019
         </span>
       </div>
