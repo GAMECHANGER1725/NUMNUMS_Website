@@ -36,10 +36,10 @@ Address: 2/4 Nelson Road, Yennora NSW 2161
 ## Pages
 
 - Homepage: https://numnumsbakery.com.au/
-- Our Cakes (gallery): https://numnumsbakery.com.au/cakes.html
-- About Us: https://numnumsbakery.com.au/about.html
-- Locations: https://numnumsbakery.com.au/locations.html
-- Order Online: https://numnumsbakery.com.au/order.html
+- Our Cakes (gallery): https://numnumsbakery.com.au/cakes
+- About Us: https://numnumsbakery.com.au/about
+- Locations: https://numnumsbakery.com.au/locations
+- Order Online: https://numnumsbakery.com.au/order
 
 ## Contact
 
