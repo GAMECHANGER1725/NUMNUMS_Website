@@ -46,6 +46,11 @@
 - **Spacing:** Use intentional, consistent spacing tokens — not random Tailwind steps.
 - **Depth:** Surfaces should have a layering system (base → elevated → floating), not all sit at the same z-plane.
 
+## Deployment Workflow
+- GitHub → Netlify sync is automatic. Pushing to GitHub deploys to production.
+- **Test all changes on localhost** until the user explicitly says to push/commit to GitHub.
+- Never run `git push` or `git commit` unless the user explicitly asks.
+
 ## Hard Rules
 - Do not add sections, features, or content not in the reference
 - Do not "improve" a reference design — match it

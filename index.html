@@ -341,11 +341,8 @@
       .nav-link      { display: none !important; }
       #nav-indicator { display: none !important; }
       #nav-pill      { background: transparent !important; border: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; }
-      #mobile-menu-btn { display: flex !important; }
+      #mobile-hamburger-root { display: flex !important; }
       .btn-hover-interactive { display: none !important; }
-      #mobile-menu-btn.open .ham-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-      #mobile-menu-btn.open .ham-bar:nth-child(2) { opacity: 0; }
-      #mobile-menu-btn.open .ham-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
       /* Trust bar infinite scroll */
       .trust-dupe { display: flex !important; }
       #trust-bar { overflow: hidden !important; }
@@ -439,7 +436,7 @@
 
     /* Photo thumbnail button */
     .ts-thumb-btn{display:inline-block;width:72px;height:72px;border-radius:0.75rem;border:1.5px solid rgba(200,84,120,0.22);background-size:cover;background-position:center;cursor:pointer;padding:0;position:relative;overflow:hidden;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease;}
-    .ts-thumb-btn::after{content:'🔍';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:rgba(44,26,14,0);transition:background 0.2s ease;}
+    .ts-thumb-btn::after{content:'';position:absolute;inset:0;background:rgba(44,26,14,0);transition:background 0.2s ease;}
     .ts-thumb-btn:hover{transform:scale(1.06);box-shadow:0 4px 16px rgba(200,84,120,0.28);}
     .ts-thumb-btn:hover::after{background:rgba(44,26,14,0.35);}
     .ts-thumb-btn:focus-visible{outline:2px solid #C85478;outline-offset:3px;}
@@ -673,27 +670,14 @@
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
           </a>
-          <!-- Mobile hamburger — hidden on desktop via CSS -->
-          <button id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" style="display:none; flex-direction:column; justify-content:center; align-items:center; gap:6px; width:40px; height:40px; background:transparent; border:none; cursor:pointer; padding:0; margin-left:8px; flex-shrink:0;">
-            <span class="ham-bar"></span>
-            <span class="ham-bar"></span>
-            <span class="ham-bar"></span>
-          </button>
+          <!-- Mobile hamburger React mount -->
+          <div id="mobile-hamburger-root" style="display:none; margin-left:8px; flex-shrink:0;"></div>
         </div>
       </div>
     </div>
   </nav>
-  <!-- Mobile navigation drawer -->
-  <div id="mobile-menu" aria-hidden="true" style="display:none; position:fixed; top:68px; left:0; right:0; z-index:90; background:#FFF8F2; border-bottom:3px solid rgba(200,84,120,0.12); padding:1.5rem 2rem 2rem; flex-direction:column; gap:0; opacity:0; transform:translateY(-8px); transition:opacity 0.25s ease, transform 0.25s ease; box-shadow:0 8px 32px rgba(44,26,14,0.10);">
-    <a href="cakes.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">Our Cakes</a>
-    <a href="about.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">About</a>
-    <a href="order.html"     style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">Order Online</a>
-    <a href="locations.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18) !important;border-left:none !important;border-right:none !important;border-top:none !important;display:block;">Locations</a>
-    <a href="blog/index.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E !important;text-decoration:none;padding:1.1rem 0;border:none !important;display:block;">Blog</a>
-    <div style="margin-top:1.75rem;">
-      <a href="order.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:#C85478 !important;color:#fff !important;font-family:'Jost',sans-serif;font-weight:600;font-size:1rem;border-radius:9999px !important;border:none !important;text-decoration:none;box-shadow:0 4px 14px rgba(200,84,120,0.30);">Order Now →</a>
-    </div>
-  </div>
+  <!-- Mobile navigation menu — React portal renders here -->
+  <div id="mobile-menu-portal"></div>
 
   <!-- ═══════════════════════════════════════════ HERO ═══ -->
   <section class="hero-section" aria-label="Hero">
@@ -1572,16 +1556,6 @@
   </script>
 
   <script>
-    // Mobile hamburger toggle
-    (function() {
-      var btn  = document.getElementById('mobile-menu-btn');
-      var menu = document.getElementById('mobile-menu');
-      if (!btn || !menu) return;
-      function openMenu() { btn.classList.add('open'); btn.setAttribute('aria-expanded','true'); menu.setAttribute('aria-hidden','false'); menu.style.display='flex'; requestAnimationFrame(function(){ menu.style.opacity='1'; menu.style.transform='translateY(0)'; }); }
-      function closeMenu() { btn.classList.remove('open'); btn.setAttribute('aria-expanded','false'); menu.setAttribute('aria-hidden','true'); menu.style.opacity='0'; menu.style.transform='translateY(-8px)'; setTimeout(function(){ menu.style.display='none'; },250); }
-      btn.addEventListener('click', function(){ btn.classList.contains('open') ? closeMenu() : openMenu(); });
-      document.addEventListener('click', function(e){ if(menu.style.display!=='none' && !menu.contains(e.target) && !btn.contains(e.target)) closeMenu(); });
-    })();
     // Pin hero to exact visible viewport height — fixes Android Chrome address-bar bleed
     (function() {
       var hero = document.querySelector('.hero-section');
@@ -1599,6 +1573,227 @@
     </button>
     <img id="lb-img" src="" alt="Cake photo">
   </div>
+
+  <!-- ═══════════════════ REACT MOBILE NAV ═══════════════════ -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+  (function () {
+    const { useState, useEffect, useRef } = React;
+
+    const NAV_LINKS = [
+      { href: 'cakes.html',      label: 'Our Cakes' },
+      { href: 'about.html',      label: 'About' },
+      { href: 'order.html',      label: 'Order Online' },
+      { href: 'locations.html',  label: 'Locations' },
+      { href: 'blog/index.html', label: 'Blog' },
+    ];
+
+    function MobileNav() {
+      const [open, setOpen]       = useState(false);
+      const [scrolled, setScrolled] = useState(false);
+      const btnRef = useRef(null);
+
+      /* Track navbar scroll class → controls bar icon colour */
+      useEffect(() => {
+        const navbar = document.getElementById('navbar');
+        if (!navbar) return;
+        const sync = () => setScrolled(navbar.classList.contains('scrolled'));
+        sync();
+        const obs = new MutationObserver(sync);
+        obs.observe(navbar, { attributes: true, attributeFilter: ['class'] });
+        return () => obs.disconnect();
+      }, []);
+
+      /* Close on outside click */
+      useEffect(() => {
+        if (!open) return;
+        const handler = (e) => {
+          const root   = document.getElementById('mobile-hamburger-root');
+          const portal = document.getElementById('mobile-menu-portal');
+          if (root   && root.contains(e.target))   return;
+          if (portal && portal.contains(e.target)) return;
+          setOpen(false);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+      }, [open]);
+
+      /* Body scroll lock while menu is open */
+      useEffect(() => {
+        document.body.style.overflow = open ? 'hidden' : '';
+        return () => { document.body.style.overflow = ''; };
+      }, [open]);
+
+      /* ── Hamburger span bar styles (3-bar ↔ X animation) ── */
+      // Bars are 2px tall with 6px gap → center offset = 2+6 = 8px
+      const easeSpring  = 'cubic-bezier(.5,.85,.25,1.1)';
+      const easeSpring2 = 'cubic-bezier(.5,.85,.25,1.8)';
+
+      const barColor = scrolled ? '#2C1A0E' : '#fff';
+
+      const barBase = {
+        display:         'block',
+        width:           22,
+        height:          2,
+        borderRadius:    9999,
+        background:      barColor,
+        transformOrigin: 'center',
+        transition:      `background 0.3s ease`,
+      };
+      const bar1 = {
+        ...barBase,
+        transform:  open ? 'translateY(8px) rotate(45deg)' : 'translateY(0)',
+        transition: `transform 0.38s ${easeSpring}, background 0.3s ease`,
+      };
+      const bar2 = {
+        ...barBase,
+        opacity:    open ? 0 : 1,
+        transform:  open ? 'scaleX(0.4)' : 'scaleX(1)',
+        transition: `opacity 0.22s ease, transform 0.22s ease, background 0.3s ease`,
+      };
+      const bar3 = {
+        ...barBase,
+        transform:  open ? 'translateY(-8px) rotate(-45deg)' : 'translateY(0)',
+        transition: `transform 0.38s ${easeSpring2}, background 0.3s ease`,
+      };
+
+      /* ── Dropdown overlay (portal) ── */
+      const menuEl = (
+        <div
+          role="dialog"
+          aria-label="Mobile navigation"
+          aria-hidden={!open}
+          style={{
+            position:   'fixed',
+            top:        68,
+            left:       0,
+            right:      0,
+            zIndex:     90,
+            background: '#FFF8F2',
+            borderBottom: '3px solid rgba(200,84,120,0.12)',
+            padding:    '0 2rem 2rem',
+            display:    'flex',
+            flexDirection: 'column',
+            boxShadow:  '0 16px 48px rgba(44,26,14,0.16), 0 4px 12px rgba(44,26,14,0.08)',
+            /* Backdrop blur strip */
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            /* Entrance animation */
+            opacity:    open ? 1 : 0,
+            transform:  open ? 'translateY(0) scaleY(1)' : 'translateY(-12px) scaleY(0.97)',
+            transformOrigin: 'top center',
+            pointerEvents: open ? 'auto' : 'none',
+            transition: 'opacity 0.32s cubic-bezier(0.4,0,0.2,1), transform 0.38s cubic-bezier(0.34,1.3,0.64,1)',
+          }}
+        >
+          {NAV_LINKS.map((link, i) => {
+            const delay = open ? `${0.06 + i * 0.07}s` : '0s';
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                style={{
+                  fontFamily:     "'Jost', sans-serif",
+                  fontSize:       '1.35rem',
+                  fontWeight:     500,
+                  color:          '#2C1A0E',
+                  textDecoration: 'none',
+                  padding:        '1.05rem 0',
+                  borderBottom:   i < NAV_LINKS.length - 1
+                    ? '1px solid rgba(44,26,14,0.10)'
+                    : 'none',
+                  display:  'block',
+                  opacity:  open ? 1 : 0,
+                  transform: open ? 'translateX(0)' : 'translateX(-18px)',
+                  transition: `opacity 0.38s ease ${delay}, transform 0.42s cubic-bezier(0.34,1.3,0.64,1) ${delay}`,
+                  letterSpacing: '0.01em',
+                }}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+
+          {/* CTA button */}
+          <div
+            style={{
+              marginTop:  '1.6rem',
+              opacity:    open ? 1 : 0,
+              transform:  open ? 'translateY(0)' : 'translateY(14px)',
+              transition: open
+                ? `opacity 0.38s ease ${0.06 + NAV_LINKS.length * 0.07}s, transform 0.44s cubic-bezier(0.34,1.3,0.64,1) ${0.06 + NAV_LINKS.length * 0.07}s`
+                : 'none',
+            }}
+          >
+            <a
+              href="order.html"
+              onClick={() => setOpen(false)}
+              style={{
+                display:        'inline-flex',
+                alignItems:     'center',
+                gap:            8,
+                padding:        '14px 34px',
+                background:     '#C85478',
+                color:          '#fff',
+                fontFamily:     "'Jost', sans-serif",
+                fontWeight:     600,
+                fontSize:       '1rem',
+                borderRadius:   9999,
+                textDecoration: 'none',
+                boxShadow:      '0 4px 18px rgba(200,84,120,0.35)',
+                letterSpacing:  '0.02em',
+              }}
+            >
+              Order Now →
+            </a>
+          </div>
+        </div>
+      );
+
+      return (
+        <>
+          {/* ── Hamburger button ── */}
+          <button
+            ref={btnRef}
+            onClick={() => setOpen(v => !v)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            style={{
+              width:      40,
+              height:     40,
+              background: 'transparent',
+              border:     'none',
+              cursor:     'pointer',
+              padding:    0,
+              display:    'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap:        6,
+              outline:    'none',
+            }}
+          >
+            <span style={bar1} />
+            <span style={bar2} />
+            <span style={bar3} />
+          </button>
+
+          {/* ── Portal: dropdown menu ── */}
+          {ReactDOM.createPortal(menuEl, document.getElementById('mobile-menu-portal'))}
+        </>
+      );
+    }
+
+
+    const mountEl = document.getElementById('mobile-hamburger-root');
+    if (mountEl) {
+      ReactDOM.createRoot(mountEl).render(<MobileNav />);
+    }
+  })();
+  </script>
 
 </body>
 </html>
