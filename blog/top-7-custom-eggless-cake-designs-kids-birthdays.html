@@ -54,7 +54,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .btn-hover-interactive:hover .bhi-text{transform:translateX(48px);opacity:0;}
     .btn-hover-interactive:hover .bhi-hover{transform:translateX(-4px);opacity:1;}
     .btn-hover-interactive:hover .bhi-bg{left:0;top:0;width:100%;height:100%;transform:scale(1.8);}
-    .btn-cta{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:9999px;font-family:'Jost',sans-serif;font-weight:600;font-size:0.875rem;color:#2C1A0E;background:#C85478;text-decoration:none;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 14px rgba(200,84,120,0.28);}
+    .btn-cta{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:9999px;font-family:'Jost',sans-serif;font-weight:600;font-size:0.875rem;color:#fff!important;text-decoration:none!important;background:#C85478;text-decoration:none;transition:background 0.2s,transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 14px rgba(200,84,120,0.28);}
     .btn-cta:hover{background:#A03D5E;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,84,120,0.35);}
     .page-hero{background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%);position:relative;overflow:hidden;padding:140px 1.5rem 80px;}
     .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 30%,rgba(200,84,120,0.15) 0%,transparent 65%);pointer-events:none;}
@@ -106,6 +106,141 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </script>
 </head>
 <body>
+<div id="sk-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:99998;background:#FFF8F2;overflow:hidden;pointer-events:all;will-change:opacity;">
+  <style>
+    .sk{background:linear-gradient(90deg,#EDE0D6 0%,#F8EEE6 35%,#FFF8F2 50%,#F8EEE6 65%,#EDE0D6 100%);background-size:300% 100%;animation:sk-shine 1.8s ease-in-out infinite;border-radius:6px;}
+    @keyframes sk-shine{0%{background-position:100% 0}100%{background-position:-100% 0}}
+    #sk-overlay *{box-sizing:border-box;margin:0;padding:0;}
+    @media(max-width:767px){.sk-d{display:none!important;}.sk-m{display:flex!important;}}
+    @media(min-width:768px){.sk-d{display:flex!important;}.sk-m{display:none!important;}}
+  </style>
+
+  <!-- NAV -->
+  <div style="position:absolute;top:0;left:0;right:0;height:72px;background:#fff;border-bottom:1px solid rgba(200,84,120,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="sk" style="width:38px;height:38px;border-radius:50%;flex-shrink:0;"></div>
+      <div class="sk" style="width:110px;height:16px;border-radius:4px;"></div>
+    </div>
+    <!-- desktop links -->
+    <div class="sk-d" style="align-items:center;gap:28px;">
+      <div class="sk" style="width:72px;height:13px;border-radius:4px;"></div>
+      <div class="sk" style="width:48px;height:13px;border-radius:4px;"></div>
+      <div class="sk" style="width:90px;height:13px;border-radius:4px;"></div>
+      <div class="sk" style="width:68px;height:13px;border-radius:4px;"></div>
+      <div class="sk" style="width:36px;height:13px;border-radius:4px;"></div>
+      <div class="sk" style="width:108px;height:36px;border-radius:9999px;"></div>
+    </div>
+    <!-- mobile hamburger -->
+    <div class="sk-m" style="flex-direction:column;gap:5px;">
+      <div class="sk" style="width:22px;height:2px;border-radius:2px;"></div>
+      <div class="sk" style="width:22px;height:2px;border-radius:2px;"></div>
+      <div class="sk" style="width:22px;height:2px;border-radius:2px;"></div>
+    </div>
+  </div>
+
+  <!-- HERO — dark espresso band -->
+  <div style="position:absolute;top:72px;left:0;right:0;background:#2C1A0E;padding:60px 2.5rem 56px;overflow:hidden;">
+    <!-- desktop 2-col -->
+    <div class="sk-d" style="max-width:1280px;margin:0 auto;align-items:center;gap:5rem;">
+      <div style="flex:1;min-width:0;">
+        <div class="sk" style="width:140px;height:22px;border-radius:9999px;margin-bottom:1.5rem;opacity:0.35;"></div>
+        <div class="sk" style="width:100%;height:56px;border-radius:8px;margin-bottom:12px;opacity:0.28;"></div>
+        <div class="sk" style="width:78%;height:56px;border-radius:8px;margin-bottom:28px;opacity:0.22;"></div>
+        <div class="sk" style="width:100%;height:14px;border-radius:4px;margin-bottom:8px;opacity:0.18;"></div>
+        <div class="sk" style="width:88%;height:14px;border-radius:4px;margin-bottom:8px;opacity:0.15;"></div>
+        <div class="sk" style="width:65%;height:14px;border-radius:4px;margin-bottom:32px;opacity:0.12;"></div>
+        <div style="display:flex;gap:14px;">
+          <div class="sk" style="width:164px;height:48px;border-radius:9999px;opacity:0.30;"></div>
+          <div class="sk" style="width:124px;height:48px;border-radius:9999px;opacity:0.18;"></div>
+        </div>
+      </div>
+      <div style="flex:0 0 420px;">
+        <div class="sk" style="width:100%;height:340px;border-radius:1.5rem;opacity:0.22;"></div>
+      </div>
+    </div>
+    <!-- mobile hero -->
+    <div class="sk-m" style="flex-direction:column;max-width:480px;margin:0 auto;">
+      <div class="sk" style="width:120px;height:20px;border-radius:9999px;margin-bottom:1.25rem;opacity:0.35;"></div>
+      <div class="sk" style="width:100%;height:44px;border-radius:6px;margin-bottom:10px;opacity:0.28;"></div>
+      <div class="sk" style="width:80%;height:44px;border-radius:6px;margin-bottom:24px;opacity:0.22;"></div>
+      <div class="sk" style="width:100%;height:13px;border-radius:4px;margin-bottom:7px;opacity:0.18;"></div>
+      <div class="sk" style="width:85%;height:13px;border-radius:4px;margin-bottom:24px;opacity:0.14;"></div>
+      <div class="sk" style="width:152px;height:44px;border-radius:9999px;opacity:0.30;"></div>
+    </div>
+  </div>
+
+  <!-- TRUST BAR -->
+  <div style="position:absolute;top:72px;left:0;right:0;" id="sk-trust-offset">
+    <script>
+      (function(){
+        var hero = document.querySelector('#sk-overlay [style*="background:#2C1A0E"]');
+        var trust = document.getElementById('sk-trust-offset');
+        if(hero && trust) trust.style.top = (72 + hero.offsetHeight) + 'px';
+      })();
+    </script>
+  </div>
+
+  <!-- CONTENT AREA (below hero) -->
+  <div id="sk-body" style="position:absolute;left:0;right:0;padding:3rem 2.5rem 0;">
+    <!-- 4 stat cards desktop -->
+    <div class="sk-d" style="max-width:1280px;margin:0 auto 3rem;gap:1.5rem;">
+      <div class="sk" style="flex:1;height:88px;border-radius:1.25rem;"></div>
+      <div class="sk" style="flex:1;height:88px;border-radius:1.25rem;"></div>
+      <div class="sk" style="flex:1;height:88px;border-radius:1.25rem;"></div>
+      <div class="sk" style="flex:1;height:88px;border-radius:1.25rem;"></div>
+    </div>
+    <!-- mobile stat cards -->
+    <div class="sk-m" style="flex-direction:column;gap:1rem;margin-bottom:2.5rem;">
+      <div class="sk" style="height:72px;border-radius:1.25rem;"></div>
+      <div class="sk" style="height:72px;border-radius:1.25rem;"></div>
+    </div>
+
+    <!-- section heading -->
+    <div style="max-width:1280px;margin:0 auto 2.5rem;text-align:center;">
+      <div class="sk" style="width:100px;height:10px;border-radius:4px;margin:0 auto 12px;"></div>
+      <div class="sk" style="width:340px;max-width:90%;height:36px;border-radius:6px;margin:0 auto 10px;"></div>
+      <div class="sk" style="width:220px;max-width:80%;height:14px;border-radius:4px;margin:0 auto;"></div>
+    </div>
+
+    <!-- cake card grid desktop -->
+    <div class="sk-d" style="max-width:1280px;margin:0 auto;gap:2rem;">
+      <div class="sk" style="flex:1;height:280px;border-radius:1.5rem;"></div>
+      <div class="sk" style="flex:1;height:280px;border-radius:1.5rem;"></div>
+      <div class="sk" style="flex:1;height:280px;border-radius:1.5rem;"></div>
+    </div>
+    <!-- cake card mobile -->
+    <div class="sk-m" style="flex-direction:column;gap:1.25rem;">
+      <div class="sk" style="height:220px;border-radius:1.25rem;"></div>
+      <div class="sk" style="height:220px;border-radius:1.25rem;"></div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // position content area below hero
+      function positionBody(){
+        var hero = document.querySelector('#sk-overlay [style*="background:#2C1A0E"]');
+        var body = document.getElementById('sk-body');
+        if(hero && body) body.style.top = (72 + hero.offsetHeight) + 'px';
+      }
+      positionBody();
+      window.addEventListener('resize', positionBody);
+
+      // fade out on load
+      function hideSkeleton(){
+        var el = document.getElementById('sk-overlay');
+        if(!el || el._hiding) return;
+        el._hiding = true;
+        el.style.transition = 'opacity 0.55s cubic-bezier(0.4,0,0.2,1)';
+        el.style.opacity = '0';
+        setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 580);
+      }
+      window.addEventListener('load', hideSkeleton);
+      setTimeout(hideSkeleton, 3000);
+    })();
+  </script>
+</div>
+
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NM5H6SSZ"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -324,6 +459,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     function handleResize(){var g=document.getElementById('article-grid'),s=document.getElementById('article-sidebar');if(!g||!s)return;if(window.innerWidth<900){g.style.gridTemplateColumns='1fr';s.style.position='static';}else{g.style.gridTemplateColumns='1fr 280px';s.style.position='sticky';}}
     handleResize();window.addEventListener('resize',handleResize);
     (function(){var btn=document.getElementById('mobile-menu-btn'),menu=document.getElementById('mobile-menu');if(!btn||!menu)return;var links=Array.from(menu.querySelectorAll('a'));var cta=menu.querySelector('div');function o(){btn.classList.add('open');btn.setAttribute('aria-expanded','true');menu.setAttribute('aria-hidden','false');menu.style.display='flex';document.body.style.overflow='hidden';links.forEach(function(a){a.style.opacity='0';a.style.transform='translateX(-18px)';a.style.transition='none';});if(cta){cta.style.opacity='0';cta.style.transform='translateY(14px)';cta.style.transition='none';}requestAnimationFrame(function(){requestAnimationFrame(function(){menu.style.opacity='1';menu.style.transform='translateY(0) scaleY(1)';links.forEach(function(a,i){var d=(0.06+i*0.07).toFixed(2)+'s';a.style.transition='opacity 0.38s ease '+d+', transform 0.42s cubic-bezier(0.34,1.3,0.64,1) '+d;a.style.opacity='1';a.style.transform='translateX(0)';});if(cta){var d=(0.06+links.length*0.07).toFixed(2)+'s';cta.style.transition='opacity 0.38s ease '+d+', transform 0.44s cubic-bezier(0.34,1.3,0.64,1) '+d;cta.style.opacity='1';cta.style.transform='translateY(0)';}});});}function c(){btn.classList.remove('open');btn.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');menu.style.opacity='0';menu.style.transform='translateY(-12px) scaleY(0.97)';document.body.style.overflow='';setTimeout(function(){menu.style.display='none';},320);}btn.addEventListener('click',function(){btn.classList.contains('open')?c():o();});document.addEventListener('mousedown',function(e){if(menu.style.display!=='none'&&!menu.contains(e.target)&&!btn.contains(e.target))c();});})();
+  </script>
+
+  <!-- Lenis smooth scroll -->
+  <style>
+    /* Let Lenis own all scrolling — disable CSS smooth-scroll so they don't fight */
+    html { scroll-behavior: auto !important; }
+  </style>
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script>
+    (function() {
+      var lenis = new Lenis({
+        duration: 1.38,
+        easing: function(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
+        smoothWheel: true,
+        wheelMultiplier: 1.0,
+        syncTouch: true,
+        touchMultiplier: 1.5,
+      });
+      // Scroll progress bar
+      var progressBar = document.createElement('div');
+      progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(progressBar);
+      lenis.on('scroll', function(e) {
+        progressBar.style.width = (e.progress * 100) + '%';
+      });
+      // Pause Lenis when mobile menu locks body scroll
+      new MutationObserver(function() {
+        document.body.style.overflow === 'hidden' ? lenis.stop() : lenis.start();
+      }).observe(document.body, { attributes: true, attributeFilter: ['style'] });
+      // RAF loop
+      (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
+      // Smooth anchor scrolling via Lenis
+      document.addEventListener('click', function(e) {
+        var a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        var id = a.getAttribute('href').slice(1);
+        var el = id ? document.getElementById(id) : null;
+        if (el) { e.preventDefault(); lenis.scrollTo(el, { offset: -80 }); }
+      });
+      window.__lenis = lenis;
+    })();
   </script>
 </body>
 </html>
