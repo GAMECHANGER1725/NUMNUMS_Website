@@ -136,7 +136,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-people-display{font-family:'Cormorant Garamond',Georgia,serif;font-size:2.8rem;font-weight:700;color:#2C1A0E;line-height:1;margin-bottom:1.5rem;}
     .ps-size-display{font-family:'Cormorant Garamond',Georgia,serif;font-size:3.5rem;font-weight:700;color:#2C1A0E;line-height:1;}
     .ps-price-display{font-family:'Cormorant Garamond',Georgia,serif;font-size:2.4rem;font-weight:600;color:#C85478;line-height:1.1;margin:0.5rem 0 1rem;}
-    .ps-slider{width:100%;-webkit-appearance:none;appearance:none;height:10px;border-radius:9999px;outline:none;cursor:pointer;margin-bottom:2rem;}
+    .ps-slider{width:100%;-webkit-appearance:none;appearance:none;height:10px;border-radius:9999px;outline:none;cursor:pointer;margin-bottom:2rem;touch-action:none;}
     .ps-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;background:#fff;border:2px solid rgba(200,84,120,0.3);border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(200,84,120,0.20);transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.15s ease,border-color 0.15s ease;}
     .ps-slider:hover::-webkit-slider-thumb{transform:scale(1.18);border-color:rgba(200,84,120,0.55);box-shadow:0 4px 16px rgba(200,84,120,0.30);}
     .ps-slider:active::-webkit-slider-thumb{transform:scale(1.28);background:#FFF8F2;}
@@ -517,18 +517,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div style="position:relative;">
                 <select id="cake-size" style="width:100%;padding:8px 24px 8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
                   <option value="">Size…</option>
-                  <option value='6" (6–8 guests, $34.99)'>6" | 6-8 guests ($34.99)</option>
-                  <option value='8" (12–14 guests, $49.99)'>8" | 12-14 guests ($49.99)</option>
-                  <option value='10" (20–22 guests, $74.99)'>10" | 20-22 guests ($74.99)</option>
-                  <option value='12" (25–30 guests, $89.99)'>12" | 25-30 guests ($89.99)</option>
-                  <option value='14" (40–45 guests, $114.99)'>14" | 40-45 guests ($114.99)</option>
-                  <option value='16" (50–55 guests, $134.99)'>16" | 50-55 guests ($134.99)</option>
+                  <option value='6" (6–8 guests, from $34.99)'>6" | 6-8 guests (from $34.99)</option>
+                  <option value='8" (12–14 guests, from $49.99)'>8" | 12-14 guests (from $49.99)</option>
+                  <option value='10" (20–22 guests, from $74.99)'>10" | 20-22 guests (from $74.99)</option>
+                  <option value='12" (25–30 guests, from $89.99)'>12" | 25-30 guests (from $89.99)</option>
+                  <option value='14" (40–45 guests, from $114.99)'>14" | 40-45 guests (from $114.99)</option>
+                  <option value='16" (50–55 guests, from $134.99)'>16" | 50-55 guests (from $134.99)</option>
                   <option value="Multi-tier (custom)">Multi-tier (custom quote)</option>
                 </select>
                 <svg style="position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
               <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
             </div>
+          </div>
+
+          <!-- PRICING DISCLAIMER -->
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;padding:0.65rem 0.85rem;background:rgba(200,84,120,0.06);border-left:3px solid #C85478;border-radius:0.5rem;margin-bottom:0.85rem;">
+            <span class="material-symbols-outlined" style="font-size:1rem;color:#C85478;flex-shrink:0;line-height:1.5;">info</span>
+            <p style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.55;">Prices shown are <strong style="font-weight:600;">starting prices</strong> for the base cake. Custom designs and decorations may affect the final cost.</p>
           </div>
 
           <!-- PICKUP LOCATION -->
@@ -1047,7 +1053,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             'Date needed: '      + fmtDate(selDate)               + '\n' +
             'Pickup time: '      + hour + ':' + min + ' ' + ampm  + '\n' +
             'Notes: '            + (notes||'None')                + '\n' +
-            'If you have a reference image for your desired design, please attach it to this message.';
+            'If you have a reference image for your desired design, please attach it to this message.\n' +
+            'Note: I understand the listed size price is a starting price and the final cost will be confirmed by your team before I pay.';
           window.open('https://wa.me/61425697725?text=' + encodeURIComponent(msg), '_blank', 'noopener');
         });
       }
@@ -1110,6 +1117,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var cta=menu.querySelector('div');
       function openMenu(){
         btn.classList.add('open');btn.setAttribute('aria-expanded','true');
+        if(menu.parentNode!==document.body)document.body.appendChild(menu);
+        menu.style.zIndex='9999';
         menu.setAttribute('aria-hidden','false');menu.style.display='flex';
         document.body.style.overflow='hidden';
         links.forEach(function(a){a.style.opacity='0';a.style.transform='translateX(-18px)';a.style.transition='none';});
@@ -1149,28 +1158,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
   <script>
     (function() {
+      var progressBar = document.createElement('div');
+      progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(progressBar);
+      // Mobile: native scroll, just drive progress bar
+      if (window.matchMedia('(max-width:767px)').matches) {
+        window.addEventListener('scroll', function() {
+          var total = document.body.scrollHeight - window.innerHeight;
+          if (total > 0) progressBar.style.width = (window.scrollY / total * 100) + '%';
+        }, { passive: true });
+        return;
+      }
+      // Desktop: Lenis smooth scroll
       var lenis = new Lenis({
         duration: 1.38,
         easing: function(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
         smoothWheel: true,
         wheelMultiplier: 1.0,
-        syncTouch: true,
-        touchMultiplier: 1.5,
       });
-      // Scroll progress bar
-      var progressBar = document.createElement('div');
-      progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
-      document.body.prepend(progressBar);
       lenis.on('scroll', function(e) {
         progressBar.style.width = (e.progress * 100) + '%';
       });
-      // Pause Lenis when mobile menu locks body scroll
       new MutationObserver(function() {
         document.body.style.overflow === 'hidden' ? lenis.stop() : lenis.start();
       }).observe(document.body, { attributes: true, attributeFilter: ['style'] });
-      // RAF loop
       (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
-      // Smooth anchor scrolling via Lenis
       document.addEventListener('click', function(e) {
         var a = e.target.closest('a[href^="#"]');
         if (!a) return;

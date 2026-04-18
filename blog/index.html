@@ -106,9 +106,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     #mobile-menu-btn.open .ham-bar:nth-child(3){transform:translateY(-8px) rotate(-45deg);}
     @media(max-width:768px){#nav-pill .nav-link:not(:last-of-type){display:none;}#mobile-menu-btn{display:flex!important;}}
 
-    .t-pill{background:transparent;border:1px solid rgba(200,84,120,0.28);color:rgba(44,26,14,0.55);font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.04em;padding:5px 14px;border-radius:9999px;cursor:pointer;transition:background 0.2s ease,border-color 0.2s ease,color 0.2s ease;}
-    .t-pill:hover{border-color:#C85478;color:#C85478;}
-    .t-pill.t-active{background:#C85478;border-color:#C85478;color:#fff;}
+    /* ── Blog sidebar + search ───────────────────────────────────── */
+    .blog-layout{display:grid;grid-template-columns:220px 1fr;gap:3.5rem;align-items:start;}
+    .blog-sidebar{position:sticky;top:88px;}
+    .search-wrap{position:relative;margin-bottom:1.75rem;}
+    .search-wrap input{width:100%;padding:9px 38px 9px 14px;border:1.5px solid rgba(200,84,120,0.20);border-radius:0.75rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.85rem;color:#2C1A0E;outline:none;transition:border-color 0.2s ease,box-shadow 0.2s ease;}
+    .search-wrap input:focus{border-color:#C85478;box-shadow:0 0 0 3px rgba(200,84,120,0.10);}
+    .search-wrap input::placeholder{color:rgba(44,26,14,0.30);}
+    .search-wrap .s-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(44,26,14,0.28);pointer-events:none;transition:color 0.2s ease;}
+    .search-wrap:focus-within .s-icon{color:#C85478;}
+    .sidebar-head{font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(44,26,14,0.38);margin:0 0 0.85rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(200,84,120,0.10);}
+    .tag-items-wrap{display:flex;flex-direction:column;}
+    .tag-item{display:flex;align-items:center;gap:10px;padding:7px 6px;cursor:pointer;user-select:none;border-radius:8px;transition:background 0.15s ease;}
+    .tag-item:hover{background:rgba(200,84,120,0.05);}
+    .tag-item:hover .tag-label{color:#C85478;}
+    .tag-box{width:18px;height:18px;border:1.5px solid rgba(200,84,120,0.30);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;transition:background 0.18s ease,border-color 0.18s ease,transform 0.22s cubic-bezier(0.34,1.56,0.64,1);}
+    .tag-item.checked .tag-box{background:#C85478;border-color:#C85478;transform:scale(1.08);}
+    .tag-tick{opacity:0;transform:scale(0.3) rotate(-15deg);transition:opacity 0.15s ease,transform 0.24s cubic-bezier(0.34,1.56,0.64,1);}
+    .tag-item.checked .tag-tick{opacity:1;transform:scale(1) rotate(0deg);}
+    .tag-label{font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:rgba(44,26,14,0.75);transition:color 0.18s ease,font-weight 0.18s ease;flex:1;line-height:1.2;}
+    .tag-item.checked .tag-label{color:#2C1A0E;font-weight:500;}
+    .tag-count{font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(44,26,14,0.30);min-width:1.4em;text-align:right;}
+    #no-results{display:none;grid-column:1/-1;text-align:center;padding:4rem 2rem;font-family:'Jost',sans-serif;font-size:0.9rem;font-weight:300;color:rgba(44,26,14,0.40);}
+    /* Mobile: sidebar collapses to horizontal scroll */
+    @media(max-width:900px){
+      .blog-layout{grid-template-columns:1fr;gap:1.5rem;}
+      .blog-sidebar{position:static;}
+      .search-wrap{margin-bottom:0.85rem;}
+      .sidebar-head{display:none;}
+      .tag-items-wrap{flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;gap:8px;}
+      .tag-items-wrap::-webkit-scrollbar{display:none;}
+      .tag-item{flex-direction:row;flex-shrink:0;padding:6px 14px;background:#fff;border:1.5px solid rgba(200,84,120,0.20);border-radius:9999px;gap:7px;}
+      .tag-item:hover{background:rgba(200,84,120,0.06);}
+      .tag-item.checked{background:rgba(200,84,120,0.08);border-color:#C85478;}
+      .tag-box{width:14px;height:14px;border-radius:3px;}
+      .tag-tick{width:8px;height:8px;}
+      .tag-label{font-size:0.78rem;font-weight:500;}
+      .tag-count{display:none;}
+    }
     @media(max-width:640px){#footer-grid{grid-template-columns:1fr!important;gap:2rem!important;}}
   </style>
   <script type="application/ld+json">
@@ -317,25 +352,100 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <section style="padding:4rem 1.5rem 6rem;background:#FFF8F2;">
     <div style="max-width:1280px;margin:0 auto;">
 
-      <!-- FILTER BAR -->
-      <div class="reveal" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(200,84,120,0.10);">
-        <span style="font-family:'Jost',sans-serif;font-size:0.70rem;font-weight:500;color:rgba(44,26,14,0.38);letter-spacing:0.07em;text-transform:uppercase;white-space:nowrap;">14 April 2026</span>
-        <span style="width:1px;height:12px;background:rgba(44,26,14,0.15);flex-shrink:0;display:inline-block;"></span>
-        <div id="topic-filters" style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button onclick="filterBlog(this,'all')"          data-topic="all"          class="t-pill t-active">All</button>
-          <button onclick="filterBlog(this,'birthday')"     data-topic="birthday"     class="t-pill">Birthday</button>
-          <button onclick="filterBlog(this,'eggless-cakes')" data-topic="eggless-cakes" class="t-pill">Eggless Cakes</button>
-          <button onclick="filterBlog(this,'ingredients')"  data-topic="ingredients"  class="t-pill">Ingredients</button>
-          <button onclick="filterBlog(this,'location')"     data-topic="location"     class="t-pill">Location</button>
-          <button onclick="filterBlog(this,'custom-cakes')" data-topic="custom-cakes" class="t-pill">Custom Cakes</button>
-          <button onclick="filterBlog(this,'weddings')"     data-topic="weddings"     class="t-pill">Weddings</button>
-          <button onclick="filterBlog(this,'festivals')"    data-topic="festivals"    class="t-pill">Festivals</button>
-        </div>
-      </div>
+      <!-- BLOG LAYOUT: SIDEBAR + GRID -->
+      <div class="blog-layout">
 
+        <!-- SIDEBAR -->
+        <aside class="blog-sidebar">
+          <div class="search-wrap reveal">
+            <input type="search" id="blog-search" placeholder="Search articles…" autocomplete="off" spellcheck="false" aria-label="Search blog articles">
+            <svg class="s-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="reveal" style="transition-delay:0.08s;">
+            <p class="sidebar-head">Topics</p>
+            <div class="tag-items-wrap">
+              <label class="tag-item checked" data-tag="all">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">All</span>
+                <span class="tag-count">13</span>
+              </label>
+              <label class="tag-item" data-tag="birthday">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Birthday</span>
+                <span class="tag-count">3</span>
+              </label>
+              <label class="tag-item" data-tag="custom-cakes">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Custom Cakes</span>
+                <span class="tag-count">3</span>
+              </label>
+              <label class="tag-item" data-tag="eggless-cakes">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Eggless Cakes</span>
+                <span class="tag-count">3</span>
+              </label>
+              <label class="tag-item" data-tag="religious">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Religious</span>
+                <span class="tag-count">1</span>
+              </label>
+              <label class="tag-item" data-tag="dietary">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Dietary</span>
+                <span class="tag-count">1</span>
+              </label>
+              <label class="tag-item" data-tag="ingredients">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Ingredients</span>
+                <span class="tag-count">1</span>
+              </label>
+              <label class="tag-item" data-tag="location">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Location</span>
+                <span class="tag-count">1</span>
+              </label>
+              <label class="tag-item" data-tag="festivals">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Festivals</span>
+                <span class="tag-count">1</span>
+              </label>
+              <label class="tag-item" data-tag="weddings">
+                <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="tag-label">Weddings</span>
+                <span class="tag-count">1</span>
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <div>
       <!-- CARDS GRID -->
-      <div id="blog-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2rem;align-items:start;">
+      <div id="blog-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2rem;align-items:start;">
 
+        <!-- CARD -->
+        <div class="reveal blog-card-wrap" data-topics="religious dietary">
+          <a href="halal-friendly-cakes-eggless-sydney.html" style="text-decoration:none;display:flex;flex-direction:column;background:#fff;border-radius:1.25rem;overflow:hidden;border:1px solid rgba(200,84,120,0.08);box-shadow:0 2px 12px rgba(44,26,14,0.06);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;height:100%;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(44,26,14,0.10)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(44,26,14,0.06)'">
+            <div style="height:240px;position:relative;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#3A6B4A 0%,#2C5240 55%,#1E3A2C 100%);background-size:cover;">
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(30,58,44,0.94) 0%,rgba(30,58,44,0.38) 50%,rgba(30,58,44,0.04) 100%);"></div>
+              <div style="position:absolute;top:1rem;left:1rem;">
+                <span style="background:rgba(58,107,74,0.25);border:1px solid rgba(100,180,120,0.40);color:#9FDBB0;font-family:'Jost',sans-serif;font-size:0.63rem;font-weight:600;letter-spacing:0.10em;text-transform:uppercase;padding:4px 12px;border-radius:9999px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);">Halal · Dietary</span>
+              </div>
+              <div style="position:absolute;bottom:0;left:0;right:0;padding:1rem 1.5rem 1rem;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.4rem;">
+                  <span style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,255,255,0.55);">17 April 2026</span>
+                  <span style="color:rgba(255,255,255,0.25);">·</span>
+                  <span style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,255,255,0.55);">7 min read</span>
+                </div>
+                <h2 class="font-display" style="font-size:1.2rem;font-weight:600;letter-spacing:-0.02em;color:#fff;margin:0;line-height:1.2;">Halal-Friendly Cakes: Why Eggless Is a Great Choice</h2>
+              </div>
+            </div>
+            <div style="padding:1.25rem 1.5rem 1.5rem;display:flex;flex-direction:column;flex:1;">
+              <p style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:300;color:rgba(44,26,14,0.65);line-height:1.75;margin:0 0 1.25rem;flex:1;">Why eggless cakes are a naturally halal-friendly choice — what to look for, what to ask, and where to order in Sydney for Eid, Ramadan, and every occasion.</p>
+              <div style="display:flex;align-items:center;gap:6px;font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#C85478;">Read article <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </a>
+        </div>
         <!-- CARD -->
         <div class="reveal blog-card-wrap" data-topics="birthday custom-cakes">
           <a href="eggless-birthday-cakes-sydney.html" style="text-decoration:none;display:flex;flex-direction:column;background:#fff;border-radius:1.25rem;overflow:hidden;border:1px solid rgba(200,84,120,0.08);box-shadow:0 2px 12px rgba(44,26,14,0.06);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;height:100%;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(44,26,14,0.10)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(44,26,14,0.06)'">
@@ -589,7 +699,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </a>
         </div>
-      </div>
+        <p id="no-results">No articles match your search. Try a different term or clear your filters.</p>
+      </div><!-- /blog-grid -->
+        </div><!-- /content-area -->
+      </div><!-- /blog-layout -->
     </div>
   </section>
   <!-- ORDER CTA -->
@@ -659,17 +772,61 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <script>
 
-    // Blog topic filter
-    function filterBlog(btn, topic) {
-      document.querySelectorAll('#topic-filters .t-pill').forEach(function(p){
-        p.classList.remove('t-active');
+    // ── Blog multi-select filter + search ────────────────────────
+    (function() {
+      var activeTags = new Set(['all']);
+
+      function applyFilters() {
+        var q = (document.getElementById('blog-search').value || '').toLowerCase().trim();
+        var cards = document.querySelectorAll('#blog-grid .blog-card-wrap');
+        var visible = 0;
+        cards.forEach(function(card) {
+          var topics = (card.getAttribute('data-topics') || '').split(' ');
+          var tagOk  = activeTags.has('all') || topics.some(function(t){ return activeTags.has(t); });
+          var h2     = card.querySelector('h2');
+          var p      = card.querySelector('p');
+          var text   = ((h2 ? h2.textContent : '') + ' ' + (p ? p.textContent : '')).toLowerCase();
+          var searchOk = !q || text.indexOf(q) !== -1;
+          var show = tagOk && searchOk;
+          card.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        var noRes = document.getElementById('no-results');
+        if (noRes) noRes.style.display = visible === 0 ? 'block' : 'none';
+      }
+
+      function toggleTag(el) {
+        var tag = el.getAttribute('data-tag');
+        if (tag === 'all') {
+          activeTags.clear();
+          activeTags.add('all');
+          document.querySelectorAll('.tag-item').forEach(function(t){ t.classList.remove('checked'); });
+          el.classList.add('checked');
+        } else {
+          activeTags.delete('all');
+          var allEl = document.querySelector('.tag-item[data-tag="all"]');
+          if (allEl) allEl.classList.remove('checked');
+          if (activeTags.has(tag)) {
+            activeTags.delete(tag);
+            el.classList.remove('checked');
+          } else {
+            activeTags.add(tag);
+            el.classList.add('checked');
+          }
+          if (activeTags.size === 0) {
+            activeTags.add('all');
+            if (allEl) allEl.classList.add('checked');
+          }
+        }
+        applyFilters();
+      }
+
+      document.querySelectorAll('.tag-item').forEach(function(el) {
+        el.addEventListener('click', function(){ toggleTag(el); });
       });
-      btn.classList.add('t-active');
-      document.querySelectorAll('#blog-grid .blog-card-wrap').forEach(function(wrap){
-        var topics = (wrap.getAttribute('data-topics') || '').split(' ');
-        wrap.style.display = (topic === 'all' || topics.indexOf(topic) !== -1) ? '' : 'none';
-      });
-    }
+      var si = document.getElementById('blog-search');
+      if (si) si.addEventListener('input', applyFilters);
+    })();
     // Scroll reveal
     const revealEls = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(entries => {
@@ -684,6 +841,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var cta=menu.querySelector('div');
       function openMenu(){
         btn.classList.add('open');btn.setAttribute('aria-expanded','true');
+        if(menu.parentNode!==document.body)document.body.appendChild(menu);
+        menu.style.zIndex='9999';
         menu.setAttribute('aria-hidden','false');menu.style.display='flex';
         document.body.style.overflow='hidden';
         links.forEach(function(a){a.style.opacity='0';a.style.transform='translateX(-18px)';a.style.transition='none';});
@@ -748,28 +907,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
   <script>
     (function() {
+      var progressBar = document.createElement('div');
+      progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(progressBar);
+      // Mobile: native scroll, just drive progress bar
+      if (window.matchMedia('(max-width:767px)').matches) {
+        window.addEventListener('scroll', function() {
+          var total = document.body.scrollHeight - window.innerHeight;
+          if (total > 0) progressBar.style.width = (window.scrollY / total * 100) + '%';
+        }, { passive: true });
+        return;
+      }
+      // Desktop: Lenis smooth scroll
       var lenis = new Lenis({
         duration: 1.38,
         easing: function(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
         smoothWheel: true,
         wheelMultiplier: 1.0,
-        syncTouch: true,
-        touchMultiplier: 1.5,
       });
-      // Scroll progress bar
-      var progressBar = document.createElement('div');
-      progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
-      document.body.prepend(progressBar);
       lenis.on('scroll', function(e) {
         progressBar.style.width = (e.progress * 100) + '%';
       });
-      // Pause Lenis when mobile menu locks body scroll
       new MutationObserver(function() {
         document.body.style.overflow === 'hidden' ? lenis.stop() : lenis.start();
       }).observe(document.body, { attributes: true, attributeFilter: ['style'] });
-      // RAF loop
       (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
-      // Smooth anchor scrolling via Lenis
       document.addEventListener('click', function(e) {
         var a = e.target.closest('a[href^="#"]');
         if (!a) return;
