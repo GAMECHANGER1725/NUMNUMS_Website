@@ -29,7 +29,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta property="og:description" content="Order 100% eggless custom cakes in Sydney from Num Num's Bakery. Birthday, wedding and celebration cakes made fresh to order. Pick up from Harris Park or Riverstone.">
   <meta property="og:image" content="https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg">
   <meta property="og:url" content="https://numnumsbakery.com.au/">
-  <meta property="og:site_name" content="Num Num's Bakery">
+  <meta property="og:site_name" content="Num Nums Bakery">
   <meta property="og:locale" content="en_AU">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Eggless Custom Cakes Sydney | Num Num's Bakery">
@@ -422,7 +422,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-people-display{font-family:'Cormorant Garamond',Georgia,serif;font-size:2.8rem;font-weight:700;color:#2C1A0E;line-height:1;margin-bottom:1.5rem;}
     .ps-size-display{font-family:'Cormorant Garamond',Georgia,serif;font-size:3.5rem;font-weight:700;color:#2C1A0E;line-height:1;}
     .ps-price-display{font-family:'Cormorant Garamond',Georgia,serif;font-size:2.4rem;font-weight:600;color:#C85478;line-height:1.1;margin:0.5rem 0 1rem;}
-    .ps-slider{width:100%;-webkit-appearance:none;appearance:none;height:10px;border-radius:9999px;outline:none;cursor:pointer;margin-bottom:1.5rem;}
+    .ps-slider{width:100%;-webkit-appearance:none;appearance:none;height:10px;border-radius:9999px;outline:none;cursor:pointer;margin-bottom:1.5rem;touch-action:none;}
     .ps-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;background:#fff;border:2px solid rgba(200,84,120,0.3);border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(200,84,120,0.20);margin-top:-8px;transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.15s ease,border-color 0.15s ease;}
     .ps-slider:hover::-webkit-slider-thumb{transform:scale(1.18);border-color:rgba(200,84,120,0.55);box-shadow:0 4px 16px rgba(200,84,120,0.30);}
     .ps-slider:active::-webkit-slider-thumb{transform:scale(1.28);background:#FFF8F2;}
@@ -492,7 +492,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         "@type": "WebSite",
         "@id": "https://numnumsbakery.com.au/#website",
         "url": "https://numnumsbakery.com.au/",
-        "name": "Num Num's Bakery",
+        "name": "Num Nums Bakery",
         "publisher": { "@id": "https://numnumsbakery.com.au/#organization" },
         "potentialAction": {
           "@type": "SearchAction",
@@ -1826,19 +1826,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           aria-hidden={!open}
           style={{
             position:   'fixed',
-            top:        68,
-            left:       0,
-            right:      0,
+            top:        80,
+            left:       12,
+            right:      12,
             zIndex:     90,
-            background: '#FFF8F2',
-            borderBottom: '3px solid rgba(200,84,120,0.12)',
-            padding:    '0 2rem 2rem',
+            background: 'rgba(255,248,242,0.50)',
+            borderRadius: '1.5rem',
+            overflow:   'hidden',
+            padding:    '0 1.75rem 1.75rem',
             display:    'flex',
             flexDirection: 'column',
-            boxShadow:  '0 16px 48px rgba(44,26,14,0.16), 0 4px 12px rgba(44,26,14,0.08)',
-            /* Backdrop blur strip */
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
+            boxShadow:  '0 20px 60px rgba(44,26,14,0.20), 0 6px 20px rgba(44,26,14,0.10), inset 0 1px 0 rgba(255,255,255,0.40)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
             /* Entrance animation */
             opacity:    open ? 1 : 0,
             transform:  open ? 'translateY(0) scaleY(1)' : 'translateY(-12px) scaleY(0.97)',
@@ -1862,7 +1862,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                   textDecoration: 'none',
                   padding:        '1.05rem 0',
                   borderBottom:   i < NAV_LINKS.length - 1
-                    ? '1px solid rgba(44,26,14,0.10)'
+                    ? '1px solid rgba(44,26,14,0.35)'
                     : 'none',
                   display:  'block',
                   opacity:  open ? 1 : 0,
@@ -1963,28 +1963,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
   <script>
     (function() {
-      var lenis = new Lenis({
-        duration: 1.38,
-        easing: function(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
-        smoothWheel: true,
-        wheelMultiplier: 1.0,
-        syncTouch: true,
-        touchMultiplier: 1.5,
-      });
-      // Scroll progress bar
       var progressBar = document.createElement('div');
       progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
       document.body.prepend(progressBar);
+      // Mobile: native scroll, just drive progress bar
+      if (window.matchMedia('(max-width:767px)').matches || navigator.maxTouchPoints > 0) {
+        window.addEventListener('scroll', function() {
+          var total = document.body.scrollHeight - window.innerHeight;
+          if (total > 0) progressBar.style.width = (window.scrollY / total * 100) + '%';
+        }, { passive: true });
+        return;
+      }
+      // Desktop: Lenis smooth scroll
+      var lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1.0 });
       lenis.on('scroll', function(e) {
         progressBar.style.width = (e.progress * 100) + '%';
       });
-      // Pause Lenis when mobile menu locks body scroll
       new MutationObserver(function() {
         document.body.style.overflow === 'hidden' ? lenis.stop() : lenis.start();
       }).observe(document.body, { attributes: true, attributeFilter: ['style'] });
-      // RAF loop
       (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
-      // Smooth anchor scrolling via Lenis
       document.addEventListener('click', function(e) {
         var a = e.target.closest('a[href^="#"]');
         if (!a) return;

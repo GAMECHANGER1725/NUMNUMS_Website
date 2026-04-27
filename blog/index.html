@@ -28,7 +28,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta property="og:description" content="Guides, tips and stories about eggless cakes in Sydney. Birthday party planning, ingredient guides, and more from Num Num's Bakery.">
   <meta property="og:image" content="https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg">
   <meta property="og:url" content="https://numnumsbakery.com.au/blog">
-  <meta property="og:site_name" content="Num Num's Bakery">
+  <meta property="og:site_name" content="Num Nums Bakery">
   <meta property="og:locale" content="en_AU">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Eggless Cake Blog | Num Num's Bakery Sydney">
@@ -104,11 +104,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     #mobile-menu-btn.open .ham-bar:nth-child(1){transform:translateY(8px) rotate(45deg);}
     #mobile-menu-btn.open .ham-bar:nth-child(2){opacity:0;transform:scaleX(0.4);}
     #mobile-menu-btn.open .ham-bar:nth-child(3){transform:translateY(-8px) rotate(-45deg);}
-    @media(max-width:768px){#nav-pill .nav-link:not(:last-of-type){display:none;}#mobile-menu-btn{display:flex!important;}}
+    @media(max-width:768px){
+      #nav-pill .nav-link{display:none!important;}
+      #nav-pill .btn-hover-interactive{min-width:auto!important;padding:10px 20px!important;font-size:0.82rem!important;}
+      #mobile-menu-btn{display:flex!important;}
+      #blog-grid a > div:first-child{height:160px!important;}
+      #blog-grid .blog-card-wrap a > div:last-child > p{display:none!important;}
+      #blog-grid .blog-card-wrap a > div:last-child{padding:0.625rem 1.25rem 0.875rem!important;}
+    }
 
     /* ── Blog sidebar + search ───────────────────────────────────── */
     .blog-layout{display:grid;grid-template-columns:220px 1fr;gap:3.5rem;align-items:start;}
-    .blog-sidebar{position:sticky;top:88px;}
+    .blog-layout > *{min-width:0;}
+    .blog-sidebar{position:sticky;top:88px;min-width:0;}
     .search-wrap{position:relative;margin-bottom:1.75rem;}
     .search-wrap input{width:100%;padding:9px 38px 9px 14px;border:1.5px solid rgba(200,84,120,0.20);border-radius:0.75rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.85rem;color:#2C1A0E;outline:none;transition:border-color 0.2s ease,box-shadow 0.2s ease;}
     .search-wrap input:focus{border-color:#C85478;box-shadow:0 0 0 3px rgba(200,84,120,0.10);}
@@ -128,6 +136,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .tag-item.checked .tag-label{color:#2C1A0E;font-weight:500;}
     .tag-count{font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(44,26,14,0.30);min-width:1.4em;text-align:right;}
     #no-results{display:none;grid-column:1/-1;text-align:center;padding:4rem 2rem;font-family:'Jost',sans-serif;font-size:0.9rem;font-weight:300;color:rgba(44,26,14,0.40);}
+    /* ── Mobile pagination ───────────────────────────────────── */
+    #bc-show-more-wrap{display:none;}
+    @media(max-width:768px){
+      #blog-grid{grid-template-columns:1fr !important;gap:1.5rem !important;}
+      #blog-grid .blog-card-wrap.bc-hidden{display:none !important;}
+      #blog-grid .blog-card-wrap.bc-peek{position:relative;max-height:140px;overflow:hidden;pointer-events:none;}
+      #blog-grid .blog-card-wrap.bc-peek > a{pointer-events:none;}
+      #blog-grid .blog-card-wrap.bc-peek::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,248,242,0) 0%,rgba(255,248,242,0.65) 45%,#FFF8F2 92%);pointer-events:none;border-radius:1.25rem;}
+      #bc-show-more-wrap{display:flex;justify-content:center;margin-top:-1.25rem;margin-bottom:0.5rem;position:relative;z-index:2;}
+      #bc-show-more{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:#fff;border:1.5px solid rgba(200,84,120,0.30);border-radius:9999px;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:600;color:#C85478;cursor:pointer;box-shadow:0 4px 14px rgba(200,84,120,0.12);transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease,background 0.2s ease;}
+      #bc-show-more:hover{background:#C85478;color:#fff;border-color:#C85478;transform:translateY(-2px);box-shadow:0 8px 22px rgba(200,84,120,0.28);}
+      #bc-show-more:active{transform:translateY(0);}
+      #bc-show-more svg{transition:transform 0.25s ease;}
+      #bc-show-more.bc-bouncing svg{animation:bcBounce 1.6s ease-in-out infinite;}
+      @keyframes bcBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
+    }
     /* Mobile: sidebar collapses to horizontal scroll */
     @media(max-width:900px){
       .blog-layout{grid-template-columns:1fr;gap:1.5rem;}
@@ -330,13 +354,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </nav>
 
   <!-- MOBILE MENU -->
-  <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:68px;left:0;right:0;z-index:90;background:#FFF8F2;border-bottom:3px solid rgba(200,84,120,0.12);padding:0 2rem 2rem;flex-direction:column;gap:0;opacity:0;transform:translateY(-12px) scaleY(0.97);transform-origin:top center;transition:opacity 0.32s cubic-bezier(0.4,0,0.2,1),transform 0.38s cubic-bezier(0.34,1.3,0.64,1);box-shadow:0 16px 48px rgba(44,26,14,0.16),0 4px 12px rgba(44,26,14,0.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">
-    <a href="../cakes.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18);display:block;">Our Cakes</a>
-    <a href="../about.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18);display:block;">About</a>
-    <a href="../order.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18);display:block;">Order Online</a>
-    <a href="../locations.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.18);display:block;">Locations</a>
+  <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:80px;left:12px;right:12px;z-index:90;background:rgba(255,248,242,0.50);border-radius:1.5rem;overflow:hidden;padding:0 1.75rem 1.75rem;flex-direction:column;gap:0;opacity:0;transform:translateY(-12px) scaleY(0.97);transform-origin:top center;transition:opacity 0.32s cubic-bezier(0.4,0,0.2,1),transform 0.38s cubic-bezier(0.34,1.3,0.64,1);box-shadow:0 20px 60px rgba(44,26,14,0.20),0 6px 20px rgba(44,26,14,0.10),inset 0 1px 0 rgba(255,255,255,0.40);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);">
+    <a href="../cakes.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.35);display:block;">Our Cakes</a>
+    <a href="../about.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.35);display:block;">About</a>
+    <a href="../order.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.35);display:block;">Order Online</a>
+    <a href="../locations.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:1.1rem 0;border-bottom:1px solid rgba(44,26,14,0.35);display:block;">Locations</a>
     <a href="index.html" style="font-family:'Jost',sans-serif;font-size:1.4rem;font-weight:500;color:#C85478;text-decoration:none;padding:1.1rem 0;display:block;">Blog</a>
-    <div style="margin-top:1.75rem;"><a href="../order.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:#C85478;color:#2C1A0E;font-family:'Jost',sans-serif;font-weight:600;font-size:1rem;border-radius:9999px;text-decoration:none;box-shadow:0 4px 14px rgba(200,84,120,0.30);">Order Now →</a></div>
+    <div style="margin-top:1.75rem;"><a href="../order.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:#C85478;color:#fff;font-family:'Jost',sans-serif;font-weight:600;font-size:1rem;border-radius:9999px;text-decoration:none;box-shadow:0 4px 14px rgba(200,84,120,0.30);">Order Now →</a></div>
   </div>
 
   <!-- PAGE HERO -->
@@ -367,12 +391,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <label class="tag-item checked" data-tag="all">
                 <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 <span class="tag-label">All</span>
-                <span class="tag-count">13</span>
+                <span class="tag-count">14</span>
               </label>
               <label class="tag-item" data-tag="birthday">
                 <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 <span class="tag-label">Birthday</span>
-                <span class="tag-count">3</span>
+                <span class="tag-count">4</span>
               </label>
               <label class="tag-item" data-tag="custom-cakes">
                 <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -402,7 +426,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <label class="tag-item" data-tag="location">
                 <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 <span class="tag-label">Location</span>
-                <span class="tag-count">1</span>
+                <span class="tag-count">2</span>
               </label>
               <label class="tag-item" data-tag="festivals">
                 <span class="tag-box"><svg class="tag-tick" width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -423,6 +447,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- CARDS GRID -->
       <div id="blog-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2rem;align-items:start;">
 
+        <!-- CARD -->
+        <div class="reveal blog-card-wrap" data-topics="birthday location">
+          <a href="birthday-cake-near-me-sydney-suburbs.html" style="text-decoration:none;display:flex;flex-direction:column;background:#fff;border-radius:1.25rem;overflow:hidden;border:1px solid rgba(30,58,110,0.10);box-shadow:0 2px 12px rgba(44,26,14,0.06);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;height:100%;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(30,58,110,0.14)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(44,26,14,0.06)'">
+            <div style="height:240px;position:relative;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#1E3A6E 0%,#0F2448 55%,#091929 100%);background-size:cover;">
+              <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(9,25,41,0.96) 0%,rgba(15,36,72,0.40) 50%,rgba(15,36,72,0.04) 100%);"></div>
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 75% 25%,rgba(59,130,246,0.18) 0%,transparent 60%);pointer-events:none;"></div>
+              <div style="position:absolute;top:1rem;left:1rem;">
+                <span style="background:rgba(30,58,110,0.28);border:1px solid rgba(147,197,253,0.35);color:#93C5FD;font-family:'Jost',sans-serif;font-size:0.63rem;font-weight:600;letter-spacing:0.10em;text-transform:uppercase;padding:4px 12px;border-radius:9999px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);">Birthday · Location</span>
+              </div>
+              <div style="position:absolute;bottom:0;left:0;right:0;padding:1rem 1.5rem 1rem;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.4rem;">
+                  <span style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,255,255,0.55);">25 April 2026</span>
+                  <span style="color:rgba(255,255,255,0.25);">·</span>
+                  <span style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,255,255,0.55);">8 min read</span>
+                </div>
+                <h2 class="font-display" style="font-size:1.2rem;font-weight:600;letter-spacing:-0.02em;color:#fff;margin:0;line-height:1.2;">Birthday Cake Near Me in Sydney: Which Suburbs We Serve</h2>
+              </div>
+            </div>
+            <div style="padding:1.25rem 1.5rem 1.5rem;display:flex;flex-direction:column;flex:1;">
+              <p style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:300;color:rgba(44,26,14,0.65);line-height:1.75;margin:0 0 1.25rem;flex:1;">Which Sydney suburbs are close enough to pick up a fresh eggless birthday cake from Num Num's Bakery? Harris Park, Parramatta, Riverstone, Blacktown and beyond — explained.</p>
+              <div style="display:flex;align-items:center;gap:6px;font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#C85478;">Read article <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            </div>
+          </a>
+        </div>
         <!-- CARD -->
         <div class="reveal blog-card-wrap" data-topics="religious dietary">
           <a href="halal-friendly-cakes-eggless-sydney.html" style="text-decoration:none;display:flex;flex-direction:column;background:#fff;border-radius:1.25rem;overflow:hidden;border:1px solid rgba(200,84,120,0.08);box-shadow:0 2px 12px rgba(44,26,14,0.06);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;height:100%;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(44,26,14,0.10)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(44,26,14,0.06)'">
@@ -701,6 +749,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <p id="no-results">No articles match your search. Try a different term or clear your filters.</p>
       </div><!-- /blog-grid -->
+      <div id="bc-show-more-wrap">
+        <button id="bc-show-more" type="button" class="bc-bouncing" aria-label="Show more articles">
+          <span id="bc-show-more-text">Show 3 more articles</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
         </div><!-- /content-area -->
       </div><!-- /blog-layout -->
     </div>
@@ -775,11 +829,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // ── Blog multi-select filter + search ────────────────────────
     (function() {
       var activeTags = new Set(['all']);
+      var MOBILE_INITIAL = 3;
+      var MOBILE_BATCH = 3;
+      var mobileVisibleCount = MOBILE_INITIAL;
+      var isMobile = function(){ return window.matchMedia('(max-width:768px)').matches; };
+
+      function applyMobilePagination(filteredCards) {
+        // Clear pagination classes
+        filteredCards.forEach(function(c){ c.classList.remove('bc-peek','bc-hidden'); });
+        var wrap = document.getElementById('bc-show-more-wrap');
+        var btn  = document.getElementById('bc-show-more');
+        var txt  = document.getElementById('bc-show-more-text');
+        if (!isMobile()) { if (wrap) wrap.style.display = 'none'; return; }
+        if (filteredCards.length <= MOBILE_INITIAL) { if (wrap) wrap.style.display = 'none'; return; }
+        filteredCards.forEach(function(c, i){
+          if (i < mobileVisibleCount) return;
+          if (i === mobileVisibleCount) c.classList.add('bc-peek');
+          else c.classList.add('bc-hidden');
+        });
+        var remaining = filteredCards.length - mobileVisibleCount;
+        if (remaining <= 0) { if (wrap) wrap.style.display = 'none'; return; }
+        if (wrap) wrap.style.display = 'flex';
+        if (txt)  txt.textContent = 'Show ' + Math.min(MOBILE_BATCH, remaining) + ' more article' + (Math.min(MOBILE_BATCH, remaining) === 1 ? '' : 's');
+      }
 
       function applyFilters() {
         var q = (document.getElementById('blog-search').value || '').toLowerCase().trim();
         var cards = document.querySelectorAll('#blog-grid .blog-card-wrap');
         var visible = 0;
+        var filteredCards = [];
         cards.forEach(function(card) {
           var topics = (card.getAttribute('data-topics') || '').split(' ');
           var tagOk  = activeTags.has('all') || topics.some(function(t){ return activeTags.has(t); });
@@ -789,11 +867,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var searchOk = !q || text.indexOf(q) !== -1;
           var show = tagOk && searchOk;
           card.style.display = show ? '' : 'none';
-          if (show) visible++;
+          if (show) { visible++; filteredCards.push(card); }
         });
         var noRes = document.getElementById('no-results');
         if (noRes) noRes.style.display = visible === 0 ? 'block' : 'none';
+        applyMobilePagination(filteredCards);
       }
+
+      // Hook show-more button
+      var smBtn = document.getElementById('bc-show-more');
+      if (smBtn) smBtn.addEventListener('click', function(){
+        mobileVisibleCount += MOBILE_BATCH;
+        smBtn.classList.remove('bc-bouncing');
+        applyFilters();
+        // Force-reveal cards that are now visible but still have opacity:0
+        requestAnimationFrame(function(){
+          document.querySelectorAll('#blog-grid .blog-card-wrap.reveal:not(.visible):not(.bc-hidden):not(.bc-peek)').forEach(function(c){
+            c.classList.add('visible');
+          });
+        });
+      });
+      // Re-apply on resize across the mobile/desktop breakpoint
+      var lastIsMobile = isMobile();
+      window.addEventListener('resize', function(){
+        var now = isMobile();
+        if (now !== lastIsMobile) { lastIsMobile = now; mobileVisibleCount = MOBILE_INITIAL; applyFilters(); }
+      });
 
       function toggleTag(el) {
         var tag = el.getAttribute('data-tag');
@@ -818,6 +917,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (allEl) allEl.classList.add('checked');
           }
         }
+        mobileVisibleCount = MOBILE_INITIAL;
         applyFilters();
       }
 
@@ -825,7 +925,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         el.addEventListener('click', function(){ toggleTag(el); });
       });
       var si = document.getElementById('blog-search');
-      if (si) si.addEventListener('input', applyFilters);
+      if (si) si.addEventListener('input', function(){ mobileVisibleCount = MOBILE_INITIAL; applyFilters(); });
+      // Initial run so mobile pagination applies on first paint
+      mobileVisibleCount = MOBILE_INITIAL;
+      applyFilters();
     })();
     // Scroll reveal
     const revealEls = document.querySelectorAll('.reveal');
@@ -911,7 +1014,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
       document.body.prepend(progressBar);
       // Mobile: native scroll, just drive progress bar
-      if (window.matchMedia('(max-width:767px)').matches) {
+      if (window.matchMedia('(max-width:767px)').matches || navigator.maxTouchPoints > 0) {
         window.addEventListener('scroll', function() {
           var total = document.body.scrollHeight - window.innerHeight;
           if (total > 0) progressBar.style.width = (window.scrollY / total * 100) + '%';
@@ -919,12 +1022,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         return;
       }
       // Desktop: Lenis smooth scroll
-      var lenis = new Lenis({
-        duration: 1.38,
-        easing: function(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
-        smoothWheel: true,
-        wheelMultiplier: 1.0,
-      });
+      var lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1.0 });
       lenis.on('scroll', function(e) {
         progressBar.style.width = (e.progress * 100) + '%';
       });
