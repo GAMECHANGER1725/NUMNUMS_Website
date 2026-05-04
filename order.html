@@ -36,8 +36,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="twitter:image" content="https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap" rel="stylesheet"></noscript>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -133,9 +133,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-card{border-radius:1.25rem;padding:2rem;border:1px solid rgba(200,84,120,0.14);position:relative;overflow:visible;}
     .ps-card-left{background:#fff;box-shadow:0 2px 12px rgba(44,26,14,0.06);}
     .ps-card-right{background:#FFF8F2;box-shadow:0 2px 12px rgba(44,26,14,0.04);}
-    .ps-people-display{font-family:'Jost',sans-serif;font-size:2.8rem;font-weight:700;color:#2C1A0E;line-height:1;margin-bottom:1.5rem;}
-    .ps-size-display{font-family:'Jost',sans-serif;font-size:3.5rem;font-weight:700;color:#2C1A0E;line-height:1;}
-    .ps-price-display{font-family:'Jost',sans-serif;font-size:2.4rem;font-weight:600;color:#C85478;line-height:1.1;margin:0.5rem 0 1rem;}
+    .ps-people-display{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:600;color:#2C1A0E;line-height:1;margin-bottom:1.5rem;}
+    .ps-size-display{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:600;color:#2C1A0E;line-height:1;}
+    .ps-price-display{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;color:#C85478;line-height:1.1;margin:0.5rem 0 1rem;}
     .ps-slider{width:100%;-webkit-appearance:none;appearance:none;height:10px;border-radius:9999px;outline:none;cursor:pointer;margin-bottom:2rem;touch-action:none;}
     .ps-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;background:#fff;border:2px solid rgba(200,84,120,0.3);border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(200,84,120,0.20);transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.15s ease,border-color 0.15s ease;}
     .ps-slider:hover::-webkit-slider-thumb{transform:scale(1.18);border-color:rgba(200,84,120,0.55);box-shadow:0 4px 16px rgba(200,84,120,0.30);}
@@ -144,8 +144,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-size-display,.ps-price-display,.ps-serves,.ps-people-display{transition:opacity 0.18s ease,transform 0.18s cubic-bezier(0.34,1.56,0.64,1);}
     .ps-info-btn{position:absolute;top:1rem;right:1rem;width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(200,84,120,0.25);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(92,58,34,0.6);transition:border-color 0.2s ease,color 0.2s ease;}
     .ps-info-btn:hover{border-color:#C85478;color:#C85478;}
-    .ps-tooltip{position:absolute;top:calc(100% + 8px);right:0;background:#2C1A0E;border-radius:0.875rem;padding:1rem;min-width:220px;opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease;z-index:20;box-shadow:0 8px 24px rgba(44,26,14,0.25);}
-    .ps-info-btn:hover .ps-tooltip{opacity:1;transform:translateY(0);pointer-events:auto;}
+    .ps-tooltip{position:absolute;top:calc(100% + 8px);right:0;background:#2C1A0E;border-radius:0.875rem;padding:1rem;min-width:220px;max-width:min(280px,90vw);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease;z-index:100;box-shadow:0 8px 24px rgba(44,26,14,0.25);}
+    .ps-info-btn:hover .ps-tooltip,.ps-info-btn.ps-tooltip-open .ps-tooltip{opacity:1;transform:translateY(0);pointer-events:auto;}
+    .view-link{color:#C85478 !important;text-decoration:none;}
+    .view-link:hover{color:#A03D5E !important;}
     @media(max-width:600px){.ps-wrap{grid-template-columns:1fr;}}
     .ham-bar { display:block; width:22px; height:2px; background:#2C1A0E; border-radius:9999px; transform-origin:center; }
     .ham-bar:nth-child(1) { transition: transform 0.38s cubic-bezier(.5,.85,.25,1.1); }
@@ -933,6 +935,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         update();
       }
       initPricingSlider('pricing-slider-order');
+    })();
+
+    // ── Pricing tooltip click/touch toggle ───────────────────────
+    (function() {
+      document.querySelectorAll('.ps-info-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isOpen = btn.classList.contains('ps-tooltip-open');
+          document.querySelectorAll('.ps-info-btn').forEach(function(b) { b.classList.remove('ps-tooltip-open'); });
+          if (!isOpen) {
+            btn.classList.add('ps-tooltip-open');
+            var tooltip = btn.querySelector('.ps-tooltip');
+            if (tooltip) {
+              requestAnimationFrame(function() {
+                var rect = tooltip.getBoundingClientRect();
+                var overflow = rect.bottom - window.innerHeight + 20;
+                if (overflow > 0) window.scrollBy({top: overflow, behavior: 'smooth'});
+              });
+            }
+          }
+        });
+      });
+      document.addEventListener('click', function() {
+        document.querySelectorAll('.ps-info-btn').forEach(function(b) { b.classList.remove('ps-tooltip-open'); });
+      });
     })();
 
     // ── Custom Cake Order Form (popover calendar) ────────────────

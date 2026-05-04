@@ -36,8 +36,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="twitter:image" content="https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap" rel="stylesheet"></noscript>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -154,7 +154,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .footer-nav-link::before{content:'';display:block;width:5px;height:5px;border-radius:50%;background:#C85478;opacity:0;transition:opacity 0.2s ease;}
     .footer-nav-link:hover{color:#E8A4B5;}
     .footer-nav-link:hover::before{opacity:1;}
-  
+
+    /* Pricing slider */
+    .ps-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:820px;margin:0 auto;}
+    .ps-card{border-radius:1.25rem;padding:2rem;border:1px solid rgba(200,84,120,0.14);position:relative;overflow:visible;}
+    .ps-card-left{background:#fff;box-shadow:0 2px 12px rgba(44,26,14,0.06);}
+    .ps-card-right{background:#FFF8F2;box-shadow:0 2px 12px rgba(44,26,14,0.04);}
+    .ps-people-display{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:600;color:#2C1A0E;line-height:1;margin-bottom:1.5rem;}
+    .ps-size-display{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:600;color:#2C1A0E;line-height:1;}
+    .ps-price-display{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;color:#C85478;line-height:1.1;margin:0.5rem 0 1rem;}
+    .ps-slider{width:100%;-webkit-appearance:none;appearance:none;height:10px;border-radius:9999px;outline:none;cursor:pointer;margin-bottom:1.5rem;touch-action:none;}
+    .ps-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;background:#fff;border:2px solid rgba(200,84,120,0.3);border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(200,84,120,0.20);margin-top:-8px;transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.15s ease,border-color 0.15s ease;}
+    .ps-slider:hover::-webkit-slider-thumb{transform:scale(1.18);border-color:rgba(200,84,120,0.55);box-shadow:0 4px 16px rgba(200,84,120,0.30);}
+    .ps-slider:active::-webkit-slider-thumb{transform:scale(1.28);background:#FFF8F2;}
+    .ps-slider::-moz-range-thumb{width:24px;height:24px;background:#fff;border:2px solid rgba(200,84,120,0.3);border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(200,84,120,0.20);}
+    .ps-size-display,.ps-price-display,.ps-serves,.ps-people-display{transition:opacity 0.18s ease,transform 0.18s cubic-bezier(0.34,1.56,0.64,1);}
+    .ps-info-btn{position:absolute;top:1rem;right:1rem;width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(200,84,120,0.25);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(92,58,34,0.6);transition:border-color 0.2s ease,color 0.2s ease;z-index:10;}
+    .ps-info-btn:hover{border-color:#C85478;color:#C85478;}
+    .ps-tooltip{position:absolute;top:calc(100% + 8px);right:0;background:#2C1A0E;border-radius:0.875rem;padding:1rem;min-width:220px;max-width:min(280px,90vw);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease;z-index:100;box-shadow:0 8px 24px rgba(44,26,14,0.25);}
+    .ps-info-btn:hover .ps-tooltip,.ps-info-btn.ps-tooltip-open .ps-tooltip{opacity:1;transform:translateY(0);pointer-events:auto;}
+    .view-link{color:#C85478 !important;text-decoration:none;}
+    .view-link:hover{color:#A03D5E !important;}
+    @media(max-width:600px){.ps-wrap{grid-template-columns:1fr;}}
+
     /* Cursor Cards */
     .cursor-card { position: relative; isolation: isolate; }
     .cc-glow { position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; transition:opacity 0.3s ease; z-index:-1; }
@@ -898,6 +920,65 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════ PRICING ══════════════════════════════════════ -->
+  <section style="padding:6rem 0; background:#fff;">
+    <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem;">
+      <div style="margin-bottom:3rem;" class="reveal">
+        <div class="section-label" style="margin-bottom:1rem;">Pricing</div>
+        <h2 class="font-display" style="font-size:clamp(2rem,3.5vw,2.8rem); font-weight:600; letter-spacing:-0.03em; color:#2C1A0E; margin:0 0 0.5rem;">How Many Guests?</h2>
+        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22;">Drag the slider and we'll recommend the right cake size and price.</p>
+      </div>
+      <div id="pricing-slider-cakes" class="ps-wrap reveal">
+        <!-- Left card -->
+        <div class="ps-card ps-card-left cursor-card">
+          <button class="ps-info-btn" aria-label="Show full pricing table">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.01"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+            <div class="ps-tooltip" role="tooltip">
+              <p style="font-family:'Jost',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(255,248,242,0.45);margin:0 0 0.75rem;">Cake Size Guide</p>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead><tr>
+                  <th style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 8px 6px 0;letter-spacing:0.04em;">Size</th>
+                  <th style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 8px 6px 0;letter-spacing:0.04em;">Guests</th>
+                  <th style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:right;padding:0 0 6px;letter-spacing:0.04em;">Price</th>
+                </tr></thead>
+                <tbody>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">6"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">6–8</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$34.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">8"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">12–14</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$49.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">10"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">20–22</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$74.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">12"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">25–30</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$89.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">14"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">40–45</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$114.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">16"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">50–55</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$134.99</td></tr>
+                </tbody>
+              </table>
+              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.4);margin:0.75rem 0 0;line-height:1.5;">Photo Cake: +$19.99 · Special occasion &amp; custom: Inquiry · Cupcakes: Inquiry</p>
+              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.4);margin:0.5rem 0 0;line-height:1.5;border-top:1px solid rgba(255,248,242,0.08);padding-top:0.5rem;">Rasmalai: 6&quot; $49.99 · 8&quot; $69.99 · 10&quot; $99.99 · 12&quot; $124.99</p>
+              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.4);margin:0.3rem 0 0;line-height:1.5;">Ferrero Rocher: 6&quot; $44.99 · 8&quot; $64.99 · 10&quot; $89.99 · 12&quot; $114.99</p>
+            </div>
+          </button>
+          <h3 style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(44,26,14,0.4);margin:0 0 1rem;">How many guests?</h3>
+          <div class="ps-people-display">8 guests</div>
+          <input type="range" min="1" max="60" value="8" class="ps-slider" aria-label="Number of guests">
+          <div style="font-family:'Jost',sans-serif;font-size:0.78rem;color:#5C3A22;display:flex;align-items:center;justify-content:space-between;">
+            <span>Need more than 55?</span>
+            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" style="color:#C85478;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">Contact us <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+        </div>
+        <!-- Right card -->
+        <div class="ps-card ps-card-right cursor-card">
+          <h3 style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(44,26,14,0.4);margin:0 0 1rem;">Your Cake</h3>
+          <span class="ps-popular" style="display:none;margin-bottom:0.75rem;padding:3px 12px;border-radius:9999px;background:#2C1A0E;font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;"></span>
+          <div class="ps-size-display">6"</div>
+          <div class="ps-price-display">$34.99</div>
+          <p class="ps-serves" style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:#5C3A22;margin:0 0 1.5rem;line-height:1.5;">Serves 6–8 guests</p>
+          <p class="ps-custom-msg" style="display:none;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:300;color:#5C3A22;margin:0 0 1.5rem;line-height:1.6;">For 55+ guests we recommend a tiered cake. Contact us for a custom quote.</p>
+          <a href="order.html" class="ps-order-btn btn-cta" style="font-size:0.85rem;padding:10px 20px;">
+            <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:-0.05em;">chat</span> WhatsApp to Order
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════════════════════ CONTENT DEPTH: HOW TO ORDER ══════════════════════════ -->
   <section style="background:#FFF8F2;padding:6rem 1.5rem;">
     <div id="cakes-process-grid" style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;">
@@ -1366,6 +1447,109 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         });
       }
     });
+  });
+})();
+</script>
+<script>
+(function() {
+  var CAKE_DATA = [
+    {size:'6"', price:'34.99', serves:'6–8',   popular:false},
+    {size:'8"', price:'49.99', serves:'12–14',  popular:true},
+    {size:'10"',price:'74.99', serves:'20–22',  popular:false},
+    {size:'12"',price:'89.99', serves:'25–30',  popular:false},
+    {size:'14"',price:'114.99',serves:'40–45',  popular:false},
+    {size:'16"',price:'134.99',serves:'50–55',  popular:false}
+  ];
+  function getTier(p) {
+    if (p <= 8)  return 0;
+    if (p <= 14) return 1;
+    if (p <= 22) return 2;
+    if (p <= 30) return 3;
+    if (p <= 45) return 4;
+    if (p <= 55) return 5;
+    return -1;
+  }
+  function initPricingSlider(wrapperId) {
+    var wrap = document.getElementById(wrapperId);
+    if (!wrap) return;
+    var slider      = wrap.querySelector('.ps-slider');
+    var peopleDisp  = wrap.querySelector('.ps-people-display');
+    var sizeDisplay = wrap.querySelector('.ps-size-display');
+    var priceDisplay= wrap.querySelector('.ps-price-display');
+    var servesEl    = wrap.querySelector('.ps-serves');
+    var popularEl   = wrap.querySelector('.ps-popular');
+    var customMsgEl = wrap.querySelector('.ps-custom-msg');
+    var orderBtn    = wrap.querySelector('.ps-order-btn');
+    if (!slider) return;
+    var prevTier = -2;
+    function update() {
+      var p = parseInt(slider.value, 10);
+      if (peopleDisp) peopleDisp.textContent = p + ' guest' + (p === 1 ? '' : 's');
+      var grad = 'linear-gradient(to right, #C85478 0%, #C85478 ' + Math.round((p-1)/59*100) + '%, rgba(200,84,120,0.15) ' + Math.round((p-1)/59*100) + '%, rgba(200,84,120,0.15) 100%)';
+      slider.style.background = grad;
+      var t = getTier(p);
+      var tierChanged = (t !== prevTier);
+      prevTier = t;
+      if (tierChanged) {
+        [sizeDisplay, priceDisplay, servesEl].forEach(function(el) {
+          if (!el) return;
+          el.style.opacity = '0.3';
+          el.style.transform = 'translateY(5px)';
+        });
+      }
+      if (t === -1) {
+        if (sizeDisplay) sizeDisplay.textContent = 'Custom';
+        if (priceDisplay) priceDisplay.textContent = 'Contact us';
+        if (servesEl) servesEl.textContent = '';
+        if (popularEl) popularEl.style.display = 'none';
+        if (customMsgEl) customMsgEl.style.display = 'block';
+        if (orderBtn) orderBtn.style.display = 'none';
+      } else {
+        var tier = CAKE_DATA[t];
+        if (sizeDisplay) sizeDisplay.textContent = tier.size;
+        if (priceDisplay) priceDisplay.textContent = '$' + tier.price;
+        if (servesEl) servesEl.textContent = 'Serves ' + tier.serves + ' guests';
+        if (popularEl) { popularEl.textContent = tier.popular ? 'Most Popular' : ''; popularEl.style.display = tier.popular ? 'inline-block' : 'none'; }
+        if (customMsgEl) customMsgEl.style.display = 'none';
+        if (orderBtn) orderBtn.style.display = 'inline-flex';
+      }
+      if (tierChanged) {
+        setTimeout(function() {
+          [sizeDisplay, priceDisplay, servesEl].forEach(function(el) {
+            if (!el) return;
+            el.style.opacity = '';
+            el.style.transform = '';
+          });
+        }, 10);
+      }
+    }
+    slider.addEventListener('input', update);
+    update();
+  }
+  initPricingSlider('pricing-slider-cakes');
+})();
+
+(function() {
+  document.querySelectorAll('.ps-info-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var isOpen = btn.classList.contains('ps-tooltip-open');
+      document.querySelectorAll('.ps-info-btn').forEach(function(b) { b.classList.remove('ps-tooltip-open'); });
+      if (!isOpen) {
+        btn.classList.add('ps-tooltip-open');
+        var tooltip = btn.querySelector('.ps-tooltip');
+        if (tooltip) {
+          requestAnimationFrame(function() {
+            var rect = tooltip.getBoundingClientRect();
+            var overflow = rect.bottom - window.innerHeight + 20;
+            if (overflow > 0) window.scrollBy({top: overflow, behavior: 'smooth'});
+          });
+        }
+      }
+    });
+  });
+  document.addEventListener('click', function() {
+    document.querySelectorAll('.ps-info-btn').forEach(function(b) { b.classList.remove('ps-tooltip-open'); });
   });
 })();
 </script>
