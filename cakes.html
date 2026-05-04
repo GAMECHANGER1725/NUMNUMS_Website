@@ -1530,27 +1530,42 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 })();
 
 (function() {
+  var portal = null;
+  function closeAll() {
+    document.querySelectorAll('.ps-info-btn').forEach(function(b) { b.classList.remove('ps-tooltip-open'); });
+    if (portal) { portal.remove(); portal = null; }
+  }
+  function openTooltip(btn) {
+    var template = btn.querySelector('.ps-tooltip');
+    if (!template) return;
+    btn.classList.add('ps-tooltip-open');
+    portal = template.cloneNode(true);
+    portal.style.cssText = 'position:absolute;opacity:1;transform:none;pointer-events:auto;z-index:9999;background:#2C1A0E;border-radius:0.875rem;padding:1rem;box-shadow:0 8px 24px rgba(44,26,14,0.25);';
+    portal.style.width = Math.min(280, window.innerWidth - 32) + 'px';
+    var btnRect = btn.getBoundingClientRect();
+    var scrollY = window.pageYOffset;
+    var scrollX = window.pageXOffset;
+    var w = Math.min(280, window.innerWidth - 32);
+    var left = Math.max(16 + scrollX, btnRect.right - w + scrollX);
+    var top = btnRect.bottom + scrollY + 8;
+    portal.style.top = top + 'px';
+    portal.style.left = left + 'px';
+    document.body.appendChild(portal);
+    var h = portal.offsetHeight;
+    var viewBottom = scrollY + window.innerHeight;
+    if (top + h > viewBottom - 16) {
+      portal.style.top = Math.max(scrollY + 16, viewBottom - h - 16) + 'px';
+    }
+  }
   document.querySelectorAll('.ps-info-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       var isOpen = btn.classList.contains('ps-tooltip-open');
-      document.querySelectorAll('.ps-info-btn').forEach(function(b) { b.classList.remove('ps-tooltip-open'); });
-      if (!isOpen) {
-        btn.classList.add('ps-tooltip-open');
-        var tooltip = btn.querySelector('.ps-tooltip');
-        if (tooltip) {
-          requestAnimationFrame(function() {
-            var rect = tooltip.getBoundingClientRect();
-            var overflow = rect.bottom - window.innerHeight + 20;
-            if (overflow > 0) window.scrollBy({top: overflow, behavior: 'smooth'});
-          });
-        }
-      }
+      closeAll();
+      if (!isOpen) openTooltip(btn);
     });
   });
-  document.addEventListener('click', function() {
-    document.querySelectorAll('.ps-info-btn').forEach(function(b) { b.classList.remove('ps-tooltip-open'); });
-  });
+  document.addEventListener('click', closeAll);
 })();
 </script>
 <script>
