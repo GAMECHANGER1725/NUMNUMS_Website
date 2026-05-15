@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 
-const PORT = 3000;
+const PORT = 4000;
 const ROOT = process.cwd();
 
 const MIME = {
