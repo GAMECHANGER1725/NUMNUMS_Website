@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Tailwind v4 theme overrides to match inline configs in HTML */
+@theme {
+  --color-brand-cream: #FFF8F2;
+  --color-brand-linen: #F5EBE0;
+  --color-brand-pink: #C85478;
+  --color-brand-pink-light: #E8A4B5;
+  --color-brand-pink-dark: #A03D5E;
+  --color-brand-teal: #4EC4D8;
+  --color-brand-espresso: #2C1A0E;
+  --color-brand-espresso-mid: #5C3A22;
+  --font-display: "Cormorant Garamond", serif;
+  --font-body: "Jost", sans-serif;
+}
