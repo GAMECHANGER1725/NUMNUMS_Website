@@ -1,3 +1,131 @@
+# ── Redirects ────────────────────────────────────────────────────────────────
+
+# Favicon (browsers probe /favicon.ico regardless of <link> tags)
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/brand_assets/favicon-32.png"
+  status = 301
+
+# Sitemap variant crawlers expect
+[[redirects]]
+  from = "/sitemap_index.xml"
+  to = "/sitemap.xml"
+  status = 301
+
+# Common alternate page names → real pages
+[[redirects]]
+  from = "/about-us"
+  to = "/about"
+  status = 301
+
+[[redirects]]
+  from = "/about-us/"
+  to = "/about"
+  status = 301
+
+[[redirects]]
+  from = "/contact"
+  to = "/order"
+  status = 301
+
+[[redirects]]
+  from = "/contact/"
+  to = "/order"
+  status = 301
+
+[[redirects]]
+  from = "/contact-us"
+  to = "/order"
+  status = 301
+
+[[redirects]]
+  from = "/contact-us/"
+  to = "/order"
+  status = 301
+
+[[redirects]]
+  from = "/contact_us"
+  to = "/order"
+  status = 301
+
+[[redirects]]
+  from = "/services"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/services/"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/services/feed/"
+  to = "/blog"
+  status = 301
+
+[[redirects]]
+  from = "/gallery"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/gallery/"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/kids-cake"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/kids-cake/"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/indian-sweet/"
+  to = "/indian-sweet"
+  status = 301
+
+[[redirects]]
+  from = "/faqs"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/faqs/"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/croissant-tart-section/"
+  to = "/"
+  status = 301
+
+# Old blog slugs that were renamed → current URLs
+[[redirects]]
+  from = "/skip-the-science-experiment-why-we-choose-natural-ingredients-in-every-cake/"
+  to = "/blog/natural-ingredients-eggless-cakes"
+  status = 301
+
+[[redirects]]
+  from = "/soft-sponge-cake-with-dark-chocolate-topping-and-nuts/"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/the-art-of-decorating-cakes-modern-cake-designs/"
+  to = "/blog"
+  status = 301
+
+[[redirects]]
+  from = "/the-art-of-decorating-cakes-modern-cake-designs/feed/"
+  to = "/blog"
+  status = 301
+
+# ── Headers ───────────────────────────────────────────────────────────────────
+
 [[headers]]
   for = "/*.html"
   [headers.values]
