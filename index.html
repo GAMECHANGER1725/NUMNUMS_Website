@@ -237,7 +237,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 0 1.5rem;
+      /* safe center: when content is taller than the viewport, align to the
+         top (below the fixed nav) instead of overflowing up under the navbar */
+      justify-content: safe center;
+      padding: calc(68px + 1.5rem) 1.5rem 2rem;
       max-width: 900px;
       margin: 0 auto;
     }
