@@ -233,6 +233,11 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 - [ ] The Lenis block appears immediately before `</body>`. Never omit it. Copy from `feedback_lenis_smooth_scroll.md` memory file or any existing post.
 
+### Word count & depth
+
+- [ ] Every post must contain **at least 2,000 words of body prose** (the `article-body` text, excluding SVG chart labels, nav, sidebar and footer). Count it explicitly — don't estimate. If a draft lands under 2,000, expand it with an extra question-format H2 section or deeper detail before publishing.
+- [ ] Target **3–5 inline body images** (first = LCP with `fetchpriority="high"`, rest `loading="lazy"`) and **2–4 SVG charts**, spaced evenly through the post.
+
 ### Location accuracy — Harris Park vs Riverstone (two shops)
 
 - [ ] Num Num's has **two** locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm.

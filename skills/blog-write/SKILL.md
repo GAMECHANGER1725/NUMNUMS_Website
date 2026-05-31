@@ -539,6 +539,10 @@ These rules are derived from real audit failures on this project. Every point mu
 **Lenis smooth scroll**
 - [ ] Every blog post HTML file must include the Lenis smooth scroll block immediately before `</body>`. Never omit it. The exact snippet is defined in the project memory file `feedback_lenis_smooth_scroll.md`.
 
+**Word count & depth**
+- [ ] Every post must contain **at least 2,000 words of body prose** (the article-body text, excluding SVG chart labels, nav, sidebar and footer). Count it before delivery — do not estimate. Posts that land at ~1,600–1,900 read as thin; expand with an extra question-format H2 section or deeper detail in existing sections until prose clears 2,000.
+- [ ] Aim for **3–5 inline images** in the body (first one is the LCP image with `fetchpriority="high"`, the rest `loading="lazy"`) and **2–4 SVG charts** with even distribution.
+
 **Location accuracy — Harris Park vs Riverstone (two shops)**
 - [ ] Num Num's has TWO locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm. For a suburb post, choose the genuinely nearest shop as the primary "nearest location": **Harris Park** for Parramatta and central/western suburbs (Harris Park, Westmead, Granville, Merrylands, North Parramatta, Auburn, Rosehill, Rydalmere); **Riverstone** for the north-west (Quakers Hill, Schofields, The Ponds, Box Hill, Marsden Park, Rouse Hill, Tallawong).
 - [ ] The LocalBusiness schema (address, geo, opening hours), the sidebar "Nearest Location" card, the footer address block, and every stated drive time/distance MUST all match the chosen nearest shop. Never claim a short drive time (e.g. "5 min" / "15 min") while pointing the schema or address block at the farther shop. Harris Park ≈ 5 min from Parramatta CBD; Riverstone ≈ 25–30 min from Parramatta.
