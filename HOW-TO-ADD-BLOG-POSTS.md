@@ -6,6 +6,8 @@ Every blog post = three updates:
 2. A new card entry at the **top** of `blog/index.html`
 3. A new `<url>` entry in `sitemap.xml`
 
+After writing, **always run `/blog-analyze`** on the finished post and fix every issue (Critical → High → Medium → Low) before considering the post done. Then update both this file and `SKILL.md` with any new patterns found so the same mistake never needs a second prompt.
+
 ---
 
 ## Dates — always use Sydney time (AEDT/AEST)
@@ -167,3 +169,83 @@ GitHub push → Netlify auto-deploys to production (numnumsbakery.com.au) in ~1�
 - **CSP in `netlify.toml`** must include `https://unpkg.com` in `script-src` or Lenis breaks silently in production.
 - **Blog card colours** — the unique gradient colour is for the index card only. The post interior always uses the standard espresso/cream/pink palette.
 - **Lenis scroll** — desktop only. Mobile uses native scroll.
+
+---
+
+## Quality Gate — Pre-publish Checklist
+
+Run `/blog-analyze` on every post before marking it done. Fix all issues found (Critical → High → Medium → Low). The items below are the recurring failure patterns discovered during live audits — check them manually before even running the analyzer.
+
+### Meta & SEO
+
+- [ ] **Meta description contains ≥ 2 concrete numbers** (distances, times, flavour counts, etc.). "Order in 48 hrs" alone is not enough. Target pattern: `"100% eggless [product] near [suburb] — [N] flavours, [distance] min from [location]. Order with [timeframe] notice."` — 150–160 chars.
+- [ ] **Meta description is ≤ 160 characters.** Count it explicitly — don't estimate. Anything over 160 gets truncated in SERPs, usually cutting the phone number or CTA. Trim from the middle if needed; keep the numbers and CTA intact at the end.
+- [ ] **Title tag** includes primary keyword + location, max 60 chars.
+- [ ] **Canonical URL** matches the slug exactly (no `.html` suffix in canonical — just `/blog/your-slug`).
+
+### LCP / Image Performance
+
+- [ ] **First `<img>` in the article body** (the LCP element) has `fetchpriority="high"` and does **NOT** have `loading="lazy"`. Copy this exactly: `<img src="..." alt="..." class="cake-img" fetchpriority="high" width="800" height="530">`
+- [ ] All subsequent images use `loading="lazy"`.
+- [ ] All images are `.webp` format. Alt text is a full descriptive sentence (product + location).
+- [ ] **Unsplash CDN URLs must use `?fm=webp`**, not `?fm=jpg`. The researcher returns `fm=jpg` by default — always swap before pasting into the HTML. Correct pattern: `https://images.unsplash.com/photo-<id>?fm=webp&q=80&w=1200&auto=format&fit=crop`
+
+### External Links — mandatory (minimum 2 per post)
+
+Every post must link out to at least 2 authoritative external sources placed naturally in the body copy (not a "Sources" section at the end). Approved sources:
+
+| Source | URL pattern | Use for |
+|---|---|---|
+| ABS | abs.gov.au/statistics/people/population | Suburb growth, demographics |
+| NSW Education | education.nsw.gov.au/schooling/term-dates | School holiday dates |
+| Food Standards Australia | foodstandards.gov.au | Dietary/allergen context |
+| NSW Health | health.nsw.gov.au | Food safety |
+| Google Maps | maps.google.com | Travel time reference |
+
+### Answer-First H2 openers — every section, no exceptions
+
+- [ ] Every H2 opens with a paragraph that **directly answers the heading question** AND includes a specific number or sourced fact. "The most common question we get…" is NOT answer-first. Correct pattern: `[Direct answer with a specific claim + source/provenance]. [1–2 sentences expanding the point.]`
+- [ ] First-party claims are fine when provenance is explicit: "From our [N] years of orders in [area]…" or "From our internal order data, 2025–26…"
+- [ ] Do not open any H2 with a rhetorical question, a scene-setting sentence, or a statement about what you're going to explain.
+- [ ] **Sections that use personal/internal experience markers (`[PERSONAL EXPERIENCE]`, `[ORIGINAL DATA]`) must still open with a sourced stat first.** Move the internal data paragraph to second position. The experience/observation adds colour after the fact is established — it never replaces it.
+
+### Chart / SVG data integrity
+
+- [ ] Charts using exact percentages or numbers must state in the figcaption that the data is internal/first-party.
+- [ ] Figcaption format: `"Approximate [metric] — Num Num's Bakery internal [order/sales] data, [year range]. Figures represent relative popularity ranking, not a formal survey."`
+- [ ] Never use survey-methodology language ("Multiple themes could be selected") unless an actual survey was run.
+
+### Internal linking — body text
+
+- [ ] Every reference to another page on the site ("our cakes", "the order page", "locations", "Our Cakes page") must be a working `<a href>` hyperlink — never plain text.
+- [ ] Minimum 5 internal links in body text only (sidebar and related-posts section do not count toward this minimum).
+
+### Sidebar related-post links
+
+- [ ] Every URL in the sidebar "Related Posts" block must point to a **file that already exists** in `blog/`. Run `ls blog/*.html` before writing the sidebar — if the target post doesn't exist yet, use the nearest existing post on the same topic instead. A dead 404 link in the sidebar harms crawlability and user trust.
+
+### H2 heading style
+
+- [ ] ≥ 60% of H2s end with `?` (question format). Count before delivery.
+- [ ] No H2 ends mid-thought without punctuation.
+
+### Lenis smooth scroll
+
+- [ ] The Lenis block appears immediately before `</body>`. Never omit it. Copy from `feedback_lenis_smooth_scroll.md` memory file or any existing post.
+
+---
+
+## After Every Post — Update the MD Files (Always, No Exceptions)
+
+This step is **unconditional** — it runs after every post regardless of whether new issues were found.
+
+After fixing all `/blog-analyze` findings:
+
+1. Go through every finding at every severity level (Critical → Low).
+2. For each finding, check whether it is already covered verbatim in:
+   - The **Quality Gate** section of this file (`HOW-TO-ADD-BLOG-POSTS.md`)
+   - The **Num Nums Bakery HTML Project — Non-negotiable Pre-publish Checklist** section in `SKILL.md` at `/Users/vaidikpatel/.claude/plugins/cache/agricidaniel-blog/claude-blog/1.9.1/skills/blog-write/SKILL.md`
+3. If either file is missing the pattern, add it to **both files** — same wording, same section, kept in sync.
+4. If no new patterns were found, confirm explicitly in the delivery summary: "Checklist files reviewed — no new patterns to add."
+
+**Never silently skip this step.** Every finding that surfaces once becomes a pre-check forever. The checklists grow; they never shrink.
