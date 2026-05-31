@@ -168,5 +168,11 @@
     <loc>https://numnumsbakery.com.au/blog/eggless-cakes-northwest-sydney</loc>
     <lastmod>2026-06-01</lastmod>
   </url>
+  <url>
+    <loc>https://numnumsbakery.com.au/blog/eggless-cakes-parramatta</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
 </urlset>
