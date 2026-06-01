@@ -224,6 +224,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 - [ ] Every URL in the sidebar "Related Posts" block must point to a **file that already exists** in `blog/`. Run `ls blog/*.html` before writing the sidebar — if the target post doesn't exist yet, use the nearest existing post on the same topic instead. A dead 404 link in the sidebar harms crawlability and user trust.
 
+### Nearest-location accuracy (suburb posts)
+
+- [ ] Num Num's has TWO shops: **Harris Park** (96/96 Wigram Street, NSW 2150, open daily 11 am–10 pm) and **Riverstone** (Shop 8, Riverstone Shopping Centre, NSW 2765, Mon–Fri 6 am–8 pm / Sat–Sun 7 am–7 pm). A suburb post must lead with the genuinely **closest** shop — do not default every suburb to Riverstone. Parramatta-LGA / western suburbs (Parramatta, Harris Park, Rosehill, Camellia, Granville, Clyde, Rydalmere, Westmead, Merrylands, Holroyd) lead with **Harris Park**; north-west suburbs (Quakers Hill, Schofields, The Ponds, Marsden Park, Box Hill, Riverstone, Tallawong) lead with **Riverstone**. Mention the other shop second as the alternate. The LocalBusiness schema `@id`, address, hours and `areaServed` must match the lead shop.
+
 ### H2 heading style
 
 - [ ] ≥ 60% of H2s end with `?` (question format). Count before delivery.
