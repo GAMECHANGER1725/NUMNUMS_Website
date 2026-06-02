@@ -238,6 +238,16 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] ≥ 60% of H2s end with `?` (question format). Count before delivery.
 - [ ] No H2 ends mid-thought without punctuation.
 
+### Allergen honesty (allergy / dietary posts)
+
+- [ ] Never imply a cake is "allergen-free" or safe beyond eggs. The kitchen is 100% **egg-free**, which removes the egg cross-contamination pathway — but cakes **contain dairy** (milk powder, butter) and **may involve nuts**, and standard cakes contain wheat. Disclose this explicitly in any egg-allergy or dietary post.
+- [ ] For severe/anaphylactic egg allergy, include an honest caveat: tell customers to state their needs when ordering and follow their own medical / ASCIA-aligned advice. Do not promise medical-grade safety. Cite ASCIA (allergy.org.au) and Allergy & Anaphylaxis Australia (allergyfacts.org.au) as authoritative sources.
+
+### Non-suburb / city-wide & topic posts (schema + length)
+
+- [ ] For posts NOT anchored to a single suburb (corporate events, "order a cake online", "egg allergy", broad "cake"/"eggless cake" keyword posts), include **BOTH** LocalBusiness nodes in the schema `@graph` — `#harrispark` and `#riverstone` — each with `areaServed: "Greater Sydney"`. Do NOT force a single "nearest shop" and do NOT state specific drive times (no anchor suburb to measure from). Show both shops in the sidebar and footer.
+- [ ] City-wide / topic / comparison posts land short on first draft almost every time (~1,850–1,900 words). Budget an extra question-format H2 from the outset and re-count after every edit to clear 2,000.
+
 ### Lenis smooth scroll
 
 - [ ] The Lenis block appears immediately before `</body>`. Never omit it. Copy from `feedback_lenis_smooth_scroll.md` memory file or any existing post.
