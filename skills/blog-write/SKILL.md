@@ -535,6 +535,10 @@ These rules are derived from real audit failures on this project. Every point mu
 **Nearest-location accuracy (suburb posts)**
 - [ ] Num Num's has TWO shops: **Harris Park** (96/96 Wigram Street, NSW 2150, open daily 11 am–10 pm) and **Riverstone** (Shop 8, Riverstone Shopping Centre, NSW 2765, Mon–Fri 6 am–8 pm / Sat–Sun 7 am–7 pm). A suburb post must lead with the genuinely **closest** shop, not default every suburb to Riverstone. Parramatta-LGA and western suburbs (Parramatta, Harris Park, Rosehill, Camellia, Granville, Clyde, Rydalmere, Westmead, Merrylands, Holroyd) lead with **Harris Park**; north-west suburbs (Quakers Hill, Schofields, The Ponds, Marsden Park, Box Hill, Riverstone, Tallawong) lead with **Riverstone**. The other shop is mentioned second as the alternate. The LocalBusiness schema `@id`, address, hours, and `areaServed` must match the lead shop.
 
+**Suburb reality check (do this during research, before writing)**
+- [ ] Before writing a suburb post, verify the suburb's **actual postcode** and whether it has a meaningful **residential population** via ABS QuickStats / Community Profile. Some "suburbs" on a priority list (e.g. **Clyde 2142**, Camellia) are tiny industrial/rail localities with near-zero usual residents and a postcode that differs from the nearest shop's. Do NOT assume a suburb shares Harris Park's 2150 postcode, and do NOT fabricate suburb-level demographic stats for a suburb that has almost no residents.
+- [ ] For low-population/industrial suburbs, frame honestly ("one of Sydney's smallest, most industrial pockets") and lean on **LGA-level data** (City of Parramatta, Cumberland City Council) described as "the surrounding area / suburbs that ring [suburb]", citing profile.id / forecast.id. State the tiny resident count plainly rather than inventing families.
+
 **H2 heading style**
 - [ ] At least 60% of H2s must be question-format (end with `?`). Check before delivery.
 - [ ] No H2 heading should end mid-thought without punctuation. A heading like "What Size Cake Do You Need" (missing `?`) is a failure.
