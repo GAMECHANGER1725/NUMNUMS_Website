@@ -239,7 +239,7 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 ### Word count & depth
 
-- [ ] Every post must contain **at least 2,000 words of body prose** (the `article-body` text, excluding SVG chart labels, nav, sidebar and footer). Count it explicitly — don't estimate. If a draft lands under 2,000, expand it with an extra question-format H2 section or deeper detail before publishing.
+- [ ] Every post must contain **at least 2,000 words of body prose** (the `article-body` text, excluding SVG chart labels, nav, sidebar and footer). Count it explicitly — don't estimate. If a draft lands under 2,000, expand it with an extra question-format H2 section or deeper detail before publishing. **Re-count after EVERY edit pass, not just once** — top-up paragraphs frequently still leave a post 10–50 words short, so verify the final number is ≥ 2,000 immediately before `git add`. **City-wide and comparison posts (no single suburb anchor, e.g. "eggless cake vs regular cake", "best cake Sydney") consistently land shortest** — budget an extra question-format H2 from the outset rather than topping up at the end.
 - [ ] Target **3–5 inline body images** (first = LCP with `fetchpriority="high"`, rest `loading="lazy"`) and **2–4 SVG charts**, spaced evenly through the post.
 
 ### Location accuracy — Harris Park vs Riverstone (two shops)

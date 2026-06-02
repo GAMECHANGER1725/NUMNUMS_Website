@@ -543,7 +543,7 @@ These rules are derived from real audit failures on this project. Every point mu
 - [ ] Every blog post HTML file must include the Lenis smooth scroll block immediately before `</body>`. Never omit it. The exact snippet is defined in the project memory file `feedback_lenis_smooth_scroll.md`.
 
 **Word count & depth**
-- [ ] Every post must contain **at least 2,000 words of body prose** (the article-body text, excluding SVG chart labels, nav, sidebar and footer). Count it before delivery — do not estimate. Posts that land at ~1,600–1,900 read as thin; expand with an extra question-format H2 section or deeper detail in existing sections until prose clears 2,000.
+- [ ] Every post must contain **at least 2,000 words of body prose** (the article-body text, excluding SVG chart labels, nav, sidebar and footer). Count it before delivery — do not estimate. Posts that land at ~1,600–1,900 read as thin; expand with an extra question-format H2 section or deeper detail in existing sections until prose clears 2,000. **Re-count after EVERY edit pass, not just once** — top-up paragraphs frequently still leave a post 10–50 words short, so verify the final number is ≥ 2,000 immediately before `git add`. **City-wide and comparison posts (no single suburb anchor, e.g. "eggless cake vs regular cake", "best cake Sydney") consistently land shortest** — budget an extra question-format H2 from the outset rather than topping up at the end.
 - [ ] Aim for **3–5 inline images** in the body (first one is the LCP image with `fetchpriority="high"`, the rest `loading="lazy"`) and **2–4 SVG charts** with even distribution.
 
 **Location accuracy — Harris Park vs Riverstone (two shops)**
