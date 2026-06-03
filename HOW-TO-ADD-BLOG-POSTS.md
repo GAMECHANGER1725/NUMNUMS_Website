@@ -219,6 +219,7 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 - [ ] Every reference to another page on the site ("our cakes", "the order page", "locations", "Our Cakes page") must be a working `<a href>` hyperlink — never plain text.
 - [ ] Minimum 5 internal links in body text only (sidebar and related-posts section do not count toward this minimum).
+- [ ] **Every body-text link to another blog post must point to a file that already exists in `blog/`.** Run `ls blog/` before linking to a sibling post in prose — the same existence check the sidebar requires also applies to body links. Never link to a planned-but-unwritten slug (e.g. linking to `how-eggless-cakes-are-made` when only `natural-ingredients-eggless-cakes.html` exists). A 404 in body copy harms crawlability and trust.
 
 ### Sidebar related-post links
 

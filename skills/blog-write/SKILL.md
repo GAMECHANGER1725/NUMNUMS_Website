@@ -528,6 +528,7 @@ These rules are derived from real audit failures on this project. Every point mu
 **Internal linking — body text**
 - [ ] Every reference to another page on the site (e.g. "our cakes", "the order page", "locations") must be a working `<a href>` hyperlink — never plain text.
 - [ ] Minimum internal links per post: 5 (sidebar and related posts do not count toward this minimum — body text links only).
+- [ ] **Every body-text link to another blog post must point to a file that already exists in `blog/`.** Run `ls blog/` before linking to a sibling post in prose — the same existence check the sidebar requires also applies to body links. Never link to a planned-but-unwritten slug (e.g. `how-eggless-cakes-are-made` when only `natural-ingredients-eggless-cakes.html` exists). A 404 in body copy harms crawlability and trust.
 
 **Sidebar related-post links**
 - [ ] Every URL in the sidebar "Related Posts" block must point to a **file that already exists** in `blog/`. Check with `ls blog/` before writing. A 404 in the sidebar harms crawlability and user trust. If the target post doesn't exist yet, replace with the nearest existing post on the same topic.
