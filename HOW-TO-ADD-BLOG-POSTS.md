@@ -209,6 +209,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] Do not open any H2 with a rhetorical question, a scene-setting sentence, or a statement about what you're going to explain.
 - [ ] **Sections that use personal/internal experience markers (`[PERSONAL EXPERIENCE]`, `[ORIGINAL DATA]`) must still open with a sourced stat first.** Move the internal data paragraph to second position. The experience/observation adds colour after the fact is established — it never replaces it.
 
+### Chart / SVG colour palette (interior is always pink)
+
+- [ ] Charts and SVGs in the post interior use the standard pink/cream palette (`#C85478`, `#E8A4B5`, espresso `#2C1A0E` on `#FFF8F2`) regardless of the hero gradient. The post interior is always pink-themed — only the hero and the index card use the topic gradient colour (blue/green/burgundy/etc.). At most ONE bar may use the hero accent colour (as the reference Quakers Hill projection bar uses `#7C3A1E`). Do NOT colour entire charts blue/green/burgundy to match the hero — it contradicts the "post interior uses the standard espresso/cream/pink palette" rule above.
+
 ### Chart / SVG data integrity
 
 - [ ] Charts using exact percentages or numbers must state in the figcaption that the data is internal/first-party.

@@ -520,6 +520,9 @@ These rules are derived from real audit failures on this project. Every point mu
 - [ ] If no external stat exists for a section, use a qualified first-party statement: "From our [N] years of orders / From our internal data / From orders across [area]…" — this makes provenance explicit without fabricating a source.
 - [ ] **Sections that rely on personal/internal experience must still open with a sourced stat.** The internal data paragraph comes second, after the stat. Never let a [PERSONAL EXPERIENCE] or [ORIGINAL DATA] marker become the first sentence of an H2 section.
 
+**Chart / SVG colour palette (interior is always pink)**
+- [ ] Charts and SVGs in the post interior use the standard pink/cream palette (`#C85478`, `#E8A4B5`, espresso `#2C1A0E` on `#FFF8F2`) regardless of the hero gradient. The post interior is always pink-themed — only the hero and the index card use the topic gradient colour (blue/green/burgundy/etc.). At most ONE bar may use the hero accent colour (as the reference Quakers Hill projection bar uses `#7C3A1E`). Do NOT colour entire charts blue/green/burgundy to match the hero — that contradicts the "post interior uses the standard pink palette" rule.
+
 **Chart / SVG data integrity**
 - [ ] Charts using exact percentages (e.g. 72%, 65%) must clarify in the figcaption that the data is internal/first-party. Never present internal percentages in a way that implies third-party research.
 - [ ] Figcaption format: `"Approximate [metric] — [Business Name] internal [order/sales/customer] data, [year range]. [Any methodological note if needed.]"`
