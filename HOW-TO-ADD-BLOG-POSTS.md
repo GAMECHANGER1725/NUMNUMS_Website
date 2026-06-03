@@ -212,6 +212,7 @@ Every post must link out to at least 2 authoritative external sources placed nat
 ### Chart / SVG colour palette (interior is always pink)
 
 - [ ] Charts and SVGs in the post interior use the standard pink/cream palette (`#C85478`, `#E8A4B5`, espresso `#2C1A0E` on `#FFF8F2`) regardless of the hero gradient. The post interior is always pink-themed — only the hero and the index card use the topic gradient colour (blue/green/burgundy/etc.). At most ONE bar may use the hero accent colour (as the reference Quakers Hill projection bar uses `#7C3A1E`). Do NOT colour entire charts blue/green/burgundy to match the hero — it contradicts the "post interior uses the standard espresso/cream/pink palette" rule above.
+- [ ] **Orphan `#7C3A1E` chart bar when copying the reference template.** The Quakers Hill reference has an orange hero, so its interior charts use `#7C3A1E` for the single "accent" bar. When you copy that template into a NON-orange post (Blue/Northwest, Pink/Eggless, Burgundy, etc.), `grep` for `#7C3A1E` in the finished file: it should appear ONCE (the skeleton-overlay hero block, which you recolour to the new hero's darkest colour) — never inside a chart `<rect>`. A leftover orange bar matches neither the pink interior palette nor the new hero accent. Recolour it to `#C85478` (pink) or the new hero accent. After recolouring the skeleton block, `grep -c "7C3A1E"` should return 0.
 
 ### Chart / SVG data integrity
 
