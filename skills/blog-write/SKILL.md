@@ -543,6 +543,9 @@ These rules are derived from real audit failures on this project. Every point mu
 - [ ] At least 60% of H2s must be question-format (end with `?`). Check before delivery.
 - [ ] No H2 heading should end mid-thought without punctuation. A heading like "What Size Cake Do You Need" (missing `?`) is a failure.
 
+**Hero gradient consistency (non-default gradients)**
+- [ ] When a post uses a hero gradient other than the default orange (e.g. Blue/Northwest, Pink/Eggless, Burgundy/Birthday), update ALL four hero elements to match, not just `.page-hero`: (1) the `.page-hero` background gradient, (2) the `.page-hero::after` radial tint, (3) the skeleton-overlay hero background colour (`#sk-overlay` inner block, default `#7C3A1E`), and (4) the hero breadcrumb link/`/`/label tints (default `rgba(255,210,180,…)`) plus the hero badge `background`/`border`/`color`. Leaving the orange defaults behind a blue/pink/burgundy hero is a visible mismatch on first paint. Match the chosen card palette's darkest colour for the skeleton block and its light accent for the badge text.
+
 **Lenis smooth scroll**
 - [ ] Every blog post HTML file must include the Lenis smooth scroll block immediately before `</body>`. Never omit it. The exact snippet is defined in the project memory file `feedback_lenis_smooth_scroll.md`.
 

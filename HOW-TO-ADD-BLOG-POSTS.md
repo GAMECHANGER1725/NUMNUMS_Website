@@ -248,6 +248,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] For posts NOT anchored to a single suburb (corporate events, "order a cake online", "egg allergy", broad "cake"/"eggless cake" keyword posts), include **BOTH** LocalBusiness nodes in the schema `@graph` — `#harrispark` and `#riverstone` — each with `areaServed: "Greater Sydney"`. Do NOT force a single "nearest shop" and do NOT state specific drive times (no anchor suburb to measure from). Show both shops in the sidebar and footer.
 - [ ] City-wide / topic / comparison posts land short on first draft almost every time (~1,850–1,900 words). Budget an extra question-format H2 from the outset and re-count after every edit to clear 2,000.
 
+### Hero gradient consistency (non-default gradients)
+
+- [ ] When a post uses a hero gradient other than the default orange (Blue/Northwest, Pink/Eggless, Burgundy/Birthday, etc.), update ALL four hero elements to match — not just `.page-hero`: (1) the `.page-hero` background gradient, (2) the `.page-hero::after` radial tint, (3) the skeleton-overlay hero background colour (the `#sk-overlay` inner hero block, default `#7C3A1E`), and (4) the hero breadcrumb link/separator/label tints (default `rgba(255,210,180,…)`) plus the hero badge `background`/`border`/`color`. Use the chosen card palette's darkest colour for the skeleton block and its light accent for the badge text. Leaving orange defaults behind a blue/pink/burgundy hero is a visible first-paint mismatch.
+
 ### Lenis smooth scroll
 
 - [ ] The Lenis block appears immediately before `</body>`. Never omit it. Copy from `feedback_lenis_smooth_scroll.md` memory file or any existing post.
