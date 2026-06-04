@@ -528,6 +528,7 @@ These rules are derived from real audit failures on this project. Every point mu
 - [ ] Charts using exact percentages (e.g. 72%, 65%) must clarify in the figcaption that the data is internal/first-party. Never present internal percentages in a way that implies third-party research.
 - [ ] Figcaption format: `"Approximate [metric] — [Business Name] internal [order/sales/customer] data, [year range]. [Any methodological note if needed.]"`
 - [ ] Never include "Multiple themes could be selected" or other survey-methodology language unless you actually ran a survey.
+- [ ] **Validate every SVG `fill`/`stroke` is a real hex colour before committing.** A typo'd fill (e.g. `fill="#A8days"`) renders an invisible or black bar and silently breaks the chart. After writing any chart, `grep` the SVG for `fill="#"` values and confirm each is a valid 3- or 6-digit hex. Also confirm there are no duplicate/stray `<rect>` left over from copy-paste.
 
 **Internal linking — body text**
 - [ ] Every reference to another page on the site (e.g. "our cakes", "the order page", "locations") must be a working `<a href>` hyperlink — never plain text.

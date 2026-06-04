@@ -219,6 +219,7 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] Charts using exact percentages or numbers must state in the figcaption that the data is internal/first-party.
 - [ ] Figcaption format: `"Approximate [metric] — Num Num's Bakery internal [order/sales] data, [year range]. Figures represent relative popularity ranking, not a formal survey."`
 - [ ] Never use survey-methodology language ("Multiple themes could be selected") unless an actual survey was run.
+- [ ] **Validate every SVG `fill`/`stroke` is a real hex colour before committing.** A typo'd fill (e.g. `fill="#A8days"`) renders an invisible or black bar and silently breaks the chart. After writing any chart, `grep` the SVG for `fill="#"` values and confirm each is a valid 3- or 6-digit hex. Also confirm there are no duplicate/stray `<rect>` left over from copy-paste.
 
 ### Internal linking — body text
 
