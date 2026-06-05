@@ -115,6 +115,34 @@ For the dark overlay `<div>`, use the darkest colour from the outer gradient at 
 
 Use up to 2–3 topics per card. Separate with spaces, no commas.
 
+> **Only use tags from the table above.** Every `data-topics` value must have a matching chip in the Topics filter dropdown (Step 2b). Do not invent new tags (e.g. `kids-cakes`) — a tag with no filter chip is invisible to the dropdown. Use the documented equivalent instead (a kids' birthday post is `birthday`).
+
+---
+
+## Step 2b — Update the Topics filter dropdown
+
+The blog index has a **Topics filter** in the sidebar (`<div class="tag-items-wrap">`, each chip is a `<label class="tag-item" data-tag="…">` with a `<span class="tag-count">N</span>`). These counts are **hard-coded**, not computed, so they go stale the moment you add a card. Every time you add a post you MUST refresh them:
+
+1. For the **All** chip, increment the count by 1.
+2. For **each tag** in the new card's `data-topics`, increment that chip's count by 1.
+3. If a tag in your card has **no chip yet**, either retag the card to a documented tag, or add a new chip (copy an existing `<label class="tag-item">` block, set `data-tag`, label and count).
+
+To verify the whole dropdown against reality at any time, run:
+
+```bash
+python3 - <<'PY'
+import re,collections
+html=open('blog/index.html',encoding='utf-8').read()
+cards=re.findall(r'class="reveal blog-card-wrap"\s+data-topics="([^"]+)"',html)
+c=collections.Counter()
+for t in cards:
+    for tag in t.split(): c[tag]+=1
+print("All:",len(cards)); [print(f"{k}: {v}") for k,v in sorted(c.items(),key=lambda x:-x[1])]
+PY
+```
+
+Then make every `tag-count` in the dropdown match this output exactly.
+
 ---
 
 ## Step 3 — Update `sitemap.xml`
@@ -272,6 +300,11 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] Num Num's has **two** locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm.
 - [ ] For a suburb post, choose the genuinely nearest shop as the primary "nearest location": **Harris Park** for Parramatta and central/western suburbs (Harris Park, Westmead, Granville, Merrylands, North Parramatta, Auburn, Rosehill, Rydalmere); **Riverstone** for the north-west (Quakers Hill, Schofields, The Ponds, Box Hill, Marsden Park, Rouse Hill, Tallawong).
 - [ ] The LocalBusiness schema (address, geo, opening hours), the sidebar "Nearest Location" card, the footer address block, and every stated drive time/distance must all match the chosen nearest shop. Never claim a short drive time while pointing the schema or address at the farther shop. Harris Park ≈ 5 min from Parramatta CBD; Riverstone ≈ 25–30 min from Parramatta.
+
+### Topics filter dropdown (update every post)
+
+- [ ] **Update the Topics filter dropdown counts in `blog/index.html`.** The `<span class="tag-count">` values are hard-coded and go stale every time a card is added. After inserting a card, increment the **All** count and each tag's count from the new card's `data-topics` (see Step 2b for the verification script). The dropdown must match the real card distribution exactly before you commit.
+- [ ] **No orphan tags.** Every `data-topics` value must have a matching chip in the dropdown and must come from the documented tag table. Never introduce an undocumented tag (e.g. `kids-cakes`) — a tag with no chip is invisible to the filter.
 
 ---
 

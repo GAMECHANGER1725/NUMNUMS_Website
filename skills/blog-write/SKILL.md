@@ -537,6 +537,10 @@ These rules are derived from real audit failures on this project. Every point mu
 **Sidebar related-post links**
 - [ ] Every URL in the sidebar "Related Posts" block must point to a **file that already exists** in `blog/`. Check with `ls blog/` before writing. A 404 in the sidebar harms crawlability and user trust. If the target post doesn't exist yet, replace with the nearest existing post on the same topic.
 
+**Topics filter dropdown (blog/index.html) — update every post**
+- [ ] The blog index sidebar has a **Topics filter** with hard-coded counts (`<span class="tag-count">N</span>` inside each `<label class="tag-item" data-tag="…">`). These do NOT auto-compute, so they go stale every time a card is added. After adding the index card, increment the **All** count and each count matching the new card's `data-topics`. Verify the whole dropdown against the real card distribution before committing (regex-count `data-topics` across `blog-card-wrap` cards and make each `tag-count` match exactly).
+- [ ] **No orphan `data-topics`.** Every tag on a card must have a matching chip in the dropdown and must come from the documented tag list. Never introduce an undocumented tag (e.g. `kids-cakes`) — a tag with no chip is invisible to the filter; use the documented equivalent (a kids' birthday post is `birthday`).
+
 **Nearest-location accuracy (suburb posts)**
 - [ ] Num Num's has TWO shops: **Harris Park** (96/96 Wigram Street, NSW 2150, open daily 11 am–10 pm) and **Riverstone** (Shop 8, Riverstone Shopping Centre, NSW 2765, Mon–Fri 6 am–8 pm / Sat–Sun 7 am–7 pm). A suburb post must lead with the genuinely **closest** shop, not default every suburb to Riverstone. Parramatta-LGA and western suburbs (Parramatta, Harris Park, Rosehill, Camellia, Granville, Clyde, Rydalmere, Westmead, Merrylands, Holroyd) lead with **Harris Park**; north-west suburbs (Quakers Hill, Schofields, The Ponds, Marsden Park, Box Hill, Riverstone, Tallawong) lead with **Riverstone**. The other shop is mentioned second as the alternate. The LocalBusiness schema `@id`, address, hours, and `areaServed` must match the lead shop.
 
