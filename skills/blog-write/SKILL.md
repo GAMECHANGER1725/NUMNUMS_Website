@@ -506,6 +506,9 @@ These rules are derived from real audit failures on this project. Every point mu
 **Meta & description length**
 - [ ] Meta description must be ≤ 160 characters. Count it. Truncation at 160 chars in SERPs means the phone number or key CTA gets cut — trim from the middle, keep the numbers and CTA at the end.
 
+**Entity / Organization schema (every post)**
+- [ ] Every post's JSON-LD `@graph` must include an **`Organization` entity node** with `@id: https://numnumsbakery.com.au/#organization`, referenced as the Article `publisher`. Its `sameAs` array must list the brand's Instagram, Facebook, AND the Wikidata entity `https://www.wikidata.org/wiki/Q140076208`. The Wikidata link anchors Num Num's Bakery as a recognised entity for AI / knowledge-graph citation — never omit it. The reference Quakers Hill template references `#organization` as publisher but does NOT define the node; you must add it when copying the template.
+
 **External Links — mandatory**
 - [ ] Every post must include **at least 2 outbound links** to authoritative tier 1-3 external sources. Acceptable sources for this project:
   - ABS (abs.gov.au) — population, suburb growth, demographic data

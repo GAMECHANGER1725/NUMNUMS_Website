@@ -218,6 +218,10 @@ Run `/blog-analyze` on every post before marking it done. Fix all issues found (
 - [ ] All images are `.webp` format. Alt text is a full descriptive sentence (product + location).
 - [ ] **Unsplash CDN URLs must use `?fm=webp`**, not `?fm=jpg`. The researcher returns `fm=jpg` by default — always swap before pasting into the HTML. Correct pattern: `https://images.unsplash.com/photo-<id>?fm=webp&q=80&w=1200&auto=format&fit=crop`
 
+### Entity / Organization schema (every post)
+
+- [ ] Every post's JSON-LD `@graph` must include an **`Organization` entity node** with `@id: https://numnumsbakery.com.au/#organization`, referenced as the Article `publisher`. Its `sameAs` array must list the brand's Instagram, Facebook, AND the Wikidata entity `https://www.wikidata.org/wiki/Q140076208`. The Wikidata link anchors Num Num's Bakery as a recognised entity for AI / knowledge-graph citation — never omit it. The reference Quakers Hill template references `#organization` as publisher but does NOT define the node; add it when copying the template.
+
 ### External Links — mandatory (minimum 2 per post)
 
 Every post must link out to at least 2 authoritative external sources placed naturally in the body copy (not a "Sources" section at the end). Approved sources:
