@@ -1,7 +1,7 @@
-# GBP Posts · creation rules
+# GBP Posts · creation rules — RIVERSTONE
 
 
-> Claude reads this before writing any GBP post.
+> Claude reads this before writing any GBP post for the **Riverstone** location.
 > Pairs with `tone.md`, `humour.md`, `vocabulary.md`, `business-context.md`.
 > Output queues into `posts-queue.md` AND POSTs to Make.com webhook.
 
@@ -51,10 +51,10 @@ If you find yourself about to output `type: update` — STOP. The correct output
 
 
 ```yaml
-MAKE_WEBHOOK_URL: https://hook.us2.make.com/uww8m1lhwrc4plnjc1wyqf27vtp65kn2
-GBP_ACCOUNT_NAME: accounts/[ACCOUNT_ID]
-GBP_LOCATION_NAME: locations/[LOCATION_ID]
-DEFAULT_CTA_URL: https://www.thebrotherhood.ca
+MAKE_WEBHOOK_URL: https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o
+GBP_LOCATION: Riverstone Shopping Centre, Riverstone NSW 2765
+DEFAULT_CTA_URL: https://numnumsbakery.com.au/#order
+MEDIA_ITEMS_MAPPING: "{{1.media_items[1]}}"   # Make.com module reference for this scenario
 ```
 
 
@@ -464,6 +464,7 @@ CTA: Book
 - ❌ **Blog excerpts that link off-platform** — visitors are in decision mode
 - ❌ **Posting without a photo** — drops engagement ~60%
 - ❌ **Reusing copy across clients** — Google detects duplication
+- ❌ **Invented Offer posts** — NEVER create an `"Offer"` post with a discount, coupon code, or promo unless the user has explicitly told you the offer details (amount, dates, conditions). If no offer has been provided, default to `"Call to action"` or `"Event"` instead. Making up offers that don't exist misleads customers and damages trust.
 
 
 ---
@@ -573,7 +574,12 @@ title: "60-80 char headline · plain text"
 summary: |
  Body text · plain text · no markdown · 25-300 words
 media_items:
- - "https://images.unsplash.com/photo-xxxxx?w=1200"
+  - "https://images.pexels.com/photos/xxxxx/photo.jpeg?auto=compress&cs=tinysrgb&w=1200"
+# ⚠️ media_items is a plain ARRAY OF STRINGS (direct image URLs)
+# Make.com maps this as {{1.media_items[1]}} — 1-based index, first element = the image URL
+# JSON format: "media_items": ["https://..."]
+# Must be a real, publicly accessible image URL (Pexels/Unsplash direct link)
+# Minimum 1200×900 px · 4:3 ratio · max 1 MB
 
 
 # === Internal tracking (NOT sent to webhook) ===
@@ -686,6 +692,8 @@ keywords_baited:
 
 ### Type 3 · Offer (the highest converter · yellow badge)
 
+
+⚠️ **ONLY use this type when the user has explicitly provided the offer details.** Never invent a discount, coupon code, or promo. If the user hasn't given you an offer to run, use `"Call to action"` instead.
 
 Use for: discounts, promos, limited-time deals. Auto-displays with yellow "Limited Time Offer" tag.
 
