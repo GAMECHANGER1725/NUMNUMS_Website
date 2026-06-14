@@ -157,10 +157,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
-      {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://numnumsbakery.com.au/blog"}
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
+          {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://numnumsbakery.com.au/blog"}
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://numnumsbakery.com.au/#organization",
+        "name": "Num Num's Bakery",
+        "url": "https://numnumsbakery.com.au/",
+        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+      }
     ]
   }
   </script>

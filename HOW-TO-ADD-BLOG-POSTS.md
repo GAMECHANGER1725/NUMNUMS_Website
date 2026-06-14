@@ -1,10 +1,12 @@
 # How to Add a New Blog Post — Num Num's Bakery
 
 ## Overview
-Every blog post = three updates:
+Every blog post = four updates (+ one post-deploy ping):
 1. A new HTML file in `blog/` (the post itself)
 2. A new card entry at the **top** of `blog/index.html`
 3. A new `<url>` entry in `sitemap.xml`
+4. A new entry in `llms.txt` under `## Blog Posts`
+5. After it's live: ping IndexNow → `node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug` (Step 6)
 
 After writing, **always run `/blog-analyze`** on the finished post and fix every issue (Critical → High → Medium → Low) before considering the post done. Then update both this file and `SKILL.md` with any new patterns found so the same mistake never needs a second prompt.
 
@@ -162,7 +164,21 @@ Add a `<url>` block **before** the closing `</urlset>` tag:
 
 ---
 
-## Step 4 — Test locally
+## Step 4 — Update `llms.txt`
+
+Open `llms.txt` and add a line under `## Blog Posts` (order doesn't matter):
+
+```
+- https://numnumsbakery.com.au/blog/YOUR-SLUG — Your Post Title Here
+```
+
+Use the exact `<title>` text from the post (strip the ` | Num Num's Bakery` suffix if present).
+
+> **Important:** llms.txt is the map AI assistants (ChatGPT, Perplexity, Claude) use to discover your content. Missing entries = those posts are invisible to AI search. 62 posts were missing during the 2026-06-05 GEO audit.
+
+---
+
+## Step 5 — Test locally
 
 ```bash
 node serve.mjs   # starts at http://localhost:4000
@@ -180,12 +196,34 @@ Check:
 ## Step 5 — Commit and push
 
 ```bash
-git add blog/your-slug.html blog/index.html sitemap.xml
+git add blog/your-slug.html blog/index.html sitemap.xml llms.txt
 git commit -m "Add blog post: YOUR POST TITLE"
 git push
 ```
 
 GitHub push → Netlify auto-deploys to production (numnumsbakery.com.au) in ~1–2 minutes.
+
+---
+
+## Step 6 — Ping IndexNow (after the post is live)
+
+Once Netlify has finished deploying and the new post is reachable, submit it to
+IndexNow so Bing / Copilot (and Yandex, Seznam, Naver) discover it immediately.
+This improves AI-search freshness — Bing Copilot leans on Bing's index.
+
+```bash
+node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug
+```
+
+- Submit **only the new/updated URL(s)** — IndexNow asks you not to spam the full
+  sitemap on every change. Pass multiple URLs space-separated if you changed several.
+- `node indexnow.mjs` with no args submits every URL in `sitemap.xml` (use sparingly).
+- `node indexnow.mjs --dry` prints what would be sent without sending.
+- The verification key lives at `https://numnumsbakery.com.au/8a811016cc8e6931dbe358599d9112e9.txt`
+  (file `8a811016cc8e6931dbe358599d9112e9.txt` in the repo root). Don't delete it.
+
+> **Why:** IndexNow is the single freshness lever called out in the 2026-06-05 GEO
+> audit. Google ignores IndexNow, but Bing/Copilot and Perplexity (Bing-backed) react fast.
 
 ---
 
@@ -284,6 +322,11 @@ Every post must link out to at least 2 authoritative external sources placed nat
 ### Non-suburb / city-wide & topic posts (schema + length)
 
 - [ ] For posts NOT anchored to a single suburb (corporate events, "order a cake online", "egg allergy", broad "cake"/"eggless cake" keyword posts), include **BOTH** LocalBusiness nodes in the schema `@graph` — `#harrispark` and `#riverstone` — each with `areaServed: "Greater Sydney"`. Do NOT force a single "nearest shop" and do NOT state specific drive times (no anchor suburb to measure from). Show both shops in the sidebar and footer.
+- [ ] **sameAs required on every LocalBusiness node** — every `LocalBusiness` node must include the full `sameAs` array as the last property (before the closing `}`):
+  ```json
+  "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+  ```
+  If the post has no `LocalBusiness` node, add a minimal `Organization` node to `@graph` with this `sameAs`. Wikidata (`Q140076208`) must always be the third entry.
 - [ ] City-wide / topic / comparison posts land short on first draft almost every time (~1,850–1,900 words). Budget an extra question-format H2 from the outset and re-count after every edit to clear 2,000.
 
 ### Hero gradient consistency (non-default gradients)
@@ -304,6 +347,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] Num Num's has **two** locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm.
 - [ ] For a suburb post, choose the genuinely nearest shop as the primary "nearest location": **Harris Park** for Parramatta and central/western suburbs (Harris Park, Westmead, Granville, Merrylands, North Parramatta, Auburn, Rosehill, Rydalmere); **Riverstone** for the north-west (Quakers Hill, Schofields, The Ponds, Box Hill, Marsden Park, Rouse Hill, Tallawong).
 - [ ] The LocalBusiness schema (address, geo, opening hours), the sidebar "Nearest Location" card, the footer address block, and every stated drive time/distance must all match the chosen nearest shop. Never claim a short drive time while pointing the schema or address at the farther shop. Harris Park ≈ 5 min from Parramatta CBD; Riverstone ≈ 25–30 min from Parramatta.
+
+### llms.txt — update every post
+
+- [ ] **Add the new post to `llms.txt`** under `## Blog Posts`: `- https://numnumsbakery.com.au/blog/YOUR-SLUG — Your Post Title`. Use the exact `<title>` text (strip the ` | Num Num's Bakery` suffix). 62 posts were missing during the 2026-06-05 GEO audit — missing entries mean the post is invisible to ChatGPT, Perplexity, and other AI assistants reading the file.
 
 ### Topics filter dropdown (update every post)
 
