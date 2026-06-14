@@ -51,10 +51,10 @@ If you find yourself about to output `type: update` — STOP. The correct output
 
 
 ```yaml
-MAKE_WEBHOOK_URL: https://hook.eu1.make.com/3lpat91ijfb2zqd27w14adnzjdopiofk
+MAKE_WEBHOOK_URL: https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r
 GBP_LOCATION: 96/96 Wigram Street, Harris Park NSW 2150
 DEFAULT_CTA_URL: https://numnumsbakery.com.au/#order
-MEDIA_ITEMS_MAPPING: "{{24.media_items[1]}}"  # Make.com module reference for this scenario
+MEDIA_ITEMS_MAPPING: "{{1.media_items[1]}}"  # Make.com module reference for this scenario
 ```
 
 
@@ -576,7 +576,7 @@ summary: |
 media_items:
   - "https://images.pexels.com/photos/xxxxx/photo.jpeg?auto=compress&cs=tinysrgb&w=1200"
 # ⚠️ media_items is a plain ARRAY OF STRINGS (direct image URLs)
-# Make.com maps this as {{24.media_items[1]}} — Harris Park scenario uses module 24
+# Make.com maps this as {{1.media_items[1]}} — Harris Park scenario webhook is module 1
 # JSON format: "media_items": ["https://..."]
 # Must be a real, publicly accessible image URL (Pexels/Unsplash direct link)
 # Minimum 1200×900 px · 4:3 ratio · max 1 MB
