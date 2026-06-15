@@ -20,6 +20,10 @@ const jost = Jost({
 export const metadata: Metadata = {
   title: "Share Your Experience — Num Num's Bakery",
   description: 'Let us know how we did. Your feedback helps us bake it better every time.',
+  icons: {
+    icon: '/review/favicon-brand.png',
+    apple: '/review/favicon-brand.png',
+  },
 }
 
 export default function RootLayout({
