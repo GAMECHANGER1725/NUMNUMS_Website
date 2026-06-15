@@ -265,11 +265,12 @@ export default function ReviewForm() {
     try {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          rating,
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          rating: String(rating),
           feedback: feedback.trim() || '(no comment)',
-        }),
+        }).toString(),
       })
     } catch {
       // Fail silently — still show thank-you
