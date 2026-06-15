@@ -195,7 +195,7 @@ function ThankYou() {
   )
 }
 
-function Redirecting() {
+function Redirecting({ hasFeedback }: { hasFeedback: boolean }) {
   return (
     <FullScreen>
       <div
@@ -222,12 +222,21 @@ function Redirecting() {
       >
         Taking you to Google…
       </h2>
-      <p
-        className="mt-3 font-sans font-light"
-        style={{ fontSize: 14, color: '#8B6A5A' }}
-      >
-        Your review makes a huge difference.
-      </p>
+      {hasFeedback ? (
+        <p
+          className="mt-3 font-sans font-light"
+          style={{ fontSize: 14, color: '#C85478' }}
+        >
+          ✓ Your feedback has been copied — just paste it into Google Reviews.
+        </p>
+      ) : (
+        <p
+          className="mt-3 font-sans font-light"
+          style={{ fontSize: 14, color: '#8B6A5A' }}
+        >
+          Your review makes a huge difference.
+        </p>
+      )}
     </FullScreen>
   )
 }
@@ -243,9 +252,13 @@ export default function ReviewForm() {
 
     if (rating >= 4) {
       setStatus('redirecting')
+      const text = feedback.trim()
+      if (text) {
+        navigator.clipboard.writeText(text).catch(() => { /* silent fallback */ })
+      }
       setTimeout(() => {
         window.location.href = GOOGLE_URL
-      }, 1400)
+      }, 1800)
       return
     }
 
@@ -266,7 +279,7 @@ export default function ReviewForm() {
   }
 
   if (status === 'success') return <ThankYou />
-  if (status === 'redirecting') return <Redirecting />
+  if (status === 'redirecting') return <Redirecting hasFeedback={!!feedback.trim()} />
 
   return (
     <div className="h-screen overflow-hidden flex flex-col md:flex-row">
