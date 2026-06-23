@@ -31,6 +31,8 @@ main `blog` skill's references directory, not in `blog-write/`):
 
 ## Workflow
 
+> **Session startup rule (Num Nums Bakery project):** Before beginning any post, re-read this file (`skills/blog-write/SKILL.md`) in full. Do not rely on a cached or summarised version from earlier in the session. This re-read happens once per post, at the start of Phase 0, every time.
+
 ### Phase 0: Surface Targeting (do this BEFORE research)
 
 Decide which of the FLOW 5 surfaces this post is meant to win. The choice
@@ -597,10 +599,11 @@ The orchestrator holds the loop counter; this sub-skill never loops itself.
 
 ### Phase 6.8: Mandatory Post-Write Analysis (Num Nums Bakery project)
 
-After writing the HTML file and before delivery, **always run `/blog-analyze`** on the finished post. This is not optional.
+After writing the HTML file and before delivery, **always invoke the `/blog-analyze` Skill tool** on the finished post. This is not optional and cannot be substituted with inline programmatic checks (word-count scripts, grep, Python gate-checks). Before invoking the Skill, **re-read `skills/blog-analyze/SKILL.md` in full** — do not rely on a cached read from earlier in the session.
 
 Steps:
-1. Run the analysis against the newly written file.
+1. Re-read `skills/blog-analyze/SKILL.md` in full.
+2. Invoke the `/blog-analyze` Skill tool against the newly written file.
 2. Fix **every issue** returned, working Critical → High → Medium → Low. Do not present the draft until all findings are resolved.
 3. **Always update both checklist files after every post** — this step is unconditional, not "if findings exist." After fixing all issues, go through every finding at every severity level (Critical → Low) and for each one:
    a. Check whether the pattern is already covered verbatim in the **Num Nums Bakery HTML Project — Non-negotiable Pre-publish Checklist** section of this file (SKILL.md).

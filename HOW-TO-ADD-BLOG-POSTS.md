@@ -23,6 +23,17 @@ All dates on blog cards and inside post files must reflect the **Sydney date** a
 
 ---
 
+## Step 0 — Invoke `/blog-write` and re-read SKILL.md (mandatory before every post)
+
+Before writing any post:
+
+1. **Invoke the `/blog-write` Skill tool** — do not write inline without invoking it first.
+2. **Re-read `skills/blog-write/SKILL.md` in full** before beginning. Do not rely on a cached read from earlier in the session.
+
+These two steps are non-negotiable and run at the start of every post, every time.
+
+---
+
 ## Step 1 — Create the blog post HTML
 
 Copy an existing post as a starting point (e.g. `blog/eggless-cakes-schofields.html`) and update:
@@ -240,7 +251,9 @@ node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug
 
 ## Quality Gate — Pre-publish Checklist
 
-Run `/blog-analyze` on every post before marking it done. Fix all issues found (Critical → High → Medium → Low). The items below are the recurring failure patterns discovered during live audits — check them manually before even running the analyzer.
+**Always invoke the `/blog-analyze` Skill tool** on every post before marking it done — do not substitute inline programmatic checks (word-count scripts, grep, Python) for the Skill invocation. Before running the analysis, **re-read `skills/blog-analyze/SKILL.md` in full**.
+
+Fix all issues found (Critical → High → Medium → Low). The items below are the recurring failure patterns discovered during live audits — check them manually before even running the analyzer.
 
 ### Meta & SEO
 
