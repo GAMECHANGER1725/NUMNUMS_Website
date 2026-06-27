@@ -178,13 +178,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-section {
       position: relative;
       overflow: hidden;
-      height: 100vh;
-      height: 100dvh;
-      min-height: 600px;
+      /* min-height (not fixed height) so the hero grows instead of clipping its
+         content on short desktop windows; flex centres the content vertically. */
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      /* Top-align (not centre) so the content sits high and its bottom clears
+         a docked taskbar / browser chrome on short desktop windows. */
+      justify-content: flex-start;
+      align-items: center;
       background-color: #2C1A0E;
     }
     @media (max-width: 640px) {
-      .hero-section { height: 100vh; height: 100dvh; min-height: 600px; }
+      .hero-section { min-height: 100vh; min-height: 100dvh; }
       .hero-content {
         justify-content: center;
         padding-top: calc(68px + 2.5rem) !important;
@@ -233,16 +240,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-content {
       position: relative;
       z-index: 2;
-      height: 100%;
+      width: 100%;
+      max-width: 900px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      /* safe center: when content is taller than the viewport, align to the
-         top (below the fixed nav) instead of overflowing up under the navbar */
-      justify-content: safe center;
-      padding: calc(68px + 1.5rem) 1.5rem 2rem;
-      max-width: 900px;
-      margin: 0 auto;
+      padding: calc(68px + 1rem) 1.5rem 2rem;
     }
 
     /* Material Symbols */
@@ -412,20 +415,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .view-link:hover{color:#A03D5E !important;}
     @media(max-width:600px){.ps-wrap{grid-template-columns:1fr;}}
 
-    /* Testimonial slider */
-    .ts-track-wrap{overflow:hidden;}
-    .ts-track{display:flex;align-items:flex-start;}
+    /* Reviews — Wall of Love cards */
     .ts-card{flex-shrink:0;padding:0.5rem;box-sizing:border-box;}
     .ts-card-inner{background:#fff;border-radius:1.5rem;padding:1.5rem;border:1px solid rgba(200,84,120,0.12);box-shadow:0 2px 12px rgba(44,26,14,0.05);display:flex;flex-direction:column;}
-    .ts-nav-btn{width:40px;height:40px;border-radius:50%;border:none;background:rgba(44,26,14,0.60);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;box-shadow:0 2px 10px rgba(44,26,14,0.25);opacity:0.88;transition:opacity 0.2s ease,box-shadow 0.2s ease,transform 0.2s cubic-bezier(0.34,1.56,0.64,1);}
-    .ts-nav-btn:hover{opacity:1;transform:scale(1.1);box-shadow:0 4px 16px rgba(44,26,14,0.30);}
-    .ts-nav-btn:focus-visible{outline:2px solid #C85478;outline-offset:2px;}
-    .ts-nav-btn:active{box-shadow:0 0 0 10px rgba(200,84,120,0.18),0 0 22px rgba(200,84,120,0.45);opacity:1;transform:scale(0.95);}
-    .ts-nav-overlay{position:absolute;top:calc(50% - 22px);z-index:10;}
-    .ts-nav-prev{left:6px;}
-    .ts-nav-next{right:6px;}
-    .ts-dot{width:8px;height:8px;border-radius:50%;background:rgba(44,26,14,0.15);border:none;cursor:pointer;padding:0;transition:background 0.25s ease,transform 0.25s cubic-bezier(0.34,1.56,0.64,1);}
-    .ts-dot.ts-dot-active{background:#C85478;transform:scale(1.3);}
+
+    /* Wall of Love — static masonry grid (replaces carousel) */
+    .wall-grid{column-count:3;column-gap:1.5rem;}
+    .wall-grid .ts-card{width:auto;padding:0;margin:0 0 1.5rem;display:block;break-inside:avoid;-webkit-column-break-inside:avoid;}
+    .wall-grid .ts-thumb-btn{display:block;width:100%;height:200px;border-radius:0.9rem;margin-top:1.1rem;border:1px solid rgba(200,84,120,0.18);background-color:#FFF8F2;}
+    @media (max-width:1100px){.wall-grid{column-count:2;}}
+    @media (max-width:680px){.wall-grid{column-count:1;}.wall-grid .ts-thumb-btn{height:250px;}}
+
+    /* CTA trust badges + static hero social proof */
+    .cta-badges{display:flex;flex-wrap:wrap;gap:7px 16px;margin-bottom:0.85rem;max-width:540px;}
+    .cta-badges span{display:inline-flex;align-items:center;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.01em;color:rgba(255,255,255,0.82);white-space:nowrap;}
+    .cta-badges span::before{content:'\2713';margin-right:5px;color:#E8A4B5;font-weight:700;}
+    .hero-proof{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 11px;padding:0.6rem 0.95rem;border-radius:12px;border:1px solid rgba(232,164,181,0.35);background:rgba(20,8,2,0.35);box-shadow:0 0 18px rgba(200,84,120,0.18),inset 0 1px 0 rgba(255,255,255,0.06);max-width:540px;}
+    .hero-proof .hp-stars{color:#F4B400;font-size:0.82rem;letter-spacing:1px;}
+    .hero-proof .hp-rating{font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;color:#fff;}
+    .hero-proof .hp-quote{font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:300;font-style:italic;color:rgba(255,255,255,0.80);flex-basis:100%;transition:opacity 0.4s ease;}
+    .hero-proof .hp-quote.hp-fade{opacity:0;}
 
     /* Photo thumbnail button */
     .ts-thumb-btn{display:inline-block;width:72px;height:72px;border-radius:0.75rem;border:1.5px solid rgba(200,84,120,0.22);background-size:cover;background-position:center;cursor:pointer;padding:0;position:relative;overflow:hidden;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease;}
@@ -463,7 +472,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         "telephone": "+61425697725",
         "foundingDate": "2019",
         "founder": { "@type": "Person", "name": "Tarun Patel" },
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/"],
+        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"],
         "description": "100% eggless custom cakes made to order in Sydney. Jain-friendly, vegetarian, birthday, wedding and celebration cakes. Pick up from Harris Park or Riverstone."
       },
       {
@@ -473,11 +482,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         "name": "Num Nums Bakery",
         "publisher": { "@id": "https://numnumsbakery.com.au/#organization" },
         "potentialAction": {
-          "@type": "OrderAction",
+          "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://wa.me/61425697725"
-          }
+            "urlTemplate": "https://numnumsbakery.com.au/?s={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
         }
       },
       {
@@ -513,55 +523,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         ],
         "aggregateRating": {
           "@type": "AggregateRating",
-          "ratingValue": "4.6",
-          "reviewCount": "50",
-          "bestRating": "5",
-          "worstRating": "1"
+          "ratingValue": 4.6,
+          "reviewCount": 50,
+          "bestRating": 5,
+          "worstRating": 1
         },
-        "review": [
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Naina Goyal" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2024-09-12",
-            "reviewBody": "I've purchased around 5 customised cakes for special occasions and always received the perfect eggless cake at a reasonable price. Consistently excellent quality every single time. Highly recommended!"
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Surbhi Sharma" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2024-11-03",
-            "reviewBody": "Would really recommend Num Num's Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake. All my guests loved it and praised the customization."
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Karunesh Singh" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2025-01-18",
-            "reviewBody": "Num Num's Bakery delivered a fantastic experience! I ordered a 14\" Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it."
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Sivasankar Kuttalingam" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2024-12-07",
-            "reviewBody": "We ordered a custom racing-theme cake for our little one's 2nd birthday and it turned out far beyond our expectations. The design was incredibly detailed, from the checkered pattern to the miniature cars and vibrant colours."
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Ankit Aggarwal" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2025-02-14",
-            "reviewBody": "The cake was absolutely delightful, beautifully made and delicious. The best part was how closely it matched the picture we shared. We're always impressed by Num Num's Bakery and have never been disappointed."
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Patel Hirendra" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2025-03-02",
-            "reviewBody": "We ordered a cookies and cream cake for my son's 5th birthday. It looked so beautiful, was nicely presented, and tasted amazing. Exactly what we wanted."
-          }
-        ],
         "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521"
       },
       {
@@ -603,35 +569,93 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         ],
         "aggregateRating": {
           "@type": "AggregateRating",
-          "ratingValue": "4.6",
-          "reviewCount": "50",
-          "bestRating": "5",
-          "worstRating": "1"
+          "ratingValue": 4.6,
+          "reviewCount": 50,
+          "bestRating": 5,
+          "worstRating": 1
         },
-        "review": [
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Vijit Desai" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2024-08-20",
-            "reviewBody": "Absolutely love Num Num's Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety. Every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Nilesh Patel" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2024-10-05",
-            "reviewBody": "Excellent Mango flavour cake, great customer service, and value for money. Thank you for making our day."
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Varuni Bottu" },
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-            "datePublished": "2025-01-30",
-            "reviewBody": "I always order from Num Nums and the cakes are so yum and eggless, always fresh and juicy. My personal favourites are pineapple and mango flavours. Highly recommend!"
-          }
-        ],
         "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698"
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-hp-1",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#harris-park" },
+        "author": { "@type": "Person", "name": "Naina Goyal" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2024-09-12",
+        "reviewBody": "I've purchased around 5 customised cakes for special occasions and always received the perfect eggless cake at a reasonable price. Consistently excellent quality every single time. Highly recommended!"
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-hp-2",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#harris-park" },
+        "author": { "@type": "Person", "name": "Surbhi Sharma" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2024-11-03",
+        "reviewBody": "Would really recommend Num Num's Bakery for anyone who is after good custom eggless cakes. You made my son's 3rd birthday super cool with this beautiful jungle theme cake. All my guests loved it and praised the customization."
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-hp-3",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#harris-park" },
+        "author": { "@type": "Person", "name": "Karunesh Singh" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2025-01-18",
+        "reviewBody": "Num Num's Bakery delivered a fantastic experience! I ordered a 14\" Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it."
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-hp-4",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#harris-park" },
+        "author": { "@type": "Person", "name": "Sivasankar Kuttalingam" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2024-12-07",
+        "reviewBody": "We ordered a custom racing-theme cake for our little one's 2nd birthday and it turned out far beyond our expectations. The design was incredibly detailed, from the checkered pattern to the miniature cars and vibrant colours."
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-hp-5",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#harris-park" },
+        "author": { "@type": "Person", "name": "Ankit Aggarwal" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2025-02-14",
+        "reviewBody": "The cake was absolutely delightful, beautifully made and delicious. The best part was how closely it matched the picture we shared. We're always impressed by Num Num's Bakery and have never been disappointed."
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-hp-6",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#harris-park" },
+        "author": { "@type": "Person", "name": "Patel Hirendra" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2025-03-02",
+        "reviewBody": "We ordered a cookies and cream cake for my son's 5th birthday. It looked so beautiful, was nicely presented, and tasted amazing. Exactly what we wanted."
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-rs-1",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#riverstone" },
+        "author": { "@type": "Person", "name": "Vijit Desai" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2024-08-20",
+        "reviewBody": "Absolutely love Num Num's Bakery! The cakes are soft, flavorful, and beautifully decorated. Fantastic variety. Every bite is pure joy. The quality is top-notch and the staff is warm and attentive. Perfect for any occasion!"
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-rs-2",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#riverstone" },
+        "author": { "@type": "Person", "name": "Nilesh Patel" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2024-10-05",
+        "reviewBody": "Excellent Mango flavour cake, great customer service, and value for money. Thank you for making our day."
+      },
+      {
+        "@type": "Review",
+        "@id": "https://numnumsbakery.com.au/#review-rs-3",
+        "itemReviewed": { "@id": "https://numnumsbakery.com.au/#riverstone" },
+        "author": { "@type": "Person", "name": "Varuni Bottu" },
+        "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
+        "datePublished": "2025-01-30",
+        "reviewBody": "I always order from Num Nums and the cakes are so yum and eggless, always fresh and juicy. My personal favourites are pineapple and mango flavours. Highly recommend!"
       }
     ]
   }
@@ -848,25 +872,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="hero-content">
       <!-- Badge -->
-      <div style="margin-bottom:1rem;">
+      <div style="margin-bottom:0.75rem;">
         <span id="hero-badge" style="display:inline-block; padding:6px 16px; border-radius:9999px; border:1px solid rgba(255,255,255,0.35); background:rgba(255,255,255,0.10); font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.10em; text-transform:uppercase; color:rgba(255,255,255,0.92); white-space:nowrap;">
-          100% Eggless &nbsp;·&nbsp; Vegetarian Friendly &nbsp;·&nbsp; Est. 2019
+          Sydney's 100% Eggless Bakery &nbsp;·&nbsp; Est. 2019
         </span>
       </div>
 
       <!-- H1 -->
-      <h1 style="font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,7vw,5.5rem); font-weight:600; line-height:1.08; letter-spacing:-0.03em; color:#fff; margin:0 0 1rem;">
-        Sydney's 100% Eggless<br>
-        <em style="font-style:italic; font-weight:300;">Custom Cake Bakery.</em>
+      <h1 style="font-family:'Cormorant Garamond',serif; font-size:clamp(2.7rem,6vw,4.75rem); font-weight:600; line-height:1.06; letter-spacing:-0.03em; color:#fff; margin:0 0 0.75rem;">
+        A Custom Cake So Good,<br>
+        <em style="font-style:italic; font-weight:300;">No One Will Guess It's Eggless.</em>
       </h1>
 
       <!-- Subheading -->
-      <p style="font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(1.2rem,2.2vw,1.6rem); color:rgba(255,255,255,0.80); letter-spacing:0.01em; line-height:1.5; margin:0 0 1.75rem;">
-        Made without eggs. Made with love. Harris Park &amp; Riverstone.
+      <p style="font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(1.2rem,2.2vw,1.6rem); color:rgba(255,255,255,0.80); letter-spacing:0.01em; line-height:1.5; margin:0 0 1.1rem;">
+        Send us any design and we'll recreate it &mdash; 100% eggless, made fresh in 48 hours. Pick up in Harris Park &amp; Riverstone.
       </p>
 
       <!-- CTAs -->
-      <div style="display:flex; flex-wrap:nowrap; gap:10px; align-items:center; margin-bottom:1.25rem;">
+      <div style="display:flex; flex-wrap:nowrap; gap:10px; align-items:center; margin-bottom:0.9rem;">
         <a href="order.html" class="btn-cta">Order Your Cake</a>
         <a href="#our-cakes" class="btn-secondary" style="border-color:rgba(255,255,255,0.4); color:#fff;"
            onclick="event.preventDefault(); document.getElementById('our-cakes').scrollIntoView({behavior:'smooth'});">
@@ -874,46 +898,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </a>
       </div>
 
-      <!-- Testimonial block -->
-      <div id="testimonial-block" style="margin-bottom:1.25rem; transition:opacity 0.5s ease; display:inline-block; padding:0.6rem 1rem 0.65rem; border-radius:12px; border:1px solid rgba(232,164,181,0.35); background:rgba(20,8,2,0.35); box-shadow:0 0 18px rgba(200,84,120,0.18), inset 0 1px 0 rgba(255,255,255,0.06);">
-        <div id="tchip-stars" style="font-size:0.72rem; color:#E8A4B5; letter-spacing:0.12em; margin-bottom:0.3rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <div id="tchip-quote" style="font-family:'Jost',sans-serif; font-size:clamp(0.78rem,2vw,0.88rem); font-weight:300; font-style:italic; color:rgba(255,255,255,0.95); line-height:1.5; margin-bottom:0.25rem;"></div>
-        <div id="tchip-name" style="font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:500; color:rgba(232,164,181,0.85); letter-spacing:0.04em;"></div>
+      <!-- Trust badges + risk reversal (directly under CTA) -->
+      <div class="cta-badges">
+        <span>100% Eggless, every cake</span>
+        <span>Fresh, made in 48 hours</span>
+        <span>We match your photo</span>
+        <span>Love it or we'll make it right</span>
       </div>
-      <script>
-        (function(){
-          var reviews=[
-            {quote:"\u201cConsistently excellent quality every time.\u201d",name:"Naina G."},
-            {quote:"\u201cThe cake matched the picture we shared exactly.\u201d",name:"Ankit A."},
-            {quote:"\u201cSo yum and always fresh \u2014 highly recommend.\u201d",name:"Varuni B."}
-          ];
-          var block=document.getElementById('testimonial-block');
-          var qEl=document.getElementById('tchip-quote');
-          var nEl=document.getElementById('tchip-name');
-          var i=0;
-          function show(){
-            block.style.opacity='0';
-            setTimeout(function(){
-              qEl.textContent=reviews[i].quote;
-              nEl.textContent='\u2014 '+reviews[i].name;
-              block.style.opacity='1';
-            },500);
-            i=(i+1)%reviews.length;
-          }
-          show();
-          setInterval(show,4000);
-        })();
-      </script>
 
-      <!-- Trust stats -->
-      <div style="display:flex; flex-wrap:nowrap; align-items:center; gap:8px; overflow:hidden;">
-        <span style="font-family:'Jost',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.7); white-space:nowrap;">Since 2019</span>
-        <div class="trust-divider" style="background:rgba(255,255,255,0.25); flex-shrink:0;"></div>
-        <span style="font-family:'Jost',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.7); white-space:nowrap;">2 Locations</span>
-        <div class="trust-divider" style="background:rgba(255,255,255,0.25); flex-shrink:0;"></div>
-        <span style="font-family:'Jost',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.7); white-space:nowrap;">15 Flavours</span>
-        <div class="trust-divider" style="background:rgba(255,255,255,0.25); flex-shrink:0;"></div>
-        <span style="font-family:'Jost',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.7); white-space:nowrap;">100% Eggless</span>
+      <!-- Rotating social proof — cycles through real reviews every 3 s -->
+      <div class="hero-proof" id="hero-proof">
+        <span class="hp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span class="hp-rating">4.6 &middot; 50+ Google reviews</span>
+        <span class="hp-quote" id="hero-rotating-quote">&ldquo;It matched the picture we shared exactly.&rdquo; &mdash; Ankit A.</span>
       </div>
     </div>
   </section>
@@ -1207,7 +1204,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <input type="range" min="1" max="60" value="8" class="ps-slider" aria-label="Number of guests">
           <div style="font-family:'Jost',sans-serif;font-size:0.78rem;color:#5C3A22;display:flex;align-items:center;justify-content:space-between;">
             <span>Need more than 55?</span>
-            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" style="color:#C85478;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">Contact us <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+            <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20large%20100%25%20eggless%20cake%20for%2055%2B%20guests.%20Date%3A%20%2F%20Design%3A" target="_blank" rel="noopener" style="color:#C85478;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">Contact us <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
           </div>
         </div>
         <!-- Right card -->
@@ -1218,8 +1215,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="ps-price-display">$39.99</div>
           <p class="ps-serves" style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:#5C3A22;margin:0 0 1.5rem;line-height:1.5;">Serves 6–8 guests</p>
           <p class="ps-custom-msg" style="display:none;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:300;color:#5C3A22;margin:0 0 1.5rem;line-height:1.6;">For 55+ guests we recommend a tiered cake. Contact us for a custom quote.</p>
-          <a href="order.html"
-             class="ps-order-btn btn-cta" style="font-size:0.85rem;padding:10px 20px;">
+          <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone"
+             target="_blank" rel="noopener" class="ps-order-btn btn-cta" style="font-size:0.85rem;padding:10px 20px;">
             <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:-0.05em;">chat</span> WhatsApp to Order
           </a>
         </div>
@@ -1234,7 +1231,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Header row: rating left, nav buttons right -->
       <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; margin-bottom:3rem;" class="reveal">
         <div>
-          <div class="section-label" style="margin-bottom:0.75rem;">What Sydney Families Are Saying</div>
+          <div class="section-label" style="margin-bottom:0.75rem;">Loved by 50+ Sydney Families</div>
           <div style="display:flex; align-items:baseline; gap:12px;">
             <span class="font-display" style="font-size:4.5rem; font-weight:700; color:#2C1A0E; line-height:1;">4.6</span>
             <div>
@@ -1246,12 +1243,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
-      <!-- Slider track -->
-      <div class="ts-track-wrap reveal" style="position:relative;">
-        <button id="ts-prev" class="ts-nav-btn ts-nav-overlay ts-nav-prev" aria-label="Previous review">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div id="ts-track" class="ts-track">
+      <!-- Wall of Love -->
+      <div class="wall-grid reveal">
 
           <!-- Card 1 — Vijit Desai -->
           <div class="ts-card">
@@ -1299,6 +1292,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
               <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"Excellent Mango flavour cake, great customer service, and value for money. Thank you for making our day."</p>
+              <button class="ts-thumb-btn" data-src="cake_photos/Product%20Images/Mango.webp" style="background-image:url(cake_photos/Product%20Images/Mango.webp);" aria-label="View mango cake photo"></button>
             </div>
           </div>
 
@@ -1315,6 +1309,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
               <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"I always order from Num Nums and the cakes are so yum and eggless, always fresh and juicy. My personal favourites are pineapple and mango flavours. Highly recommend!"</p>
+              <button class="ts-thumb-btn" data-src="cake_photos/Product%20Images/Pineapple.webp" style="background-image:url(cake_photos/Product%20Images/Pineapple.webp);" aria-label="View pineapple cake photo"></button>
             </div>
           </div>
 
@@ -1348,6 +1343,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
               <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"Num Num's Bakery delivered a fantastic experience! I ordered a 14&quot; Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it. Thank you!"</p>
+              <button class="ts-thumb-btn" data-src="cake_photos/Product%20Images/Butter_Scotch.webp" style="background-image:url(cake_photos/Product%20Images/Butter_Scotch.webp);" aria-label="View butterscotch cake photo"></button>
             </div>
           </div>
 
@@ -1397,29 +1393,102 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </div>
               <div style="color:#F4B400; font-size:0.85rem; margin-bottom:0.75rem; letter-spacing:2px;">★★★★★</div>
               <p class="font-display" style="font-size:1.05rem; font-style:italic; font-weight:400; color:#2C1A0E; line-height:1.65; margin:0;">"We ordered a cookies and cream cake for my son's 5th birthday. It looked so beautiful, was nicely presented, and tasted amazing. Exactly what we wanted. Thank you!"</p>
+              <button class="ts-thumb-btn" data-src="cake_photos/Product%20Images/Cookies_And_Cream.webp" style="background-image:url(cake_photos/Product%20Images/Cookies_And_Cream.webp);" aria-label="View cookies and cream cake photo"></button>
             </div>
           </div>
 
-        </div>
-        <button id="ts-next" class="ts-nav-btn ts-nav-overlay ts-nav-next" aria-label="Next review">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
       </div>
-
-      <!-- Dot navigation -->
-      <div id="ts-dots" style="display:flex; justify-content:center; gap:8px; margin-top:2rem;"></div>
 
     </div>
   </section>
 
+  <!-- ═══════════════════════════════════════════════ FAQ ═══ -->
+  <section style="padding:6rem 1.5rem; background:#FFF8F2;" aria-label="Frequently asked questions">
+    <style>
+      .faq-item{background:#fff;border:1px solid rgba(200,84,120,0.12);border-radius:1rem;margin-bottom:1rem;box-shadow:0 2px 12px rgba(44,26,14,0.04);overflow:hidden;}
+      .faq-item summary{list-style:none;cursor:pointer;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;color:#2C1A0E;transition:color 0.2s ease;}
+      .faq-item summary::-webkit-details-marker{display:none;}
+      .faq-item summary:hover{color:#C85478;}
+      .faq-item summary:focus-visible{outline:2px solid #C85478;outline-offset:-2px;border-radius:1rem;}
+      .faq-icon{flex-shrink:0;width:24px;height:24px;position:relative;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+      .faq-icon::before,.faq-icon::after{content:'';position:absolute;top:50%;left:50%;width:12px;height:2px;background:#C85478;border-radius:2px;transform:translate(-50%,-50%);transition:transform 0.3s ease;}
+      .faq-icon::after{transform:translate(-50%,-50%) rotate(90deg);}
+      .faq-item[open] .faq-icon::after{transform:translate(-50%,-50%) rotate(0deg);}
+      .faq-item[open] summary{color:#C85478;}
+      .faq-answer{padding:0 1.5rem 1.4rem;font-family:'Jost',sans-serif;font-weight:300;font-size:0.9rem;color:#5C3A22;line-height:1.7;}
+      @media (prefers-reduced-motion: reduce){.faq-icon,.faq-icon::before,.faq-icon::after{transition:none;}}
+    </style>
+    <div style="max-width:720px; margin:0 auto;">
+      <div style="text-align:center; margin-bottom:3rem;" class="reveal">
+        <div class="section-label" style="margin-bottom:1rem; justify-content:center;">Good to Know</div>
+        <h2 class="font-display" style="font-size:clamp(2.2rem,4vw,3rem); font-weight:600; letter-spacing:-0.03em; color:#2C1A0E; margin:0;">Eggless Cake Questions, Answered</h2>
+      </div>
+      <div class="reveal">
+        <details class="faq-item" open>
+          <summary>Are your cakes really 100% eggless?<span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-answer">Yes. Every cake we bake is completely egg-free &mdash; not just the ones labelled eggless. There are no eggs anywhere in our kitchen, so vegetarian, Jain-friendly and halal-friendly families can order anything on the menu without asking twice.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Can you make a cake from a photo I send?<span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-answer">Yes. Send us a photo from Instagram, Pinterest or anywhere else and we&rsquo;ll recreate the design for your occasion. Our gallery is a starting point, not a limit &mdash; if you can show us a picture, we can make the cake.</div>
+        </details>
+        <details class="faq-item">
+          <summary>How much notice do you need?<span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-answer">Custom cakes need at least 48 hours&rsquo; notice. Message us your date, design and pickup store, and we&rsquo;ll confirm your order the same day.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Do you deliver, or is it pickup?<span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-answer">Every order is made fresh for pickup from our Harris Park or Riverstone stores, ready at the time you choose.</div>
+        </details>
+        <details class="faq-item">
+          <summary>How do I get a quote?<span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-answer">Message us on WhatsApp or call with your date, design and pickup store. Quotes are free and there&rsquo;s no obligation to order.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Are your cakes really 100% eggless?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every cake we bake is completely egg-free, not just the ones labelled eggless. There are no eggs anywhere in our kitchen, so vegetarian, Jain-friendly and halal-friendly families can order anything on the menu without asking twice." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you make a cake from a photo I send?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Send us a photo from Instagram, Pinterest or anywhere else and we'll recreate the design for your occasion. Our gallery is a starting point, not a limit. If you can show us a picture, we can make the cake." }
+      },
+      {
+        "@type": "Question",
+        "name": "How much notice do you need?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Custom cakes need at least 48 hours' notice. Message us your date, design and pickup store, and we'll confirm your order the same day." }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you deliver, or is it pickup?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Every order is made fresh for pickup from our Harris Park or Riverstone stores, ready at the time you choose." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I get a quote?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Message us on WhatsApp or call with your date, design and pickup store. Quotes are free and there's no obligation to order." }
+      }
+    ]
+  }
+  </script>
+
   <!-- ════════════════════════════════ HOW TO ORDER ═══ -->
-  <section style="padding:6rem 1.5rem; background:#FFF8F2;">
+  <section style="padding:6rem 1.5rem; background:#fff;">
     <div style="max-width:960px; margin:0 auto; text-align:center;">
 
       <div class="reveal">
         <div class="section-label" style="margin-bottom:1rem; justify-content:center;">Ready to Order</div>
         <h2 class="font-display" style="font-size:clamp(2.2rem,4vw,3rem); font-weight:600; letter-spacing:-0.03em; color:#2C1A0E; margin:0 0 1rem;">How to Order an Eggless Custom Cake</h2>
-        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22; max-width:480px; margin:0 auto 3.5rem;">Custom cakes take just 48 hours. Order via WhatsApp or phone.</p>
+        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22; max-width:480px; margin:0 auto 3.5rem;">Three simple steps. Custom cakes ready in just 48 hours &mdash; order via WhatsApp or phone.</p>
       </div>
 
       <!-- 3 Steps -->
@@ -1443,7 +1512,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <!-- CTAs -->
       <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; margin-bottom:2.5rem;" class="reveal">
-        <a href="https://wa.me/61425697725"
+        <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone"
            target="_blank" rel="noopener" class="btn-cta" style="background:#25D366; box-shadow:0 4px 14px rgba(37,211,102,0.30);"
            onmouseenter="this.style.background='#1DAD56'" onmouseleave="this.style.background='#25D366'">
           <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-0.1em;">chat</span> Message on WhatsApp
@@ -1472,7 +1541,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="display:flex;gap:8px;">
             <a href="https://www.instagram.com/numnumsbakery/" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg></a>
             <a href="https://www.facebook.com/Numnumsbakeryharrispark/" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" class="footer-social-btn" aria-label="WhatsApp"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
+            <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener" class="footer-social-btn" aria-label="WhatsApp"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
             <a href="tel:+61425697725" class="footer-social-btn" aria-label="Phone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.5 2 2 0 0 1 3.6 1.32h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
           </div>
           <a href="mailto:info.numnumsbakery@gmail.com" style="display:inline-flex;align-items:center;gap:6px;margin-top:0.75rem;font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:400;color:rgba(255,248,242,0.5);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#E8A4B5'" onmouseleave="this.style.color='rgba(255,248,242,0.5)'"><span class="material-symbols-outlined" style="font-size:1rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">mail</span>info.numnumsbakery@gmail.com</a>
@@ -1500,7 +1569,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <a href="about.html" class="footer-nav-link">About Us</a>
             <a href="locations.html" class="footer-nav-link">Locations</a>
             <a href="order.html" class="footer-nav-link">Order Online</a>
-            <a href="https://wa.me/61425697725" target="_blank" rel="noopener" class="footer-nav-link">WhatsApp Order</a>
+            <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener" class="footer-nav-link">WhatsApp Order</a>
             <a href="privacy-policy.html" class="footer-nav-link">Privacy Policy</a>
           </div>
         </div>
@@ -1675,79 +1744,61 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.addEventListener('click', closeAll);
     })();
 
-    // ── Testimonial Carousel ─────────────────────────────────────
+    // Reviews are now a static Wall of Love (masonry grid) — no carousel JS needed.
+
+    // ── Hero rotating quote ───────────────────────────────────────
     (function() {
-      var wrap    = document.querySelector('.ts-track-wrap');
-      var track   = document.getElementById('ts-track');
-      var prevBtn = document.getElementById('ts-prev');
-      var nextBtn = document.getElementById('ts-next');
-      var dotsWrap = document.getElementById('ts-dots');
-      if (!track || !wrap) return;
-      if (dotsWrap) dotsWrap.style.display = 'none';
-
-      var cards = Array.from(track.children);
-      var N = cards.length;
+      var quotes = [
+        "“It matched the picture we shared exactly.” — Ankit A.",
+        "“Best cake we’ve ever had. Soft, flavourful, and 100% eggless.” — Nilesh P.",
+        "“Ordered a jungle-theme cake — it was absolutely stunning.” — Surbhi G.",
+        "“The butterscotch cake was a hit at our party!” — Karunesh S.",
+        "“Custom design done perfectly. Everyone loved it.” — Vijit D.",
+        "“Amazing quality and super fresh. Highly recommend!” — Varuni B."
+      ];
       var idx = 0;
-
-      function getVisible() {
-        var w = window.innerWidth;
-        return w >= 1280 ? 3 : w >= 768 ? 2 : 1;
+      function rotate() {
+        var el = document.getElementById('hero-rotating-quote');
+        if (!el) return;
+        el.classList.add('hp-fade');
+        setTimeout(function() {
+          idx = (idx + 1) % quotes.length;
+          el.textContent = quotes[idx];
+          el.classList.remove('hp-fade');
+        }, 400);
       }
-
-      function getMax() { return Math.max(0, N - getVisible()); }
-
-      function setWidths() {
-        var visible = getVisible();
-        var cw = wrap.offsetWidth / visible;
-        cards.forEach(function(c) { c.style.width = cw + 'px'; });
-        if (idx > getMax()) idx = getMax();
-        track.style.transition = 'none';
-        track.style.transform = 'translateX(-' + (idx * cw) + 'px)';
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setInterval(rotate, 3000);
       }
-
-      function go(newIdx, animate) {
-        idx = newIdx;
-        var cw = wrap.offsetWidth / getVisible();
-        track.style.transition = animate
-          ? 'transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94)'
-          : 'none';
-        track.style.transform = 'translateX(-' + (idx * cw) + 'px)';
-      }
-
-      if (prevBtn) prevBtn.addEventListener('click', function() {
-        go(idx <= 0 ? getMax() : idx - 1, idx > 0);
-      });
-      if (nextBtn) nextBtn.addEventListener('click', function() {
-        go(idx >= getMax() ? 0 : idx + 1, idx < getMax());
-      });
-
-      window.addEventListener('resize', setWidths);
-      setWidths();
     })();
 
     // ── Photo Lightbox ───────────────────────────────────────────
+    // Listeners are bound to document and the overlay is looked up lazily,
+    // so this works regardless of where #photo-lightbox sits in the DOM.
     (function() {
-      var lb = document.getElementById('photo-lightbox');
-      var lbImg = document.getElementById('lb-img');
-      var lbClose = document.getElementById('lb-close');
-      if (!lb || !lbImg) return;
+      function lb() { return document.getElementById('photo-lightbox'); }
+      function lbImg() { return document.getElementById('lb-img'); }
       function open(src) {
-        lbImg.src = src;
-        lb.classList.add('lb-open');
+        var box = lb(), img = lbImg();
+        if (!box || !img) return;
+        img.src = src;
+        box.classList.add('lb-open');
         document.body.style.overflow = 'hidden';
       }
       function close() {
-        lb.classList.remove('lb-open');
+        var box = lb();
+        if (!box) return;
+        box.classList.remove('lb-open');
         document.body.style.overflow = '';
       }
-      if (lbClose) lbClose.addEventListener('click', close);
-      lb.addEventListener('click', function(e) { if (e.target === lb) close(); });
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
-      // Event delegation — works for any .ts-thumb-btn
+      // Event delegation — works for any .ts-thumb-btn and the close button.
       document.addEventListener('click', function(e) {
+        if (e.target.closest('#lb-close')) { close(); return; }
+        if (e.target === lb()) { close(); return; }
         var btn = e.target.closest('.ts-thumb-btn');
         if (btn && btn.dataset.src) open(btn.dataset.src);
       });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
     })();
   </script>
 
@@ -1756,7 +1807,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     (function() {
       var hero = document.querySelector('.hero-section');
       if (!hero) return;
-      function fit() { hero.style.height = window.innerHeight + 'px'; }
+      function fit() { hero.style.minHeight = window.innerHeight + 'px'; }
       fit();
       window.addEventListener('resize', fit, { passive: true });
     })();
@@ -1773,7 +1824,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- ═══════════════════ REACT MOBILE NAV ═══════════════════ -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Pinned to Babel 7: v8 defaults JSX to the automatic runtime (emits `import` from
+       react/jsx-runtime), which breaks in-browser classic-script compilation and stops the
+       mobile nav from mounting. v7 keeps the classic React.createElement output. -->
+  <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
   <script type="text/babel">
   (function () {
     const { useState, useEffect, useRef } = React;
@@ -2064,6 +2118,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   });
 })();
+</script>
+
+<!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
+<script>
+  (function(){
+    function fireEnquiry(method){
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'enquiry_click', { method: method, transport: 'beacon' });
+        }
+        if (window.dataLayer) {
+          window.dataLayer.push({ event: 'enquiry_click', enquiry_method: method });
+        }
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: method });
+        }
+      } catch (e) {}
+    }
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a[href]');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
+        fireEnquiry('whatsapp');
+      } else if (href.indexOf('tel:') === 0) {
+        fireEnquiry('phone');
+      }
+    }, true);
+  })();
 </script>
 
 </body>

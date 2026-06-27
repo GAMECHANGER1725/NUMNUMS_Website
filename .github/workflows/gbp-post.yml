@@ -1,0 +1,119 @@
+name: GBP Post Publisher
+
+on:
+  push:
+    paths:
+      - 'GBP/outbox/*.json'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Publish GBP posts to Make.com
+        run: |
+          python3 << 'PYEOF'
+          import json, os, sys, datetime
+          import urllib.request, urllib.error, subprocess
+
+          outbox_dir = 'GBP/outbox'
+          queue_path = 'GBP/posts-queue.md'
+
+          files = sorted(f for f in os.listdir(outbox_dir) if f.endswith('.json'))
+          if not files:
+              print('No outbox files found — nothing to do.')
+              sys.exit(0)
+
+          posted = 0
+          for fname in files:
+              fpath = os.path.join(outbox_dir, fname)
+              print(f'\n--- Processing {fname} ---')
+
+              with open(fpath) as f:
+                  data = json.load(f)
+
+              webhook  = data['webhook']
+              post_id  = data['post_id']
+              location = data.get('location', 'unknown')
+
+              # Build the Make.com payload (strip internal fields)
+              payload = {k: v for k, v in data.items()
+                         if k not in ('webhook', 'location', 'post_id', 'keywords')}
+
+              payload_bytes = json.dumps(payload).encode()
+              req = urllib.request.Request(
+                  webhook,
+                  data=payload_bytes,
+                  headers={'Content-Type': 'application/json'},
+                  method='POST'
+              )
+
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as resp:
+                      body = resp.read().decode()
+                      print(f'Make.com {resp.status}: {body[:200]}')
+              except urllib.error.HTTPError as e:
+                  body = e.read().decode()
+                  print(f'ERROR — HTTP {e.code}: {body[:500]}')
+                  sys.exit(1)
+              except Exception as e:
+                  print(f'ERROR — {e}')
+                  sys.exit(1)
+
+              # Update posts-queue.md
+              today      = datetime.date.today().isoformat()
+              image_url  = data['media_items'][0] if data.get('media_items') else ''
+              keywords   = data.get('keywords', [])
+              kw_lines   = '\n'.join(f'  - {k}' for k in keywords)
+
+              new_block = (
+                  f'### {post_id}\n\n'
+                  f'```yaml\n'
+                  f'id: {post_id}\n'
+                  f'status: published\n'
+                  f'published_at: {today}\n'
+                  f'post_type: "{data["post_type"]}"\n'
+                  f'title: "{data["title"]}"\n'
+                  f'cta_action: {data.get("cta_action", "LEARN_MORE")}\n'
+                  f'cta_url: "{data.get("cta_url", "")}"\n'
+                  f'media_items:\n'
+                  f'  - "{image_url}"\n'
+                  f'keywords_baited:\n'
+                  f'{kw_lines}\n'
+                  f'webhook: "{webhook}"\n'
+                  f'```\n\n'
+                  f'---\n\n'
+              )
+
+              with open(queue_path) as f:
+                  content = f.read()
+
+              marker = '## Published\n\n---\n\n'
+              if marker in content:
+                  content = content.replace(marker, marker + new_block, 1)
+              else:
+                  # Fallback: append after ## Published header
+                  content = content.replace('## Published\n', '## Published\n\n' + new_block, 1)
+
+              with open(queue_path, 'w') as f:
+                  f.write(content)
+
+              os.remove(fpath)
+              posted += 1
+              print(f'Published {post_id} ({location})')
+
+          if posted:
+              subprocess.run(['git', 'config', 'user.name', 'GBP Bot'], check=True)
+              subprocess.run(['git', 'config', 'user.email', 'noreply@numnumsbakery.com.au'], check=True)
+              subprocess.run(['git', 'add', 'GBP/outbox/', 'GBP/posts-queue.md'], check=True)
+              subprocess.run(['git', 'commit', '-m', f'GBP: {posted} post(s) published via Make.com'], check=True)
+              subprocess.run(['git', 'push'], check=True)
+              print(f'\nDone — {posted} post(s) published.')
+          PYEOF
