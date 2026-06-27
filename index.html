@@ -433,7 +433,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-proof{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 11px;padding:0.6rem 0.95rem;border-radius:12px;border:1px solid rgba(232,164,181,0.35);background:rgba(20,8,2,0.35);box-shadow:0 0 18px rgba(200,84,120,0.18),inset 0 1px 0 rgba(255,255,255,0.06);max-width:540px;}
     .hero-proof .hp-stars{color:#F4B400;font-size:0.82rem;letter-spacing:1px;}
     .hero-proof .hp-rating{font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;color:#fff;}
-    .hero-proof .hp-quote{font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:300;font-style:italic;color:rgba(255,255,255,0.80);flex-basis:100%;}
+    .hero-proof .hp-quote{font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:300;font-style:italic;color:rgba(255,255,255,0.80);flex-basis:100%;transition:opacity 0.4s ease;}
+    .hero-proof .hp-quote.hp-fade{opacity:0;}
 
     /* Photo thumbnail button */
     .ts-thumb-btn{display:inline-block;width:72px;height:72px;border-radius:0.75rem;border:1.5px solid rgba(200,84,120,0.22);background-size:cover;background-position:center;cursor:pointer;padding:0;position:relative;overflow:hidden;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease;}
@@ -905,11 +906,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>Love it or we'll make it right</span>
       </div>
 
-      <!-- Static social proof — rating + a real review (full reviews in the Wall of Love) -->
-      <div class="hero-proof">
+      <!-- Rotating social proof — cycles through real reviews every 3 s -->
+      <div class="hero-proof" id="hero-proof">
         <span class="hp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
         <span class="hp-rating">4.6 &middot; 50+ Google reviews</span>
-        <span class="hp-quote">&ldquo;It matched the picture we shared exactly.&rdquo; &mdash; Ankit A.</span>
+        <span class="hp-quote" id="hero-rotating-quote">&ldquo;It matched the picture we shared exactly.&rdquo; &mdash; Ankit A.</span>
       </div>
     </div>
   </section>
@@ -1744,6 +1745,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     })();
 
     // Reviews are now a static Wall of Love (masonry grid) — no carousel JS needed.
+
+    // ── Hero rotating quote ───────────────────────────────────────
+    (function() {
+      var quotes = [
+        "“It matched the picture we shared exactly.” — Ankit A.",
+        "“Best cake we’ve ever had. Soft, flavourful, and 100% eggless.” — Nilesh P.",
+        "“Ordered a jungle-theme cake — it was absolutely stunning.” — Surbhi G.",
+        "“The butterscotch cake was a hit at our party!” — Karunesh S.",
+        "“Custom design done perfectly. Everyone loved it.” — Vijit D.",
+        "“Amazing quality and super fresh. Highly recommend!” — Varuni B."
+      ];
+      var idx = 0;
+      function rotate() {
+        var el = document.getElementById('hero-rotating-quote');
+        if (!el) return;
+        el.classList.add('hp-fade');
+        setTimeout(function() {
+          idx = (idx + 1) % quotes.length;
+          el.textContent = quotes[idx];
+          el.classList.remove('hp-fade');
+        }, 400);
+      }
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setInterval(rotate, 3000);
+      }
+    })();
 
     // ── Photo Lightbox ───────────────────────────────────────────
     // Listeners are bound to document and the overlay is looked up lazily,
