@@ -3,7 +3,7 @@
 # Favicon (browsers probe /favicon.ico regardless of <link> tags)
 [[redirects]]
   from = "/favicon.ico"
-  to = "/brand_assets/favicon-32.png"
+  to = "/icons/favicon-32.png"
   status = 301
 
 # Sitemap variant crawlers expect
@@ -567,6 +567,11 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
     X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/cake_photos/*"
