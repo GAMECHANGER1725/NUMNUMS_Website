@@ -1,11 +1,5 @@
 # ── Redirects ────────────────────────────────────────────────────────────────
 
-# Favicon (browsers probe /favicon.ico regardless of <link> tags)
-[[redirects]]
-  from = "/favicon.ico"
-  to = "/icons/favicon-32.png"
-  status = 301
-
 # Sitemap variant crawlers expect
 [[redirects]]
   from = "/sitemap_index.xml"
@@ -616,4 +610,4 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://interfaces.zapier.com https://storage.googleapis.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://hook.eu1.make.com https://www.facebook.com https://connect.facebook.net; frame-src https://interfaces.zapier.com; worker-src 'none';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://interfaces.zapier.com https://storage.googleapis.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://hook.eu1.make.com https://www.facebook.com https://connect.facebook.net; frame-src https://interfaces.zapier.com https://www.google.com https://www.googletagmanager.com; worker-src 'none';"
