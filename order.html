@@ -433,6 +433,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div><a href="order.html">Order Now</a></div>
   </div>
 
+  <!-- Sticky progress bar — mobile only. Mirrors #order-progress-bar so the
+       customer can still see it while filling fields further down the form. -->
+  <div id="order-progress-sticky" style="display:none;position:fixed;top:68px;left:0;right:0;z-index:80;padding:10px 18px 12px;background:rgba(255,248,242,0.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 24px rgba(44,26,14,0.10);opacity:0;transform:translateY(-100%) scaleY(0.9);transform-origin:top center;transition:opacity 0.45s cubic-bezier(0.34,1.56,0.64,1),transform 0.5s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+      <span id="order-progress-label-sticky" style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:#5C3A22;">You're on your way</span>
+      <span id="order-progress-pct-sticky" style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:#C85478;">20%</span>
+    </div>
+    <div style="height:5px;border-radius:9999px;background:rgba(200,84,120,0.15);overflow:hidden;">
+      <div id="order-progress-bar-sticky" style="height:100%;width:20%;border-radius:9999px;background:linear-gradient(90deg,#C85478,#E8A4B5);transition:width 0.35s cubic-bezier(0.34,1.56,0.64,1);"></div>
+    </div>
+  </div>
+  <style>
+    #order-progress-sticky.visible { opacity:1 !important; transform:translateY(0) scaleY(1) !important; pointer-events:auto !important; }
+    @media (min-width:641px) { #order-progress-sticky { display:none !important; } }
+    @media (max-width:640px) { #order-progress-sticky { display:block !important; } }
+  </style>
+
   <!-- ══════════════════════════════════════ PAGE HERO ═══ -->
   <div class="page-hero">
     <div style="position:relative; z-index:1; max-width:960px; margin:0 auto; text-align:center;">
@@ -482,7 +499,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0 0 0.85rem;line-height:1.6;">Fill in the details below and we'll pre-fill a WhatsApp message with your cake, ready to send.</p>
 
           <!-- GOAL-GRADIENT PROGRESS -->
-          <div style="margin-bottom:1rem;">
+          <div id="order-progress-wrap" style="margin-bottom:1rem;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
               <span id="order-progress-label" style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:#5C3A22;">You're on your way</span>
               <span id="order-progress-pct" style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:#C85478;">20%</span>
@@ -1147,17 +1164,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           if (document.getElementById('cake-size').value) done++;
           if (document.querySelector('[name="pickup-location"]:checked')) done++;
           var pct = Math.round(20 + (done / 5) * 80);
-          var bar = document.getElementById('order-progress-bar');
-          var pctLabel = document.getElementById('order-progress-pct');
-          var textLabel = document.getElementById('order-progress-label');
-          if (bar) bar.style.width = pct + '%';
-          if (pctLabel) pctLabel.textContent = pct + '%';
-          if (textLabel) textLabel.textContent = pct >= 100 ? 'Ready to send' : (pct >= 60 ? "You're almost there" : "You're on your way");
+          var label = pct >= 100 ? 'Ready to send' : (pct >= 60 ? "You're almost there" : "You're on your way");
+          [
+            ['order-progress-bar', 'order-progress-pct', 'order-progress-label'],
+            ['order-progress-bar-sticky', 'order-progress-pct-sticky', 'order-progress-label-sticky'],
+          ].forEach(function(ids) {
+            var bar = document.getElementById(ids[0]);
+            var pctLabel = document.getElementById(ids[1]);
+            var textLabel = document.getElementById(ids[2]);
+            if (bar) bar.style.width = pct + '%';
+            if (pctLabel) pctLabel.textContent = pct + '%';
+            if (textLabel) textLabel.textContent = label;
+          });
         }
         form.querySelectorAll('select, input[type="radio"]').forEach(function(el) {
           el.addEventListener('change', updateOrderProgress);
         });
         updateOrderProgress();
+
+        // Sticky progress bar (mobile only): reveal with a spring animation once
+        // the in-form bar scrolls out of view above the fold, so it stays visible
+        // while completing fields further down; retract the same way on the way back up.
+        (function() {
+          var wrap   = document.getElementById('order-progress-wrap');
+          var sticky = document.getElementById('order-progress-sticky');
+          if (!wrap || !sticky) return;
+          var mq = window.matchMedia('(max-width:640px)');
+          var ticking = false;
+          function sync() {
+            ticking = false;
+            if (!mq.matches) { sticky.classList.remove('visible'); return; }
+            var scrolledPast = wrap.getBoundingClientRect().top < 68;
+            sticky.classList.toggle('visible', scrolledPast);
+          }
+          window.addEventListener('scroll', function() {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(sync);
+          }, { passive: true });
+          mq.addEventListener('change', sync);
+          sync();
+        })();
 
         form.addEventListener('submit', function(e) {
           e.preventDefault();
