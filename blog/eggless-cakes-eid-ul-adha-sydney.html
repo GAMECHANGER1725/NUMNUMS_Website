@@ -599,7 +599,7 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
             <span class="faq-icon" aria-hidden="true">+</span>
           </div>
           <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">For a standard eggless cake, place your order at least 48 hours in advance. For large Eid ul-Adha gatherings or multi-tier and custom-decorated cakes, we recommend 4–5 days notice. WhatsApp <a href="https://wa.me/61425697725" target="_blank" rel="noopener noreferrer">+61 425 697 725</a> to confirm availability. During peak Eid periods, slots fill early — order as soon as your guest count is confirmed.</p>
+            <p itemprop="text">For a standard eggless cake, place your order at least 48 hours in advance. For large Eid ul-Adha gatherings or multi-tier and custom-decorated cakes, we recommend 4–5 days notice. WhatsApp <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener noreferrer">+61 425 697 725</a> to confirm availability. During peak Eid periods, slots fill early — order as soon as your guest count is confirmed.</p>
           </div>
         </div>
 
@@ -705,7 +705,7 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       <a href="/locations" class="footer-nav-link">Locations</a>
       <a href="/about" class="footer-nav-link">About Us</a>
       <a href="/blog/" class="footer-nav-link">Blog</a>
-      <a href="https://wa.me/61425697725" class="footer-nav-link" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+      <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" class="footer-nav-link" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
     </div>
   </div>
   <div style="max-width:1180px;margin:2rem auto 0;padding:1.5rem 0 0;border-top:1px solid rgba(255,248,242,0.07);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
@@ -770,5 +770,35 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       window.__lenis = lenis;
     })();
   </script>
+
+<!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
+<script>
+  (function(){
+    function fireEnquiry(method){
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'enquiry_click', { method: method, transport: 'beacon' });
+        }
+        if (window.dataLayer) {
+          window.dataLayer.push({ event: 'enquiry_click', enquiry_method: method });
+        }
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: method });
+        }
+      } catch (e) {}
+    }
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a[href]');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
+        fireEnquiry('whatsapp');
+      } else if (href.indexOf('tel:') === 0) {
+        fireEnquiry('phone');
+      }
+    }, true);
+  })();
+</script>
+
 </body>
 </html>

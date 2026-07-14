@@ -535,7 +535,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <span class="store-badge" style="background:rgba(200,84,120,0.10);color:#C85478;margin-bottom:0.75rem;display:inline-block;">Original Store</span>
               <h2 class="font-display" style="font-size:2rem;font-weight:600;letter-spacing:-0.02em;color:#2C1A0E;margin:0 0 4px;">Harris Park</h2>
-              <p style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#5C3A22;margin:0;">96/96 Wigram Street, Harris Park NSW 2150</p>
+              <p style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#5C3A22;margin:0 0 6px;">96/96 Wigram Street, Harris Park NSW 2150</p>
+              <p style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#C85478;margin:0;">On the Harris Park strip — open latest of our two stores, daily till 10pm.</p>
             </div>
             <div style="width:48px;height:48px;border-radius:14px;background:rgba(200,84,120,0.10);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="material-symbols-outlined" style="font-size:1.4rem;color:#C85478;">location_on</span></div>
           </div>
@@ -551,7 +552,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <!-- CTAs -->
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.5rem;">
-            <a href="https://wa.me/61425697725"
+            <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park"
                target="_blank" rel="noopener" class="btn-cta" style="background:#25D366;box-shadow:0 4px 14px rgba(37,211,102,0.25);font-size:0.82rem;padding:9px 18px;"
                onmouseenter="this.style.background='#1DAD56'" onmouseleave="this.style.background='#25D366'">
               <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:-0.05em;">chat</span> WhatsApp
@@ -577,7 +578,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <span class="store-badge" style="background:rgba(78,196,216,0.12);color:#2a8fa3;margin-bottom:0.75rem;display:inline-block;">New Store</span>
               <h2 class="font-display" style="font-size:2rem;font-weight:600;letter-spacing:-0.02em;color:#2C1A0E;margin:0 0 4px;">Riverstone</h2>
-              <p style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#5C3A22;margin:0;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765</p>
+              <p style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#5C3A22;margin:0 0 6px;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765</p>
+              <p style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#2a8fa3;margin:0;">North-west Sydney's early-opening eggless bakery — doors open from 6am.</p>
             </div>
             <div style="width:48px;height:48px;border-radius:14px;background:rgba(78,196,216,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="material-symbols-outlined" style="font-size:1.4rem;color:#2a8fa3;">location_on</span></div>
           </div>
@@ -597,7 +599,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <!-- CTAs -->
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.5rem;">
-            <a href="https://wa.me/61425697725"
+            <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Riverstone"
                target="_blank" rel="noopener" class="btn-cta" style="background:#25D366;box-shadow:0 4px 14px rgba(37,211,102,0.25);font-size:0.82rem;padding:9px 18px;"
                onmouseenter="this.style.background='#1DAD56'" onmouseleave="this.style.background='#25D366'">
               <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:-0.05em;">chat</span> WhatsApp
@@ -980,6 +982,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   });
 })();
+</script>
+
+
+<!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
+<script>
+  (function(){
+    function fireEnquiry(method){
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'enquiry_click', { method: method, transport: 'beacon' });
+        }
+        if (window.dataLayer) {
+          window.dataLayer.push({ event: 'enquiry_click', enquiry_method: method });
+        }
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: method });
+        }
+      } catch (e) {}
+    }
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a[href]');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
+        fireEnquiry('whatsapp');
+      } else if (href.indexOf('tel:') === 0) {
+        fireEnquiry('phone');
+      }
+    }, true);
+  })();
 </script>
 
 </body>

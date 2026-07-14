@@ -478,8 +478,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,0.10);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
             <span class="material-symbols-outlined" style="font-size:1.5rem;color:#25D366;">chat</span>
           </div>
-          <h3 class="font-display" style="font-size:1.4rem;font-weight:600;color:#2C1A0E;margin:0 0 0.4rem;letter-spacing:-0.02em;">Fill in Your Details</h3>
-          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0 0 1.25rem;line-height:1.6;">Fill in the details and we'll pre-fill a WhatsApp message. Just press Send to confirm.</p>
+          <h3 class="font-display" style="font-size:1.4rem;font-weight:600;color:#2C1A0E;margin:0 0 0.4rem;letter-spacing:-0.02em;">Build Your Cake</h3>
+          <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0 0 0.85rem;line-height:1.6;">Fill in the details below and we'll pre-fill a WhatsApp message with your cake, ready to send.</p>
+
+          <!-- GOAL-GRADIENT PROGRESS -->
+          <div style="margin-bottom:1rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
+              <span id="order-progress-label" style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:#5C3A22;">You're on your way</span>
+              <span id="order-progress-pct" style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:#C85478;">20%</span>
+            </div>
+            <div style="height:5px;border-radius:9999px;background:rgba(200,84,120,0.12);overflow:hidden;">
+              <div id="order-progress-bar" style="height:100%;width:20%;border-radius:9999px;background:linear-gradient(90deg,#C85478,#E8A4B5);transition:width 0.35s cubic-bezier(0.34,1.56,0.64,1);"></div>
+            </div>
+          </div>
+
+          <!-- RECIPROCITY: quick tips before asking for details -->
+          <div style="display:flex;flex-direction:column;gap:5px;padding:0.7rem 0.85rem;background:rgba(200,84,120,0.05);border-radius:0.6rem;margin-bottom:1.1rem;">
+            <p style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#C85478;margin:0;">Before you start</p>
+            <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Chocolate + Ferrero Rocher is our most-ordered flavour pairing.</p>
+            <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Have a reference photo? Any design works — just attach it in the WhatsApp message.</p>
+            <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Most 20-guest parties choose the 10&Prime; size.</p>
+            <a href="cakes.html#flavour-size-guide" style="font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;color:#C85478;text-decoration:none;margin-top:2px;">See the full flavour &amp; size guide &rarr;</a>
+          </div>
 
           <!-- DATE PICKER -->
           <div style="margin-bottom:0.85rem;">
@@ -504,6 +524,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </div>
             </div>
             <div id="dt-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.74rem;margin-top:0.3rem;">Please select a pickup date.</div>
+            <div id="dt-error-hint" style="display:none;color:#5C3A22;font-family:'Jost',sans-serif;font-size:0.74rem;margin-top:0.2rem;">In a hurry? <a href="tel:+61425697725" style="color:#C85478;font-weight:600;text-decoration:none;">Call us</a> — we'll do our best.</div>
           </div>
 
           <!-- TIME PICKER -->
@@ -627,7 +648,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <!-- SUBMIT -->
           <button type="submit" class="btn-cta" style="width:100%;justify-content:center;background:#25D366;box-shadow:0 4px 14px rgba(37,211,102,0.28);" onmouseenter="this.style.background='#1DAD56'" onmouseleave="this.style.background='#25D366'">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-            Pre-fill WhatsApp &amp; Send
+            Send My Cake Details
           </button>
           <div class="cta-badges">
             <span>100% Eggless</span>
@@ -650,6 +671,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <a href="tel:+61425697725" class="btn-cta" style="justify-content:center;">
             Call +61 425 697 725
+          </a>
+          <a href="mailto:info.numnumsbakery@gmail.com?subject=Custom%20cake%20enquiry" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:rgba(44,26,14,0.5);text-decoration:none;">
+            <span class="material-symbols-outlined" style="font-size:1rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">mail</span>
+            No WhatsApp? Email us
           </a>
         </div>
 
@@ -1066,6 +1091,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             closePopover();
             var err = document.getElementById('dt-error');
             if (err) err.style.display = 'none';
+            if (typeof updateOrderProgress === 'function') updateOrderProgress();
           });
         });
       }
@@ -1107,11 +1133,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           el.addEventListener('blur',  function() { el.style.borderColor='rgba(200,84,120,0.18)'; el.style.boxShadow='none'; });
         });
 
+        // Smart default: pre-select Harris Park (longest opening hours) so the
+        // location step is already done unless the customer wants Riverstone.
+        var defaultLoc = document.getElementById('loc-harris');
+        if (defaultLoc) { defaultLoc.checked = true; defaultLoc.dispatchEvent(new Event('change', { bubbles: true })); }
+
+        // Goal-gradient progress bar — starts at 20%, fills as fields complete.
+        function updateOrderProgress() {
+          var done = 0;
+          if (selDate) done++;
+          if (document.getElementById('cake-flavour').value) done++;
+          if (document.getElementById('cake-occasion').value) done++;
+          if (document.getElementById('cake-size').value) done++;
+          if (document.querySelector('[name="pickup-location"]:checked')) done++;
+          var pct = Math.round(20 + (done / 5) * 80);
+          var bar = document.getElementById('order-progress-bar');
+          var pctLabel = document.getElementById('order-progress-pct');
+          var textLabel = document.getElementById('order-progress-label');
+          if (bar) bar.style.width = pct + '%';
+          if (pctLabel) pctLabel.textContent = pct + '%';
+          if (textLabel) textLabel.textContent = pct >= 100 ? 'Ready to send' : (pct >= 60 ? "You're almost there" : "You're on your way");
+        }
+        form.querySelectorAll('select, input[type="radio"]').forEach(function(el) {
+          el.addEventListener('change', updateOrderProgress);
+        });
+        updateOrderProgress();
+
         form.addEventListener('submit', function(e) {
           e.preventDefault();
           var ok = true;
-          var dtErr = document.getElementById('dt-error');
-          if (!selDate) { dtErr.style.display='block'; ok=false; } else { dtErr.style.display='none'; }
+          var dtErr  = document.getElementById('dt-error');
+          var dtHint = document.getElementById('dt-error-hint');
+          dtHint.style.display = 'none';
+          if (!selDate) { dtErr.textContent='Please select a pickup date.'; dtErr.style.display='block'; ok=false; } else { dtErr.style.display='none'; }
 
           if (selDate) {
             var hr24   = parseInt(document.getElementById('ord-hour').value, 10) % 12
@@ -1120,8 +1174,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                   hr24, parseInt(document.getElementById('ord-min').value, 10));
             var cutoff = new Date(Date.now() + 48 * 60 * 60 * 1000);
             if (selDT < cutoff) {
-              dtErr.textContent = 'Please select a date and time at least 48 hours from now.';
+              dtErr.textContent = 'Most orders need 48 hours notice — please choose a later time.';
               dtErr.style.display = 'block';
+              dtHint.style.display = 'block';
               ok = false;
             }
           }
@@ -1159,6 +1214,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             'Notes: '            + (notes||'None')                + '\n' +
             'If you have a reference image for your desired design, please attach it to this message.\n' +
             'Note: I understand the listed size price is a starting price and the final cost will be confirmed by your team before I pay.';
+          try {
+            if (typeof gtag === 'function') { gtag('event', 'order_form_submit', { method: 'whatsapp', transport: 'beacon' }); }
+            if (window.dataLayer) { window.dataLayer.push({ event: 'order_form_submit', enquiry_method: 'whatsapp' }); }
+            if (typeof fbq === 'function') { fbq('track', 'Lead', { content_name: 'order_form' }); }
+          } catch (e) {}
           window.open('https://wa.me/61425697725?text=' + encodeURIComponent(msg), '_blank', 'noopener');
         });
       }
@@ -1362,6 +1422,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   });
 })();
+</script>
+
+
+<!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
+<script>
+  (function(){
+    function fireEnquiry(method){
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'enquiry_click', { method: method, transport: 'beacon' });
+        }
+        if (window.dataLayer) {
+          window.dataLayer.push({ event: 'enquiry_click', enquiry_method: method });
+        }
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: method });
+        }
+      } catch (e) {}
+    }
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a[href]');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
+        fireEnquiry('whatsapp');
+      } else if (href.indexOf('tel:') === 0) {
+        fireEnquiry('phone');
+      }
+    }, true);
+  })();
 </script>
 
 </body>

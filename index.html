@@ -151,6 +151,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     .btn-cta:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
     .btn-cta:active { transform: scale(0.97); }
+    /* Split-by-intent hero CTA: desktop opens the structured builder, mobile opens WhatsApp directly */
+    .hero-cta-wa { display: none; }
 
     .btn-secondary {
       display: inline-flex;
@@ -203,6 +205,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         row-gap: 0.15rem;
       }
       .btn-cta, .btn-secondary { flex: 1 !important; min-width: 0 !important; padding-left: 10px !important; padding-right: 10px !important; justify-content: center !important; }
+      .hero-cta-web { display: none !important; }
+      .hero-cta-wa { display: inline-flex !important; white-space: nowrap !important; font-size: 0.8rem !important; gap: 5px !important; }
       #hero-badge { font-size: 0.62rem !important; letter-spacing: 0.06em !important; }
     }
     .hero-video {
@@ -331,19 +335,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @media (max-width: 480px) {
       #footer-grid { grid-template-columns: 1fr !important; }
     }
-    .ham-bar { display:block; width:22px; height:2px; background:#2C1A0E; border-radius:9999px; transition:transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease; }
+    .ham-bar { display:block; width:22px; height:2px; background:#fff; border-radius:9999px; transform-origin:center; }
+    .ham-bar:nth-child(1) { transition: transform 0.38s cubic-bezier(.5,.85,.25,1.1), background 0.3s ease; }
+    .ham-bar:nth-child(2) { transition: opacity 0.22s ease, transform 0.22s ease, background 0.3s ease; }
+    .ham-bar:nth-child(3) { transition: transform 0.38s cubic-bezier(.5,.85,.25,1.8), background 0.3s ease; }
+    #navbar.scrolled .ham-bar { background:#2C1A0E; }
     @keyframes trust-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
     @media (max-width: 640px) {
       .nav-link      { display: none !important; }
       #nav-indicator { display: none !important; }
       #nav-pill      { background: transparent !important; border: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; padding: 0 !important; }
-      #mobile-hamburger-root { display: flex !important; }
+      #mobile-menu-btn { display: flex !important; }
       .btn-hover-interactive { display: none !important; }
+      #mobile-menu-btn.open .ham-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      #mobile-menu-btn.open .ham-bar:nth-child(2) { opacity: 0; transform: scaleX(0.4); }
+      #mobile-menu-btn.open .ham-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
       /* Trust bar infinite scroll */
       .trust-dupe { display: flex !important; }
       #trust-bar { overflow: hidden !important; }
       #trust-bar > div { max-width: none !important; padding: 0 !important; overflow: visible !important; }
       #trust-track { flex-wrap: nowrap !important; justify-content: flex-start !important; overflow: visible !important; width: max-content !important; animation: trust-scroll 14s linear infinite !important; }
+    }
+
+    #mobile-menu > a {
+      display: block;
+      font-family: 'Jost', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: #2C1A0E;
+      text-decoration: none;
+      padding: 1.05rem 0;
+      border-bottom: 1px solid rgba(44,26,14,0.35);
+      letter-spacing: 0.01em;
+    }
+    #mobile-menu > a:last-of-type {
+      border-bottom: none;
+    }
+    #mobile-menu > div {
+      margin-top: 1.6rem;
+    }
+    #mobile-menu > div > a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 34px;
+      background: #C85478;
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      box-shadow: 0 4px 18px rgba(200,84,120,0.35);
+      letter-spacing: 0.02em;
+      border: none;
     }
 
     /* Scrollbar hide for pricing strip */
@@ -858,14 +903,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
           </a>
-          <!-- Mobile hamburger React mount -->
-          <div id="mobile-hamburger-root" style="display:none; margin-left:8px; flex-shrink:0;"></div>
+          <button id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" style="display:none; flex-direction:column; justify-content:center; align-items:center; gap:6px; width:40px; height:40px; background:transparent; border:none; cursor:pointer; padding:0; margin-left:8px; flex-shrink:0;">
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+            <span class="ham-bar"></span>
+          </button>
         </div>
       </div>
     </div>
   </nav>
-  <!-- Mobile navigation menu — React portal renders here -->
-  <div id="mobile-menu-portal"></div>
+  <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:80px;left:12px;right:12px;z-index:90;background:rgba(255,248,242,0.50);border-radius:1.5rem;overflow:hidden;padding:0 1.75rem 1.75rem;flex-direction:column;gap:0;opacity:0;transform:translateY(-12px) scaleY(0.97);transform-origin:top center;transition:opacity 0.32s cubic-bezier(0.4,0,0.2,1),transform 0.38s cubic-bezier(0.34,1.3,0.64,1);box-shadow:0 20px 60px rgba(44,26,14,0.20),0 6px 20px rgba(44,26,14,0.10),inset 0 1px 0 rgba(255,255,255,0.40);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);">
+    <a href="cakes.html">Our Cakes</a>
+    <a href="indian-sweet.html">Indian Sweets</a>
+    <a href="about.html">About</a>
+    <a href="order.html">Order Online</a>
+    <a href="locations.html">Locations</a>
+    <a href="blog/index.html">Blog</a>
+    <div><a href="order.html">Order Now</a></div>
+  </div>
 
   <!-- ═══════════════════════════════════════════ HERO ═══ -->
   <section class="hero-section" aria-label="Hero">
@@ -900,7 +955,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <!-- CTAs -->
       <div style="display:flex; flex-wrap:nowrap; gap:10px; align-items:center; margin-bottom:0.9rem;">
-        <a href="order.html" class="btn-cta">Order Your Cake</a>
+        <a href="order.html" class="btn-cta hero-cta-web">Order Your Cake</a>
+        <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener" class="btn-cta hero-cta-wa"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Get a Quote</a>
         <a href="#our-cakes" class="btn-secondary" style="border-color:rgba(255,255,255,0.4); color:#fff;"
            onclick="event.preventDefault(); document.getElementById('our-cakes').scrollIntoView({behavior:'smooth'});">
           Explore Our Cakes
@@ -979,6 +1035,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
   </div>
+
+  <!-- ══════════════════════════════════ PROBLEM / MECHANISM ═══ -->
+  <section style="padding:5rem 1.5rem 5.5rem; background:#FFF8F2;">
+    <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1.1fr 0.9fr; gap:3rem; align-items:center;" class="problem-grid">
+      <div class="reveal">
+        <div class="section-label" style="margin-bottom:1rem;">The Problem</div>
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3.2vw,2.5rem); font-weight:600; letter-spacing:-0.03em; color:#2C1A0E; margin:0 0 1rem; line-height:1.15;">Finding a cake that's actually eggless shouldn't take all week.</h2>
+        <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:1rem; color:#5C3A22; line-height:1.7; margin:0 0 1rem;">
+          Most "eggless" cakes are a supermarket cake with the egg quietly left out — dense, dry, and baked in the same kitchen as everything else. Genuinely egg-free usually means a long drive across Sydney, or a home baker who can't guarantee your date. And when the party's in five days, most places just say no.
+        </p>
+        <p style="font-family:'Jost',sans-serif; font-weight:400; font-size:1rem; color:#2C1A0E; line-height:1.7; margin:0;">
+          We built Num Num's around one fix: <strong>send us a photo, we recreate it 100% eggless, fresh in 48 hours.</strong> Every flavour, every size, every day — not a special order.
+        </p>
+      </div>
+      <div class="cursor-card" style="background:#2C1A0E; border-radius:1.5rem; padding:2.25rem; position:relative; overflow:hidden;">
+        <div style="font-family:'Jost',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#E8A4B5; margin-bottom:0.9rem;">The Send-a-Photo Eggless System</div>
+        <div style="display:flex; flex-direction:column; gap:0.9rem;">
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="flex-shrink:0; width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.10); display:flex; align-items:center; justify-content:center; font-family:'Jost',sans-serif; font-size:0.7rem; font-weight:700; color:#fff;">1</span>
+            <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:rgba(255,248,242,0.85); margin:0; line-height:1.5;">Send any photo, size and date on WhatsApp</p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="flex-shrink:0; width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.10); display:flex; align-items:center; justify-content:center; font-family:'Jost',sans-serif; font-size:0.7rem; font-weight:700; color:#fff;">2</span>
+            <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:rgba(255,248,242,0.85); margin:0; line-height:1.5;">We confirm your design, size and price in writing</p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="flex-shrink:0; width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.10); display:flex; align-items:center; justify-content:center; font-family:'Jost',sans-serif; font-size:0.7rem; font-weight:700; color:#fff;">3</span>
+            <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:rgba(255,248,242,0.85); margin:0; line-height:1.5;">Collect fresh, 48 hours later, from Harris Park or Riverstone</p>
+          </div>
+        </div>
+        <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener" class="btn-cta" style="margin-top:1.5rem; width:100%; justify-content:center;">Start on WhatsApp — free, no obligation</a>
+      </div>
+    </div>
+  </section>
+  <style>
+    @media (max-width: 860px) { .problem-grid { grid-template-columns: 1fr !important; } }
+  </style>
 
   <!-- ══════════════════════════════════════ OUR CAKES ═══ -->
   <section id="our-cakes" style="padding:6rem 1.5rem;">
@@ -1228,8 +1321,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
              target="_blank" rel="noopener" class="ps-order-btn btn-cta" style="font-size:0.85rem;padding:10px 20px;">
             <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:-0.05em;">chat</span> WhatsApp to Order
           </a>
+          <p style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;color:rgba(44,26,14,0.5);margin:0.75rem 0 0;display:flex;align-items:center;gap:5px;">
+            <span style="color:#F4B400;">★★★★★</span> 4.6 · 50+ Sydney families
+          </p>
         </div>
       </div>
+      <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:400;color:#5C3A22;text-align:center;margin:1.75rem 0 0;">
+        Custom slots are limited each week — peak dates (Diwali, Eid, long weekends) book out first, so lock yours in early.
+      </p>
     </div>
   </section>
 
@@ -1840,229 +1939,45 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <img id="lb-img" src="" alt="Cake photo">
   </div>
 
-  <!-- ═══════════════════ REACT MOBILE NAV ═══════════════════ -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <!-- Pinned to Babel 7: v8 defaults JSX to the automatic runtime (emits `import` from
-       react/jsx-runtime), which breaks in-browser classic-script compilation and stops the
-       mobile nav from mounting. v7 keeps the classic React.createElement output. -->
-  <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
-  <script type="text/babel">
-  (function () {
-    const { useState, useEffect, useRef } = React;
-
-    const NAV_LINKS = [
-      { href: 'cakes.html',         label: 'Our Cakes' },
-      { href: 'indian-sweet.html',  label: 'Indian Sweets' },
-      { href: 'about.html',         label: 'About' },
-      { href: 'order.html',      label: 'Order Online' },
-      { href: 'locations.html',  label: 'Locations' },
-      { href: 'blog/index.html', label: 'Blog' },
-    ];
-
-    function MobileNav() {
-      const [open, setOpen]       = useState(false);
-      const [scrolled, setScrolled] = useState(false);
-      const btnRef = useRef(null);
-
-      /* Track navbar scroll class controls bar icon colour */
-      useEffect(() => {
-        const navbar = document.getElementById('navbar');
-        if (!navbar) return;
-        const sync = () => setScrolled(navbar.classList.contains('scrolled'));
-        sync();
-        const obs = new MutationObserver(sync);
-        obs.observe(navbar, { attributes: true, attributeFilter: ['class'] });
-        return () => obs.disconnect();
-      }, []);
-
-      /* Close on outside click */
-      useEffect(() => {
-        if (!open) return;
-        const handler = (e) => {
-          const root   = document.getElementById('mobile-hamburger-root');
-          const portal = document.getElementById('mobile-menu-portal');
-          if (root   && root.contains(e.target))   return;
-          if (portal && portal.contains(e.target)) return;
-          setOpen(false);
-        };
-        document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
-      }, [open]);
-
-      /* Body scroll lock while menu is open */
-      useEffect(() => {
-        document.body.style.overflow = open ? 'hidden' : '';
-        return () => { document.body.style.overflow = ''; };
-      }, [open]);
-
-      /* ── Hamburger span bar styles (3-bar ↔ X animation) ── */
-      // Bars are 2px tall with 6px gap center offset = 2+6 = 8px
-      const easeSpring  = 'cubic-bezier(.5,.85,.25,1.1)';
-      const easeSpring2 = 'cubic-bezier(.5,.85,.25,1.8)';
-
-      const barColor = scrolled ? '#2C1A0E' : '#fff';
-
-      const barBase = {
-        display:         'block',
-        width:           22,
-        height:          2,
-        borderRadius:    9999,
-        background:      barColor,
-        transformOrigin: 'center',
-        transition:      `background 0.3s ease`,
-      };
-      const bar1 = {
-        ...barBase,
-        transform:  open ? 'translateY(8px) rotate(45deg)' : 'translateY(0)',
-        transition: `transform 0.38s ${easeSpring}, background 0.3s ease`,
-      };
-      const bar2 = {
-        ...barBase,
-        opacity:    open ? 0 : 1,
-        transform:  open ? 'scaleX(0.4)' : 'scaleX(1)',
-        transition: `opacity 0.22s ease, transform 0.22s ease, background 0.3s ease`,
-      };
-      const bar3 = {
-        ...barBase,
-        transform:  open ? 'translateY(-8px) rotate(-45deg)' : 'translateY(0)',
-        transition: `transform 0.38s ${easeSpring2}, background 0.3s ease`,
-      };
-
-      /* ── Dropdown overlay (portal) ── */
-      const menuEl = (
-        <div
-          role="dialog"
-          aria-label="Mobile navigation"
-          aria-hidden={!open}
-          style={{
-            position:   'fixed',
-            top:        80,
-            left:       12,
-            right:      12,
-            zIndex:     90,
-            background: 'rgba(255,248,242,0.50)',
-            borderRadius: '1.5rem',
-            overflow:   'hidden',
-            padding:    '0 1.75rem 1.75rem',
-            display:    'flex',
-            flexDirection: 'column',
-            boxShadow:  '0 20px 60px rgba(44,26,14,0.20), 0 6px 20px rgba(44,26,14,0.10), inset 0 1px 0 rgba(255,255,255,0.40)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-            /* Entrance animation */
-            opacity:    open ? 1 : 0,
-            transform:  open ? 'translateY(0) scaleY(1)' : 'translateY(-12px) scaleY(0.97)',
-            transformOrigin: 'top center',
-            pointerEvents: open ? 'auto' : 'none',
-            transition: 'opacity 0.32s cubic-bezier(0.4,0,0.2,1), transform 0.38s cubic-bezier(0.34,1.3,0.64,1)',
-          }}
-        >
-          {NAV_LINKS.map((link, i) => {
-            const delay = open ? `${0.06 + i * 0.07}s` : '0s';
-            return (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                style={{
-                  fontFamily: "'Jost', sans-serif",
-                  fontSize:       '1.35rem',
-                  fontWeight:     500,
-                  color:          '#2C1A0E',
-                  textDecoration: 'none',
-                  padding:        '1.05rem 0',
-                  borderBottom:   i < NAV_LINKS.length - 1
-                    ? '1px solid rgba(44,26,14,0.35)'
-                    : 'none',
-                  display:  'block',
-                  opacity:  open ? 1 : 0,
-                  transform: open ? 'translateX(0)' : 'translateX(-18px)',
-                  transition: `opacity 0.38s ease ${delay}, transform 0.42s cubic-bezier(0.34,1.3,0.64,1) ${delay}`,
-                  letterSpacing: '0.01em',
-                }}
-              >
-                {link.label}
-              </a>
-            );
-          })}
-
-          {/* CTA button */}
-          <div
-            style={{
-              marginTop:  '1.6rem',
-              opacity:    open ? 1 : 0,
-              transform:  open ? 'translateY(0)' : 'translateY(14px)',
-              transition: open
-                ? `opacity 0.38s ease ${0.06 + NAV_LINKS.length * 0.07}s, transform 0.44s cubic-bezier(0.34,1.3,0.64,1) ${0.06 + NAV_LINKS.length * 0.07}s`
-                : 'none',
-            }}
-          >
-            <a
-              href="order.html"
-              onClick={() => setOpen(false)}
-              style={{
-                display:        'inline-flex',
-                alignItems:     'center',
-                gap:            8,
-                padding:        '14px 34px',
-                background:     '#C85478',
-                color:          '#fff',
-                fontFamily: "'Jost', sans-serif",
-                fontWeight:     600,
-                fontSize:       '1rem',
-                borderRadius:   9999,
-                textDecoration: 'none',
-                boxShadow:      '0 4px 18px rgba(200,84,120,0.35)',
-                letterSpacing:  '0.02em',
-              }}
-            >
-              Order Now
-            </a>
-          </div>
-        </div>
-      );
-
-      return (
-        <>
-          {/* ── Hamburger button ── */}
-          <button
-            ref={btnRef}
-            onClick={() => setOpen(v => !v)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-            style={{
-              width:      40,
-              height:     40,
-              background: 'transparent',
-              border:     'none',
-              cursor:     'pointer',
-              padding:    0,
-              display:    'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap:        6,
-              outline:    'none',
-            }}
-          >
-            <span style={bar1} />
-            <span style={bar2} />
-            <span style={bar3} />
-          </button>
-
-          {/* ── Portal: dropdown menu ── */}
-          {ReactDOM.createPortal(menuEl, document.getElementById('mobile-menu-portal'))}
-        </>
-      );
-    }
-
-
-    const mountEl = document.getElementById('mobile-hamburger-root');
-    if (mountEl) {
-      ReactDOM.createRoot(mountEl).render(<MobileNav />);
-    }
-  })();
+  <!-- ═══════════════════ MOBILE NAV ═══════════════════ -->
+  <script>
+    (function() {
+      var btn=document.getElementById('mobile-menu-btn'),menu=document.getElementById('mobile-menu');
+      if(!btn||!menu)return;
+      var links=Array.from(menu.querySelectorAll('a'));
+      var cta=menu.querySelector('div');
+      function openMenu(){
+        btn.classList.add('open');btn.setAttribute('aria-expanded','true');
+        if(menu.parentNode!==document.body)document.body.appendChild(menu);
+        menu.style.zIndex='9999';
+        menu.setAttribute('aria-hidden','false');menu.style.display='flex';
+        document.body.style.overflow='hidden';
+        links.forEach(function(a){a.style.opacity='0';a.style.transform='translateX(-18px)';a.style.transition='none';});
+        if(cta){cta.style.opacity='0';cta.style.transform='translateY(14px)';cta.style.transition='none';}
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          menu.style.opacity='1';menu.style.transform='translateY(0) scaleY(1)';
+          links.forEach(function(a,i){
+            var d=(0.06+i*0.07).toFixed(2)+'s';
+            a.style.transition='opacity 0.38s ease '+d+', transform 0.42s cubic-bezier(0.34,1.3,0.64,1) '+d;
+            a.style.opacity='1';a.style.transform='translateX(0)';
+          });
+          if(cta){
+            var d=(0.06+links.length*0.07).toFixed(2)+'s';
+            cta.style.transition='opacity 0.38s ease '+d+', transform 0.44s cubic-bezier(0.34,1.3,0.64,1) '+d;
+            cta.style.opacity='1';cta.style.transform='translateY(0)';
+          }
+        });});
+      }
+      function closeMenu(){
+        btn.classList.remove('open');btn.setAttribute('aria-expanded','false');
+        menu.setAttribute('aria-hidden','true');
+        menu.style.opacity='0';menu.style.transform='translateY(-12px) scaleY(0.97)';
+        document.body.style.overflow='';
+        setTimeout(function(){menu.style.display='none';},320);
+      }
+      btn.addEventListener('click',function(){btn.classList.contains('open')?closeMenu():openMenu();});
+      document.addEventListener('mousedown',function(e){if(menu.style.display!=='none'&&!menu.contains(e.target)&&!btn.contains(e.target))closeMenu();});
+    })();
   </script>
 
 

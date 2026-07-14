@@ -1402,5 +1402,35 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
   })();
 </script>
 
+
+<!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
+<script>
+  (function(){
+    function fireEnquiry(method){
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'enquiry_click', { method: method, transport: 'beacon' });
+        }
+        if (window.dataLayer) {
+          window.dataLayer.push({ event: 'enquiry_click', enquiry_method: method });
+        }
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: method });
+        }
+      } catch (e) {}
+    }
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a[href]');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
+        fireEnquiry('whatsapp');
+      } else if (href.indexOf('tel:') === 0) {
+        fireEnquiry('phone');
+      }
+    }, true);
+  })();
+</script>
+
 </body>
 </html>
