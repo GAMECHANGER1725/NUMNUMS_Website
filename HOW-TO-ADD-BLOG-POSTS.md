@@ -356,6 +356,7 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 - [ ] **Update the Topics filter dropdown counts in `blog/index.html`.** The `<span class="tag-count">` values are hard-coded and go stale every time a card is added. After inserting a card, increment the **All** count and each tag's count from the new card's `data-topics` (see Step 2b for the verification script). The dropdown must match the real card distribution exactly before you commit.
 - [ ] **No orphan tags.** Every `data-topics` value must have a matching chip in the dropdown and must come from the documented tag table. Never introduce an undocumented tag (e.g. `kids-cakes`) — a tag with no chip is invisible to the filter.
+- [ ] **No duplicate or missing cards.** Every `blog/*.html` file must have exactly one card in `#blog-grid`, and no `href` should appear on more than one card (a 2026-07-14 audit found a pre-existing 120-line block of 5 cards duplicated verbatim, plus one real post with zero cards). Before committing any index.html change, extract every card `href`, confirm the set is duplicate-free, and confirm it matches the set of files in `blog/` exactly.
 
 ---
 
