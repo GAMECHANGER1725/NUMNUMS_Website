@@ -93,11 +93,15 @@ See `skills/blog/references/content-templates.md` for detailed selection criteri
 
 Spawn a `blog-researcher` agent (or do inline research with WebSearch):
 
+0. **Build the used-image blocklist before searching for any image** (mandatory, prevents repeat images across the blog):
+   - Run: `grep -ohE '(images\.unsplash\.com/photo-[a-zA-Z0-9_-]+|cdn\.pixabay\.com/photo/[^"'"'"' )]+|images\.pexels\.com/photos/[0-9]+)' blog/*.html | sort -u`
+   - Every ID/URL this returns is ALREADY USED somewhere in the blog and must NOT be reused for the cover or any inline image in this post.
+   - Do not pick the first or most obvious search result by habit — the top Unsplash/Pixabay hit for common queries like "cake", "birthday cake", "bakery" is the same photo every time, which is exactly how the corpus ended up with the same handful of images repeated 50-90 times each. Scroll past the first page of results or vary the search query (add topic-specific modifiers: occasion, ingredient, colour, culture) until you find an ID not in the blocklist.
 1. **Find 8-12 current statistics** (2025-2026 data preferred)
    - Search: `[topic] study 2025 2026 data statistics`
    - Prioritize tier 1-3 sources (see `skills/blog/references/quality-scoring.md`)
    - Record: statistic, source name, URL, date, methodology
-2. **Find a cover image** (wide, high-quality, topic-relevant):
+2. **Find a cover image** (wide, high-quality, topic-relevant, NOT in the used-image blocklist from step 0):
    - Search: `site:pixabay.com [topic] wide banner` (preferred)
    - Alternative: `site:unsplash.com [topic] wide`
    - Fallback: `site:pexels.com [topic] wide banner`
@@ -105,7 +109,7 @@ Spawn a `blog-researcher` agent (or do inline research with WebSearch):
    - Or generate a custom SVG cover via `blog-chart` (text-on-gradient with key stat)
    - Or generate a custom AI image via `blog-image` sub-skill (if nanobanana-mcp configured)
    - See `skills/blog/references/visual-media.md` for cover image sizing details
-3. **Find 3-5 inline images** from open-source platforms:
+3. **Find 3-5 inline images** from open-source platforms, each a distinct ID not in the used-image blocklist from step 0 and not already chosen earlier in this same post:
    - **Pixabay** (preferred): Search `site:pixabay.com [topic keywords]`
      - Extract image URL from page
      - Direct URLs: `https://cdn.pixabay.com/photo/YYYY/MM/DD/HH/MM/filename.jpg`
@@ -113,6 +117,7 @@ Spawn a `blog-researcher` agent (or do inline research with WebSearch):
    - **Unsplash** (alternative): Search `site:unsplash.com [topic keywords]`
      - Build URL: `https://images.unsplash.com/photo-<id>?w=1200&h=630&fit=crop&q=80`
    - **Pexels** (fallback): Search `site:pexels.com [topic keywords]`
+   - Before finalizing each image, re-check its ID against the step 0 blocklist — do not trust memory of what "seems new," grep again if unsure.
 4. **Plan 2-4 data visualizations** from researched statistics
    - Select diverse chart types (see `skills/blog/references/visual-media.md`)
    - Map data points to chart formats
@@ -565,6 +570,9 @@ These rules are derived from real audit failures on this project. Every point mu
 **Word count & depth**
 - [ ] Every post must contain **at least 2,000 words of body prose** (the article-body text, excluding SVG chart labels, nav, sidebar and footer). Count it before delivery — do not estimate. Posts that land at ~1,600–1,900 read as thin; expand with an extra question-format H2 section or deeper detail in existing sections until prose clears 2,000. **Re-count after EVERY edit pass, not just once** — top-up paragraphs frequently still leave a post 10–50 words short, so verify the final number is ≥ 2,000 immediately before `git add`. **City-wide and comparison posts (no single suburb anchor, e.g. "eggless cake vs regular cake", "best cake Sydney") consistently land shortest** — budget an extra question-format H2 from the outset rather than topping up at the end.
 - [ ] Aim for **3–5 inline images** in the body (first one is the LCP image with `fetchpriority="high"`, the rest `loading="lazy"`) and **2–4 SVG charts** with even distribution.
+
+**Image reuse (mandatory check before every commit)**
+- [ ] Run `grep -ohE '(images\.unsplash\.com/photo-[a-zA-Z0-9_-]+|cdn\.pixabay\.com/photo/[^"'"'"' )]+|images\.pexels\.com/photos/[0-9]+)' blog/*.html | sort | uniq -c | sort -rn` and confirm every image ID used in the post being published appears **exactly once** in that output (i.e. only in this post's own file). If any image ID this post uses already shows a count ≥ 2 or appears in another file, replace it with a different image before committing. A handful of stock photo IDs (cake close-ups, bakery interiors) get reused 50-90+ times across the site when this check is skipped — it is the single most common quality failure in this workflow, so do not skip it even under time pressure.
 
 **Location accuracy — Harris Park vs Riverstone (two shops)**
 - [ ] Num Num's has TWO locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm. For a suburb post, choose the genuinely nearest shop as the primary "nearest location": **Harris Park** for Parramatta and central/western suburbs (Harris Park, Westmead, Granville, Merrylands, North Parramatta, Auburn, Rosehill, Rydalmere); **Riverstone** for the north-west (Quakers Hill, Schofields, The Ponds, Box Hill, Marsden Park, Rouse Hill, Tallawong).
