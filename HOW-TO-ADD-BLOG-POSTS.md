@@ -337,6 +337,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 - [ ] The Lenis block appears immediately before `</body>`. Never omit it. Copy from `feedback_lenis_smooth_scroll.md` memory file or any existing post.
 
+### Readability (Flesch score) — suburb posts run low, fix during drafting
+
+- [ ] Suburb/location posts are stat-dense and address-dense (postcodes, LGA names, drive times, census figures), which structurally drags the Flesch Reading Ease score down — a 2026-07-17 audit found already-published reference posts (Quakers Hill, Auburn) sitting at Flesch 50–52, and a first draft of a new suburb post landed at Flesch 46, both below the 55–75 acceptable band. Do not treat this as a post-hoc fix: while drafting, actively split compound sentences that stack an em-dash aside AND a trailing clause (e.g. "X — the Y that Z — happened because W") into two shorter sentences. Target average sentence length under 20 words in general prose paragraphs (citation-capsule and FAQ-answer sentences can stay longer, since they need to remain self-contained 40–60 word quotable units for AI citation — don't fragment those). Re-run a Flesch check (e.g. Python's `textstat.flesch_reading_ease`) after drafting and again after any edit pass; if it's still under 55, do one more simplification pass on the 5–8 longest non-FAQ, non-citation-capsule sentences before considering the post done.
+
 ### Word count & depth
 
 - [ ] Every post must contain **at least 2,000 words of body prose** (the `article-body` text, excluding SVG chart labels, nav, sidebar and footer). Count it explicitly — don't estimate. If a draft lands under 2,000, expand it with an extra question-format H2 section or deeper detail before publishing. **Re-count after EVERY edit pass, not just once** — top-up paragraphs frequently still leave a post 10–50 words short, so verify the final number is ≥ 2,000 immediately before `git add`. **City-wide and comparison posts (no single suburb anchor, e.g. "eggless cake vs regular cake", "best cake Sydney") consistently land shortest** — budget an extra question-format H2 from the outset rather than topping up at the end.
