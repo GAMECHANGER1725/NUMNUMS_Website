@@ -352,6 +352,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] Every post must contain **at least 2,000 words of body prose** (the `article-body` text, excluding SVG chart labels, nav, sidebar and footer). Count it explicitly — don't estimate. If a draft lands under 2,000, expand it with an extra question-format H2 section or deeper detail before publishing. **Re-count after EVERY edit pass, not just once** — top-up paragraphs frequently still leave a post 10–50 words short, so verify the final number is ≥ 2,000 immediately before `git add`. **City-wide and comparison posts (no single suburb anchor, e.g. "eggless cake vs regular cake", "best cake Sydney") consistently land shortest** — budget an extra question-format H2 from the outset rather than topping up at the end.
 - [ ] Target **3–5 inline body images** (first = LCP with `fetchpriority="high"`, rest `loading="lazy"`) and **2–4 SVG charts**, spaced evenly through the post.
 
+### FAQ answer length — recount each answer individually, not just the section
+
+- [ ] FAQ answers routinely drift outside the 40–60 word band on a first draft even when the section as a whole reads fine. A 2026-07-18 audit (Annangrove post) found one of five FAQ answers landed at 36 words — just under the 40–60 word requirement — while the other four were compliant; the shortfall was easy to miss without counting each answer on its own. After drafting the FAQ section, count words in **each answer individually** (not an average across the section) and pad any answer under 40 words with a natural clarifying clause (a reason, a follow-up detail, a specific timeframe) rather than leaving it short.
+
 ### Location accuracy — Harris Park vs Riverstone (two shops)
 
 - [ ] Num Num's has **two** locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm.
