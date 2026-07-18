@@ -356,6 +356,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 - [ ] FAQ answers routinely drift outside the 40–60 word band on a first draft even when the section as a whole reads fine. A 2026-07-18 audit (Annangrove post) found one of five FAQ answers landed at 36 words — just under the 40–60 word requirement — while the other four were compliant; the shortfall was easy to miss without counting each answer on its own. After drafting the FAQ section, count words in **each answer individually** (not an average across the section) and pad any answer under 40 words with a natural clarifying clause (a reason, a follow-up detail, a specific timeframe) rather than leaving it short.
 
+### Information gain markers — visible callout HTML, not just HTML comments
+
+- [ ] A 2026-07-18 audit (Eggless Cake Calories Guide post) found the first draft implemented `[ORIGINAL DATA]`, `[PERSONAL EXPERIENCE]` and `[UNIQUE INSIGHT]` markers as invisible `<!-- [ORIGINAL DATA] -->` HTML comments, which is technically permitted by the blog-write SKILL but renders no visible signal to readers or AI crawlers reading the DOM. On this project, information gain markers must **always** render as a visible styled callout/blockquote block (a `.callout-box` div with a `.callout-label` showing `[Original Data]`, `[Personal Experience]`, or `[Unique Insight]`), never as an HTML comment only. Reuse the `.takeaway-box`-style pattern: tinted or white background, `#C85478` left border, uppercase label, one self-contained paragraph.
+
 ### Location accuracy — Harris Park vs Riverstone (two shops)
 
 - [ ] Num Num's has **two** locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm.
