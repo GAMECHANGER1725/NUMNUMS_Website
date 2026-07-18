@@ -1,5 +1,22 @@
 # ── Redirects ────────────────────────────────────────────────────────────────
 
+# Canonical host: force www → non-www and http → https onto the single
+# canonical origin. GSC showed the homepage split across https://…/ (pos 14.74)
+# and http://www…/ (pos 7.76); these consolidate the ranking signal onto one URL.
+# NOTE: also confirm in Netlify dashboard → Domain management that the primary
+# domain is "numnumsbakery.com.au" (non-www) with "Force HTTPS" enabled.
+[[redirects]]
+  from = "https://www.numnumsbakery.com.au/*"
+  to = "https://numnumsbakery.com.au/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.numnumsbakery.com.au/*"
+  to = "https://numnumsbakery.com.au/:splat"
+  status = 301
+  force = true
+
 # Sitemap variant crawlers expect
 [[redirects]]
   from = "/sitemap_index.xml"
@@ -542,6 +559,679 @@
 [[redirects]]
   from = "/blog/why-we-chose-100-percent-eggless-bakery.html"
   to = "/blog/why-we-chose-100-percent-eggless-bakery"
+  status = 301
+
+
+# ── Blog .html → extensionless (301) — complete coverage (added 2026-07) ──────
+[[redirects]]
+  from = "/blog/afternoon-tea-cakes-sydney.html"
+  to = "/blog/afternoon-tea-cakes-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/are-eggless-cakes-healthy.html"
+  to = "/blog/are-eggless-cakes-healthy"
+  status = 301
+
+[[redirects]]
+  from = "/blog/best-eggless-cake-shops-sydney-2026.html"
+  to = "/blog/best-eggless-cake-shops-sydney-2026"
+  status = 301
+
+[[redirects]]
+  from = "/blog/cake-consultation-sydney.html"
+  to = "/blog/cake-consultation-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/cake-delivery-sydney.html"
+  to = "/blog/cake-delivery-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/cake-flavour-guide-sydney.html"
+  to = "/blog/cake-flavour-guide-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/cake-gifting-sydney.html"
+  to = "/blog/cake-gifting-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/cake-shop-western-sydney.html"
+  to = "/blog/cake-shop-western-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/cake-smash-cakes-sydney.html"
+  to = "/blog/cake-smash-cakes-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/christening-naming-day-cakes-sydney.html"
+  to = "/blog/christening-naming-day-cakes-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/corporate-cake-sydney.html"
+  to = "/blog/corporate-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-bulk-order-sydney.html"
+  to = "/blog/eggless-cake-bulk-order-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-buttercream-vs-fondant.html"
+  to = "/blog/eggless-cake-buttercream-vs-fondant"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-catering-sydney.html"
+  to = "/blog/eggless-cake-catering-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-customization-sydney.html"
+  to = "/blog/eggless-cake-customization-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-delivery-sydney.html"
+  to = "/blog/eggless-cake-delivery-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-design-ideas-sydney.html"
+  to = "/blog/eggless-cake-design-ideas-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-egg-substitutes.html"
+  to = "/blog/eggless-cake-egg-substitutes"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-fillings-sydney.html"
+  to = "/blog/eggless-cake-fillings-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-flavour-pairing-guide.html"
+  to = "/blog/eggless-cake-flavour-pairing-guide"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-for-pooja-sydney.html"
+  to = "/blog/eggless-cake-for-pooja-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-for-pregnancy-sydney.html"
+  to = "/blog/eggless-cake-for-pregnancy-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-for-seniors-sydney.html"
+  to = "/blog/eggless-cake-for-seniors-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-for-toddlers-sydney.html"
+  to = "/blog/eggless-cake-for-toddlers-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-for-vegetarians-sydney.html"
+  to = "/blog/eggless-cake-for-vegetarians-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-gifting-guide-sydney.html"
+  to = "/blog/eggless-cake-gifting-guide-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-gluten-free-sydney.html"
+  to = "/blog/eggless-cake-gluten-free-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-nutrition-sydney.html"
+  to = "/blog/eggless-cake-nutrition-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-price-sydney.html"
+  to = "/blog/eggless-cake-price-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-school-celebration-sydney.html"
+  to = "/blog/eggless-cake-school-celebration-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-seasonal-flavours.html"
+  to = "/blog/eggless-cake-seasonal-flavours"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-tasting-sydney.html"
+  to = "/blog/eggless-cake-tasting-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cake-types.html"
+  to = "/blog/eggless-cake-types"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-acacia-gardens.html"
+  to = "/blog/eggless-cakes-acacia-gardens"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-anniversary-sydney.html"
+  to = "/blog/eggless-cakes-anniversary-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-auburn.html"
+  to = "/blog/eggless-cakes-auburn"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-bella-vista.html"
+  to = "/blog/eggless-cakes-bella-vista"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-berala.html"
+  to = "/blog/eggless-cakes-berala"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-blacktown.html"
+  to = "/blog/eggless-cakes-blacktown"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-bridal-shower-sydney.html"
+  to = "/blog/eggless-cakes-bridal-shower-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-carlingford.html"
+  to = "/blog/eggless-cakes-carlingford"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-chester-hill.html"
+  to = "/blog/eggless-cakes-chester-hill"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-colebee.html"
+  to = "/blog/eggless-cakes-colebee"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-constitution-hill.html"
+  to = "/blog/eggless-cakes-constitution-hill"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-dundas-valley.html"
+  to = "/blog/eggless-cakes-dundas-valley"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-dural.html"
+  to = "/blog/eggless-cakes-dural"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-dussehra-sydney.html"
+  to = "/blog/eggless-cakes-dussehra-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-easter-sydney.html"
+  to = "/blog/eggless-cakes-easter-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-eastwood.html"
+  to = "/blog/eggless-cakes-eastwood"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-eid-ul-adha-sydney.html"
+  to = "/blog/eggless-cakes-eid-ul-adha-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-engagement-sydney.html"
+  to = "/blog/eggless-cakes-engagement-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-epping.html"
+  to = "/blog/eggless-cakes-epping"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-ermington.html"
+  to = "/blog/eggless-cakes-ermington"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-fathers-day-sydney.html"
+  to = "/blog/eggless-cakes-fathers-day-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-first-communion-sydney.html"
+  to = "/blog/eggless-cakes-first-communion-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-ganesh-chaturthi-sydney.html"
+  to = "/blog/eggless-cakes-ganesh-chaturthi-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-girraween.html"
+  to = "/blog/eggless-cakes-girraween"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-glenhaven.html"
+  to = "/blog/eggless-cakes-glenhaven"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-greystanes.html"
+  to = "/blog/eggless-cakes-greystanes"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-guildford-west.html"
+  to = "/blog/eggless-cakes-guildford-west"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-guildford.html"
+  to = "/blog/eggless-cakes-guildford"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-harris-park.html"
+  to = "/blog/eggless-cakes-harris-park"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-holi-sydney.html"
+  to = "/blog/eggless-cakes-holi-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-homebush.html"
+  to = "/blog/eggless-cakes-homebush"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-housewarming-sydney.html"
+  to = "/blog/eggless-cakes-housewarming-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-janmashtami-sydney.html"
+  to = "/blog/eggless-cakes-janmashtami-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-karwa-chauth-sydney.html"
+  to = "/blog/eggless-cakes-karwa-chauth-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-kellyville-ridge.html"
+  to = "/blog/eggless-cakes-kellyville-ridge"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-lidcombe.html"
+  to = "/blog/eggless-cakes-lidcombe"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-lohri-sydney.html"
+  to = "/blog/eggless-cakes-lohri-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-lunar-new-year-sydney.html"
+  to = "/blog/eggless-cakes-lunar-new-year-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-marayong.html"
+  to = "/blog/eggless-cakes-marayong"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-marsden-park.html"
+  to = "/blog/eggless-cakes-marsden-park"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-mehendi-sydney.html"
+  to = "/blog/eggless-cakes-mehendi-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-new-year-sydney.html"
+  to = "/blog/eggless-cakes-new-year-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-north-rocks.html"
+  to = "/blog/eggless-cakes-north-rocks"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-northmead.html"
+  to = "/blog/eggless-cakes-northmead"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-oatlands.html"
+  to = "/blog/eggless-cakes-oatlands"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-old-toongabbie.html"
+  to = "/blog/eggless-cakes-old-toongabbie"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-onam-sydney.html"
+  to = "/blog/eggless-cakes-onam-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-parklea.html"
+  to = "/blog/eggless-cakes-parklea"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-pemulwuy.html"
+  to = "/blog/eggless-cakes-pemulwuy"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-pendle-hill.html"
+  to = "/blog/eggless-cakes-pendle-hill"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-plumpton.html"
+  to = "/blog/eggless-cakes-plumpton"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-pongal-sydney.html"
+  to = "/blog/eggless-cakes-pongal-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-prospect.html"
+  to = "/blog/eggless-cakes-prospect"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-ramadan-sydney.html"
+  to = "/blog/eggless-cakes-ramadan-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-regents-park.html"
+  to = "/blog/eggless-cakes-regents-park"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-retirement-sydney.html"
+  to = "/blog/eggless-cakes-retirement-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-richmond.html"
+  to = "/blog/eggless-cakes-richmond"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-riverstone.html"
+  to = "/blog/eggless-cakes-riverstone"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-rooty-hill.html"
+  to = "/blog/eggless-cakes-rooty-hill"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-seven-hills.html"
+  to = "/blog/eggless-cakes-seven-hills"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-south-granville.html"
+  to = "/blog/eggless-cakes-south-granville"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-strathfield.html"
+  to = "/blog/eggless-cakes-strathfield"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-teachers-day-sydney.html"
+  to = "/blog/eggless-cakes-teachers-day-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-telopea.html"
+  to = "/blog/eggless-cakes-telopea"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-toongabbie.html"
+  to = "/blog/eggless-cakes-toongabbie"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-vaisakhi-sydney.html"
+  to = "/blog/eggless-cakes-vaisakhi-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-valentines-day-sydney.html"
+  to = "/blog/eggless-cakes-valentines-day-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-vineyard.html"
+  to = "/blog/eggless-cakes-vineyard"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-wentworthville.html"
+  to = "/blog/eggless-cakes-wentworthville"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-windsor.html"
+  to = "/blog/eggless-cakes-windsor"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-winston-hills.html"
+  to = "/blog/eggless-cakes-winston-hills"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-cakes-woodville.html"
+  to = "/blog/eggless-cakes-woodville"
+  status = 301
+
+[[redirects]]
+  from = "/blog/eggless-chocolate-cake-sydney.html"
+  to = "/blog/eggless-chocolate-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/farewell-cake-sydney.html"
+  to = "/blog/farewell-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/first-birthday-cake-sydney.html"
+  to = "/blog/first-birthday-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/how-to-choose-cake-sydney.html"
+  to = "/blog/how-to-choose-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/how-to-design-birthday-cake-sydney.html"
+  to = "/blog/how-to-design-birthday-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/how-to-order-cake-sydney.html"
+  to = "/blog/how-to-order-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/kids-birthday-cake-north-west-sydney.html"
+  to = "/blog/kids-birthday-cake-north-west-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/luxury-cake-sydney.html"
+  to = "/blog/luxury-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/milestone-birthday-cake-sydney.html"
+  to = "/blog/milestone-birthday-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/multicultural-celebration-cake-sydney.html"
+  to = "/blog/multicultural-celebration-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/naked-cake-sydney.html"
+  to = "/blog/naked-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/photo-cake-sydney.html"
+  to = "/blog/photo-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/same-day-cake-sydney.html"
+  to = "/blog/same-day-cake-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/theme-cakes-sydney.html"
+  to = "/blog/theme-cakes-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/tiered-cakes-sydney.html"
+  to = "/blog/tiered-cakes-sydney"
+  status = 301
+
+[[redirects]]
+  from = "/blog/unique-birthday-cake-ideas-sydney.html"
+  to = "/blog/unique-birthday-cake-ideas-sydney"
+  status = 301
+
+# ── Legacy WordPress URLs (index bloat) → current pages (301) ────────────────
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/portfolio/*"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/portfolio_group/*"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/category/*"
+  to = "/blog"
+  status = 301
+
+[[redirects]]
+  from = "/our-team/"
+  to = "/about"
+  status = 301
+
+[[redirects]]
+  from = "/our-team"
+  to = "/about"
+  status = 301
+
+[[redirects]]
+  from = "/23-tier-cake/"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/23-tier-cake"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/pastry/"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/pastry"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/services/birthday-cakes/"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/services/birthday-cakes"
+  to = "/cakes"
+  status = 301
+
+[[redirects]]
+  from = "/croissant-tart-section"
+  to = "/"
   status = 301
 
 # ── Headers ───────────────────────────────────────────────────────────────────
