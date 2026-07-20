@@ -40,6 +40,41 @@
 
   <!-- Blog posts -->
   <url>
+    <loc>https://numnumsbakery.com.au/blog/eggless-cakes-doonside</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://numnumsbakery.com.au/blog/eggless-cakes-glendenning</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://numnumsbakery.com.au/blog/eggless-cakes-guru-nanak-jayanti-sydney</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://numnumsbakery.com.au/blog/eggless-cake-faq-sydney</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://numnumsbakery.com.au/blog/cake-serving-size-guide-sydney</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://numnumsbakery.com.au/blog/eggless-birthday-cakes-sydney</loc>
     <lastmod>2026-05-20</lastmod>
   </url>
