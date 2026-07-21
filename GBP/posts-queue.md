@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-07-21
+
+```yaml
+id: post-rs-2026-07-21
+status: published
+published_at: 2026-07-21
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless cakes for Box Hill and Rouse Hill families near Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5753.jpeg"
+keywords_baited:
+  - custom eggless cake Rouse Hill Box Hill
+  - genuinely eggless bakery near Riverstone
+  - double check eggs birthday cake
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
