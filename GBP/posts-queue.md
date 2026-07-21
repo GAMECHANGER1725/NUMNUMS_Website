@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-07-21
+
+```yaml
+id: post-hp-2026-07-21
+status: published
+published_at: 2026-07-21
+location: harris-park
+post_type: "Call to action"
+title: "Eggless right down to the buttercream — Rosehill and Camellia orders welcome"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5606.jpeg"
+keywords_baited:
+  - eggless buttercream and ganache not just sponge
+  - Rosehill and Camellia custom cake pickup
+  - is the frosting eggless too Parramatta
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
