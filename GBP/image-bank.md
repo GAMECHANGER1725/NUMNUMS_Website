@@ -1,7 +1,45 @@
 # GBP Image Bank — Num Num's Bakery
 
 Real bakery photos hosted at numnums-images.netlify.app (342 images).
-Cloud routines pick the first unused URL — check GBP/posts-queue.md media_items for already-used URLs.
+
+## How to pick an image (read this before every post)
+
+**The only authority on what has been used is `GBP/used-images.txt`.** Read that file first.
+Do NOT use `posts-queue.md` `media_items` as the used-image check — early posts recorded
+Pexels stock URLs there, which never match a bank URL, so that check silently excludes nothing.
+
+1. Read `GBP/used-images.txt` into a set.
+2. Take the pool below, subtract that set → the *available* list.
+3. **Pick at random from the available list. Do not take the first one.**
+   The pool is sorted, so consecutive entries (`IMG_0661`, `IMG_0662`, `IMG_0663`…) are
+   almost always the same cake shot from different angles — sequential picking produces
+   a run of near-identical posts even when dedup is working correctly.
+4. 🚨 **Append the chosen URL to `GBP/used-images.txt`, commit it, and push it — in the
+   same run, BEFORE or immediately after you publish. This is not optional and it is not
+   the workflow's job.**
+
+   This is the step that was missing, and it is the entire reason every post shipped with
+   the same photo. **You have two publish paths, and only one of them touches git:**
+
+   | Publish path | Does `used-images.txt` get updated? |
+   |---|---|
+   | Write `GBP/outbox/*.json` → GitHub Actions posts it | Yes — the workflow appends as a backstop |
+   | **POST straight to the Make.com webhook** | **NO — nothing is recorded unless you do it yourself** |
+
+   The routine currently uses the **direct webhook path** (confirmed 2026-07-21: posts are
+   still going live, but there has been no GBP commit since 14 June). On that path the
+   workflow never runs, so if you do not commit `used-images.txt` yourself, the next run
+   reads the same file, computes the same "available" list, and picks the same photo —
+   forever. **Publishing without committing the image is the bug.**
+
+5. If the available list is empty, all 342 are exhausted: clear `used-images.txt` and
+   start a fresh cycle.
+
+⚠️ **Failure history:** from 14 June 2026 until this was fixed, every post shipped with
+`0167032d-a343-456a-8e50-90022e501183.jpg` (the Elsa cake) — the first URL in the pool.
+Two independent faults stacked: the publisher's queue-update step was a silent no-op
+(fixed in `.github/workflows/gbp-post.yml`), **and** the routine publishes directly to the
+webhook, so that workflow never ran anyway. State only persists if the routine commits it.
 
 ## Image Pool
 

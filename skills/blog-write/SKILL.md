@@ -584,7 +584,24 @@ These rules are derived from real audit failures on this project. Every point mu
 - [ ] The Key Takeaways / Quick Summary box drifts outside the 40–60 word combined target on a first draft the same way FAQ answers do, even when every individual bullet reads fine on its own. A 2026-07-19 audit (Cake Price Guide Sydney post, a city-wide topic post) found the box landed at 88 words across 5 bullets on first draft — well over the 40–60 word target — because each bullet was judged individually for quality rather than summed for total length. After drafting the Key Takeaways/Quick Summary box, add up the word count across **all bullets combined** and tighten phrasing (drop redundant qualifiers, shorten to the essential number/fact) until the total sits inside 40–60 words, the same discipline already applied to FAQ answers.
 
 **Image reuse (mandatory check before every commit)**
-- [ ] Run `grep -ohE '(images\.unsplash\.com/photo-[a-zA-Z0-9_-]+|cdn\.pixabay\.com/photo/[^"'"'"' )]+|images\.pexels\.com/photos/[0-9]+)' blog/*.html | sort | uniq -c | sort -rn` and confirm every image ID used in the post being published appears **exactly once** in that output (i.e. only in this post's own file). If any image ID this post uses already shows a count ≥ 2 or appears in another file, replace it with a different image before committing. A handful of stock photo IDs (cake close-ups, bakery interiors) get reused 50-90+ times across the site when this check is skipped — it is the single most common quality failure in this workflow, so do not skip it even under time pressure.
+
+⚠️ **Current state as of 2026-07-21: 667 image references across the blog draw on only 106
+distinct images.** The worst offender (`photo-1558301211-0d8c8ddee6ec`) appears in **101 posts**;
+three more appear in 86-89 each. This is the single most common quality failure in this workflow.
+It went unchecked for months because this rule lived in a copy of SKILL.md that was never loaded.
+
+- [ ] **Prefer Num Num's own photos.** The bakery has **342 real photos** on its CDN, listed in
+  `GBP/image-bank.md` (`https://numnums-images.netlify.app/…`). Real product photography beats
+  stock for both E-E-A-T and conversion, and the pool is 3× larger than the stock set currently
+  in rotation. Use the bank for the hero and at least one inline image before reaching for stock.
+- [ ] **If you do use stock, it must be genuinely new to the site.** Run:
+  `grep -ohE '(images\.unsplash\.com/photo-[a-zA-Z0-9_-]+|cdn\.pixabay\.com/photo/[^"'"'"' )]+|images\.pexels\.com/photos/[0-9]+)' blog/*.html | sort -u`
+  Every stock ID in the new post must be **absent** from that list. Do not reuse an existing ID
+  "because it fits" — with 342 bank photos available there is no excuse.
+- [ ] **Never reuse an image inside a single post.** Each of the 3-5 inline images must be distinct.
+- [ ] After writing, confirm the distinct-image count went **up** by the number of new images you
+  added: re-run the `sort -u | wc -l` count before and after. If it did not increase, you reused
+  something.
 
 **Information gain markers — visible callout HTML, not just HTML comments**
 - [ ] A 2026-07-18 audit (Eggless Cake Calories Guide post) found the first draft implemented `[ORIGINAL DATA]`, `[PERSONAL EXPERIENCE]` and `[UNIQUE INSIGHT]` markers as invisible `<!-- [ORIGINAL DATA] -->` HTML comments per the "or as visible callouts if the format supports it" language above — technically present but not rendered on the page, so they carry no visible E-E-A-T/originality signal to readers or AI crawlers reading the rendered DOM. On this project, information gain markers must **always** render as a visible styled callout/blockquote block (e.g. a `.callout-box` div with a `.callout-label` showing `[Original Data]`, `[Personal Experience]`, or `[Unique Insight]`), never as an HTML comment only. Reuse the `.takeaway-box`-style pattern: white or tinted background, `#C85478` left border, uppercase label, one self-contained paragraph.
@@ -619,13 +636,19 @@ Steps:
 
 The orchestrator holds the loop counter; this sub-skill never loops itself.
 
-### Phase 6.8: Mandatory Post-Write Analysis (Num Nums Bakery project)
+### Phase 6.8: Mandatory Post-Write Checklist Pass (Num Nums Bakery project)
 
-After writing the HTML file and before delivery, **always run `/blog-analyze`** on the finished post. This is not optional.
+⚠️ **Do NOT run `/blog-analyze`.** The user ruled it out on 2026-06-20 as a token waste, and
+that decision stands. Its value is already captured as a static, token-free checklist — use that
+instead. (Superseded instruction: this phase previously said "always run `/blog-analyze`".)
+
+After writing the HTML file and before delivery, walk the checklist manually. This is not optional.
 
 Steps:
-1. Run the analysis against the newly written file.
-2. Fix **every issue** returned, working Critical → High → Medium → Low. Do not present the draft until all findings are resolved.
+1. Verify the newly written file against the **Num Nums Bakery HTML Project — Non-negotiable
+   Pre-publish Checklist** section of this file AND the **Quality Gate** section of
+   `HOW-TO-ADD-BLOG-POSTS.md`. Work through them item by item — do not eyeball it.
+2. Fix **every issue** found, working Critical → High → Medium → Low. Do not present the draft until all findings are resolved.
 3. **Always update both checklist files after every post** — this step is unconditional, not "if findings exist." After fixing all issues, go through every finding at every severity level (Critical → Low) and for each one:
    a. Check whether the pattern is already covered verbatim in the **Num Nums Bakery HTML Project — Non-negotiable Pre-publish Checklist** section of this file (SKILL.md).
    b. Check whether it is already covered in the **Quality Gate** section of `HOW-TO-ADD-BLOG-POSTS.md` in the project root.
@@ -635,7 +658,7 @@ Steps:
 
 ### Phase 7: Delivery
 
-Present the completed article ONLY after Phase 6.5 returns all gates passing AND Phase 6.8 analysis is clean. Include the screenshots from `<folder>/preview/*.png` in the summary so the user can see what they are getting before reading the prose.
+Present the completed article ONLY after Phase 6.5 returns all gates passing AND the Phase 6.8 checklist pass is clean. Include the screenshots from `<folder>/preview/*.png` in the summary so the user can see what they are getting before reading the prose.
 
 Summary template:
 

@@ -2,6 +2,25 @@
 
 ## Always Do First
 - **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
+- **Invoke the `blog-write` skill** before writing any blog post, every session, no exceptions — including scheduled/cloud routine runs. Never hand-write a post by copying an existing one from `blog/`.
+- **Invoke the GBP rules file** before writing any Google Business Profile post: read `GBP/gbp-posts-harris-park.md` or `GBP/gbp-posts-riverstone.md` and complete its **Anti-repetition check** before drafting.
+
+## Skill Resolution — read this before writing content
+The project skill lives at **`skills/blog-write/SKILL.md`** — a real, git-tracked file. This is the
+one the cloud routine reads and appends new checklist patterns to after every post, so it is the
+single source of truth. `.claude/skills/blog-write/SKILL.md` is a local symlink to it, so the
+`blog-write` skill invocation and the file path stay in sync.
+
+- ✅ Edit `skills/blog-write/SKILL.md` (or the symlink — same file).
+- ❌ Never edit `~/.claude/plugins/cache/agricidaniel-blog/…` — version-pinned, wiped on plugin update, absent in the cloud.
+- ⚠️ Never convert `skills/blog-write/SKILL.md` into a symlink or move it under `.claude/`. `.claude/` is gitignored, so the cloud routine would lose the file entirely.
+- If the loaded `blog-write` skill does **not** contain a section titled *"Num Nums Bakery HTML Project — Non-negotiable Pre-publish Checklist"*, you have the generic plugin version. **Stop and read `skills/blog-write/SKILL.md` directly before writing.**
+
+## Anti-Repetition (blog + GBP)
+Repetition is the #1 recurring failure on this project. Before writing anything:
+- **Blog:** `ls blog/` first. Never write a post for a suburb that already has one. Check the last 10 posts in `git log --oneline -10 -- blog/` and do not reuse their angle.
+- **GBP:** follow the Anti-repetition check in the location's rules file — last 6 suburbs, last 6 angles, and a random unused image from `GBP/image-bank.md`.
+- **Images:** run the image-reuse grep in the blog-write checklist. A stock ID reused across posts is a failure, not a shortcut.
 
 ## Reference Images
 - If a reference image is provided: match layout, spacing, typography, and color exactly. Swap in placeholder content (images via `https://placehold.co/`, generic copy). Do not improve or add to the design.

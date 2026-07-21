@@ -20,11 +20,12 @@ jobs:
       - name: Publish GBP posts to Make.com
         run: |
           python3 << 'PYEOF'
-          import json, os, sys, datetime
+          import json, os, re, sys, datetime
           import urllib.request, urllib.error, subprocess
 
           outbox_dir = 'GBP/outbox'
           queue_path = 'GBP/posts-queue.md'
+          used_path  = 'GBP/used-images.txt'
 
           files = sorted(f for f in os.listdir(outbox_dir) if f.endswith('.json'))
           if not files:
@@ -79,6 +80,7 @@ jobs:
                   f'id: {post_id}\n'
                   f'status: published\n'
                   f'published_at: {today}\n'
+                  f'location: {location}\n'
                   f'post_type: "{data["post_type"]}"\n'
                   f'title: "{data["title"]}"\n'
                   f'cta_action: {data.get("cta_action", "LEARN_MORE")}\n'
@@ -94,16 +96,46 @@ jobs:
 
               with open(queue_path) as f:
                   content = f.read()
+              before = content
 
-              marker = '## Published\n\n---\n\n'
-              if marker in content:
-                  content = content.replace(marker, marker + new_block, 1)
+              # Insert directly after the "## Published ..." heading line.
+              # NOTE: match the heading by prefix — the real heading carries a
+              # suffix ("## Published (last 90 days)"), so an exact-string
+              # marker silently never matches and the queue never grows.
+              m = re.search(r'^## Published.*$', content, re.M)
+              if not m:
+                  print(f'ERROR — no "## Published" heading in {queue_path}; cannot record {post_id}.')
+                  sys.exit(1)
+
+              insert_at = m.end()
+              sep = re.match(r'\n+---\n+', content[insert_at:])
+              if sep:
+                  insert_at += sep.end()
+                  content = content[:insert_at] + new_block + content[insert_at:]
               else:
-                  # Fallback: append after ## Published header
-                  content = content.replace('## Published\n', '## Published\n\n' + new_block, 1)
+                  content = content[:insert_at] + '\n\n' + new_block + content[insert_at:]
+
+              if content == before:
+                  print(f'ERROR — queue insert was a no-op for {post_id}; refusing to drop the outbox file.')
+                  sys.exit(1)
 
               with open(queue_path, 'w') as f:
                   f.write(content)
+
+              # Persist the image so the next run cannot pick it again.
+              if image_url:
+                  try:
+                      with open(used_path) as f:
+                          used = [ln.strip() for ln in f if ln.strip()]
+                  except FileNotFoundError:
+                      used = []
+                  if image_url not in used:
+                      used.append(image_url)
+                      with open(used_path, 'w') as f:
+                          f.write('\n'.join(used) + '\n')
+                      print(f'Recorded image as used: {image_url}')
+                  else:
+                      print(f'WARNING — image was already in {used_path}, so this post reused it: {image_url}')
 
               os.remove(fpath)
               posted += 1
@@ -112,7 +144,7 @@ jobs:
           if posted:
               subprocess.run(['git', 'config', 'user.name', 'GBP Bot'], check=True)
               subprocess.run(['git', 'config', 'user.email', 'noreply@numnumsbakery.com.au'], check=True)
-              subprocess.run(['git', 'add', 'GBP/outbox/', 'GBP/posts-queue.md'], check=True)
+              subprocess.run(['git', 'add', 'GBP/outbox/', 'GBP/posts-queue.md', 'GBP/used-images.txt'], check=True)
               subprocess.run(['git', 'commit', '-m', f'GBP: {posted} post(s) published via Make.com'], check=True)
               subprocess.run(['git', 'push'], check=True)
               print(f'\nDone — {posted} post(s) published.')

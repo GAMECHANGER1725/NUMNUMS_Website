@@ -22,6 +22,9 @@ These are the most common mistakes that break the Make.com router. **NEVER produ
 ❌ **`cta: Book`** — wrong field name, use `cta_action: BOOK` + `cta_url: ...`
 ❌ **Markdown body below the `---`** — body lives INSIDE `summary: |`
 ❌ **`**bold**` or `[link]()` in summary** — plain text only
+❌ **A stock photo URL in `media_items`** — use the real photo bank (`GBP/image-bank.md`)
+❌ **The first URL from the image bank** — pick at random from what's unused, or every post looks identical
+❌ **Repeating a suburb cluster or angle from the last 6 posts** — run the Anti-repetition check first
 
 
 ✅ **The ONLY valid `post_type` values:**
@@ -121,25 +124,24 @@ Real high-performing posts run **shorter than most guides claim**:
 ---
 
 
-## Images · default = stock
+## Images · use the real bakery photo bank
 
 
-**Default approach: pull a stock image that matches the post topic.** Fastest, easiest, works for 90% of cases.
+**Num Num's has 342 of its own photos.** Never use stock for this client. Do NOT output an
+`image_query:` field, and never put a Pexels / Unsplash / Pixabay URL in `media_items` —
+real product photos outperform stock on GBP, and mixing stock URLs into the queue also
+breaks the used-image dedup check (bank URLs and stock URLs never match).
 
 
-For each post, Claude outputs an `image_query:` field — a 3-5 word search query the user pastes into Unsplash / Pexels / Pixabay to grab a relevant free image.
+**Selection procedure — see `GBP/image-bank.md` for the full rules:**
 
 
-Example: `image_query: "plumber fixing water heater"` → user grabs from Unsplash in 10 seconds → done.
-
-
-**Quality hierarchy** (for clients who want to level up):
-
-
-1. **Real client photos** — best, but requires onboarding effort
-2. **AI-generated** via fal.ai (Nano Banana, Imagen) — great for unique product shots
-3. **Stock photos** ← default, easiest
-4. ❌ Skip the post entirely if no image — engagement drops ~60% without one
+1. Read `GBP/used-images.txt` — this is the ONLY authority on what has already been used.
+2. Subtract it from the pool in `GBP/image-bank.md` → the available list.
+3. **Pick at random from the available list — never the first entry.** The pool is sorted,
+   so consecutive filenames are usually the same cake from different angles.
+4. Put the chosen URL in `media_items` and append it to `GBP/used-images.txt` in the same commit.
+5. ❌ Never skip the post — engagement drops ~60% without an image, and there are 342 to choose from.
 
 
 ---
@@ -574,11 +576,13 @@ title: "60-80 char headline · plain text"
 summary: |
  Body text · plain text · no markdown · 25-300 words
 media_items:
-  - "https://images.pexels.com/photos/xxxxx/photo.jpeg?auto=compress&cs=tinysrgb&w=1200"
+  - "https://numnums-images.netlify.app/IMG_0730.jpg"
 # ⚠️ media_items is a plain ARRAY OF STRINGS (direct image URLs)
 # Make.com maps this as {{1.media_items[1]}} — Harris Park scenario webhook is module 1
 # JSON format: "media_items": ["https://..."]
-# Must be a real, publicly accessible image URL (Pexels/Unsplash direct link)
+# Must be a URL from GBP/image-bank.md (the 342 real Num Num's photos).
+# NEVER a Pexels/Unsplash/stock URL — stock breaks the used-image dedup check
+# and performs worse than real product photography on GBP.
 # Minimum 1200×900 px · 4:3 ratio · max 1 MB
 
 
@@ -587,7 +591,7 @@ id: post-2026-05-15-001
 status: pending
 publish_date: 2026-05-15
 published_at: null
-image_query: "stock image search query"
+image_chosen: "https://numnums-images.netlify.app/IMG_0730.jpg"   # random unused pick from image-bank.md
 keywords_baited:
  - service variant
  - neighborhood
@@ -623,7 +627,7 @@ summary: |
  This is what online therapy for men in Ontario looks like when
  it's done right. First consultation is free.
 media_items:
- - "https://images.unsplash.com/photo-xxxxx?w=1200"
+ - "https://numnums-images.netlify.app/IMG_0847.jpg"
 
 
 # CTA-specific fields
@@ -636,7 +640,7 @@ id: post-2026-05-15-002
 status: pending
 publish_date: 2026-05-17
 published_at: null
-image_query: "man on laptop video call home office"
+image_chosen: "https://numnums-images.netlify.app/IMG_0847.jpg"   # random unused pick from image-bank.md
 keywords_baited:
  - online therapy for men Ontario
  - parts-based therapy
@@ -665,7 +669,7 @@ summary: |
  All skill levels welcome. Ingredients + take-home recipes
  provided. 12 spots only · $45/person.
 media_items:
- - "https://images.unsplash.com/photo-xxxxx?w=1200"
+ - "https://numnums-images.netlify.app/IMG_0994.jpg"
 
 
 # EVENT-specific fields (ISO 8601 with America/Toronto offset)
@@ -678,7 +682,7 @@ id: post-2026-05-15-003
 status: pending
 publish_date: 2026-05-15
 published_at: null
-image_query: "italian pasta cooking class"
+image_chosen: "https://numnums-images.netlify.app/IMG_0994.jpg"   # random unused pick from image-bank.md
 keywords_baited:
  - cooking class Toronto
  - King St W kitchen
@@ -709,7 +713,7 @@ summary: |
  12-year warranty · 4-hour install · same-day quotes available.
  Mention this post when you book.
 media_items:
- - "https://images.unsplash.com/photo-xxxxx?w=1200"
+ - "https://numnums-images.netlify.app/IMG_1026.jpg"
 
 
 # OFFER-specific fields
@@ -725,7 +729,7 @@ id: post-2026-05-15-004
 status: pending
 publish_date: 2026-05-15
 published_at: null
-image_query: "tankless water heater install"
+image_chosen: "https://numnums-images.netlify.app/IMG_1026.jpg"   # random unused pick from image-bank.md
 keywords_baited:
  - tankless water heater install
  - Toronto + GTA
@@ -840,6 +844,52 @@ Claude updates posts-queue.md:
 - No external dependency (no Sheets, no DB)
 - Stays in version control with the skill
 - Trackable history per client
+
+
+---
+
+
+## 🔁 Anti-repetition check (MANDATORY — run before writing a single word)
+
+This project shipped the same post angle and the same photo for weeks because this
+check did not exist and the "Published" section was never actually being written to.
+Do not generate anything until you have completed all four steps.
+
+**Step 1 — Read the real history.**
+Read `GBP/posts-queue.md` (every `### post-…` block, Published *and* Pending) and
+`GBP/used-images.txt`. If the Published section is empty but `used-images.txt` has
+entries, trust `used-images.txt` and treat the queue as unreliable — say so in your output.
+
+**Step 2 — Do not repeat a suburb cluster.**
+List the suburbs named in the last **6** posts for this location. The new post must lead
+with a suburb combination that is NOT in that list. Each location has a `key_suburbs`
+list in its `gbp-numnums-*.md` config — work through it rather than defaulting to the
+same two or three names every time.
+- Harris Park kept regenerating *Parramatta / Granville / Merrylands / Westmead*.
+- Riverstone's equivalent trap is *Schofields / The Ponds / Marsden Park*.
+
+**Step 3 — Do not repeat an angle.**
+List the `title` of the last **6** posts. The new post must not reuse the same angle
+(e.g. "custom eggless birthday cakes for X families" is one angle, not a template to
+refill with new suburb names). Rotate the `post_type` per the Monthly mix table above —
+if the last two posts were both `Call to action`, this one is not.
+
+**Step 4 — Do not repeat an image.**
+Follow the selection procedure in `GBP/image-bank.md`: subtract `used-images.txt` from
+the pool and pick **at random** from what remains, never the first entry.
+
+🚨 **Then commit and push `GBP/used-images.txt` in this same run — even if you published by
+POSTing straight to the Make.com webhook instead of writing an outbox file.** The GitHub
+Actions publisher only appends that file when you go through `GBP/outbox/`; on the direct
+webhook path nothing records your choice unless you do. Skipping this is precisely why
+every post from 14 June to 21 July 2026 shipped with the same Elsa cake photo — the state
+file never changed, so every run recomputed the identical "first available" pick.
+
+**A post is not finished until `used-images.txt` contains the image you just used.**
+
+**Step 5 — State your working in the output.** Before the post itself, print:
+`Last 6 suburbs: … | Last 6 angles: … | Images used: N/342 | This post: <suburbs>, <angle>, <image>`
+If you cannot show this, you have not done the check.
 
 
 ---

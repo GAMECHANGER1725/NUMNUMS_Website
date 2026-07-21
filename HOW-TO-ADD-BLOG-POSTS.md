@@ -8,7 +8,11 @@ Every blog post = four updates (+ one post-deploy ping):
 4. A new entry in `llms.txt` under `## Blog Posts`
 5. After it's live: ping IndexNow → `node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug` (Step 6)
 
-After writing, **always run `/blog-analyze`** on the finished post and fix every issue (Critical → High → Medium → Low) before considering the post done. Then update both this file and `SKILL.md` with any new patterns found so the same mistake never needs a second prompt.
+**Always START by invoking the `blog-write` skill** — never hand-write a post from the template without calling it.
+
+After writing, walk the **Quality Gate** checklist below manually and fix every issue (Critical → High → Medium → Low) before considering the post done. Then update both this file and the skill with any new patterns found so the same mistake never needs a second prompt.
+
+⚠️ **Do NOT run `/blog-analyze`** — ruled out on 2026-06-20 as a token waste. The checklist below already encodes everything the analyzer used to catch.
 
 ---
 
@@ -240,7 +244,7 @@ node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug
 
 ## Quality Gate — Pre-publish Checklist
 
-Run `/blog-analyze` on every post before marking it done. Fix all issues found (Critical → High → Medium → Low). The items below are the recurring failure patterns discovered during live audits — check them manually before even running the analyzer.
+Check every post against this list before marking it done, and fix all issues found (Critical → High → Medium → Low). These are the recurring failure patterns discovered during live audits. **Do not run `/blog-analyze`** — this list replaces it.
 
 ### Meta & SEO
 
@@ -386,13 +390,20 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 This step is **unconditional** — it runs after every post regardless of whether new issues were found.
 
-After fixing all `/blog-analyze` findings:
+After fixing everything the Quality Gate pass turned up:
 
-1. Go through every finding at every severity level (Critical → Low).
-2. For each finding, check whether it is already covered verbatim in:
+1. Go through every issue at every severity level (Critical → Low).
+2. For each one, check whether it is already covered verbatim in:
    - The **Quality Gate** section of this file (`HOW-TO-ADD-BLOG-POSTS.md`)
-   - The **Num Nums Bakery HTML Project — Non-negotiable Pre-publish Checklist** section in `SKILL.md` at `/Users/vaidikpatel/.claude/plugins/cache/agricidaniel-blog/claude-blog/1.9.1/skills/blog-write/SKILL.md`
+   - The **Num Nums Bakery HTML Project — Non-negotiable Pre-publish Checklist** section of the
+     project skill at **`.claude/skills/blog-write/SKILL.md`** (repo-relative — this file is
+     committed, so cloud routines get it too)
 3. If either file is missing the pattern, add it to **both files** — same wording, same section, kept in sync.
+
+⚠️ **Never edit the plugin cache copy** (`~/.claude/plugins/cache/agricidaniel-blog/…`). It is
+version-pinned, wiped on every plugin update, and does not exist in the cloud routine's checkout.
+Edits made there are invisible to the routine. `skills/blog-write/SKILL.md` is a symlink to the
+committed skill, so editing either repo path is fine — they are the same file.
 4. If no new patterns were found, confirm explicitly in the delivery summary: "Checklist files reviewed — no new patterns to add."
 
 **Never silently skip this step.** Every finding that surfaces once becomes a pre-check forever. The checklists grow; they never shrink.
