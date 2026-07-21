@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-07-21
+
+```yaml
+id: post-hp-2026-07-21
+status: published
+published_at: 2026-07-21
+location: harris-park
+post_type: "Call to action"
+title: "Halal-friendly engagement cakes for Rosehill and Camellia families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/152e0928-1673-4d83-9ff8-1a689e866f5a.jpg"
+keywords_baited:
+  - halal-friendly engagement cake
+  - Rosehill Camellia Harris Park
+  - halal-friendly cake without special request
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
