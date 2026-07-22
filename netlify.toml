@@ -1374,6 +1374,108 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/cake-delivery-areas-sydney.html"
+  to = "/blog/cake-delivery-areas-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/cake-price-guide-sydney.html"
+  to = "/blog/cake-price-guide-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-calories-guide-sydney.html"
+  to = "/blog/eggless-cake-calories-guide-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-lower-sugar-options-sydney.html"
+  to = "/blog/eggless-cake-lower-sugar-options-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-reviews-sydney.html"
+  to = "/blog/eggless-cake-reviews-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-annangrove.html"
+  to = "/blog/eggless-cakes-annangrove"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-dean-park.html"
+  to = "/blog/eggless-cakes-dean-park"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-grantham-farm.html"
+  to = "/blog/eggless-cakes-grantham-farm"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-guru-nanak-gurpurab-sydney.html"
+  to = "/blog/eggless-cakes-guru-nanak-gurpurab-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-kings-park.html"
+  to = "/blog/eggless-cakes-kings-park"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-melrose-park.html"
+  to = "/blog/eggless-cakes-melrose-park"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-mid-autumn-festival-sydney.html"
+  to = "/blog/eggless-cakes-mid-autumn-festival-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-newington.html"
+  to = "/blog/eggless-cakes-newington"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-nowruz-sydney.html"
+  to = "/blog/eggless-cakes-nowruz-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-silverwater.html"
+  to = "/blog/eggless-cakes-silverwater"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-vesak-day-sydney.html"
+  to = "/blog/eggless-cakes-vesak-day-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-yennora.html"
+  to = "/blog/eggless-cakes-yennora"
+  status = 301
+  force = true
+
 # ── Legacy WordPress URLs (index bloat) → current pages (301) ────────────────
 [[redirects]]
   from = "/index.html"
