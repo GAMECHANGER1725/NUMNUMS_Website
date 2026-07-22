@@ -1,0 +1,5 @@
+# NumNums-SEO-Weekly run ledger
+# One line per run, appended by the routine. Newest at the bottom.
+# Format:
+# DD-MM-YYYY | health_score | 7d_clicks | 7d_impressions | 7d_ctr | 7d_avg_position | fixes_applied
+# No runs yet.
