@@ -6,15 +6,37 @@
 - **Invoke the GBP rules file** before writing any Google Business Profile post: read `GBP/gbp-posts-harris-park.md` or `GBP/gbp-posts-riverstone.md` and complete its **Anti-repetition check** before drafting.
 
 ## Skill Resolution — read this before writing content
-The project skill lives at **`skills/blog-write/SKILL.md`** — a real, git-tracked file. This is the
-one the cloud routine reads and appends new checklist patterns to after every post, so it is the
-single source of truth. `.claude/skills/blog-write/SKILL.md` is a local symlink to it, so the
-`blog-write` skill invocation and the file path stay in sync.
+Project skills live as real, git-tracked files under **`skills/<name>/`**. Each is symlinked from
+`.claude/skills/<name>` so it is auto-discovered and invocable by name. **Both the real file and
+the symlink are tracked**, so cloud routines get the skill too.
 
-- ✅ Edit `skills/blog-write/SKILL.md` (or the symlink — same file).
-- ❌ Never edit `~/.claude/plugins/cache/agricidaniel-blog/…` — version-pinned, wiped on plugin update, absent in the cloud.
-- ⚠️ Never convert `skills/blog-write/SKILL.md` into a symlink or move it under `.claude/`. `.claude/` is gitignored, so the cloud routine would lose the file entirely.
-- If the loaded `blog-write` skill does **not** contain a section titled *"Num Nums Bakery HTML Project — Non-negotiable Pre-publish Checklist"*, you have the generic plugin version. **Stop and read `skills/blog-write/SKILL.md` directly before writing.**
+`.gitignore` ignores `.claude/*` but negates `!.claude/skills/`. It must be `.claude/*`, not
+`.claude/` — git will not descend into an excluded directory, so a negation under it never fires.
+Do not "simplify" that back to `.claude/`; it silently un-tracks every project skill.
+
+- ✅ Edit `skills/<name>/SKILL.md` (or via the symlink — same file).
+- ❌ Never edit `~/.claude/plugins/cache/…` — version-pinned, wiped on plugin update, absent in the cloud.
+- ⚠️ Symlinking a skill under `.claude/skills/` is now **correct and required**. (Older guidance here
+  forbade it because `.claude/` was fully ignored. That is fixed — see the negation above.)
+
+### `blog-write`
+Source of truth: `skills/blog-write/SKILL.md`. The cloud routine reads it and appends new checklist
+patterns after every post. If the loaded skill does **not** contain a section titled *"Num Nums
+Bakery HTML Project — Non-negotiable Pre-publish Checklist"*, you have the generic plugin version.
+**Stop and read `skills/blog-write/SKILL.md` directly before writing.**
+
+### `seo-audit`
+Source of truth: `skills/seo-audit/`. A **verbatim, byte-for-byte vendored copy** of the `claude-seo`
+plugin v2.0.0 (`agricidaniel-claude-seo`), used by the NumNums-SEO-Weekly routine because plugins
+are not installed in the cloud sandbox. See `skills/seo-audit/VENDORED.md`.
+
+- ❌ **Never edit anything under `skills/seo-audit/`.** It must stay identical to upstream so the
+  0–100 health score is comparable week over week and against upstream.
+- Project-specific rules (eggless-only scope, Wikidata `sameAs`, sitemap/`llms.txt` as Critical)
+  belong in the **routine prompt**, which passes them to the skill as input — never baked into the
+  skill.
+- Requires `pip install requests beautifulsoup4 lxml`. It is not stdlib-only; `scripts/fetch_page.py`
+  exits immediately without them.
 
 ## Anti-Repetition (blog + GBP)
 Repetition is the #1 recurring failure on this project. Before writing anything:

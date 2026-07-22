@@ -8,7 +8,11 @@ node_modules/
 .DS_Store
 
 # Claude Code
-.claude/
+# Ignore .claude contents EXCEPT skills/ — cloud routines need project skills
+# tracked to discover them. Must be `.claude/*`, not `.claude/`: git will not
+# descend into an excluded directory, so a negation under it never fires.
+.claude/*
+!.claude/skills/
 
 # Temp files
 temporary screenshots/
