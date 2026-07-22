@@ -2,4 +2,4 @@
 # One line per run, appended by the routine. Newest at the bottom.
 # Format:
 # DD-MM-YYYY | health_score | 7d_clicks | 7d_impressions | 7d_ctr | 7d_avg_position | fixes_applied
-# No runs yet.
+22-07-2026 | N/A (seo-audit skill unavailable) | NO DATA | NO DATA | NO DATA | NO DATA (Supermetrics data-query tools unavailable) | 23 fix categories, ~90 files: 6 malformed JSON-LD, 10 missing Organization/Wikidata-sameAs nodes, 76 llms.txt entries added, 42 sitemap URLs fixed, 17 redirects added, 3 brand-scope violations fixed, 1 broken link, 1 duplicate title, 1 wording fix, 46 titles + 38 meta descriptions trimmed, 47 posts internally linked

@@ -1,0 +1,87 @@
+RUN_DATE: 22-07-2026
+SITE: Num Nums Bakery — https://numnumsbakery.com.au (100% eggless bakery, Sydney NSW, Australia. Sells ONLY custom eggless cakes and Indian sweets — no snacks, no savoury items, no egg-based products. Two locations: Harris Park and Riverstone.)
+DATA_SOURCES: claude-seo:seo-audit skill (attempted, unavailable — see FAILURES); manual code audit performed instead. Google Search Console via Supermetrics MCP (ds_id GW, account sc-domain:numnumsbakery.com.au) — attempted, unavailable this run (see FAILURES). Google Analytics 4 via Supermetrics MCP (ds_id GAWA, account 531794710) — attempted, unavailable this run (see FAILURES).
+WINDOW_BOUNDARIES (ISO dates, computed for reference; no GSC/GA4 data was retrievable this run — see GSC_TOTALS/GA4_TOTALS):
+  last_7d: 2026-07-15 to 2026-07-21
+  previous_7d: 2026-07-08 to 2026-07-14
+  last_28d: 2026-06-24 to 2026-07-21
+  previous_28d: 2026-05-27 to 2026-06-23
+  last_3mo: 2026-04-23 to 2026-07-21
+  last_6mo: 2026-01-21 to 2026-07-21
+  last_12mo: 2025-07-22 to 2026-07-21
+  run_date: 2026-07-22 (Wednesday — not the routine's usual Monday cadence; this is the first execution of this routine, triggered ad hoc)
+
+SEO_AUDIT_SCORE: N/A this run. The `claude-seo:seo-audit` skill required by this routine is not installed/enabled in this execution environment (see FAILURES). No numeric health score was computed, because inventing one without the skill's defined rubric would not be a real measurement. For reference only: an unrelated prior manual audit committed to this repo (FULL-AUDIT-REPORT.md, dated 2026-06-05, NOT produced by this routine) scored the site 88/100 at that time — that number predates all fixes in this run and should not be treated as this run's baseline or delta. Next run: if the skill is still unavailable, keep reporting N/A rather than fabricating a score; if available, that run's score becomes the first real baseline.
+SEO_AUDIT_SCORE_DELTA: N/A (no prior score from this routine to compare against — this is the baseline run).
+
+FIXES_APPLIED:
+blog/how-to-choose-cake-sydney.html | Fixed truncated JSON-LD (missing closing brace, entire schema block was invalid) | Critical | verified: json.loads() parses clean, page returns HTTP 200
+blog/eggless-cake-egg-substitutes.html | Fixed truncated JSON-LD (missing closing brace) | Critical | verified: json.loads() parses clean, page returns HTTP 200
+blog/eggless-cakes-housewarming-sydney.html | Fixed truncated JSON-LD (missing closing brace) | Critical | verified: json.loads() parses clean, page returns HTTP 200
+blog/eggless-cakes-fathers-day-sydney.html | Fixed invalid \' escape sequence in JSON-LD (JSON does not support \', only \") | Critical | verified: json.loads() parses clean
+blog/eggless-chocolate-cake-sydney.html | Fixed invalid \' escape sequence in JSON-LD | Critical | verified: json.loads() parses clean
+blog/theme-cakes-sydney.html | Fixed invalid \' escape sequence in JSON-LD | Critical | verified: json.loads() parses clean
+blog/eggless-cake-buttercream-vs-fondant.html | Added missing inline Organization node (name, url, logo, sameAs incl. Wikidata Q140076208) — page had a dangling #organization reference with nothing defining it | Critical | verified: json.loads() parses clean, grep confirms wikidata.org/wiki/Q140076208 present
+blog/eggless-cakes-blacktown.html | Added missing inline Organization node with Wikidata sameAs (same dangling-reference issue) | Critical | verified: as above
+blog/eggless-cakes-engagement-sydney.html | Added missing inline Organization node with Wikidata sameAs | Critical | verified: as above
+blog/eggless-cakes-marayong.html | Added missing inline Organization node with Wikidata sameAs | Critical | verified: as above
+blog/photo-cake-sydney.html | Added missing inline Organization node with Wikidata sameAs | Critical | verified: as above
+llms.txt | Added 76 blog posts missing from "## Blog Posts" section (was 150/216 listed, now 216/216) | Critical (per CLAUDE.md hard guardrail: missing llms.txt entries = Critical) | verified: programmatic diff of llms.txt slugs vs blog/ directory shows 0 missing, 0 stale
+cakes.html | Added missing Organization/LocalBusiness entity with Wikidata sameAs (page had FAQPage/BreadcrumbList/ItemList schema but no entity node at all) | Medium | verified: json.loads() parses clean, sameAs present
+indian-sweet.html | Added missing top-level Organization entity with Wikidata sameAs (page only had "Organization" as a nested seller sub-object inside Product offers, no canonical entity node) | Medium | verified: as above
+order.html | Added missing Organization entity with Wikidata sameAs | Medium | verified: as above
+privacy-policy.html | Added missing Organization entity with Wikidata sameAs | Medium | verified: as above
+blog/index.html | Added a second JSON-LD script block with Organization entity + Wikidata sameAs (page only had a standalone BreadcrumbList object, no @graph, no entity node) | Medium | verified: both script blocks parse clean
+sitemap.xml | Rewrote 42 blog URLs from stale /blog/<slug>.html form to canonical clean-URL form (was mismatched against every page's own canonical tag) | High | verified: sitemap.xml re-parses as well-formed XML (xml.dom.minidom), 0 remaining .html loc entries, loc count unchanged at 223
+netlify.toml | Added 17 missing /blog/<slug>.html -> /blog/<slug> 301 redirects (these 17 slugs had no redirect at all, so both URL forms served 200 = duplicate content) | Medium | verified: netlify.toml re-parses as valid TOML (tomllib), redirect count 244 -> 261
+blog/naked-cake-sydney.html | Removed "Macarons" and "Meringue kisses" as cake decoration options (6 mentions across body copy, image alt text, and FAQ) — business is strictly 100% eggless and these items are traditionally egg-based with no eggless-substitute claim made anywhere on the page | High (brand-scope violation) | verified: grep confirms 0 remaining macaron/meringue mentions, JSON-LD still valid
+blog/number-cakes-sydney.html | Removed "macarons" from 2 decoration-option lists (same brand-scope issue) | High | verified: grep confirms 0 remaining macaron mentions
+blog/top-7-custom-eggless-cake-designs-kids-birthdays.html | Removed "macarons" from decoration-option list | High | verified: grep confirms 0 remaining macaron mentions
+blog/afternoon-tea-cakes-sydney.html | Reworded 2 sentences mentioning "sandwiches and savouries" / "samosas and savouries" to make explicit these are the customer's own spread, not a Num Num's offering (ambiguous phrasing risked implying non-eggless/non-dessert products) | Low | verified: manual re-read of both sentences in context
+blog/eggless-cakes-new-year-sydney.html | Fixed broken internal link: href pointed to /blog/eggless-cakes-diwali-sydney (does not exist) — corrected to /blog/eggless-cakes-diwali-indian-festivals-sydney (the real file) | Low | verified: target file confirmed to exist, site-wide broken-link scan now returns 0
+blog/eggless-cakes-anniversary-sydney.html | Changed duplicate <title> (identical to blog/anniversary-cake-sydney.html) from "Eggless Anniversary Cakes in Sydney" to "Custom Eggless Anniversary Cakes Sydney" to differentiate | Low | verified: titles now distinct, both remain <=60 chars
+46 blog post <title> tags | Trimmed to <=60 characters (was 61-90 chars, would truncate in Google SERPs) — 16 fixed by shortening "| Num Num's Bakery" to "| Num Num's", 30 fixed with content-aware manual trims preserving primary keyword; full per-file list in git log (commits ac44070, beeca7b, 98c0b6e, c83ea04) | Medium | verified: site-wide re-scan confirms 0 titles over 60 chars across all 216 posts
+38 blog post <meta name="description"> tags | Trimmed to <=160 characters (was 163-221 chars) without inventing new facts; full per-file list in git log | Medium | verified: site-wide re-scan confirms 0 descriptions over 160 chars across all 216 posts
+47 blog posts (previously 0 in-body links to other posts) | Added 3-6 contextual in-text links each to genuinely relevant posts (nearby suburbs, related festivals/occasions, flavour/comparison guides), reusing each page's existing link styling/convention — no new sections or UI elements added; full per-file list in git log (commits af321bdde/c83ea04/3dbda6e-tracked batches) | Medium | verified: every added target slug confirmed to exist via directory listing; site-wide broken-internal-link scan returns 0; all touched files' JSON-LD re-validated as parseable JSON
+
+NON_CODE_ACTIONS:
+Convert local product/flavour images to WebP/AVIF (e.g. cake_photos/Product Images/*.png — Strawberry.png 760KB, Blueberry.png 848KB, Rasmalai.png 904KB, Butter_Scotch.png 1.2MB, Ferrero_Rocher.png 1.1MB, ~6.9MB total in that folder) | No image-conversion tooling (cwebp/imagemagick) is installed in this sandboxed execution environment, and swapping binary image assets + all references across pages carries visual-regression risk that this run cannot check (screenshots are explicitly disabled for this data-only routine). Needs a session with imaging tools and screenshot capability. Note: an earlier pass of this audit initially reported "422 local PNG references" as a finding — on closer inspection that count was almost entirely the same 4 small logo files (brand_assets/Logo*.png) repeated in nav/footer across every page, not 422 distinct heavy images; the real opportunity is the product-photo folder above.
+Reduce reliance on hotlinked Unsplash stock photography (672 image tags reference images.unsplash.com across blog/) in favour of real Num Num's product/store photography where possible | Creative/asset decision requiring new photography, not a code fix.
+privacy-policy.html intentionally left out of sitemap.xml | Reviewed, not changed. An earlier manual audit in this repo (FULL-AUDIT-REPORT.md, 2026-06-05) explicitly noted this exclusion as correct practice (low-value legal page kept out of the sitemap to concentrate crawl budget/index quality on money pages). Kept as-is rather than overriding a deliberate prior decision.
+Off-page SEO (backlinks, citations, GBP posting cadence) | Out of scope for this run's manual code audit — this routine's scope this run was limited to on-site technical/on-page/schema fixes performed via the codebase. Not evaluated, not claimed as fixed or broken.
+
+GSC_TOTALS: NO DATA. The Supermetrics MCP connector in this session exposes only the `manage_dashboards` tool (for building live Studio dashboards). The data-retrieval tools required to pull actual numbers — `field_discovery`, `data_query`, `accounts_discovery`, `get_async_query_results`, `data_source_discovery` — were checked for via ToolSearch and confirmed absent from this session's tool set, despite being documented as part of the Supermetrics MCP server generally. No GSC numbers (clicks, impressions, CTR, average position) were retrievable for any of the 7 windows this run. See FAILURES.
+GSC_WOW: NO DATA (see GSC_TOTALS).
+GSC_MOM: NO DATA (see GSC_TOTALS).
+GSC_BY_DEVICE: NO DATA (see GSC_TOTALS).
+GSC_BY_QUERY: NO DATA (see GSC_TOTALS).
+GSC_QUERY_MOVERS: NO DATA (see GSC_TOTALS).
+GSC_BY_PAGE: NO DATA (see GSC_TOTALS).
+GSC_BY_GEO: NO DATA (see GSC_TOTALS).
+GSC_LONG_TREND: NO DATA (see GSC_TOTALS).
+
+GA4_TOTALS: NO DATA. Same tool-availability constraint as GSC — see GSC_TOTALS and FAILURES. GA4 ds_id GAWA (account 531794710) was never queried because the query tools were unavailable, not because of an empty/failed query.
+GA4_WOW: NO DATA.
+GA4_MOM: NO DATA.
+GA4_BY_CHANNEL: NO DATA.
+GA4_BY_LANDING_PAGE: NO DATA.
+GA4_BY_DEVICE: NO DATA.
+GA4_BY_GEO: NO DATA.
+GA4_BY_AUDIENCE: NO DATA.
+GA4_BY_EVENT: NO DATA.
+
+CROSS_SOURCE: NO DATA (both sources unavailable this run — nothing to reconcile).
+
+COMPARISON_VS_LAST_WEEK: BASELINE RUN - no prior file. SEO/GSC-Analysis/history-index.txt existed with header only (0 prior run rows) before this run; no prior *-GSC-Analysis.txt file exists in SEO/GSC-Analysis/. This is the first execution of this routine.
+
+RECOMMENDATIONS (ranked; GSC/GA4-driven recommendations are deferred to next run once data access is restored — see FAILURES for what needs fixing first):
+1. [Blocks all future runs' data sections] Restore Supermetrics MCP tool access for this connector so `field_discovery`/`data_query`/`accounts_discovery`/`get_async_query_results` are exposed to the session, not just `manage_dashboards`. Until this is fixed, every GSC/GA4 section of this weekly report will read NO DATA regardless of how good the site's actual rankings are. This is the single highest-value fix for the routine itself — trigger: 0 of 14 requested GSC/GA4 metric blocks were retrievable this run.
+2. [Blocks skill-based audit] Install/enable the `claude-seo:seo-audit` skill (or equivalent plugin) in this execution environment so future runs get a real, consistent numeric health score instead of N/A. Trigger: skill lookup failed outright this run (`Unknown skill: claude-seo:seo-audit`); only an unrelated, disabled "SearchFit SEO" plugin was found in the catalog.
+3. [Content/design decision, needs a screenshot-capable session] Convert the ~6.9MB of local PNG product photography (cake_photos/Product Images/) to WebP — same visual content, meaningfully smaller page weight on flavour-heavy pages. Needs imaging tools + visual verification this run couldn't provide (see NON_CODE_ACTIONS).
+4. [Content] Consider extending this run's internal-linking pattern (contextual in-text links, not new UI blocks) to any newly-published posts going forward, so future posts don't accumulate the same zero-internal-link gap this run just closed on 47 posts — trigger: before this run, 47/216 posts (22%) had zero contextual links to other posts.
+5. [Process] Once GSC data access is restored, prioritise: (a) striking-distance queries (positions 5-20, high impressions, low CTR) for title/meta rewrites, (b) pages where mobile average position trails desktop by 2+ positions, (c) high-impression/near-zero-click pages, (d) suburbs with GSC demand but no matching blog/ post — cross-check against `ls blog/` before proposing any new suburb page, since 40+ suburb pages already exist (see blog/ directory for full list; do not duplicate an existing suburb).
+
+FAILURES:
+Step 1 (SEO audit skill) — `claude-seo:seo-audit` skill is not installed/enabled in this execution environment. Skill invocation returned "Unknown skill: claude-seo:seo-audit". SearchSkills/SearchPlugins found no matching skill; only an unrelated, disabled "SearchFit SEO" plugin exists in the org catalog, and this session has no tool to install plugins autonomously (installation requires interactive user approval via a card, and this is an unattended run). Ran a manual equivalent audit instead, using parallel research agents covering technical SEO (sitemap/llms.txt/robots/CSP/canonical/schema/broken-links/duplicate-titles) and on-page/content SEO (title/meta length, H1, alt text, heading hierarchy, internal linking, brand-scope compliance, image optimization signals, mobile viewport, thin content). This is a deviation from the routine's explicit "USE THE SKILL, do not hand-roll" instruction, made because the alternative was aborting the entire run (not permitted outside Step 0) or fabricating a skill-sourced result that never actually ran. Recommend the user install the skill/plugin before next Monday's run — see RECOMMENDATIONS #2.
+Step 3 (GSC + GA4 data pull) — The Supermetrics MCP server connected to this session exposes only 1 tool (`manage_dashboards`, for building Supermetrics Studio dashboards) instead of the full documented tool set. `field_discovery`, `data_query`, `accounts_discovery`, `get_async_query_results`, and `data_source_discovery` were confirmed absent via ToolSearch (which explicitly waits for slow-connecting MCP servers before reporting no match) and via the server's own `supermetrics://docs` resource, which documents all of these as standard tools of this same MCP server. No numeric GSC or GA4 data could be retrieved for any of the 7 requested windows. A live Supermetrics Studio dashboard was considered as a fallback (via `manage_dashboards`), but building one would require hardcoding Supermetrics field IDs (e.g. for clicks/impressions/query/device dimensions) without being able to run `field_discovery` to confirm they're real — which would violate the explicit "never guess a field ID" rule from the Supermetrics MCP server's own instructions, so this fallback was not attempted. Recommend restoring full tool access to this connector before next run — see RECOMMENDATIONS #1.
+SEO_AUDIT_SCORE — no numeric score computed this run, as a direct consequence of the Step 1 failure above (no defined skill rubric to score against). See SEO_AUDIT_SCORE section.
