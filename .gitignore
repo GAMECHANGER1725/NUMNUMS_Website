@@ -13,6 +13,9 @@ node_modules/
 # descend into an excluded directory, so a negation under it never fires.
 .claude/*
 !.claude/skills/
+# No trailing slash: .claude/agents is a symlink, and git treats symlinks as
+# files — a trailing-slash pattern matches directories only and would miss it.
+!.claude/agents
 
 # Temp files
 temporary screenshots/
