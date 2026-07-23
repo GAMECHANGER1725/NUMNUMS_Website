@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-07-23
+
+```yaml
+id: post-hp-2026-07-23
+status: published
+published_at: 2026-07-23
+location: harris-park
+post_type: "Call to action"
+title: "Late cake pickup near Rosehill and Camellia — Harris Park open till 10pm"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0920.jpg"
+keywords_baited:
+  - late cake pickup near Rosehill and Camellia
+  - Harris Park bakery open until 10pm daily
+  - picking up a cake after work before it closes
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
