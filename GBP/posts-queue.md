@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-07-24
+
+```yaml
+id: post-hp-2026-07-24
+status: published
+published_at: 2026-07-24
+location: harris-park
+post_type: "Call to action"
+title: "Jain-friendly eggless custom cakes for Auburn and Lidcombe families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0920.jpg"
+keywords_baited:
+  - Jain-friendly custom cake
+  - Auburn Lidcombe Harris Park
+  - cake without onion garlic eggs for Jain celebration
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
