@@ -255,6 +255,7 @@ Run `/blog-analyze` on every post before marking it done. Fix all issues found (
 - [ ] All subsequent images use `loading="lazy"`.
 - [ ] All images are `.webp` format. Alt text is a full descriptive sentence (product + location).
 - [ ] **Unsplash CDN URLs must use `?fm=webp`**, not `?fm=jpg`. The researcher returns `fm=jpg` by default — always swap before pasting into the HTML. Correct pattern: `https://images.unsplash.com/photo-<id>?fm=webp&q=80&w=1200&auto=format&fit=crop`
+- [ ] **Some cloud/sandboxed sessions block outbound `curl`/`WebFetch` to `images.unsplash.com`, `cdn.pixabay.com`, and even the project's own `numnums-images.netlify.app` CDN** (403 "policy denial" from the egress proxy), so live HTTP verification of a picked image can be impossible. A 2026-07-24 session (5-post batch: Dundas, Woodcroft, Bhai Dooj, Cake vs Cupcakes, Cake Serving Size Guide) hit this on both stock CDNs and the real-photo bank. In that case, don't claim "verified" — use `WebSearch` for `site:unsplash.com <topic>` and extract the real photo ID from the *individual photo page URL* pattern (`unsplash.com/photos/<descriptive-slug>-<11-char-ID>`), cross-check the ID against the image-reuse blocklist grep, and note in the delivery summary that live verification wasn't possible. Prefer an unambiguous ID over one whose slug ends in a lone leading dash (dashes can be part of the 11-character ID, e.g. `-4ccYKuvc5A`) — pick a different result rather than guess.
 
 ### Entity / Organization schema (every post)
 
