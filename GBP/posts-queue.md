@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-07-25
+
+```yaml
+id: post-rs-2026-07-25
+status: published
+published_at: 2026-07-25
+location: riverstone
+post_type: "Call to action"
+title: "6am cake pickup near Vineyard and Box Hill — before the school run"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0920.jpg"
+keywords_baited:
+  - custom eggless cake pickup before work
+  - Riverstone Vineyard Box Hill early pickup
+  - bakery open 6am near Box Hill Vineyard
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
