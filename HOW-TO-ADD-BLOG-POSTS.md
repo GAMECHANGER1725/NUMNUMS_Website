@@ -26,6 +26,18 @@ The only place `.html` legitimately appears is the **left-hand side** of a
 > 10 sitemap entries, 10 llms.txt entries and 103 index-card links all pointed at
 > redirect URLs. Fixed in the 2026-07-26 reconciliation commit.
 
+### ✅ One command verifies all of it
+
+```bash
+node verify-blog.mjs     # must exit 0 before any commit, merge, or push
+```
+
+Checks post files vs cards vs `sitemap.xml` vs `llms.txt` vs `netlify.toml`
+redirects (equal counts, no duplicates, no orphans), the clean-URL rule above,
+every `rel="canonical"`, and every Topics chip count. If it passes, the
+structural work is correct; if it fails it names the exact file and slug.
+**Never hand-count these again** — that is what let 5 posts get listed twice.
+
 **Always START by invoking the `blog-write` skill** — never hand-write a post from the template without calling it.
 
 After writing, walk the **Quality Gate** checklist below manually and fix every issue (Critical → High → Medium → Low) before considering the post done. Then update both this file and the skill with any new patterns found so the same mistake never needs a second prompt.
@@ -278,14 +290,32 @@ for f in blog/*.html; do s=$(basename "$f" .html); [ "$s" = index ] && continue;
 
 ---
 
-## Step 5 — Test locally
+## Step 5 — Verify, then test locally
+
+**Run the verifier first. It is the gate — do not commit a batch that fails it.**
 
 ```bash
-node serve.mjs   # starts at http://localhost:4000
+node verify-blog.mjs
 ```
 
+It checks, mechanically, everything that has silently broken before: post files vs
+index cards vs `sitemap.xml` vs `llms.txt` vs `netlify.toml` redirects (all equal,
+no duplicates, no orphans), no `.html` anywhere it shouldn't be, every post's
+`rel="canonical"` matching its clean URL, and every Topics chip count matching the
+real card distribution. Exit code 0 = safe. Non-zero prints exactly what to fix.
+
+Then eyeball it in the browser:
+
+```bash
+node serve.mjs   # http://localhost:4000
+```
+
+`serve.mjs` mirrors `netlify.toml`: it serves clean URLs and 301s `.html` → clean,
+so what you see locally is what production serves.
+
 Check:
-- Post loads at `http://localhost:4000/blog/your-slug.html`
+- Post loads at `http://localhost:4000/blog/your-slug` — **the clean URL, no `.html`**
+- `http://localhost:4000/blog/your-slug.html` returns a **301**, not a 200
 - Card appears at the **top** of `http://localhost:4000/blog/`
 - Card link goes to the right post
 - No `<img>` in the card header — gradient only
@@ -293,7 +323,7 @@ Check:
 
 ---
 
-## Step 5 — Commit and push
+## Step 5a — Commit and push
 
 ```bash
 git add blog/your-slug.html blog/index.html sitemap.xml llms.txt netlify.toml
@@ -322,22 +352,19 @@ it for a human" is the wrong default: it strands finished posts. Resolve them.
 | `blog/index.html` | Usually auto-merges. If not, keep both sets of cards, then recalculate the Topics counts (Step 2b) against the merged card set. |
 | `skills/blog-write/SKILL.md`, `HOW-TO-ADD-BLOG-POSTS.md` | Both sides are appended checklist items. Keep **both**, dropping any item that is a weaker restatement of the other side's. |
 
-After resolving, these five numbers must all be equal:
+After resolving, run the verifier — it replaces the whole manual grep list and is
+the single gate on the merge:
 
 ```bash
-ls blog/*.html | grep -v 'blog/index.html' | wc -l                    # post files
-grep -o 'href="/blog/[a-z0-9-]\+"' blog/index.html | sort -u | wc -l  # index cards
-grep -c '<loc>https://numnumsbakery.com.au/blog/[a-z0-9-]' sitemap.xml
-grep -c '^- https://numnumsbakery.com.au/blog/' llms.txt
-grep -c 'from = "/blog/.*\.html"' netlify.toml                        # = posts + 1
+node verify-blog.mjs
 ```
 
-The redirect count is **one higher** than the rest — `/blog/index.html` → `/blog/`
-is a real redirect with no post file behind it. Everything else must match exactly.
-As of 2026-07-26 that is **226 / 226 / 226 / 226 / 227**.
-
-Then re-run the Topics-count check in Step 2b and the duplicate checks in Steps 3
-and 4 before committing the merge.
+It must exit 0 before you commit the merge. It reports the five counts (post files
+/ cards / sitemap / llms.txt / redirects), where the redirect count is **one higher**
+than the rest — `/blog/index.html` → `/blog/` is a real redirect with no post file
+behind it — and everything else must match exactly. As of 2026-07-26 that is
+**226 / 226 / 226 / 226 / 227**. It also re-checks Topics counts and duplicates, so
+there is nothing left to verify by hand.
 
 **Only abort** if the two sides genuinely edited the *same line* to different
 values. A conflict where both sides simply appended is not that case.

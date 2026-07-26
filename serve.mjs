@@ -20,17 +20,36 @@ const MIME = {
 };
 
 createServer((req, res) => {
-  let urlPath = decodeURIComponent(req.url.split('?')[0]);
-  let filePath = join(ROOT, urlPath);
+  const urlParts = req.url.split('?');
+  const query = urlParts[1] ? `?${urlParts[1]}` : '';
+  let urlPath = decodeURIComponent(urlParts[0]);
 
-  // Directory → serve index.html
-  if (existsSync(filePath) && statSync(filePath).isDirectory()) {
-    filePath = join(filePath, 'index.html');
+  // Mirror netlify.toml: `.html` is never a canonical URL. 301 it to the clean
+  // form so local testing hits the same URLs Google sees. Without this, every
+  // canonical/sitemap/card link (/blog/<slug>) 404s locally and the routine
+  // ends up "verifying" .html URLs that redirect in production.
+  if (urlPath.endsWith('.html')) {
+    const clean = urlPath.endsWith('/index.html')
+      ? urlPath.slice(0, -'index.html'.length)   // /blog/index.html → /blog/
+      : urlPath.slice(0, -'.html'.length);       // /blog/slug.html  → /blog/slug
+    res.writeHead(301, { Location: clean + query });
+    res.end();
+    return;
   }
+
+  let filePath = join(ROOT, urlPath);
 
   // Root → index.html
   if (urlPath === '/') {
     filePath = join(ROOT, 'index.html');
+  }
+  // Directory → serve index.html
+  else if (existsSync(filePath) && statSync(filePath).isDirectory()) {
+    filePath = join(filePath, 'index.html');
+  }
+  // Clean URL → <path>.html on disk
+  else if (!extname(filePath) && existsSync(`${filePath}.html`)) {
+    filePath = `${filePath}.html`;
   }
 
   if (!existsSync(filePath)) {
