@@ -1621,6 +1621,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cake-nut-free-sydney.html"
+  to = "/blog/eggless-cake-nut-free-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
