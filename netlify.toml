@@ -1609,6 +1609,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-cherrybrook.html"
+  to = "/blog/eggless-cakes-cherrybrook"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
