@@ -1627,6 +1627,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/drip-cake-sydney.html"
+  to = "/blog/drip-cake-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
