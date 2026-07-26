@@ -1543,6 +1543,66 @@
   to = "/"
   status = 301
 
+[[redirects]]
+  from = "/blog/eggless-cakes-dundas.html"
+  to = "/blog/eggless-cakes-dundas"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-woodcroft.html"
+  to = "/blog/eggless-cakes-woodcroft"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-bhai-dooj-sydney.html"
+  to = "/blog/eggless-cakes-bhai-dooj-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-vs-cupcakes-sydney.html"
+  to = "/blog/eggless-cake-vs-cupcakes-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/cake-serving-size-guide-sydney.html"
+  to = "/blog/cake-serving-size-guide-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-doonside.html"
+  to = "/blog/eggless-cakes-doonside"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-merrylands-west.html"
+  to = "/blog/eggless-cakes-merrylands-west"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-sinhala-tamil-new-year-sydney.html"
+  to = "/blog/eggless-cakes-sinhala-tamil-new-year-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-troubleshooting.html"
+  to = "/blog/eggless-cake-troubleshooting"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/cake-vs-dessert-table-sydney.html"
+  to = "/blog/cake-vs-dessert-table-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
