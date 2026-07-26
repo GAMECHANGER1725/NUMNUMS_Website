@@ -499,6 +499,21 @@ Before delivering, verify:
 
 These rules are derived from real audit failures on this project. Every point must pass before delivery. Do NOT ask the user to fix these — resolve them before showing the draft.
 
+**Branch state — do this BEFORE picking a topic (Step 0 in `HOW-TO-ADD-BLOG-POSTS.md`)**
+- [ ] `git fetch origin && git checkout blog-drafts && git merge origin/main && git merge origin/blog-drafts` **before** any coverage check or topic pick. `main` does not show posts sitting unmerged on `blog-drafts`, so a suburb that looks free from `main` may already be claimed. Merging `main` in at the **start** keeps the conflict surface to one day of drift instead of a month.
+- [ ] Never run the coverage `ls blog/` / grep pass on `main` or a detached HEAD. Re-run it *after* the checkout and merge above.
+- [ ] If the merge conflicts, resolve it with the **Step 5b playbook** in `HOW-TO-ADD-BLOG-POSTS.md` — do not abort and write anyway. Conflicts in `sitemap.xml` / `llms.txt` / `SKILL.md` / `HOW-TO-ADD-BLOG-POSTS.md` are additive on both sides, not contradictory. Two consecutive runs (2026-07-24, 2026-07-25) each aborted a resolvable merge and stranded 10 finished posts for two days.
+
+**Canonical URL format — clean, never `.html`**
+- [ ] Every public reference to a post is `https://numnumsbakery.com.au/blog/<slug>` with **no `.html`**: `rel="canonical"`, `og:url`, sitemap `<loc>`, `llms.txt`, index-card `href`, and internal body links. `netlify.toml` 301s `.html` → clean with `force = true`, so a published `.html` URL is a redirect URL that Google reports as "Page with redirect" and refuses to index.
+- [ ] Index-card links are absolute `href="/blog/<slug>"`, **not** relative `href="<slug>.html"`. The stale card template caused 103 cards to carry a needless 301 hop.
+- [ ] Add the `.html` → clean 301 to `netlify.toml` for each new post (Step 4b). Omitting it leaves both URLs serving 200 against one canonical — duplicate content. Verify: `grep -q "from = \"/blog/<slug>.html\"" netlify.toml`.
+- [ ] After editing: `grep -c '\.html</loc>' sitemap.xml` must print **0**.
+
+**No duplicate list entries**
+- [ ] Before appending to `llms.txt`, confirm the slug isn't already listed — an unmerged earlier batch may have added it. After appending, `grep -o '^- https://numnumsbakery.com.au/blog/[a-z0-9-]*' llms.txt | sort | uniq -d` must print nothing. On 2026-07-26 five posts were listed twice because two runs each appended them.
+- [ ] These counts must line up before committing: post files = index cards = sitemap blog entries = `llms.txt` entries, and `netlify.toml` blog redirects = that number **+ 1** (the extra is `/blog/index.html` → `/blog/`). As of 2026-07-26: 226 / 226 / 226 / 226 / 227. The exact commands are in the Step 5b playbook in `HOW-TO-ADD-BLOG-POSTS.md`.
+
 **Meta & SEO**
 - [ ] Meta description must contain at least **2 concrete numbers** (distances, times, counts, percentages). "Order in 48 hrs" alone is not enough. Pattern: `"100% eggless [product] near [suburb] — [N] flavours, [distance] from [location]. Order with [timeframe] notice."`
 - [ ] Title tag: must include primary keyword + location. Max 60 chars.

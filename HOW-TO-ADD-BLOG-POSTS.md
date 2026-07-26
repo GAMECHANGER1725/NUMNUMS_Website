@@ -1,12 +1,30 @@
 # How to Add a New Blog Post — Num Num's Bakery
 
 ## Overview
-Every blog post = four updates (+ one post-deploy ping):
+Every blog post = five updates (+ one post-deploy ping):
 1. A new HTML file in `blog/` (the post itself)
 2. A new card entry at the **top** of `blog/index.html`
 3. A new `<url>` entry in `sitemap.xml`
 4. A new entry in `llms.txt` under `## Blog Posts`
-5. After it's live: ping IndexNow → `node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug` (Step 6)
+5. A new `.html` → clean-URL 301 block in `netlify.toml` (Step 4b)
+6. After it's live: ping IndexNow → `node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug` (Step 6)
+
+### 🔗 Canonical URL format — clean, never `.html`
+
+The site migrated to clean URLs. Every public reference to a post must be
+`https://numnumsbakery.com.au/blog/<slug>` with **no `.html` suffix**:
+`rel="canonical"`, `og:url`, sitemap `<loc>`, `llms.txt`, index cards, and
+internal body links. `netlify.toml` 301s `<slug>.html` → `<slug>` with
+`force = true`, so any `.html` URL you publish is a redirect URL — Google
+reports it as "Page with redirect" and won't index it.
+
+The only place `.html` legitimately appears is the **left-hand side** of a
+`netlify.toml` redirect and the on-disk filename.
+
+> This section exists because the templates below used to say `.html`, and every
+> post written between the clean-URL migration and 2026-07-26 inherited the bug:
+> 10 sitemap entries, 10 llms.txt entries and 103 index-card links all pointed at
+> redirect URLs. Fixed in the 2026-07-26 reconciliation commit.
 
 **Always START by invoking the `blog-write` skill** — never hand-write a post from the template without calling it.
 
@@ -24,6 +42,40 @@ All dates on blog cards and inside post files must reflect the **Sydney date** a
 - If you publish at 11 pm UTC in winter, it's already the next day in Sydney — use tomorrow's date.
 - Format on cards: `D Month YYYY` — e.g. `30 May 2026` (no leading zero on day).
 - Format in schema / sitemap: `YYYY-MM-DD` — e.g. `2026-05-30`.
+
+---
+
+## Step 0 — Sync `blog-drafts` with `main` BEFORE writing anything
+
+**Do this first, every run, no exceptions.** Do not pick a topic, do not write a
+line, until this completes cleanly.
+
+```bash
+git fetch origin
+git checkout blog-drafts
+git merge origin/main            # resolve now, while the diff is small
+git merge origin/blog-drafts     # pick up any batch a previous run pushed
+ls blog/ | wc -l                 # NOW the coverage check is reading real data
+```
+
+Why this is Step 0 and not a final step:
+
+- `blog-drafts` and `main` both get edited independently — `main` by SEO-audit
+  and internal-linking runs, `blog-drafts` by this routine. Merging only at the
+  **end** means a conflict blocks the whole batch after all the work is done.
+- Merging at the **start** means conflicts are between *yesterday's* changes and
+  today's, which is a handful of lines, not a month of drift.
+- Two consecutive runs (2026-07-24 and 2026-07-25) each wrote 5 posts, each hit a
+  conflict at the end, and each correctly aborted — stranding **10 finished
+  posts** for two days. Neither run was at fault; the workflow was.
+
+**Coverage checks are only valid on `blog-drafts` after this sync.** `main` does
+not show posts sitting unmerged on `blog-drafts`, so a suburb that looks
+uncovered from `main` may already be claimed. The 2026-07-25 run picked its
+topics from `main`, then found `blog-drafts` was already 5 posts ahead.
+
+If `git merge origin/main` conflicts, resolve it using the playbook in Step 5b —
+do **not** abort and start writing anyway.
 
 ---
 
@@ -61,7 +113,7 @@ Pick a gradient that fits the post topic (see the colour palette table below), t
 
 ```html
 <div class="reveal blog-card-wrap" data-topics="TOPIC1 TOPIC2">
-  <a href="YOUR-SLUG.html" style="text-decoration:none;display:flex;flex-direction:column;background:#fff;border-radius:1.25rem;overflow:hidden;border:1px solid rgba(COLOR_R,COLOR_G,COLOR_B,0.14);box-shadow:0 2px 12px rgba(44,26,14,0.06);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;height:100%;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(COLOR_R,COLOR_G,COLOR_B,0.22)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(44,26,14,0.06)'">
+  <a href="/blog/YOUR-SLUG" style="text-decoration:none;display:flex;flex-direction:column;background:#fff;border-radius:1.25rem;overflow:hidden;border:1px solid rgba(COLOR_R,COLOR_G,COLOR_B,0.14);box-shadow:0 2px 12px rgba(44,26,14,0.06);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;height:100%;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(COLOR_R,COLOR_G,COLOR_B,0.22)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(44,26,14,0.06)'">
     <div style="height:240px;position:relative;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#DARK 0%,#MID 55%,#LIGHT 100%);">
       <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(DARK,0.90) 0%,rgba(MID,0.38) 50%,rgba(DARK,0.04) 100%);"></div>
       <div style="position:absolute;top:1rem;left:1rem;">
@@ -157,11 +209,18 @@ Add a `<url>` block **before** the closing `</urlset>` tag:
 
 ```xml
 <url>
-  <loc>https://numnumsbakery.com.au/blog/YOUR-SLUG.html</loc>
+  <loc>https://numnumsbakery.com.au/blog/YOUR-SLUG</loc>
   <lastmod>YYYY-MM-DD</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.7</priority>
 </url>
+```
+
+**No `.html`.** See the canonical-URL rule in the Overview. Verify after editing:
+
+```bash
+grep -c '\.html</loc>' sitemap.xml     # must print 0
+python3 -c "import xml.dom.minidom;xml.dom.minidom.parse('sitemap.xml');print('valid')"
 ```
 
 > **Important:** Missing sitemap entries = Google may not index the post for weeks. Always do this.
@@ -178,7 +237,44 @@ Open `llms.txt` and add a line under `## Blog Posts` (order doesn't matter):
 
 Use the exact `<title>` text from the post (strip the ` | Num Num's Bakery` suffix if present).
 
-> **Important:** llms.txt is the map AI assistants (ChatGPT, Perplexity, Claude) use to discover your content. Missing entries = those posts are invisible to AI search. 62 posts were missing during the 2026-06-05 GEO audit.
+**Check it isn't already there before you append.** If a previous batch is still
+unmerged, the entry may already exist and you'll create a duplicate:
+
+```bash
+grep -n "blog/YOUR-SLUG " llms.txt        # expect no match before adding
+# after adding, this must print nothing:
+grep -o '^- https://numnumsbakery.com.au/blog/[a-z0-9-]*' llms.txt | sort | uniq -d
+```
+
+> **Important:** llms.txt is the map AI assistants (ChatGPT, Perplexity, Claude) use to discover your content. Missing entries = those posts are invisible to AI search. 62 posts were missing during the 2026-06-05 GEO audit. On 2026-07-26 the opposite failure appeared: 5 posts listed **twice** because two consecutive runs each appended them.
+
+---
+
+## Step 4b — Add the `.html` → clean-URL redirect in `netlify.toml`
+
+Every post needs a 301 so the on-disk `.html` path can't be indexed alongside
+the canonical clean URL. Insert immediately **before** the `# ── Headers ─` comment:
+
+```toml
+[[redirects]]
+  from = "/blog/YOUR-SLUG.html"
+  to = "/blog/YOUR-SLUG"
+  status = 301
+  force = true
+```
+
+`force = true` is required — without it Netlify serves the existing file instead
+of redirecting.
+
+Verify every post has one:
+
+```bash
+for f in blog/*.html; do s=$(basename "$f" .html); [ "$s" = index ] && continue; \
+  grep -q "from = \"/blog/$s.html\"" netlify.toml || echo "MISSING redirect: $s"; done
+```
+
+> Skipped for the 10 posts written 2026-07-24/25, which left both URLs serving
+> 200 against a single canonical — textbook duplicate content.
 
 ---
 
@@ -200,12 +296,51 @@ Check:
 ## Step 5 — Commit and push
 
 ```bash
-git add blog/your-slug.html blog/index.html sitemap.xml llms.txt
+git add blog/your-slug.html blog/index.html sitemap.xml llms.txt netlify.toml
 git commit -m "Add blog post: YOUR POST TITLE"
 git push
 ```
 
 GitHub push → Netlify auto-deploys to production (numnumsbakery.com.au) in ~1–2 minutes.
+
+> Netlify **auto-publish is OFF** — a push builds a deploy but it does not go
+> live until it's published manually in the Netlify UI.
+
+---
+
+## Step 5b — Merge-conflict playbook (`blog-drafts` → `main`)
+
+If Step 0 was done, conflicts here are small. When they happen, they are almost
+always in the **same four files**, and they are **additive on both sides** —
+two lists that each grew. They are not contradictory edits, so "abort and leave
+it for a human" is the wrong default: it strands finished posts. Resolve them.
+
+| File | Resolution |
+|---|---|
+| `sitemap.xml` | Take **main's** side (`git checkout --ours sitemap.xml`), then re-append your new posts as `<loc>` entries in **clean-URL form**. `main` is where the clean-URL migration lives; `blog-drafts` lags. |
+| `llms.txt` | Take **main's** side, then append your new posts **once each**. Check for duplicates first — an unmerged earlier batch may have already added them. |
+| `blog/index.html` | Usually auto-merges. If not, keep both sets of cards, then recalculate the Topics counts (Step 2b) against the merged card set. |
+| `skills/blog-write/SKILL.md`, `HOW-TO-ADD-BLOG-POSTS.md` | Both sides are appended checklist items. Keep **both**, dropping any item that is a weaker restatement of the other side's. |
+
+After resolving, these five numbers must all be equal:
+
+```bash
+ls blog/*.html | grep -v 'blog/index.html' | wc -l                    # post files
+grep -o 'href="/blog/[a-z0-9-]\+"' blog/index.html | sort -u | wc -l  # index cards
+grep -c '<loc>https://numnumsbakery.com.au/blog/[a-z0-9-]' sitemap.xml
+grep -c '^- https://numnumsbakery.com.au/blog/' llms.txt
+grep -c 'from = "/blog/.*\.html"' netlify.toml                        # = posts + 1
+```
+
+The redirect count is **one higher** than the rest — `/blog/index.html` → `/blog/`
+is a real redirect with no post file behind it. Everything else must match exactly.
+As of 2026-07-26 that is **226 / 226 / 226 / 226 / 227**.
+
+Then re-run the Topics-count check in Step 2b and the duplicate checks in Steps 3
+and 4 before committing the merge.
+
+**Only abort** if the two sides genuinely edited the *same line* to different
+values. A conflict where both sides simply appended is not that case.
 
 ---
 
