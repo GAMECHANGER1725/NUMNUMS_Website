@@ -371,13 +371,31 @@ values. A conflict where both sides simply appended is not that case.
 
 ---
 
-## Step 6 — Ping IndexNow (after the post is live)
+## Step 6 — Ping IndexNow (after the post is **live**, not just pushed)
 
-Once Netlify has finished deploying and the new post is reachable, submit it to
-IndexNow so Bing / Copilot (and Yandex, Seznam, Naver) discover it immediately.
-This improves AI-search freshness — Bing Copilot leans on Bing's index.
+Once Netlify has finished deploying **and you have published the deploy** (auto-publish
+is off), submit the new URLs to IndexNow so Bing / Copilot (and Yandex, Seznam, Naver)
+discover them immediately. This improves AI-search freshness — Bing Copilot leans on
+Bing's index.
+
+⚠️ **Ordering matters.** IndexNow verifies domain ownership by fetching
+`https://numnumsbakery.com.au/8a811016cc8e6931dbe358599d9112e9.txt`. If that key
+isn't live yet, every submission is rejected. Check it first:
 
 ```bash
+curl -s -o /dev/null -w '%{http_code}\n' https://numnumsbakery.com.au/8a811016cc8e6931dbe358599d9112e9.txt
+# must print 200 before you ping
+```
+
+> Both `indexnow.mjs` and the key file existed locally from 2026-07-11 but were never
+> `git add`ed, so they never deployed and the key returned 404 — meaning this step had
+> silently never worked for any post. Committed 2026-08-17. `node verify-blog.mjs` now
+> fails if either file is untracked.
+
+Use `--dry` to preview without sending:
+
+```bash
+node indexnow.mjs --dry https://numnumsbakery.com.au/blog/your-slug
 node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug
 ```
 

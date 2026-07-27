@@ -517,6 +517,10 @@ These rules are derived from real audit failures on this project. Every point mu
 - [ ] Before appending to `llms.txt`, confirm the slug isn't already listed — an unmerged earlier batch may have added it. After appending, `grep -o '^- https://numnumsbakery.com.au/blog/[a-z0-9-]*' llms.txt | sort | uniq -d` must print nothing. On 2026-07-26 five posts were listed twice because two runs each appended them.
 - [ ] These counts must line up before committing: post files = index cards = sitemap blog entries = `llms.txt` entries, and `netlify.toml` blog redirects = that number **+ 1** (the extra is `/blog/index.html` → `/blog/`). As of 2026-07-26: 226 / 226 / 226 / 226 / 227. **Do not count these by hand — run `node verify-blog.mjs`**, which checks all five plus duplicates and orphans in one pass.
 
+**Never leave a required workflow file untracked**
+- [ ] A file that exists in the local working tree but was never `git add`ed is **invisible to the cloud routine and never deploys** — and nothing surfaces the problem until a step mysteriously fails. `indexnow.mjs` and its IndexNow key file sat untracked from 2026-07-11 to 2026-08-17, so the key 404'd on the live site and every IndexNow submission would have been rejected, silently, for every post. If a routine step references a file, confirm `git ls-files <file>` prints it. `node verify-blog.mjs` now enforces this for `indexnow.mjs`, the IndexNow key, `serve.mjs` and `netlify.toml`.
+- [ ] IndexNow (Step 6) only works **after the Netlify deploy is published** — auto-publish is off. Confirm the key returns 200 at `https://numnumsbakery.com.au/8a811016cc8e6931dbe358599d9112e9.txt` before pinging; a 404 means every submission is rejected. Never report a ping as done without that check.
+
 **Meta & SEO**
 - [ ] Meta description must contain at least **2 concrete numbers** (distances, times, counts, percentages). "Order in 48 hrs" alone is not enough. Pattern: `"100% eggless [product] near [suburb] — [N] flavours, [distance] from [location]. Order with [timeframe] notice."`
 - [ ] Title tag: must include primary keyword + location. Max 60 chars.

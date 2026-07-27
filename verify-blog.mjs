@@ -7,8 +7,9 @@
 // HOW-TO-ADD-BLOG-POSTS.md. Two 5am runs skipped them, published .html URLs
 // against clean-URL canonicals, and double-listed 5 posts in llms.txt.
 
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const ROOT = process.cwd();
 const SITE = 'https://numnumsbakery.com.au';
@@ -130,6 +131,42 @@ if (!declared.size) {
   }
   for (const [tag, real] of realCounts) {
     if (!declared.has(tag)) fail(`Topics filter: tag "${tag}" is used by ${real} card(s) but has no chip.`);
+  }
+}
+
+// ---------- Workflow files must exist AND be tracked ----------
+// A file that exists locally but was never `git add`ed is invisible to the cloud
+// routine and never deploys. indexnow.mjs and its IndexNow key sat untracked from
+// 2026-07-11 to 2026-08-17: the key 404'd on the live site, so every IndexNow
+// submission would have been rejected, silently, for every post.
+{
+  const INDEXNOW_KEY = '8a811016cc8e6931dbe358599d9112e9';
+  const required = ['indexnow.mjs', `${INDEXNOW_KEY}.txt`, 'serve.mjs', 'netlify.toml'];
+
+  let tracked = null;
+  try {
+    tracked = new Set(
+      execFileSync('git', ['ls-files', ...required], { cwd: ROOT, encoding: 'utf8' })
+        .split('\n').filter(Boolean),
+    );
+  } catch {
+    notes.push('git not available — skipped the tracked-file check.');
+  }
+
+  for (const f of required) {
+    if (!existsSync(join(ROOT, f))) { fail(`${f}: required by the routine but missing from the repo.`); continue; }
+    if (tracked && !tracked.has(f)) {
+      fail(`${f}: exists locally but is NOT tracked by git — the cloud routine won't see it and Netlify won't deploy it. Run: git add ${f}`);
+    }
+  }
+
+  // The IndexNow key file must contain exactly the key that names it.
+  const keyFile = `${INDEXNOW_KEY}.txt`;
+  if (existsSync(join(ROOT, keyFile))) {
+    const body = read(keyFile).trim();
+    if (body !== INDEXNOW_KEY) {
+      fail(`${keyFile}: contains "${body}" but must contain exactly "${INDEXNOW_KEY}" — IndexNow verifies ownership by matching the file to its name.`);
+    }
   }
 }
 
