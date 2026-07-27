@@ -432,6 +432,7 @@ Check every post against this list before marking it done, and fix all issues fo
 - [ ] **Meta description contains ≥ 2 concrete numbers** (distances, times, flavour counts, etc.). "Order in 48 hrs" alone is not enough. Target pattern: `"100% eggless [product] near [suburb] — [N] flavours, [distance] min from [location]. Order with [timeframe] notice."` — 150–160 chars.
 - [ ] **Meta description is ≤ 160 characters.** Count it explicitly — don't estimate. Anything over 160 gets truncated in SERPs, usually cutting the phone number or CTA. Trim from the middle if needed; keep the numbers and CTA intact at the end.
 - [ ] **Title tag** includes primary keyword + location, max 60 chars.
+- [ ] **Count title length on the decoded string, not the raw HTML.** A 2026-07-27 batch (5-post run: Birrong, Kenthurst, Thaipusam, Cake Transport, Cake Toppers) found a title written as `Eggless Cake Transport &amp; Packaging Guide Sydney | Num Num's Bakery` measured at 70 characters by a naive `len()` on the raw `<title>` text, but the entity `&amp;` renders as a single `&` in the browser — the real displayed length was 66, still over 60 but by less. Always `html.unescape()` (or equivalent) the title string before counting length. Simpler fix: avoid `&`/`&amp;` in titles altogether — rewrite around it (e.g. "Transport Guide" instead of "Transport & Packaging Guide").
 - [ ] **Canonical URL** matches the slug exactly (no `.html` suffix in canonical — just `/blog/your-slug`).
 
 ### LCP / Image Performance

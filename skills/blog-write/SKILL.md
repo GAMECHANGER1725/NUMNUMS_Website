@@ -524,6 +524,7 @@ These rules are derived from real audit failures on this project. Every point mu
 **Meta & SEO**
 - [ ] Meta description must contain at least **2 concrete numbers** (distances, times, counts, percentages). "Order in 48 hrs" alone is not enough. Pattern: `"100% eggless [product] near [suburb] — [N] flavours, [distance] from [location]. Order with [timeframe] notice."`
 - [ ] Title tag: must include primary keyword + location. Max 60 chars.
+- [ ] **Count title length on the decoded string, not the raw HTML.** A 2026-07-27 batch (5-post run: Birrong, Kenthurst, Thaipusam, Cake Transport, Cake Toppers) found a title written as `Eggless Cake Transport &amp; Packaging Guide Sydney | Num Num's Bakery` measured at 70 characters by a naive `len()` on the raw `<title>` text — over the 60-char limit — but the entity `&amp;` renders as a single `&` in the browser, so the real displayed length was 66, still over but by less. Always run `html.unescape()` (or equivalent) on the title string before counting length; counting raw HTML entities as their multi-character source silently overstates length and can also mask a genuine overage in the other direction. Prefer avoiding `&amp;`/`&` in titles entirely — rewrite around it (e.g. "Transport Guide" instead of "Transport & Packaging Guide") rather than relying on entity-aware counting every time.
 
 **LCP / Image Performance**
 - [ ] The **first image in the article body** (likely the LCP element) must have `fetchpriority="high"` and must NOT have `loading="lazy"`. All subsequent images use `loading="lazy"`.
