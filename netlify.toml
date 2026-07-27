@@ -497,6 +497,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cake-transport-packaging-sydney.html"
+  to = "/blog/eggless-cake-transport-packaging-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-thaipusam-sydney.html"
   to = "/blog/eggless-cakes-thaipusam-sydney"
   status = 301
