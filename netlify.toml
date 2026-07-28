@@ -1669,6 +1669,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-mcgraths-hill.html"
+  to = "/blog/eggless-cakes-mcgraths-hill"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
