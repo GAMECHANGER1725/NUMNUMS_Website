@@ -1681,6 +1681,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cake-lactose-intolerance.html"
+  to = "/blog/eggless-cake-lactose-intolerance"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
