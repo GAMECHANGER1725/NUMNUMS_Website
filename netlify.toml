@@ -1687,6 +1687,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/cake-cutting-ceremony-sydney.html"
+  to = "/blog/cake-cutting-ceremony-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
