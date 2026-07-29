@@ -1741,6 +1741,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/birthday-cake-for-men-sydney.html"
+  to = "/blog/birthday-cake-for-men-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
