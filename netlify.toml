@@ -1693,6 +1693,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-glendenning.html"
+  to = "/blog/eggless-cakes-glendenning"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
