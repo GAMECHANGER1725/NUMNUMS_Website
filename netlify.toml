@@ -1711,6 +1711,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cake-ordering-mistakes.html"
+  to = "/blog/eggless-cake-ordering-mistakes"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
