@@ -427,6 +427,10 @@ node indexnow.mjs https://numnumsbakery.com.au/blog/your-slug
 
 Check every post against this list before marking it done, and fix all issues found (Critical → High → Medium → Low). These are the recurring failure patterns discovered during live audits. **Do not run `/blog-analyze`** — this list replaces it.
 
+### Visual verification is unavailable in this cloud sandbox — do not block on it
+
+- [ ] A 2026-07-30 run (5-post batch: South Windsor, West Ryde, Confirmation, Diabetics, Cake Smash vs First Birthday) found `node screenshot.mjs` / Puppeteer fails with "Could not find Chrome" in this project's cloud sandbox — no Chrome binary is installed, unlike the `C:/Users/nateh/...` Windows path CLAUDE.md documents for local sessions. The `blog-write` skill's own Phase 6.5 Gate 3 (patchright visual verification at 3 viewport widths) cannot run here either. Do not treat a missing screenshot pass as a blocker in this environment: substitute the structural/programmatic checks this checklist already requires (word count, Flesch score via `textstat`, JSON-LD parsing, hex/colour/tag-balance greps, link/image existence checks) and note in the delivery summary that visual verification wasn't possible, the same way the image-verification fallback below is already handled.
+
 ### Meta & SEO
 
 - [ ] **Meta description contains ≥ 2 concrete numbers** (distances, times, flavour counts, etc.). "Order in 48 hrs" alone is not enough. Target pattern: `"100% eggless [product] near [suburb] — [N] flavours, [distance] min from [location]. Order with [timeframe] notice."` — 150–160 chars.
