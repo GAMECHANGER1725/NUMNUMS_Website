@@ -359,6 +359,24 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cakes-south-windsor.html"
+  to = "/blog/eggless-cakes-south-windsor"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-west-ryde.html"
+  to = "/blog/eggless-cakes-west-ryde"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/cake-smash-vs-first-birthday-cake-sydney.html"
+  to = "/blog/cake-smash-vs-first-birthday-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-box-hill-sydney.html"
   to = "/blog/eggless-cakes-box-hill-sydney"
   status = 301
