@@ -371,6 +371,36 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cakes-whalan.html"
+  to = "/blog/eggless-cakes-whalan"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-emerton.html"
+  to = "/blog/eggless-cakes-emerton"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-quinceanera-sydney.html"
+  to = "/blog/eggless-cakes-quinceanera-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-small-gatherings-sydney.html"
+  to = "/blog/eggless-cake-small-gatherings-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/halloween-cake-sydney.html"
+  to = "/blog/halloween-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/cake-smash-vs-first-birthday-cake-sydney.html"
   to = "/blog/cake-smash-vs-first-birthday-cake-sydney"
   status = 301
