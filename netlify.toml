@@ -377,6 +377,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cakes-emerton.html"
+  to = "/blog/eggless-cakes-emerton"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/cake-smash-vs-first-birthday-cake-sydney.html"
   to = "/blog/cake-smash-vs-first-birthday-cake-sydney"
   status = 301
