@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-08-01
+
+```yaml
+id: post-rs-2026-08-01
+status: published
+published_at: 2026-08-01
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless cake pickup before 7am for Rouse Hill and Vineyard families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0920.jpg"
+keywords_baited:
+  - custom eggless cake pickup before 7am
+  - Rouse Hill Vineyard Riverstone
+  - birthday cake pickup before school run
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
