@@ -392,6 +392,19 @@ curl -s -o /dev/null -w '%{http_code}\n' https://numnumsbakery.com.au/8a811016cc
 > silently never worked for any post. Committed 2026-08-17. `node verify-blog.mjs` now
 > fails if either file is untracked.
 
+> **In cloud/sandboxed sessions, this `curl` check can fail outright (connection error,
+> not a 404) if the egress proxy blocks arbitrary outbound domains** — the same
+> restriction documented for `images.unsplash.com`/`cdn.pixabay.com` in the image-reuse
+> section applies to `numnumsbakery.com.au` too. A 2026-08-02 run (5-post batch: Old
+> Guildford, Tregear, Eid Milad-un-Nabi, Eggless Cake vs Sponge Cake, Sheet Cake Sydney)
+> hit `curl: (56) CONNECT tunnel failed` on this exact check. Combined with Netlify
+> auto-publish being off (pages aren't live immediately after push regardless), the
+> correct move in that case is to **skip the IndexNow ping for this run and say so
+> explicitly** rather than guess at success — do not call `node indexnow.mjs` without
+> confirmation, since a failed submission against an unpublished/unverified domain is a
+> wasted, possibly-rejected call. Note the skip in the delivery summary so a future run
+> (or the site owner, after publishing the deploy) knows to ping these URLs.
+
 Use `--dry` to preview without sending:
 
 ```bash
