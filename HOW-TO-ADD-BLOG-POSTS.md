@@ -496,6 +496,10 @@ Every post must link out to at least 2 authoritative external sources placed nat
 - [ ] Never use survey-methodology language ("Multiple themes could be selected") unless an actual survey was run.
 - [ ] **Validate every SVG `fill`/`stroke` is a real hex colour before committing.** A typo'd fill (e.g. `fill="#A8days"`) renders an invisible or black bar and silently breaks the chart. After writing any chart, `grep` the SVG for `fill="#"` values and confirm each is a valid 3- or 6-digit hex. Also confirm there are no duplicate/stray `<rect>` left over from copy-paste.
 
+### Comparison ("X vs Y") posts can silently skip the SVG chart requirement
+
+- [ ] A 2026-08-03 run (Eggless Cake Recipe vs Bakery Sydney post) found that building a comparison post around an HTML `<table class="compare-table">` — a natural fit for "X vs Y" content — satisfied the comparison structure but left the post with **zero SVG charts** on first draft, failing the "2-4 SVG charts, evenly distributed" requirement even though the table itself looked complete. An HTML comparison table is a good addition to a comparison post, but it is not a substitute for the chart requirement. After drafting any comparison-template post, explicitly count `<svg` chart blocks — a table is not a chart — and add at least one SVG chart (e.g. a bar chart visualizing one of the comparison's key numbers, such as time-cost or price) if the count is 0.
+
 ### Internal linking — body text
 
 - [ ] Every reference to another page on the site ("our cakes", "the order page", "locations", "Our Cakes page") must be a working `<a href>` hyperlink — never plain text.

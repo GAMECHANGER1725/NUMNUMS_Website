@@ -621,6 +621,9 @@ These rules are derived from real audit failures on this project. Every point mu
 **Key Takeaways / Quick Summary box word count — count the combined total, don't estimate**
 - [ ] The Key Takeaways / Quick Summary box drifts outside the 40–60 word combined target on a first draft the same way FAQ answers do, even when every individual bullet reads fine on its own. A 2026-07-19 audit (Cake Price Guide Sydney post, a city-wide topic post) found the box landed at 88 words across 5 bullets on first draft — well over the 40–60 word target — because each bullet was judged individually for quality rather than summed for total length. After drafting the Key Takeaways/Quick Summary box, add up the word count across **all bullets combined** and tighten phrasing (drop redundant qualifiers, shorten to the essential number/fact) until the total sits inside 40–60 words, the same discipline already applied to FAQ answers.
 
+**Comparison ("X vs Y") posts can silently skip the SVG chart requirement**
+- [ ] A 2026-08-03 run (Eggless Cake Recipe vs Bakery Sydney post) found that building a comparison post around an HTML `<table class="compare-table">` — a natural fit for "X vs Y" content — satisfied the comparison structure but left the post with **zero SVG charts** on first draft, failing the "2-4 SVG charts, evenly distributed" requirement even though the table itself looked complete. An HTML comparison table is a good addition to a comparison post, but it is not a substitute for the chart requirement. After drafting any comparison-template post, explicitly count `<svg` chart blocks — a table is not a chart — and add at least one SVG chart (e.g. a bar chart visualizing one of the comparison's key numbers, such as time-cost or price) if the count is 0.
+
 **Image reuse (mandatory check before every commit)**
 
 ⚠️ **Current state as of 2026-07-21: 667 image references across the blog draw on only 106
