@@ -1867,6 +1867,36 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-shalvey.html"
+  to = "/blog/eggless-cakes-shalvey"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-lethbridge-park.html"
+  to = "/blog/eggless-cakes-lethbridge-park"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-bar-mitzvah-sydney.html"
+  to = "/blog/eggless-cakes-bar-mitzvah-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-recipe-vs-bakery-sydney.html"
+  to = "/blog/eggless-cake-recipe-vs-bakery-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cupcakes-sydney.html"
+  to = "/blog/eggless-cupcakes-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
