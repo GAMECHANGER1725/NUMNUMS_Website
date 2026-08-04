@@ -1897,6 +1897,36 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-fairfield.html"
+  to = "/blog/eggless-cakes-fairfield"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-pitt-town.html"
+  to = "/blog/eggless-cakes-pitt-town"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/hanukkah-cakes-sydney.html"
+  to = "/blog/hanukkah-cakes-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-low-fodmap-sydney.html"
+  to = "/blog/eggless-cake-low-fodmap-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/cake-school-fete-fundraiser-sydney.html"
+  to = "/blog/cake-school-fete-fundraiser-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
