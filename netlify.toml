@@ -1945,6 +1945,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cake-office-birthday-sydney.html"
+  to = "/blog/eggless-cake-office-birthday-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
