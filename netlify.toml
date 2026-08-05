@@ -1951,6 +1951,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/hsc-results-day-cake-sydney.html"
+  to = "/blog/hsc-results-day-cake-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
