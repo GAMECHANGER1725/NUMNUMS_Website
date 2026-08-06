@@ -653,6 +653,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cake-vs-pavlova.html"
+  to = "/blog/eggless-cake-vs-pavlova"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-sweet-16-sydney.html"
   to = "/blog/eggless-cakes-sweet-16-sydney"
   status = 301
