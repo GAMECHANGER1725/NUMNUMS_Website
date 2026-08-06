@@ -653,6 +653,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cakes-sefton.html"
+  to = "/blog/eggless-cakes-sefton"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-quakers-hill.html"
   to = "/blog/eggless-cakes-quakers-hill"
   status = 301
