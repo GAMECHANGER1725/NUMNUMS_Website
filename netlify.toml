@@ -1987,6 +1987,36 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-wilberforce.html"
+  to = "/blog/eggless-cakes-wilberforce"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-hassall-grove.html"
+  to = "/blog/eggless-cakes-hassall-grove"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/songkran-thai-new-year-sydney.html"
+  to = "/blog/songkran-thai-new-year-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-fruit-cake-sydney.html"
+  to = "/blog/eggless-fruit-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/novelty-sculpted-cake-designs-sydney.html"
+  to = "/blog/novelty-sculpted-cake-designs-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
