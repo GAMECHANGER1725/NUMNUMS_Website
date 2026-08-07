@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-08-07
+
+```yaml
+id: post-rs-2026-08-07
+status: published
+published_at: 2026-08-07
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless cakes ready before work for Box Hill and Rouse Hill families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0920.jpg"
+keywords_baited:
+  - 6am weekday cake pickup Riverstone
+  - custom eggless cake Box Hill Rouse Hill Vineyard
+  - cake pickup before work without taking time off
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
