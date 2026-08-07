@@ -1,0 +1,286 @@
+RUN_DATE: 2026-08-02
+SITE: Num Nums Bakery — https://numnumsbakery.com.au (100% eggless bakery, Sydney NSW; custom eggless cakes and Indian sweets only, no snacks/savoury/egg products; two locations, Harris Park and Riverstone)
+DATA_SOURCES: Windsor.ai MCP — Google Search Console API (connector `searchconsole`, account sc-domain:numnumsbakery.com.au) + GA4 Data API (connector `googleanalytics4`, account 531794710 "Num Nums Bakery"). Both connectors confirmed present via get_connectors and queried successfully throughout this run — no Windsor failures. seo-audit skill could NOT run this run (live-site egress blocked in this sandbox, see FAILURES) — SEO_AUDIT_SCORE is N/A and Step 2 (auto-apply fixes) was skipped in full per Step 1f.
+
+WINDOW_BOUNDARIES (GSC data lags ~3 days; "current" windows anchored at 2026-07-30 = today-3):
+last_7d (current week): 2026-07-24 to 2026-07-30
+previous_7d (days 8-14 back): 2026-07-16 to 2026-07-22
+last_28d (current month): 2026-07-03 to 2026-07-30
+previous_28d (days 29-56 back): 2026-06-05 to 2026-07-02
+last_3mo: requested 2026-05-01 to 2026-07-30 — actual GSC data starts 2026-05-28 (property has no rows before that date)
+last_6mo: requested 2026-01-29 to 2026-07-30 — capped at same 2026-05-28 start; GSC totals for 3mo/6mo/12mo are therefore IDENTICAL (all three return the same ~64-day dataset, 2026-05-28 to 2026-07-30)
+last_12mo: requested 2025-07-30 to 2026-07-30 — same cap as above
+GA4 has longer history than GSC (last_3mo differs from last_6mo/last_12mo, which are identical to each other) — consistent with the 28-07-2026 run's finding that the GA4 property's data starts ~2026-04-08. Not independently re-derived to the day this run; inferred from last_6mo == last_12mo totals.
+DATA AVAILABILITY CAP: GSC has only ~64 days of history (since 2026-05-28) and GA4 only ~113 days (since ~2026-04-08). Neither source can yet produce a genuine 6-month or 12-month trend or seasonality read. This is the same cap noted in the 28-07-2026 run; it will keep applying until the properties accumulate more history.
+
+SEO_AUDIT_SCORE: N/A (this run) — vs N/A (28-07-2026, also blocked). No score change to report; both runs blocked on the same root cause. Per-category sub-scores: not applicable, audit did not run.
+
+FIXES_APPLIED: none. Step 2 was skipped in full per Step 1f — the seo-audit skill could not crawl the live site, and applying fixes derived from a self-invented audit is explicitly prohibited (this is what caused the ~90-file over-correction on the 22-07-2026 trial run). No code was read or changed this run.
+
+NON_CODE_ACTIONS:
+- Get numnumsbakery.com.au allow-listed in this sandbox's outbound-egress policy so the seo-audit skill can crawl the live site. This is now a 3-run confirmed blocker (26-07, 28-07, 02-08, identical 403 signature) — not something a session can self-serve; needs escalation to whoever manages this Claude Code on the web environment's network policy.
+- Mark order_form_submit and enquiry_click as GA4 Key Events in GA4 Admin (property 531794710) so GA4's own conversion/key-event reporting stops returning 0 for every window — this is a GA4 property-configuration change, not a code change. Still unmarked as of this run (see GA4_BY_EVENT).
+- Get more backlinks / continue GBP posting cadence — standard ongoing off-site actions, not evaluated this run (no audit ran).
+
+GSC_TOTALS (all 7 windows, all 4 core metrics):
+window | date_range | clicks | impressions | ctr | avg_position
+last_7d | 2026-07-24 to 2026-07-30 | 153 | 6742 | 2.27% | 10.36
+previous_7d | 2026-07-16 to 2026-07-22 | 197 | 5712 | 3.45% | 10.31
+last_28d | 2026-07-03 to 2026-07-30 | 644 | 22265 | 2.89% | 11.03
+previous_28d | 2026-06-05 to 2026-07-02 | 410 | 13474 | 3.04% | 12.64
+last_3mo | 2026-05-28 to 2026-07-30 (capped) | 1145 | 37928 | 3.02% | 11.79
+last_6mo | 2026-05-28 to 2026-07-30 (capped, same as above) | 1145 | 37928 | 3.02% | 11.79
+last_12mo | 2026-05-28 to 2026-07-30 (capped, same as above) | 1145 | 37928 | 3.02% | 11.79
+
+GSC_WOW (last_7d vs previous_7d):
+clicks: 153 vs 197 | -44 | -22.3%
+impressions: 6742 vs 5712 | +1030 | +18.0%
+ctr: 2.27% vs 3.45% | -1.18pp | -34.2%
+avg_position: 10.36 vs 10.31 | +0.06 | worse by 0.06 positions (essentially flat)
+Reading: impressions grew but clicks and CTR fell WoW — more visibility, less click-through this specific week. Contrasts sharply with the MoM picture below; see COMPARISON note.
+
+GSC_MOM (last_28d vs previous_28d):
+clicks: 644 vs 410 | +234 | +57.1%
+impressions: 22265 vs 13474 | +8791 | +65.3%
+ctr: 2.89% vs 3.04% | -0.15pp | -4.9%
+avg_position: 11.03 vs 12.64 | -1.61 | improved by 1.61 positions
+Reading: strong month-over-month growth in clicks, impressions, and ranking position. The WoW dip above is therefore a within-month pullback in the most recent week, not a reversal of the underlying MoM growth trend — most of this month's gains came in the earlier three weeks of the 28d window, with the most recent week softening.
+
+GSC_BY_DEVICE (per window):
+last_7d: MOBILE 118 clicks/4036 impr/2.92% ctr/pos 7.32 | DESKTOP 35 clicks/2665 impr/1.31% ctr/pos 14.91 | TABLET 0 clicks/41 impr/pos 13.63
+previous_7d: MOBILE 151/3590/4.21%/pos 7.32 | DESKTOP 45/2087/2.16%/pos 15.48 | TABLET 1/35/2.86%/pos 7.94
+last_28d: MOBILE 502/13546/3.71%/pos 7.43 | DESKTOP 140/8585/1.63%/pos 16.75 | TABLET 2/134/1.49%/pos 9.57
+previous_28d: MOBILE 316/8387/3.77%/pos 7.64 | DESKTOP 91/5013/1.82%/pos 21.02 | TABLET 3/74/4.05%/pos 11.47
+last_3mo/6mo/12mo (capped, same 64-day window): MOBILE 889/23435/3.79%/pos 7.60 | DESKTOP 249/14271/1.74%/pos 18.70 | TABLET 7/222/3.15%/pos 10.58
+PRIORITY SIGNAL — DESKTOP TRAILS MOBILE, not the reverse: desktop average position is 7-14 positions WORSE than mobile in every single window (worst gap: previous_28d, desktop pos 21.02 vs mobile pos 7.64, a 13.4-position gap). This is the opposite of the typical "mobile lags desktop" pattern and matches the 28-07-2026 run's finding exactly — same signal, same direction, second week running. GA4's device-level engagement data (see GA4_BY_DEVICE) shows desktop on-site engagement is healthy, which continues to point at a search-ranking-specific desktop problem (indexing/rendering/CWV) rather than an on-site desktop UX problem.
+
+GSC_BY_QUERY (last_28d, 2026-07-03 to 2026-07-30):
+NOTE ON COMPLETENESS: GSC's query-dimension breakdown only returns queries above Google's privacy/anonymisation threshold. Summed over the 1582 distinct queries returned, this window's query-level rows total 318 clicks / 10690 impressions against a true GSC_TOTALS figure of 644 clicks / 22265 impressions — i.e. the query breakdown captures roughly half of actual clicks and impressions. This is documented Google Search Analytics API behaviour (very-low-volume/rare queries are omitted entirely when grouped by query), not a Windsor or pipeline defect. GSC_TOTALS above is the authoritative aggregate; treat all query-level numbers below as a representative subset, not a complete census.
+Top by clicks:
+num num bakery | 66 clicks | 305 impr | 21.64% ctr | pos 1.48
+numnum bakery | 23 clicks | 76 impr | 30.26% ctr | pos 1.61
+num num bakery riverstone | 22 clicks | 84 impr | 26.19% ctr | pos 1.12
+num nums bakery | 16 clicks | 109 impr | 14.68% ctr | pos 2.17
+numnums bakery | 9 clicks | 42 impr | 21.43% ctr | pos 1.93
+num num harris park | 6 clicks | 41 impr | 14.63% ctr | pos 1.05
+num num riverstone | 6 clicks | 60 impr | 10.00% ctr | pos 1.02
+num nums bakery riverstone menu | 6 clicks | 25 impr | 24.00% ctr | pos 2.60
+nums nums bakery | 5 clicks | 15 impr | 33.33% ctr | pos 1.13
+num num bakery harris park | 4 clicks | 32 impr | 12.50% ctr | pos 1.50
+(remainder of the top-50-by-clicks list is entirely branded/near-branded variants at 1-3 clicks each — no non-branded query cracks double-digit clicks this window, confirming the site's click volume is still branded-search-dominated.)
+Top by impressions (non-branded striking-distance candidates, all currently 0 clicks unless noted):
+eggless cake shop | 280 impr | 0 clicks | pos 18.23 (LARGEST single untapped opportunity this window — near-300 impressions, zero clicks, page-2 position)
+best cakes sydney | 74 impr | 1 click | ctr 1.35% | pos 10.70
+eggless cakes | 56 impr | 0 clicks | pos 16.66
+num nums | 62 impr | 0 clicks | pos 5.97 (branded, ranks well, still 0 clicks — possible SERP snippet/branding issue worth a manual SERP check)
+eggless cakes sydney | 43 impr | 0 clicks | pos 11.95
+eggless cake shop near me | (low volume, see full query set)
+bakery near me | 32 impr | 0 clicks | pos 12.28
+num num | 29 impr | 0 clicks | pos 3.41
+best chocolate cake sydney | 30 impr | 0 clicks | pos 27.17
+best birthday cakes sydney | 18 impr | 0 clicks | pos 25.11
+wedding cakes & desserts sydney | 22 impr | 0 clicks | pos 10.32
+BRANDED VS NON-BRANDED (reclassified locally using "num num/numnum/num nums/nums" regex, since Windsor's own branded_vs_nonbranded field checks for the literal domain string "numnumsbakery" and incorrectly classifies 100% of rows — including "num num bakery" — as nonbranded; do not trust that field as shipped):
+branded: 173 clicks / 1396 impressions (of the query-level subset)
+non-branded: 145 clicks / 9294 impressions (of the query-level subset)
+Non-branded queries generate the large majority of impressions (87%) but a minority of clicks (46%) within the captured subset — consistent with the striking-distance opportunity flagged above: lots of non-branded visibility, not yet converting to clicks.
+
+GSC_QUERY_MOVERS (position deltas, common queries only, min 3 impressions in at least one period):
+WoW gains (previous_7d -> last_7d, old position -> new position):
+halal cakes sydney: 44.33 -> 5.00 (+39.33)
+punjabi eggless cake: 33.33 -> 11.00 (+22.33)
+cake shop: 25.67 -> 7.57 (+18.10)
+nut free cakes sydney: 34.82 -> 17.33 (+17.49)
+dessert places near me: 31.00 -> 18.00 (+13.00)
+birthday cake near me: 14.67 -> 2.50 (+12.17)
+dessert near me: 24.67 -> 16.25 (+8.42)
+WoW losses:
+desserts near me: 10.33 -> 23.73 (-13.39)
+cake shop sydney: 48.67 -> 61.23 (-12.56)
+cake delivery north sydney: 32.40 -> 44.00 (-11.60)
+pies near me: 4.50 -> 16.00 (-11.50)
+wedding cakes barangaroo: 72.00 -> 83.25 (-11.25)
+bakery parramatta: 16.00 -> 25.50 (-9.50)
+eggless cakes sydney: 11.95 -> 19.74 (-7.78, notable — this is a real-volume query, 65 impressions this week, and it lost ~8 positions)
+MoM gains (previous_28d -> last_28d):
+dairy free cake sydney: 61.00 -> 16.00 (+45.00)
+dairy free cakes sydney: 60.00 -> 18.00 (+42.00, real volume: 58 impressions)
+flourless cake near me: 67.20 -> 28.00 (+39.20)
+dessert north sydney: 66.00 -> 30.00 (+36.00)
+tom cakes: 48.67 -> 14.50 (+34.17)
+nut free cakes sydney: 58.00 -> 24.72 (+33.28, real volume: 57 impressions)
+halal cake shop: 42.08 -> 10.00 (+32.08)
+custom cake consultation: 63.50 -> 33.39 (+30.11, real volume: 18 impressions)
+MoM losses:
+nut free cakes castle hill: 12.75 -> 62.67 (-49.92)
+sydney cake shop: 53.00 -> 75.00 (-22.00)
+birthday cakes parramatta: 8.00 -> 26.67 (-18.67)
+vegan cakes parramatta: 44.25 -> 58.00 (-13.75)
+bakeries: 11.60 -> 25.00 (-13.40)
+nearest bakery: 3.00 -> 16.00 (-13.00)
+parramatta cakes: 14.00 -> 26.50 (-12.50)
+Reading: the "dairy free" and "nut free" clusters are the standout MoM gainers, jumping from page 5-6 to page 2 territory — both still at 0 clicks despite the ranking jump, making them prime striking-distance content/meta refresh candidates (see RECOMMENDATIONS).
+
+GSC_BY_PAGE (last_28d, top by clicks; full long tail available in raw pull, 200+ URLs, only 2+ click pages listed below for brevity):
+/ (homepage) | 369 clicks | 7013 impr | 5.26% ctr | pos 13.26
+/blog/best-eggless-cake-shops-sydney-2026 | 54 | 2350 | 2.30% | 10.27
+/blog/photo-cake-sydney | 42 | 1193 | 3.52% | 8.26
+/blog/eggless-cake-bakery-harris-park-riverstone-sydney | 35 | 2685 | 1.30% | 7.83
+/blog/best-dessert-shop-sydney | 14 | 1019 | 1.37% | 8.85
+/cakes | 11 | 1347 | 0.82% | 12.71
+/order | 11 | 900 | 1.22% | 4.66
+/blog/cake-price-guide-sydney | 10 | 388 | 2.58% | 6.05
+/blog/eggless-cake-storage-freshness-guide | 9 | 1226 | 0.73% | 7.18
+/blog/best-cake-sydney | 7 | 753 | 0.93% | 13.24
+/blog/kids-birthday-cake-sydney | 6 | 120 | 5.00% | 8.98
+/blog/same-day-cake-sydney | 6 | 255 | 2.35% | 8.20
+/indian-sweet | 6 | 617 | 0.97% | 11.45
+/blog/eggless-cake-for-vegetarians-sydney | 5 | 637 | 0.78% | 20.32 (high impressions, weak position — same title/meta candidate flagged 28-07-2026, still unresolved since Step 2 hasn't run)
+/blog/eggless-cakes-schofields | 5 | 233 | 2.15% | 7.79
+PAGES WITH HIGH IMPRESSIONS, NEAR-ZERO CLICKS (title/meta rewrite candidates, unchanged from last run — Step 2 still hasn't run to action these):
+/blog/eggless-cake-for-vegetarians-sydney (637 impr, 5 clicks, pos 20.32)
+/blog/eggless-cake-storage-freshness-guide (1226 impr, 9 clicks, pos 7.18 — good position, weak CTR, meta description likely needs work)
+/cakes (1347 impr, 11 clicks, 0.82% ctr — the core commercial page still underperforms its own homepage on CTR)
+PAGES LOSING CLICKS WOW (previous_7d -> last_7d, direct comparison this run):
+/ (homepage): 110 -> 74 (-36, -32.7% — the largest single WoW decline, consistent with the overall WoW softening seen in GSC_WOW/GA4_WOW)
+/blog/photo-cake-sydney: 23 -> 12 (-11, -47.8%)
+/order: 4 -> 1 (-3)
+/blog/best-dessert-shop-sydney: 6 -> 4 (-2)
+/blog/best-eggless-cake-shops-sydney-2026: 16 -> 14 (-2)
+Pages that had clicks previous_7d but dropped to 0 this week (small volumes, 1-3 prior clicks each): /indian-sweet, /blog/eggless-cake-for-pregnancy-sydney, /blog/eggless-cake-vs-regular-cake, /about, /blog/wedding-cake-sydney-north-west, and 12 more low-volume blog posts — normal noise at this traffic scale, not a pattern.
+
+GSC_BY_GEO (last_28d, top countries; GSC does not expose region/state for domain properties, only country):
+Australia | 612 clicks | 17985 impr | 3.40% ctr | pos 11.58 (95.0% of all clicks — confirms strong Sydney/NSW concentration, consistent with every prior run)
+United Kingdom | 10 | 623 | 1.61% | 5.82
+India | 7 | 933 | 0.75% | 8.13
+United States | 3 | 1511 | 0.20% | 9.22
+UAE | 2 | 64 | 3.12% | 5.84
+Singapore | 2 | 68 | 2.94% | 5.57
+(remaining ~110 countries contribute 0-1 clicks each, mostly diaspora/curiosity impressions on Indian-sweets content — not a targeting concern.)
+
+GSC search appearance (last_28d): PRODUCT_SNIPPETS | 1 click | 30 impressions | 3.33% ctr | pos 6.93. Only one rich-result type earning impressions, consistent with 28-07-2026 (1 click/21 impr that week) — no FAQ, HowTo, or Review-star enhancements are currently earning any impressions.
+
+GSC_LONG_TREND: Cannot report a genuine 3/6/12-month trend or seasonality read — see DATA AVAILABILITY CAP above; all three long windows return the identical 64-day dataset (2026-05-28 to 2026-07-30) because GSC has no rows before 2026-05-28. Within that 64-day window the trend remains unambiguously upward (last_28d clicks +57.1% over previous_28d), continuing the pattern first observed 28-07-2026. No seasonality conclusions possible yet with under 2.5 months of history.
+
+GA4_TOTALS (all 7 windows):
+window | date_range | sessions | users | new_users | engaged_sessions | engagement_rate | avg_engagement_time_sec | bounce_rate | key_events(conversions)
+last_7d | 2026-07-24 to 2026-07-30 | 270 | 224 | 223 | 145 | 53.70% | 48.32 | 46.30% | 0
+previous_7d | 2026-07-16 to 2026-07-22 | 287 | 246 | 239 | 173 | 60.28% | 51.22 | 39.72% | 0
+last_28d | 2026-07-03 to 2026-07-30 | 1044 | 850 | 840 | 617 | 59.10% | 49.97 | 40.90% | 0
+previous_28d | 2026-06-05 to 2026-07-02 | 651 | 507 | 486 | 385 | 59.14% | 77.83 | 40.86% | 0
+last_3mo | 2026-05-01 to 2026-07-30 (partial history) | 2385 | 1820 | 1811 | 1449 | 60.75% | 62.51 | 39.25% | 0
+last_6mo | 2026-01-29 to 2026-07-30 (capped ~2026-04-08) | 2811 | 2109 | 2113 | 1694 | 60.26% | 66.26 | 39.74% | 0
+last_12mo | 2025-07-30 to 2026-07-30 (capped, same as above) | 2811 | 2109 | 2113 | 1694 | 60.26% | 66.26 | 39.74% | 0
+"key_events" is the Windsor `conversions` field (GA4's own Key Events metric) — it is 0 in every window because no event is currently marked as a Key Event in GA4 Admin, not because nothing happened. See GA4_BY_EVENT for the real activity (enquiry_click, order_form_submit).
+
+GA4_WOW (last_7d vs previous_7d):
+sessions: 270 vs 287 | -17 | -5.9%
+users: 224 vs 246 | -22 | -8.9%
+new_users: 223 vs 239 | -16 | -6.7%
+engaged_sessions: 145 vs 173 | -28 | -16.2%
+engagement_rate: 53.70% vs 60.28% | -6.58pp | -10.9%
+avg_engagement_time: 48.32s vs 51.22s | -2.89s | -5.6%
+bounce_rate: 46.30% vs 39.72% | +6.58pp | +16.6% (worse)
+Every GA4 WoW metric softened this week — mirrors the GSC_WOW softening exactly (clicks -22.3%, ctr -34.2%). Both sources agree: the most recent 7 days were the weakest week of the current 28-day window.
+
+GA4_MOM (last_28d vs previous_28d):
+sessions: 1044 vs 651 | +393 | +60.4%
+users: 850 vs 507 | +343 | +67.7%
+new_users: 840 vs 486 | +354 | +72.8%
+engaged_sessions: 617 vs 385 | +232 | +60.3%
+engagement_rate: 59.10% vs 59.14% | -0.04pp | flat
+avg_engagement_time: 49.97s vs 77.83s | -27.86s | -35.8% (large drop — more traffic, shallower average visit; same pattern flagged 28-07-2026, now confirmed a second consecutive month)
+bounce_rate: 40.90% vs 40.86% | +0.04pp | flat
+Session/user growth MoM is strong and engagement RATE held flat (unlike the WoW dip), but average engagement TIME per session keeps falling month over month — worth a specific look at whether new-visitor mix (see GA4_BY_AUDIENCE) is diluting session depth.
+
+GA4_BY_CHANNEL (last_28d):
+Organic Search | 751 sessions | 586 users | 515 engaged | 68.58% engagement rate (71.9% of all sessions, dominant channel)
+Direct | 239 sessions | 217 users | 71 engaged | 29.71% engagement rate
+AI Assistant | 44 sessions | 39 users | 28 engaged | 63.64% engagement rate (small but high-quality — ChatGPT/Perplexity/AI Overview referrals; up from 43 sessions 28-07-2026, essentially flat)
+Organic Social | 9 sessions | 9 users | 4 engaged | 44.44%
+Paid Social | 2 sessions | 2 users | 1 engaged | 50.00%
+Referral | 1 session | 1 user | 0 engaged | 0%
+Unassigned | 1 session | 1 user | 0 engaged | 0%
+GA4_BY_CHANNEL (last_7d, for comparison): Organic Search 195 sessions, Direct 56, AI Assistant 12, Organic Social 6, Paid Social 2.
+
+GA4_BY_LANDING_PAGE (last_28d, top by sessions):
+/ | 564 sessions | 500 users | 65.96% engagement rate (1 - bounce_rate)
+/cakes | 67 sessions | 39 users | 43.28% engagement rate
+/blog/best-eggless-cake-shops-sydney-2026 | 57 sessions | 55 users | 70.18% engagement rate
+/order | 47 sessions | 34 users | 42.55% engagement rate
+/blog/photo-cake-sydney | 37 sessions | 37 users | 62.16% engagement rate
+/blog/eggless-cake-bakery-harris-park-riverstone-sydney | 32 sessions | 31 users | 75.00% engagement rate (best engagement of any high-traffic page, consistent with 28-07-2026)
+(not set) | 34 sessions | 28 users | 0% engagement rate (tracking edge case, ~3.3% of sessions, same pattern as last run)
+/indian-sweet | 11 sessions | 11 users | 54.55% engagement rate
+/blog/eggless-cake-storage-freshness-guide | 11 sessions | 10 users | 18.18% engagement rate (high GSC impressions/weak GA4 engagement — corroborates the title/meta rewrite candidate)
+conversions field returns 0 for every landing page — same GA4 Key Events configuration gap as GA4_TOTALS.
+
+GA4_BY_DEVICE (last_28d, device x browser, top rows):
+mobile / Safari | 379 sessions | 62.80% engagement rate
+mobile / Chrome | 339 sessions | 59.88% engagement rate
+desktop / Chrome | 206 sessions | 56.80% engagement rate
+desktop / Edge | 56 sessions | 55.36% engagement rate
+desktop / Safari | 26 sessions | 76.92% engagement rate (small sample, high quality)
+desktop / Firefox | 18 sessions | 38.89% engagement rate
+mobile / Samsung Internet | 14 sessions | 57.14% engagement rate
+Mobile totals: ~739 sessions (73% of GA4 traffic) vs desktop ~305 (30%) — mobile still dominates volume; desktop on-site engagement (55-77%) remains healthy, reinforcing that the GSC desktop position gap is a search-ranking issue, not an on-site desktop UX issue.
+
+GA4_BY_GEO (last_28d, top cities):
+Sydney, NSW | 659 sessions | 521 users (63.2% of all sessions)
+Melbourne, VIC | 55 sessions | 48 users
+Brisbane, QLD | 27 sessions | 24 users
+(not set) | 25 sessions | 25 users
+Singapore | 23 sessions | 23 users
+Council Bluffs, Iowa, US | 18 sessions | 18 users (same recurring small cluster flagged 28-07-2026 — likely data-center/VPN-exit traffic; still low priority, still recurring, now a 2-week pattern)
+Canberra, ACT | 8 | Newcastle, NSW | 8 | Central Coast, NSW | 7 — regional NSW long tail, expected for a Sydney-area bakery.
+
+GA4_BY_AUDIENCE (new vs returning, last_28d):
+new | 830 sessions | 832 users (81.5% of sessions)
+returning | 149 sessions | 107 users (14.6% of sessions)
+(not set) | 68 sessions | 0 users (6.7%, tracking edge case)
+Still heavily new-visitor skewed, consistent with 28-07-2026 — acquisition-growth phase, not retention phase.
+
+GA4_BY_EVENT (last_28d):
+page_view | 1965
+user_engagement | 1430
+session_start | 1058
+first_visit | 840
+scroll | 328
+form_start | 115 (up from 106 last run)
+click | 37
+enquiry_click | 11 (unchanged from 28-07-2026)
+order_form_submit | 3 (up from 2 last run — still a steep form_start-to-submit drop-off: 115 form_starts to 3 submits, ~97% drop-off)
+conversions (GA4 Key Events) returns 0 for every event — confirmed still unmarked in GA4 Admin as of this run, second week flagged (see NON_CODE_ACTIONS).
+
+CROSS_SOURCE (GSC clicks vs GA4 Organic Search sessions):
+last_7d: 153 GSC clicks vs 195 GA4 Organic Search sessions (ratio 1.27)
+last_28d: 644 GSC clicks vs 751 GA4 Organic Search sessions (ratio 1.17)
+Both ratios sit in the normal 1.0-1.3x range analysts expect between these two sources (GA4 counts some additional organic entry points GSC doesn't attribute) — no red flag, consistent with the 1.07-1.19x range reported 28-07-2026.
+
+COMPARISON_VS_LAST_WEEK (prior file: 28-07-2026-GSC-Analysis.txt, which established the true data baseline):
+GSC clicks last_7d: 153 (this run) vs 212 (28-07-2026's last_7d, 2026-07-19 to 2026-07-25) — down, but these are different, non-overlapping 7-day windows one week apart, not a direct re-measurement of the same days; treat as directional.
+GSC clicks last_28d: 644 (this run) vs 657 (28-07-2026) — roughly flat window over window.
+SEO_AUDIT_SCORE: N/A both runs — third consecutive run blocked by the same sandbox egress policy (26-07, 28-07, 02-08).
+GA4 avg_engagement_time last_28d: 49.97s (this run) vs 52.48s (28-07-2026) — continues the downward drift noted last run.
+RECOMMENDATION_FOLLOWUP: Get numnumsbakery.com.au allow-listed in this sandbox's egress policy | acted: no (not something a session can self-serve) | observed effect: identical 403 policy denial reproduced a third time this run (see FAILURES) — now a 3-run confirmed pattern, escalation is overdue.
+RECOMMENDATION_FOLLOWUP: Rewrite title/meta for "eggless cake shop" (highest-impression zero-click query) | acted: no — Step 2 did not run again this run, so no code was touched. Query remains at 280 impressions / 0 clicks / position 18.23 this run (was 19.8 last run) — position improved slightly on its own but still converts zero clicks.
+RECOMMENDATION_FOLLOWUP: Investigate the desktop-vs-mobile GSC position gap | acted: no (requires Step 2 / live audit access, neither ran) | observed effect: gap persists identically this run (desktop trails mobile by 7-14 positions in every window, worst gap now previous_28d at 13.4 positions) — confirmed a second consecutive week, not a one-off.
+RECOMMENDATION_FOLLOWUP: Mark order_form_submit and enquiry_click as GA4 Key Events | acted: no | observed effect: conversions field still returns 0 for every event/window this run — unresolved, restated in NON_CODE_ACTIONS.
+RECOMMENDATION_FOLLOWUP: Content refresh on the "dairy free"/"nut free" MoM striking-distance cluster flagged as a general pattern last run | acted: no (Step 2 didn't run) | observed effect: this run's own GSC_QUERY_MOVERS independently surfaces the same cluster again (dairy free cakes sydney 60->18, nut free cakes sydney 58->24.7) — the opportunity is real and recurring, not last week's noise.
+RECOMMENDATION_FOLLOWUP: Check /cakes.html legacy URL for a stale link (flagged 28-07-2026) | acted: not verified this run — Step 2 scope (file reads) was skipped again, no code was inspected either way.
+
+RECOMMENDATIONS (ranked, each cites the metric that triggered it):
+1. [Highest-impression zero-click query, recurring] Rewrite the title tag / meta description for the page(s) targeting "eggless cake shop" — 280 impressions, 0 clicks, position 18.23 in last_28d. This is the single largest untapped opportunity in the query set for the second run running (was 980 impr/0 clicks/pos 19.8 as "eggless cake shop" territory 28-07-2026 — note the exact query composition shifted slightly between runs but the pattern is identical: high visibility, zero conversion). Trigger: GSC_BY_QUERY top-impressions list.
+2. [Desktop ranking gap, now 2-week confirmed pattern] Investigate why DESKTOP average position trails MOBILE by 7-14 positions in every window, worst this run at previous_28d (21.02 vs 7.64, a 13.4-position gap) — while GA4 desktop engagement rate stays healthy (55-77%). Same signal as 28-07-2026, same direction, same magnitude. Check Core Web Vitals and mobile-first-indexing config for a desktop-specific rendering/crawling issue. Trigger: GSC_BY_DEVICE, consistent across all 7 windows both runs.
+3. [Striking-distance cluster, recurring] The "dairy free" and "nut free" cake queries jumped from position ~60 to ~17-25 MoM (dairy free cakes sydney 60.00->17.75 combined pattern, nut free cakes sydney 58.00->24.72, both real-volume queries at 57-58 impressions) but still convert zero clicks. The ranking work is already done — a title/meta/on-page content refresh on this specific cluster could unlock clicks fast. Trigger: GSC_QUERY_MOVERS MoM gains, both still at 0 clicks.
+4. [Funnel leak, still unresolved] GA4 shows 115 form_start events but only 3 order_form_submit events over last_28d (~97% drop-off), alongside 11 enquiry_click events. Either most real orders happen off-site (phone/WhatsApp/in-person — plausible and fine for this business type) or there's a genuine on-site order-form friction point worth a manual walkthrough. Trigger: GA4_BY_EVENT form_start-to-submit ratio, unchanged shape from 28-07-2026.
+5. [GA4 configuration gap, still unresolved] No GA4 event is marked as a Key Event, so conversions/key-event reporting is empty across every window — second run flagged. Mark order_form_submit and enquiry_click as Key Events in GA4 Admin so future runs can attribute conversions to channels/landing pages. Trigger: conversions field returns 0 for every event_name, both runs.
+6. [WoW softening, new this run] Every GSC and GA4 WoW metric softened simultaneously this week (GSC clicks -22.3%, GA4 sessions -5.9%, GA4 engagement_rate -10.9%) even as the MoM trend stays strongly positive. Homepage clicks alone dropped -32.7% WoW (110->74). Worth a quick manual check of whether anything changed on/around the homepage or in paid/organic visibility in the last 7 days specifically — could be normal single-week noise at this traffic volume, but two sources agreeing on the same direction in the same week is worth a look before dismissing it. Trigger: GSC_WOW + GA4_WOW + GSC_BY_PAGE homepage delta, all pointing the same direction this run only.
+7. [Environment, recurring, now overdue] Get numnumsbakery.com.au allow-listed in this sandbox's egress policy — this is now a 3-run confirmed blocker (26-07, 28-07, 02-08, identical 403 signature) and remains the only thing standing between this routine and a real weekly SEO_AUDIT_SCORE and any actual code fixes. Trigger: FAILURES, reproduced independently via curl, the agent proxy status endpoint, and WebFetch this run.
+8. [Content, deferred] No new suburb gap analysis performed this run (Step 2 scope, skipped). `ls blog/` confirms 266 existing posts as of this run (up from 236 at 28-07-2026, +30 posts in one week) — any suburb-gap recommendation must be checked against this current list before Step 2 next runs, not against last week's count.
+
+FAILURES:
+Step 1 (seo-audit skill, crawl phase) — BLOCKED, same root cause as 26-07-2026 and 28-07-2026, now a 3-run pattern. Verified via three independent methods this run: (1) direct curl to https://numnumsbakery.com.au and to example.com/google.com both returned "curl: (56) CONNECT tunnel failed, response 403" — confirming this is a general outbound-HTTPS block in this sandbox, not domain-specific; (2) the agent proxy's own status endpoint ($HTTPS_PROXY/__agentproxy/status) logged two fresh connect_rejected entries for numnumsbakery.com.au:443 with detail "gateway answered 403 to CONNECT (policy denial or upstream failure)"; (3) the WebFetch tool independently returned "The server returned HTTP 403 Forbidden" for the same URL, ruling out a curl/sandbox-specific quirk — the block applies at the harness level too. Per Step 1f, SEO_AUDIT_SCORE is N/A and Step 2 (auto-apply fixes) was skipped in full. pip install requests/beautifulsoup4/lxml succeeded with no errors before this was discovered, so dependencies are not the blocker.
+Windsor.ai GSC/GA4 pulls — no failures. Both connectors authenticated and queryable; get_fields and get_data succeeded on every call this run. Two data-completeness notes (not failures, both previously documented and reconfirmed this run): (1) GSC's query-dimension breakdown structurally omits low-volume queries (Google API privacy behaviour) — last_28d query rows sum to 318/10690 clicks/impressions against a true GSC_TOTALS of 644/22265, roughly half; GSC_TOTALS/WOW/MOM figures (date-dimension only) are unaffected and authoritative. (2) GSC data starts 2026-05-28 and GA4 starts ~2026-04-08 — see DATA AVAILABILITY CAP; last_6mo/last_12mo are not true 6/12-month windows yet for either source.
+Two get_data calls (last_28d query-level GSC data, ~1582 rows; previous_28d query-level GSC data, ~1220 rows) and one get_fields call (GA4, 491 fields) exceeded the tool's inline token limit and were auto-saved to disk, then processed programmatically (Python/pandas-style filtering) rather than read inline — no data was lost, but this consumed extra file-read/processing steps. Noted again for future runs: request narrower field lists or pre-filtered/sorted results where high-cardinality dimensions (query, all-fields discovery) are involved, to reduce this overhead.
+Also worth flagging: Windsor's own `branded_vs_nonbranded` field for the searchconsole connector appears to check for the literal domain string ("numnumsbakery") inside the query rather than brand-name variants, and classified 100% of this run's 1582 queries — including exact matches like "num num bakery" — as "nonbranded". This run's BRANDED VS NON-BRANDED split was computed locally instead using the regex specified in the routine prompt (num num/numnum/num nums/nums variants). Flagging in case this is a genuine upstream Windsor field bug worth reporting, not something to silently work around indefinitely.
