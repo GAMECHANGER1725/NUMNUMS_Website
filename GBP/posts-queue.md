@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-07-31
+
+```yaml
+id: post-hp-2026-07-31
+status: published
+published_at: 2026-07-31
+location: harris-park
+post_type: "Call to action"
+title: "No egg questions needed: custom cakes for Rosehill and Camellia families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1634.jpg"
+keywords_baited:
+  - Jain-friendly eggless cake Rosehill
+  - egg-allergy safe custom cake Camellia
+  - custom eggless cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
