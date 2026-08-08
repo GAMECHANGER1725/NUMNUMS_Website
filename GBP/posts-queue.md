@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-08-08
+
+```yaml
+id: post-hp-2026-08-08
+status: published
+published_at: 2026-08-08
+location: harris-park
+post_type: "Call to action"
+title: "Finish work late in Camellia or Rosehill? Harris Park cakes, pickup till 10pm"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0920.jpg"
+keywords_baited:
+  - custom eggless cake pickup after 6pm
+  - Camellia Rosehill Harris Park
+  - bakery already closed by 6pm Parramatta
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
