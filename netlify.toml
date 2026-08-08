@@ -2017,6 +2017,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-bligh-park.html"
+  to = "/blog/eggless-cakes-bligh-park"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
