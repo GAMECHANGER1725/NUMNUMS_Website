@@ -2029,6 +2029,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/rosh-hashanah-cakes-sydney.html"
+  to = "/blog/rosh-hashanah-cakes-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
