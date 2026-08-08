@@ -2041,6 +2041,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/cake-message-ideas-sydney.html"
+  to = "/blog/cake-message-ideas-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
