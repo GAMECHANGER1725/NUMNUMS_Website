@@ -1,0 +1,90 @@
+RUN_DATE: 09-08-2026 (Sunday; scheduled Monday-anchored routine firing on an off-day this cycle — window boundaries below are computed the same way regardless of day of week)
+SITE: Num Nums Bakery — https://numnumsbakery.com.au (100% eggless bakery, Sydney NSW, Australia. Sells ONLY custom eggless cakes and Indian sweets — no snacks, no savoury items, no egg-based products. Two locations: Harris Park and Riverstone.)
+DATA_SOURCES:
+  seo-audit skill — BLOCKED this run. Python deps (requests/beautifulsoup4/lxml) installed successfully. The crawl step could not reach the live site: this session's outbound egress proxy denied numnumsbakery.com.au:443 with a policy-level HTTP 403, confirmed independently via curl (`curl: (56) CONNECT tunnel failed, response 403`) and via the proxy's own status endpoint (`$HTTPS_PROXY/__agentproxy/status`), which logged a fresh `connect_rejected` entry for numnumsbakery.com.au:443 at 2026-08-09T15:10:08.677Z with detail "gateway answered 403 to CONNECT (policy denial or upstream failure)". This is the SAME failure signature as the 26-07-2026 and 28-07-2026 runs — now a confirmed 3-run pattern. SEO_AUDIT_SCORE is N/A; per Step 1f, Step 2 (code fixes) was skipped in its entirety this run.
+  Google Search Console + GA4 via Windsor.ai MCP — BLOCKED this run, but for a NEW and DIFFERENT reason than any prior run. ListConnectors confirms the Windsor.ai connector is installed, connected, and enabled in this chat. However, the actual MCP tool set exposed to this session for the Windsor.ai server contains only 4 tools: create_destination_task, get_destination_setup_info, get_destination_tasks, get_destinations — all of which are for setting up recurring scheduled EXPORTS to a destination (BigQuery, Google Sheets, etc.), not for querying data directly. get_connectors, get_fields, and get_data — the three read/query tools the 28-07-2026 run used successfully to pull real GSC/GA4 numbers inline — are NOT present in this session's tool list (confirmed via three separate ToolSearch lookups by exact name, all returning "No matching deferred tools found"). This is a session/environment tool-exposure difference, not a credential or connector-authentication problem. Per the routine's Step 3 fallback instruction, this is treated as "Windsor MCP [read tools] not reachable in this run" — NO DATA is recorded for every GSC/GA4 block below, and the run continues.
+WINDOW_BOUNDARIES (ISO dates; computed for reference even though no data could be pulled — anchor = run date 2026-08-09 minus 3 days = 2026-08-06, per GSC's ~3-day data lag):
+  last_7d: 2026-07-30 to 2026-08-05
+  previous_7d: 2026-07-23 to 2026-07-29
+  last_28d: 2026-07-09 to 2026-08-05
+  previous_28d: 2026-06-11 to 2026-07-08
+  last_3mo (requested): 2026-05-06 to 2026-08-05
+  last_6mo (requested): 2026-02-06 to 2026-08-05
+  last_12mo (requested): 2025-08-06 to 2026-08-05
+  No data source was reachable to populate any of these windows this run — see DATA_SOURCES and FAILURES.
+
+SEO_AUDIT_SCORE: N/A this run (site unreachable from this sandbox for the 3rd consecutive run — see FAILURES). No category sub-scores computed; no weight assigned to any category; nothing guessed.
+SEO_AUDIT_SCORE_DELTA: N/A vs last week (28-07-2026 was also N/A, for the identical egress-403 cause — this is now a 3-run confirmed pattern with no change in root cause).
+
+FIXES_APPLIED:
+NONE this run. Step 1 (seo-audit crawl) could not run — see SEO_AUDIT_SCORE and FAILURES — so per the routine's explicit Step 1f instruction, Step 2 was skipped in its entirety and no code changes were made anywhere in the repo this run.
+As a read-only sanity check only (not a Step 2 fix, since Step 2 did not run): `ls blog/*.html | grep -vi index | wc -l` = 300 blog posts; `grep -c '<loc>' sitemap.xml | grep /blog/` = 300 blog URLs in sitemap.xml; `grep -c '^- https://numnumsbakery.com.au/blog/' llms.txt` = 300 blog entries in llms.txt's ## Blog Posts section. All three counts match exactly — no sitemap/llms.txt gap detected this run. This does not constitute a Step 2 audit and should not be read as confirmation that no other Critical findings (schema sameAs, inline style/on* attributes, etc.) exist — those require the actual seo-audit crawl, which did not run.
+
+NON_CODE_ACTIONS:
+Allow-list numnumsbakery.com.au in this execution environment's outbound network/egress policy, or run the seo-audit skill from a session whose policy permits the live domain | Infrastructure/policy configuration outside this repo — confirmed via curl + proxy status log for the THIRD consecutive week (26-07, 28-07, 09-08) that the destination is being actively denied by the proxy's org policy. Escalating priority: this is no longer an intermittent blip, it is the standing condition of this sandbox and is the single blocker preventing this routine from ever producing a real weekly SEO_AUDIT_SCORE.
+Restore session-level access to Windsor.ai's get_connectors/get_fields/get_data tools (or equivalent read/query tools) for this routine's sessions | This is a NEW blocker as of this run — the connector itself is authenticated and connected, but the specific query tools this routine depends on are not present in the current tool set, only the scheduled-export tooling is. This looks like a session-configuration/tool-exposure issue distinct from the connector's auth state and should be checked by whoever manages this account's MCP tool provisioning.
+Convert local product/flavour images to WebP/AVIF (cake_photos/Product Images/*.png, ~6.9MB total) | Carried over unchanged from 22-07, 26-07 and 28-07 — still not actioned; Step 2 did not run this week either, so no attempt was possible.
+Off-page SEO (backlinks, citations, GBP posting cadence) | Out of scope for this routine's on-site/code-only remit; not evaluated, not claimed fixed or broken.
+
+GSC_TOTALS: NO DATA (Windsor MCP read/query tools not reachable in this run — see DATA_SOURCES). Last known real figures are in SEO/GSC-Analysis/28-07-2026-GSC-Analysis.txt (last_7d as of 2026-07-25: 212 clicks, 6209 impressions, 3.41% CTR, 10.21 avg position).
+
+GSC_WOW: NO DATA (no current or previous window data available this run to compare).
+
+GSC_MOM: NO DATA (no current or previous window data available this run to compare).
+
+GSC_BY_DEVICE: NO DATA. Last known real figures (28-07-2026, last_28d): MOBILE avg position 7.39, DESKTOP avg position 17.67, gap 10.28 positions — this gap had been flagged as a standing priority signal across all prior windows; no fresher data exists to confirm whether it has changed.
+
+GSC_BY_QUERY: NO DATA. See 28-07-2026-GSC-Analysis.txt for the last known top-clicks, striking-distance, and branded/non-branded breakdowns.
+
+GSC_QUERY_MOVERS: NO DATA this run — no current dataset to diff against previous_28d.
+
+GSC_BY_PAGE: NO DATA. See 28-07-2026-GSC-Analysis.txt for the last known top-pages breakdown.
+
+GSC_BY_GEO: NO DATA.
+
+GSC_LONG_TREND: NO DATA. Prior runs already noted the GSC connector's history only extends back to 2026-05-28, so no true 6/12-month seasonality signal has existed in any run to date regardless.
+
+GA4_TOTALS: NO DATA (Windsor MCP read/query tools not reachable in this run). Last known real figures are in 28-07-2026-GSC-Analysis.txt (last_7d as of 2026-07-25: 322 sessions, 278 users, 59.01% engagement rate).
+
+GA4_WOW: NO DATA.
+
+GA4_MOM: NO DATA.
+
+GA4_BY_CHANNEL: NO DATA.
+
+GA4_BY_LANDING_PAGE: NO DATA.
+
+GA4_BY_DEVICE: NO DATA.
+
+GA4_BY_GEO: NO DATA.
+
+GA4_BY_AUDIENCE: NO DATA.
+
+GA4_BY_EVENT: NO DATA. Last known real figures (28-07-2026, last_28d) flagged a funnel leak worth re-checking once data access is restored: 106 form_start events vs only 2 order_form_submit events, and 0 GA4 Key Events configured for any event name.
+
+CROSS_SOURCE: NO DATA (both sources unreachable this run — no reconciliation possible).
+
+COMPARISON_VS_LAST_WEEK:
+Most recent prior file with real numbers: SEO/GSC-Analysis/28-07-2026-GSC-Analysis.txt. This run (09-08-2026) produced zero new numeric data on either the audit or traffic side — it is a second consecutive fully-blocked run on the audit side (26-07, 28-07, 09-08 = 3 straight) and the first run where the Windsor data pull specifically failed due to missing read tools rather than a data-source problem. No metric deltas can be computed; treat 28-07-2026 as the still-current numeric baseline until a future run successfully pulls fresh data.
+RECOMMENDATION_FOLLOWUP: Rewrite title/meta for the page(s) targeting "eggless cake shop" (980 impressions, 0 clicks, position 19.8 as of last_28d 28-07-2026) | acted: no | observed effect: not verified — Step 2 did not run this week (Step 1 blocked), and no fresh GSC data exists to check if this query's position/CTR moved on its own.
+RECOMMENDATION_FOLLOWUP: Investigate the desktop-vs-mobile average position gap (8-14 positions, worst 14.49 in previous_28d as of 28-07-2026) | acted: no | observed effect: not verified — no fresh device-level GSC data pulled this run.
+RECOMMENDATION_FOLLOWUP: Refresh content/meta for the striking-distance cluster (fathers day cakes sydney, dairy free cakes sydney, nut free cakes sydney, kids cake sydney, best cake in sydney — all page-1 as of 28-07-2026 but still 0 clicks) | acted: no | observed effect: not verified — no fresh query-mover data pulled this run.
+RECOMMENDATION_FOLLOWUP: Manually walk through the on-site order/enquiry form to check for friction (106 form_starts vs 2 order_form_submits as of 28-07-2026) | acted: no | observed effect: not verified — this requires a human or a browser-capable session; this data-only routine cannot test it.
+RECOMMENDATION_FOLLOWUP: Mark order_form_submit and enquiry_click as GA4 Key Events in GA4 Admin | acted: no | observed effect: not verified — this is a GA4 property-config change outside the repo and outside what a data-only session can perform; needs the account owner.
+RECOMMENDATION_FOLLOWUP: Check /cakes.html for a stale internal/external link and 301-redirect it to /cakes | acted: no | observed effect: not verified — Step 2 did not run this week, and this would need a code change plus fresh GA4 landing-page data to confirm the leak persists.
+RECOMMENDATION_FOLLOWUP: Get numnumsbakery.com.au allow-listed in this sandbox's egress policy | acted: no (not something a session can self-serve) | observed effect: identical 403 policy denial reproduced a third consecutive time this run, now with an exact timestamped log entry (2026-08-09T15:10:08.677Z) — this is a confirmed standing condition, not a transient blip. This is the top-priority escalation item two runs running now made three.
+RECOMMENDATION_FOLLOWUP: No new suburb gap identified (26-07/28-07) | acted: yes, re-checked this run | observed effect: `ls blog/*.html`, sitemap.xml, and llms.txt all independently count exactly 300 blog posts/URLs/entries with no discrepancy between them — consistent with the 28-07-2026 spot-check (236 posts then; the site has grown by 64 posts since, all three sources still in sync).
+
+RECOMMENDATIONS (ranked; carried forward from the last run with real data, since no fresher numbers exist to re-rank against):
+1. [Environment, recurring, now top priority] Get numnumsbakery.com.au allow-listed in this sandbox's egress policy. This is now a 3-run confirmed blocker (26-07, 28-07, 09-08, identical 403 signature each time) and is the single blocker standing between this routine and a real weekly SEO_AUDIT_SCORE plus code fixes. Trigger: FAILURES, reproduced independently via curl and the proxy status endpoint every affected run.
+2. [Environment, new this run] Restore this routine's session access to Windsor.ai's get_connectors/get_fields/get_data (or equivalent) read tools. The connector itself is authenticated and connected (confirmed via ListConnectors), but only scheduled-export tooling is exposed to this session — no way to query GSC/GA4 data inline this run. Trigger: DATA_SOURCES, three explicit ToolSearch lookups by exact tool name all returned no match.
+3. [Highest-impression zero-click query, carried from 28-07-2026] Rewrite the title tag / meta description for the page(s) targeting "eggless cake shop" (980 impressions, 0 clicks, position 19.8 as of last_28d 2026-07-25) — the single largest untapped opportunity identified to date. Trigger: last known GSC_BY_QUERY data, 28-07-2026 file.
+4. [Desktop ranking gap, carried from 28-07-2026] Investigate why DESKTOP average position trailed MOBILE by 8-14 positions in every window as of 28-07-2026, while GA4 desktop engagement rate looked healthy — points at a search-engine-specific (not on-site UX) issue. Trigger: last known GSC_BY_DEVICE data, 28-07-2026 file.
+5. [Striking-distance cluster, carried from 28-07-2026] Refresh on-page content/meta for fathers day cakes sydney, dairy free cakes sydney, nut free cakes sydney, kids cake sydney, best cake in sydney — all reached page 1 as of 28-07-2026 but still converted zero clicks. Trigger: last known GSC_QUERY_MOVERS data, 28-07-2026 file.
+6. [Funnel leak, carried from 28-07-2026] Manually walk through the on-site order/enquiry form — 106 form_starts vs only 2 order_form_submits as of last_28d 2026-07-25. Trigger: last known GA4_BY_EVENT data, 28-07-2026 file.
+7. [GA4 configuration gap, carried from 28-07-2026] Mark order_form_submit and enquiry_click as GA4 Key Events in GA4 Admin so future runs can attribute conversions. Trigger: last known GA4_BY_EVENT data, 28-07-2026 file.
+8. [Content, deferred] No new suburb gap identified this run — blog/, sitemap.xml, and llms.txt all independently confirm 300 matching blog entries with no drift. Continue deferring new suburb pages until Step 2 is running again to action any real findings properly.
+
+FAILURES:
+Step 1 (seo-audit skill, crawl phase) — Python dependencies (requests, beautifulsoup4, lxml) installed successfully via pip with no errors. The skill's first required action, fetching https://numnumsbakery.com.au, failed at the network layer: `curl -sS --cacert /root/.ccr/ca-bundle.crt https://numnumsbakery.com.au` returned "curl: (56) CONNECT tunnel failed, response 403". The proxy's own status endpoint ($HTTPS_PROXY/__agentproxy/status) logged a fresh connect_rejected entry: {"ts":"2026-08-09T15:10:08.677Z","kind":"connect_rejected","detail":"gateway answered 403 to CONNECT (policy denial or upstream failure)","host":"numnumsbakery.com.au:443"}. Per the proxy's own README, a 403 is an organisation-level egress policy denial that must be reported, not retried or routed around — no further crawl attempts were made. This is the identical failure class documented in the 26-07-2026 and 28-07-2026 runs (three consecutive occurrences, same root cause, same signature). Per Step 1f, SEO_AUDIT_SCORE is N/A and Step 2 was skipped in full — no code changes were made anywhere in the repo this run.
+Step 3 (Windsor.ai GSC/GA4 data pull) — new failure mode, distinct from prior runs. ListConnectors confirmed the Windsor.ai MCP server is installed, connected, and enabled in this chat. However, ToolSearch queries for the exact tool names get_connectors, get_fields, and get_data (the three tools the 28-07-2026 run used to successfully pull real data) each returned "No matching deferred tools found." The only Windsor.ai tools present in this session are create_destination_task, get_destination_setup_info, get_destination_tasks, and get_destinations — all scheduled-export/destination-management tools, not data-query tools. No GSC or GA4 data could be retrieved by any means available in this session. Per the routine's Step 3 fallback instruction, this was treated as "Windsor MCP not reachable in this run" and NO DATA was recorded throughout rather than the run being failed outright. This is worth distinguishing clearly from prior weeks' failures (site-egress-403 for 26-07/28-07 crawl, Supermetrics trial expiry for 22-07) since the underlying cause here is different: a session/tool-provisioning gap rather than a data-source outage.
