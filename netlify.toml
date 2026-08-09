@@ -2071,6 +2071,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/cake-for-university-events-sydney.html"
+  to = "/blog/cake-for-university-events-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
