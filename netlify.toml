@@ -1680,6 +1680,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/cake-for-new-job-promotion-sydney.html"
+  to = "/blog/cake-for-new-job-promotion-sydney"
+  status = 301
+  force = true
+
 # ── Legacy WordPress URLs (index bloat) → current pages (301) ────────────────
 [[redirects]]
   from = "/index.html"
