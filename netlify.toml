@@ -2137,6 +2137,36 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-smithfield.html"
+  to = "/blog/eggless-cakes-smithfield"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-glenorie.html"
+  to = "/blog/eggless-cakes-glenorie"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/sensory-friendly-cake-sydney.html"
+  to = "/blog/sensory-friendly-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/tet-vietnamese-new-year-sydney.html"
+  to = "/blog/tet-vietnamese-new-year-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-vs-ice-cream-cake-sydney.html"
+  to = "/blog/eggless-cake-vs-ice-cream-cake-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
