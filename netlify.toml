@@ -2138,6 +2138,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/grand-final-party-cake-sydney.html"
+  to = "/blog/grand-final-party-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cake-wholesale-sydney.html"
   to = "/blog/eggless-cake-wholesale-sydney"
   status = 301
