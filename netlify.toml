@@ -2138,6 +2138,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/basant-panchami-saraswati-puja-sydney.html"
+  to = "/blog/basant-panchami-saraswati-puja-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-galston.html"
   to = "/blog/eggless-cakes-galston"
   status = 301
