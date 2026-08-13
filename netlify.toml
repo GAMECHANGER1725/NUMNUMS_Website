@@ -2138,6 +2138,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cakes-wetherill-park.html"
+  to = "/blog/eggless-cakes-wetherill-park"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-smithfield.html"
   to = "/blog/eggless-cakes-smithfield"
   status = 301
