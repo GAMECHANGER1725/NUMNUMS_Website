@@ -2203,6 +2203,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-fairfield-heights.html"
+  to = "/blog/eggless-cakes-fairfield-heights"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
