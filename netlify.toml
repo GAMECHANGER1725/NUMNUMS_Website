@@ -437,6 +437,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cakes-beecroft.html"
+  to = "/blog/eggless-cakes-beecroft"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-christmas-sydney.html"
   to = "/blog/eggless-cakes-christmas-sydney"
   status = 301
