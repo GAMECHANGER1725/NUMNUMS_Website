@@ -449,6 +449,12 @@
   force = true
 
 [[redirects]]
+  from = "/blog/teej-sydney.html"
+  to = "/blog/teej-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cakes-christmas-sydney.html"
   to = "/blog/eggless-cakes-christmas-sydney"
   status = 301
