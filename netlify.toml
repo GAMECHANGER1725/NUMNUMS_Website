@@ -2251,6 +2251,36 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-cabramatta.html"
+  to = "/blog/eggless-cakes-cabramatta"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/ram-navami-sydney.html"
+  to = "/blog/ram-navami-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-bossley-park.html"
+  to = "/blog/eggless-cakes-bossley-park"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-keto-low-carb-sydney.html"
+  to = "/blog/eggless-cake-keto-low-carb-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/cake-for-work-anniversary-sydney.html"
+  to = "/blog/cake-for-work-anniversary-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
