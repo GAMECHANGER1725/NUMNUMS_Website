@@ -2305,6 +2305,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/spring-cake-sydney.html"
+  to = "/blog/spring-cake-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
