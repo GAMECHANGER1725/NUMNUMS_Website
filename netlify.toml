@@ -2281,6 +2281,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-prairiewood.html"
+  to = "/blog/eggless-cakes-prairiewood"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
