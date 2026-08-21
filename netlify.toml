@@ -2293,6 +2293,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/assyrian-new-year-kha-b-nisan-sydney.html"
+  to = "/blog/assyrian-new-year-kha-b-nisan-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
