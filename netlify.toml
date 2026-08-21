@@ -2299,6 +2299,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cake-vs-tart-sydney.html"
+  to = "/blog/eggless-cake-vs-tart-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
