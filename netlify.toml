@@ -2323,6 +2323,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/dashain-tihar-sydney.html"
+  to = "/blog/dashain-tihar-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
