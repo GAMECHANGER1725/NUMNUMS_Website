@@ -2329,6 +2329,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cake-vs-supermarket-cake.html"
+  to = "/blog/eggless-cake-vs-supermarket-cake"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
