@@ -2335,6 +2335,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/winter-cake-sydney.html"
+  to = "/blog/winter-cake-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
