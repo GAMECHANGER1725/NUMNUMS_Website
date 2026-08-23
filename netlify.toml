@@ -2341,6 +2341,36 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-sydney-olympic-park.html"
+  to = "/blog/eggless-cakes-sydney-olympic-park"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-shanes-park.html"
+  to = "/blog/eggless-cakes-shanes-park"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-purim-sydney.html"
+  to = "/blog/eggless-cakes-purim-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-cancellation-policy-sydney.html"
+  to = "/blog/eggless-cake-cancellation-policy-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/autumn-cake-sydney.html"
+  to = "/blog/autumn-cake-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
