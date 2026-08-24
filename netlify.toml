@@ -2395,6 +2395,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/push-present-cake-sydney.html"
+  to = "/blog/push-present-cake-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
