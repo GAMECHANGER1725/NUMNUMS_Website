@@ -2383,6 +2383,12 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/blog/eggless-cakes-yalda-night-sydney.html"
+  to = "/blog/eggless-cakes-yalda-night-sydney"
+  status = 301
+  force = true
+
 # ── Headers ───────────────────────────────────────────────────────────────────
 
 [[headers]]
