@@ -441,13 +441,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .footer-nav-link:hover::before{opacity:1;}
 
     /* Pricing slider */
-    .ps-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:820px;margin:0 auto;}
+    .ps-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:820px;margin:0 auto;align-items:start;}
     .ps-card{border-radius:1.25rem;padding:2rem;border:1px solid rgba(200,84,120,0.14);position:relative;overflow:visible;}
     .ps-card-left{background:#fff;box-shadow:0 2px 12px rgba(44,26,14,0.06);}
     .ps-card-right{background:#FFF8F2;box-shadow:0 2px 12px rgba(44,26,14,0.04);}
     .ps-people-display{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:600;color:#2C1A0E;line-height:1;margin-bottom:1.5rem;}
     .ps-size-display{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:600;color:#2C1A0E;line-height:1;}
     .ps-price-display{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;color:#C85478;line-height:1.1;margin:0.5rem 0 1rem;}
+    /* Design-tier price ladder — price is size x design, never size alone */
+    .ps-tier-lead{font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0.85rem 0 0;line-height:1.55;}
+    .ps-tier-lead b{font-weight:600;color:#2C1A0E;}
+    .ps-tiers{margin:0.9rem 0 1.25rem;}
+    .ps-tier{padding:0.6rem 0;border-top:1px solid rgba(200,84,120,0.14);}
+    .ps-tier:last-child{border-bottom:1px solid rgba(200,84,120,0.14);}
+    .ps-tier-head{display:flex;align-items:baseline;justify-content:space-between;gap:0.75rem;}
+    .ps-tier-name{font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;}
+    .ps-tier-classic .ps-tier-name{color:#5C3A22;}
+    .ps-tier-themed .ps-tier-name{color:#A03D5E;}
+    .ps-tier-premium .ps-tier-name{color:#8A6420;}
+    .ps-tier-amt{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:600;color:#2C1A0E;line-height:1;white-space:nowrap;}
+    .ps-tier-desc{font-family:'Jost',sans-serif;font-weight:300;font-size:0.76rem;color:#5C3A22;margin:0.25rem 0 0;line-height:1.5;}
+    .ps-confirm{font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:400;color:#5C3A22;margin:0 0 1.1rem;line-height:1.55;padding-left:0.75rem;border-left:2px solid rgba(200,84,120,0.35);}
+    /* The price range needs a full row on narrow screens or it overflows */
+    @media(max-width:600px){.stat-card-price{grid-column:1 / -1;}}
+    .ps-tier,.ps-tier-lead{transition:opacity 0.18s ease,transform 0.18s cubic-bezier(0.34,1.56,0.64,1);}
     .ps-slider{width:100%;-webkit-appearance:none;appearance:none;height:10px;border-radius:9999px;outline:none;cursor:pointer;margin-bottom:1.5rem;touch-action:none;}
     .ps-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;background:#fff;border:2px solid rgba(200,84,120,0.3);border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(200,84,120,0.20);margin-top:-8px;transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.15s ease,border-color 0.15s ease;}
     .ps-slider:hover::-webkit-slider-thumb{transform:scale(1.18);border-color:rgba(200,84,120,0.55);box-shadow:0 4px 16px rgba(200,84,120,0.30);}
@@ -456,7 +473,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ps-size-display,.ps-price-display,.ps-serves,.ps-people-display{transition:opacity 0.18s ease,transform 0.18s cubic-bezier(0.34,1.56,0.64,1);}
     .ps-info-btn{position:absolute;top:1rem;right:1rem;width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(200,84,120,0.25);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(92,58,34,0.6);transition:border-color 0.2s ease,color 0.2s ease;z-index:10;}
     .ps-info-btn:hover{border-color:#C85478;color:#C85478;}
-    .ps-tooltip{position:absolute;top:calc(100% + 8px);right:0;background:#2C1A0E;border-radius:0.875rem;padding:1rem;min-width:220px;max-width:min(280px,90vw);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease;z-index:100;box-shadow:0 8px 24px rgba(44,26,14,0.25);}
+    .ps-tooltip{position:absolute;top:calc(100% + 8px);right:0;background:#2C1A0E;border-radius:0.875rem;padding:1rem;min-width:220px;max-width:min(430px,92vw);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease;z-index:100;box-shadow:0 8px 24px rgba(44,26,14,0.25);}
     .ps-info-btn:hover .ps-tooltip,.ps-info-btn.ps-tooltip-open .ps-tooltip{opacity:1;transform:translateY(0);pointer-events:auto;}
     .view-link{color:#C85478 !important;text-decoration:none;}
     .view-link:hover{color:#A03D5E !important;}
@@ -1249,9 +1266,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="font-display" style="font-size:3rem; font-weight:700; color:#C85478; line-height:1; margin-bottom:0.5rem;">15</div>
           <div style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#5C3A22;">Flavours</div>
         </div>
-        <div class="stat-card cursor-card" style="background:#FFF8F2; border-radius:1.25rem; padding:1.75rem 1.5rem; border:1px solid rgba(200,84,120,0.12);">
-          <div class="font-display" style="font-size:3rem; font-weight:700; color:#C85478; line-height:1; margin-bottom:0.5rem;">$39.99</div>
-          <div style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#5C3A22;">Starting From</div>
+        <div class="stat-card stat-card-price cursor-card" style="background:#FFF8F2; border-radius:1.25rem; padding:1.75rem 1.5rem; border:1px solid rgba(200,84,120,0.12);">
+          <div class="font-display" style="font-size:2.05rem; font-weight:700; color:#C85478; line-height:1.05; margin-bottom:0.5rem; white-space:nowrap;">$39.99–$89.99</div>
+          <div style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#5C3A22;">6&quot; cake, by design</div>
+          <div style="font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:400; color:rgba(92,58,34,0.7); margin-top:4px; line-height:1.4;">Classic · Themed · Premium</div>
         </div>
         <div class="stat-card cursor-card" style="background:#FFF8F2; border-radius:1.25rem; padding:1.75rem 1.5rem; border:1px solid rgba(200,84,120,0.12);">
           <div class="font-display" style="font-size:3rem; font-weight:700; color:#C85478; line-height:1; margin-bottom:0.5rem;">2019</div>
@@ -1272,34 +1290,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div style="margin-bottom:3rem;" class="reveal">
         <div class="section-label" style="margin-bottom:1rem;">Pricing</div>
         <h2 class="font-display" style="font-size:clamp(2rem,3.5vw,2.8rem); font-weight:600; letter-spacing:-0.03em; color:#2C1A0E; margin:0 0 0.5rem;">How Many Guests?</h2>
-        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22;">Drag the slider and we'll recommend the right cake size and price.</p>
+        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22;">Drag the slider for your guest count. Every size comes at three design levels — what you pay depends on the design, not the size alone.</p>
       </div>
       <div id="pricing-slider-index" class="ps-wrap reveal">
         <!-- Left card -->
         <div class="ps-card ps-card-left cursor-card">
           <button class="ps-info-btn" aria-label="Show full pricing table">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.01"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
-            <div class="ps-tooltip" role="tooltip">
-              <p style="font-family:'Jost',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(255,248,242,0.45);margin:0 0 0.75rem;">Cake Size Guide</p>
-              <table style="width:100%;border-collapse:collapse;">
-                <thead><tr>
-                  <th style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 8px 6px 0;letter-spacing:0.04em;">Size</th>
-                  <th style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 8px 6px 0;letter-spacing:0.04em;">Guests</th>
-                  <th style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:right;padding:0 0 6px;letter-spacing:0.04em;">Price</th>
-                </tr></thead>
-                <tbody>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">6"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">6–8</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$39.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">8"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">12–14</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$49.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">10"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">20–22</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$74.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">12"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">25–30</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$89.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">14"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">40–45</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$114.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:500;color:#FFF8F2;padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">16"</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.6);padding:5px 8px 5px 0;border-top:1px solid rgba(255,248,242,0.07);">50–55</td><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#E8A4B5;text-align:right;padding:5px 0;border-top:1px solid rgba(255,248,242,0.07);">$134.99</td></tr>
-                </tbody>
-              </table>
-              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.4);margin:0.75rem 0 0;line-height:1.5;">Photo Cake: +$19.99 · Special occasion &amp; custom: Inquiry · Cupcakes: Inquiry</p>
-              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.4);margin:0.5rem 0 0;line-height:1.5;border-top:1px solid rgba(255,248,242,0.08);padding-top:0.5rem;">Rasmalai: 6&quot; $49.99 · 8&quot; $69.99 · 10&quot; $99.99 · 12&quot; $124.99</p>
-              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.4);margin:0.3rem 0 0;line-height:1.5;">Ferrero Rocher: 6&quot; $44.99 · 8&quot; $64.99 · 10&quot; $89.99 · 12&quot; $114.99</p>
-            </div>
+            <div class="ps-tooltip" role="tooltip"><p style="font-family:'Jost',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(255,248,242,0.45);margin:0 0 0.75rem;">Cake Prices</p><p style="font-family:'Jost',sans-serif;font-size:0.63rem;color:rgba(255,248,242,0.55);margin:0 0 0.6rem;line-height:1.5;">What you pay depends on <b style="color:#FFF8F2;">size</b> and <b style="color:#FFF8F2;">how the cake is decorated</b> — not size alone.</p><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:600;color:rgba(255,248,242,0.5);padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);letter-spacing:0.03em;text-align:left;">Size</th><th style="font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:600;color:rgba(255,248,242,0.5);padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);letter-spacing:0.03em;text-align:left;">Guests</th><th style="font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:600;color:rgba(255,248,242,0.5);padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);letter-spacing:0.03em;text-align:right;">Classic</th><th style="font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:600;color:rgba(255,248,242,0.5);padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);letter-spacing:0.03em;text-align:right;">Themed</th><th style="font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:600;color:rgba(255,248,242,0.5);padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);letter-spacing:0.03em;text-align:right;">Premium</th></tr></thead><tbody><tr><td style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">6"</td><td style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">6–8</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:rgba(255,248,242,0.82);">$39.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E8A4B5;">$59.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E3B664;">$89.99</td></tr><tr><td style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">8"</td><td style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">12–14</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:rgba(255,248,242,0.82);">$49.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E8A4B5;">$74.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E3B664;">$109.99</td></tr><tr><td style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">10"</td><td style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">20–22</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:rgba(255,248,242,0.82);">$74.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E8A4B5;">$104.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E3B664;">$144.99</td></tr><tr><td style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">12"</td><td style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">25–30</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:rgba(255,248,242,0.82);">$89.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E8A4B5;">$124.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E3B664;">$174.99</td></tr><tr><td style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">14"</td><td style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">40–45</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:rgba(255,248,242,0.82);">$114.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E8A4B5;">$154.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E3B664;">$214.99</td></tr><tr><td style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">16"</td><td style="font-family:'Jost',sans-serif;font-size:0.68rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">50–55</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:rgba(255,248,242,0.82);">$134.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E8A4B5;">$179.99</td><td style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;text-align:right;padding:4px 0 4px 5px;border-top:1px solid rgba(255,248,242,0.07);color:#E3B664;">$254.99</td></tr></tbody></table><p style="font-family:'Jost',sans-serif;font-size:0.64rem;color:rgba(255,248,242,0.55);margin:0.7rem 0 0;line-height:1.6;border-top:1px solid rgba(255,248,242,0.08);padding-top:0.6rem;"><b style="color:#FFF8F2;font-weight:600;">Classic</b> — smooth buttercream, piped border, your message.<br><b style="color:#E8A4B5;font-weight:600;">Themed</b> — character toppers, printed images, themed colourwork.<br><b style="color:#E3B664;font-weight:600;">Premium</b> — fondant, sculpted detail, extra tiers, sugar flowers.</p><p style="font-family:'Jost',sans-serif;font-size:0.64rem;color:rgba(255,248,242,0.4);margin:0.5rem 0 0;line-height:1.5;">Photo print +$20 · Rasmalai +$10–$45 · Ferrero Rocher +$5–$35 by size. We confirm your exact price before you pay.</p></div>
           </button>
           <h3 style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(44,26,14,0.4);margin:0 0 1rem;">How many guests?</h3>
           <div class="ps-people-display">8 guests</div>
@@ -1314,9 +1312,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <h3 style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(44,26,14,0.4);margin:0 0 1rem;">Your Cake</h3>
           <span class="ps-popular" style="display:none;margin-bottom:0.75rem;padding:3px 12px;border-radius:9999px;background:#2C1A0E;font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;"></span>
           <div class="ps-size-display">6"</div>
-          <div class="ps-price-display">$39.99</div>
-          <p class="ps-serves" style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:#5C3A22;margin:0 0 1.5rem;line-height:1.5;">Serves 6–8 guests</p>
-          <p class="ps-custom-msg" style="display:none;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:300;color:#5C3A22;margin:0 0 1.5rem;line-height:1.6;">For 55+ guests we recommend a tiered cake. Contact us for a custom quote.</p>
+          <p class="ps-serves" style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:#5C3A22;margin:0.35rem 0 0;line-height:1.5;">serves 6–8 guests</p>
+          <p class="ps-tier-lead">Your design sets the price. Most photos customers send us are <b>Themed</b> or <b>Premium</b>.</p>
+          <div class="ps-tiers">
+            <div class="ps-tier ps-tier-classic">
+              <div class="ps-tier-head"><span class="ps-tier-name">Classic</span><span class="ps-tier-amt" data-tier-amt="classic">$39.99</span></div>
+              <p class="ps-tier-desc">Smooth buttercream, piped border and your message.</p>
+            </div>
+            <div class="ps-tier ps-tier-themed">
+              <div class="ps-tier-head"><span class="ps-tier-name">Themed</span><span class="ps-tier-amt" data-tier-amt="themed">$59.99</span></div>
+              <p class="ps-tier-desc">Character toppers, printed images and themed colourwork.</p>
+            </div>
+            <div class="ps-tier ps-tier-premium">
+              <div class="ps-tier-head"><span class="ps-tier-name">Premium</span><span class="ps-tier-amt" data-tier-amt="premium">$89.99</span></div>
+              <p class="ps-tier-desc">Fondant, sculpted detail, two tiers and sugar flowers.</p>
+            </div>
+          </div>
+          <p class="ps-custom-msg" style="display:none;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:300;color:#5C3A22;margin:1rem 0 1.5rem;line-height:1.6;">For 55+ guests we recommend a tiered cake. Contact us for a custom quote.</p>
+          <p class="ps-confirm">Send us your design and we'll confirm the exact price before you pay anything.</p>
           <a href="order.html"
              class="ps-order-btn btn-cta" style="font-size:0.85rem;padding:10px 20px;">
             <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:-0.05em;">chat</span> Order Now
@@ -1551,6 +1564,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="faq-answer">Yes. Send us a photo from Instagram, Pinterest or anywhere else and we&rsquo;ll recreate the design for your occasion. Our gallery is a starting point, not a limit &mdash; if you can show us a picture, we can make the cake.</div>
         </details>
         <details class="faq-item">
+          <summary>Why is my quote higher than the price I saw on your website?<span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-answer">The prices on our size chart are <strong>Classic</strong> prices &mdash; a plain buttercream cake with a piped border and your message. Most designs customers send us are Themed or Premium, which add character toppers, edible printed images, fondant or sculpted detail. A 6&Prime; cake is $39.99 Classic, $59.99 Themed and $89.99 Premium, and the same three levels apply to every size. Your design sets the price as much as the size does. Send us your photo and we&rsquo;ll confirm the exact cost before you pay anything.</div>
+        </details>
+        <details class="faq-item">
+          <summary>What makes a cake Classic, Themed or Premium?<span class="faq-icon" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><strong>Classic</strong> is smooth buttercream, a piped border and your message. <strong>Themed</strong> adds character toppers, edible printed images and themed colourwork. <strong>Premium</strong> is our most detailed work &mdash; fondant, sculpted figures, extra tiers or sugar flowers. Our two premium flavours cost a little more too: Rasmalai adds $10&ndash;$45 and Ferrero Rocher $5&ndash;$35 depending on size, and an edible photo print is $20.</div>
+        </details>
+        <details class="faq-item">
           <summary>How much notice do you need?<span class="faq-icon" aria-hidden="true"></span></summary>
           <div class="faq-answer">Custom cakes need at least 48 hours&rsquo; notice. Message us your date, design and pickup store, and we&rsquo;ll confirm your order the same day.</div>
         </details>
@@ -1579,6 +1600,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         "@type": "Question",
         "name": "Can you make a cake from a photo I send?",
         "acceptedAnswer": { "@type": "Answer", "text": "Yes. Send us a photo from Instagram, Pinterest or anywhere else and we'll recreate the design for your occasion. Our gallery is a starting point, not a limit. If you can show us a picture, we can make the cake." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is my quote higher than the price I saw on your website?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The prices on our size chart are Classic prices, a plain buttercream cake with a piped border and your message. Most designs customers send us are Themed or Premium, which add character toppers, edible printed images, fondant or sculpted detail. A 6 inch cake is $39.99 Classic, $59.99 Themed and $89.99 Premium, and the same three levels apply to every size. Your design sets the price as much as the size does. Send us your photo and we'll confirm the exact cost before you pay anything." }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes a cake Classic, Themed or Premium?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Classic is smooth buttercream, a piped border and your message. Themed adds character toppers, edible printed images and themed colourwork. Premium is our most detailed work: fondant, sculpted figures, extra tiers or sugar flowers. Our two premium flavours cost a little more too. Rasmalai adds $10 to $45 and Ferrero Rocher $5 to $35 depending on size, and an edible photo print is $20." }
       },
       {
         "@type": "Question",
@@ -1758,20 +1789,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var sizeDisplay = wrap.querySelector('.ps-size-display');
         var priceDisplay = wrap.querySelector('.ps-price-display');
         var servesEl = wrap.querySelector('.ps-serves');
+        var tiersEl = wrap.querySelector('.ps-tiers');
+        var tierLeadEl = wrap.querySelector('.ps-tier-lead');
+        var tierAmts = {
+          classic: wrap.querySelector('[data-tier-amt="classic"]'),
+          themed:  wrap.querySelector('[data-tier-amt="themed"]'),
+          premium: wrap.querySelector('[data-tier-amt="premium"]')
+        };
         var popularEl = wrap.querySelector('.ps-popular');
         var customMsgEl = wrap.querySelector('.ps-custom-msg');
         var orderBtn = wrap.querySelector('.ps-order-btn');
         var CAKE_DATA = [
-          { size:'6"',  serves:'6\u20138',   price:'39.99',  popular:false },
-          { size:'8"',  serves:'12\u201314', price:'49.99',  popular:false },
-          { size:'10"', serves:'20\u201322', price:'74.99',  popular:true  },
-          { size:'12"', serves:'25\u201330', price:'89.99',  popular:false },
-          { size:'14"', serves:'40\u201345', price:'114.99', popular:false },
-          { size:'16"', serves:'50\u201355', price:'134.99', popular:false },
+          { size:'6"',  serves:'6\u20138',   price:'39.99',  themed:'59.99', premium:'89.99', popular:false },
+          { size:'8"',  serves:'12\u201314', price:'49.99',  themed:'74.99', premium:'109.99', popular:false },
+          { size:'10"', serves:'20\u201322', price:'74.99',  themed:'104.99', premium:'144.99', popular:true  },
+          { size:'12"', serves:'25\u201330', price:'89.99',  themed:'124.99', premium:'174.99', popular:false },
+          { size:'14"', serves:'40\u201345', price:'114.99', themed:'154.99', premium:'214.99', popular:false },
+          { size:'16"', serves:'50\u201355', price:'134.99', themed:'179.99', premium:'254.99', popular:false },
         ];
         function getTier(p) {
           if(p<=8) return 0; if(p<=14) return 1; if(p<=22) return 2;
           if(p<=30) return 3; if(p<=45) return 4; if(p<=55) return 5; return -1;
+        }
+        function fadeEls() {
+          return [sizeDisplay, priceDisplay, servesEl, tierLeadEl]
+            .concat(Array.prototype.slice.call(wrap.querySelectorAll('.ps-tier')))
+            .filter(Boolean);
         }
         var prevTier = -99;
         function update() {
@@ -1783,32 +1826,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var tierChanged = (t !== prevTier);
           prevTier = t;
           if (tierChanged) {
-            [sizeDisplay, priceDisplay, servesEl].forEach(function(el) {
-              if (!el) return;
+            fadeEls().forEach(function(el) {
               el.style.opacity = '0.3';
               el.style.transform = 'translateY(5px)';
             });
           }
           if (t === -1) {
             sizeDisplay.textContent = 'Custom';
-            priceDisplay.textContent = 'Contact us';
+            if (priceDisplay) priceDisplay.textContent = 'Contact us';
             if (servesEl) servesEl.textContent = '';
+            if (tiersEl) tiersEl.style.display = 'none';
+            if (tierLeadEl) tierLeadEl.style.display = 'none';
             if (popularEl) popularEl.style.display = 'none';
             if (customMsgEl) customMsgEl.style.display = 'block';
             if (orderBtn) orderBtn.style.display = 'none';
           } else {
             var tier = CAKE_DATA[t];
             sizeDisplay.textContent = tier.size;
-            priceDisplay.textContent = '$' + tier.price;
-            if (servesEl) servesEl.textContent = 'Serves ' + tier.serves + ' guests';
+            if (priceDisplay) priceDisplay.textContent = '$' + tier.price;
+            if (servesEl) servesEl.textContent = 'serves ' + tier.serves + ' guests';
+            if (tiersEl) tiersEl.style.display = '';
+            if (tierLeadEl) tierLeadEl.style.display = '';
+            if (tierAmts.classic) tierAmts.classic.textContent = '$' + tier.price;
+            if (tierAmts.themed) tierAmts.themed.textContent = '$' + tier.themed;
+            if (tierAmts.premium) tierAmts.premium.textContent = '$' + tier.premium;
             if (popularEl) { popularEl.textContent = tier.popular ? 'Most Popular' : ''; popularEl.style.display = tier.popular ? 'inline-block' : 'none'; }
             if (customMsgEl) customMsgEl.style.display = 'none';
             if (orderBtn) orderBtn.style.display = 'inline-flex';
           }
           if (tierChanged) {
             setTimeout(function() {
-              [sizeDisplay, priceDisplay, servesEl].forEach(function(el) {
-                if (!el) return;
+              fadeEls().forEach(function(el) {
                 el.style.opacity = '';
                 el.style.transform = '';
               });
@@ -1835,11 +1883,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btn.classList.add('ps-tooltip-open');
         portal = template.cloneNode(true);
         portal.style.cssText = 'position:absolute;opacity:1;transform:none;pointer-events:auto;z-index:9999;background:#2C1A0E;border-radius:0.875rem;padding:1rem;box-shadow:0 8px 24px rgba(44,26,14,0.25);';
-        portal.style.width = Math.min(280, window.innerWidth - 32) + 'px';
+        portal.style.width = Math.min(430, window.innerWidth - 32) + 'px';
         var btnRect = btn.getBoundingClientRect();
         var scrollY = window.pageYOffset;
         var scrollX = window.pageXOffset;
-        var w = Math.min(280, window.innerWidth - 32);
+        var w = Math.min(430, window.innerWidth - 32);
         var left = Math.max(16 + scrollX, btnRect.right - w + scrollX);
         var top = btnRect.bottom + scrollY + 8;
         portal.style.top = top + 'px';

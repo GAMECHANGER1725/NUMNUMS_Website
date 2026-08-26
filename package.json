@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "motion": "^12.39.0",
-    "puppeteer": "^24.40.0"
+    "puppeteer": "^24.40.0",
+    "stripe": "^17.7.0"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.0",
