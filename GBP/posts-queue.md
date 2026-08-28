@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-08-28
+
+```yaml
+id: post-rs-2026-08-28
+status: published
+published_at: 2026-08-28
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless birthday cakes now serving Marsden Park and Schofields"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1195.jpg"
+keywords_baited:
+  - custom eggless birthday cake
+  - Marsden Park Schofields Riverstone
+  - is eggless buttercream really egg-free
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
