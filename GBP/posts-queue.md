@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-08-29
+
+```yaml
+id: post-rs-2026-08-29
+status: published
+published_at: 2026-08-29
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless birthday cakes — pickup before school drop-off in Rouse Hill"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0963.jpg"
+keywords_baited:
+  - custom eggless birthday cake pickup
+  - Rouse Hill Stanhope Gardens Riverstone
+  - bakery open before 7am near Rouse Hill
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
