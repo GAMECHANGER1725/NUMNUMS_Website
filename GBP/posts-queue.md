@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-08-01
+
+```yaml
+id: post-hp-2026-08-01
+status: published
+published_at: 2026-08-01
+location: harris-park
+post_type: "Call to action"
+title: "Eggless housewarming cakes near Camellia and Rosehill — from Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1256.jpg"
+keywords_baited:
+  - eggless housewarming cake Camellia Rosehill
+  - Jain-friendly cake Harris Park
+  - griha pravesh cake Parramatta
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
