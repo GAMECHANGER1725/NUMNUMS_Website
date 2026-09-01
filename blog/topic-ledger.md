@@ -19,24 +19,27 @@ source going forward.
 
 Reference only — which cluster pillar a new post's topic belongs under, and
 who to interlink with. Derived from `blog-cluster-report.md`'s Tier 1 table
-(2026-09-01). Update this table if a future cluster-analysis run changes the
-architecture.
+(2026-09-01), then corrected 2026-09-01 after Phase 4 execution — several
+originally-named pillars did not survive the GSC-corrected consolidation
+(`blog-consolidation-worklist.md`) and were themselves merged into a
+higher-traffic page in their own cluster. Update this table if a future
+cluster-analysis run changes the architecture.
 
 | Cluster | Pillar page(s) |
 |---|---|
 | Site-wide | `eggless-cake-sydney.html` → `celebration-cake-sydney.html` |
 | Suburb / near-me | `eggless-cakes-near-me-sydney.html`, `cake-delivery-areas-sydney.html`, `eggless-cakes-northwest-sydney.html` |
-| Festival | `eggless-cakes-diwali-indian-festivals-sydney.html` (South Asian), `multicultural-celebration-cake-sydney.html` (other) |
+| Festival | `eggless-cakes-diwali-indian-festivals-sydney.html` (South Asian), `eggless-cakes-eid-milad-un-nabi-sydney.html` (other — was `multicultural-celebration-cake-sydney.html`, retired, 262 vs 173 impr/90d) |
 | Life-event | `celebration-cake-sydney.html` |
-| Dietary | `eggless-cake-nutrition-sydney.html`, `eggless-cake-for-egg-allergy.html` |
+| Dietary | `eggless-cake-calories-guide-sydney.html` (was `eggless-cake-nutrition-sydney.html`, retired, 589 vs 128 impr/90d), `eggless-cake-for-egg-allergy.html` |
 | Vs-comparisons | `eggless-cake-vs-regular-cake.html` |
 | Kids-birthday | `kids-birthday-cake-sydney.html` |
 | Design | `custom-cake-sydney.html` |
-| Ingredients | `how-eggless-cakes-are-made.html` |
-| Price/size | `eggless-cake-price-sydney.html`, `eggless-cake-size-guide-sydney.html` |
-| Ordering | `eggless-cake-online-order.html` |
-| Delivery | `cake-delivery-sydney.html` |
-| Flavour | `cake-flavour-guide-sydney.html` |
+| Ingredients | `eggless-cake-egg-substitutes.html` (was `how-eggless-cakes-are-made.html`, retired, 1197 vs 123 impr/90d) |
+| Price/size | `cake-price-guide-sydney.html` (was `eggless-cake-price-sydney.html`, retired, 689 vs 23 impr/90d), `cake-serving-size-guide-sydney.html` (was `eggless-cake-size-guide-sydney.html`, retired, 1306 vs 28 impr/90d) |
+| Ordering | `how-to-order-cake-sydney.html` (was `eggless-cake-online-order.html`, retired — literal quadruplicate, see cluster report) |
+| Delivery | `eggless-cake-delivery-sydney.html` (was `cake-delivery-sydney.html`, retired, 148 vs 58 impr/90d) |
+| Flavour | `eggless-cake-flavours.html` (was `cake-flavour-guide-sydney.html`, retired, 80 vs 58 impr/90d) |
 | Seasonal | interlink only, no single pillar (4 posts, all keep) |
 | Indian sweets | `indian-sweets-harris-park-riverstone-sydney.html` — currently the ONLY page for this product line; see open gap below |
 
