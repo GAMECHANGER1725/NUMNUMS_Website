@@ -80,14 +80,38 @@ for (const [name, arr, set] of layers) {
 }
 
 // Redirects: every post needs one. /blog/index.html -> /blog/ is the one extra.
+// A retired/merged slug (Phase 4 consolidation) also keeps its own .html redirect,
+// but repointed at the survivor post instead of itself — that's legitimate, not an
+// orphan, as long as the target is a different real post. Track those targets so
+// the orphan check can tell the two apart.
+const redirectTargets = new Map(); // from-slug -> to-slug, .html redirects only
+for (const block of netlify.split('[[redirects]]')) {
+  const f = block.match(/^\s*from = "\/blog\/([a-z0-9-]+)\.html"/m);
+  const t = block.match(/^\s*to = "\/blog\/([a-z0-9-]+)"/m);
+  if (f && t) redirectTargets.set(f[1], t[1]);
+}
+const mergeRedirectSlugs = new Set(
+  [...redirectTargets].filter(([from, to]) => from !== to && postSet.has(to)).map(([from]) => from),
+);
 {
   const d = dupes(redirectSlugs);
   if (d.length) fail(`netlify.toml: duplicate redirects → ${d.join(', ')}`);
   const absent = missing(postSet, redirectSet);
   if (absent.length) fail(`netlify.toml: ${absent.length} post(s) with no .html→clean 301 → ${absent.slice(0, 10).join(', ')}`);
-  const orphan = missing(redirectSet, postSet).filter((s) => s !== 'index');
-  if (orphan.length) fail(`netlify.toml: redirect(s) with no post file → ${orphan.join(', ')}`);
+  const orphan = missing(redirectSet, postSet).filter((s) => s !== 'index' && !mergeRedirectSlugs.has(s));
+  if (orphan.length) fail(`netlify.toml: redirect(s) with no post file and no valid merge-target → ${orphan.join(', ')}`);
   if (!redirectSet.has('index')) notes.push('netlify.toml: no /blog/index.html → /blog/ redirect (expected but not fatal).');
+
+  // Every merge-redirect's .html form must have a matching clean-URL redirect too
+  // (from = "/blog/<slug>" with NO .html, to the same survivor) — Google has the
+  // clean URL indexed, not the .html one, so the .html redirect alone isn't enough.
+  const cleanRedirectFrom = new Set(
+    [...netlify.matchAll(/from = "\/blog\/([a-z0-9-]+)"/g)].map((m) => m[1]),
+  );
+  const missingCleanRedirect = [...mergeRedirectSlugs].filter((s) => !cleanRedirectFrom.has(s));
+  if (missingCleanRedirect.length) {
+    fail(`netlify.toml: merged slug(s) missing a clean-URL redirect (from = "/blog/<slug>" with no .html) → ${missingCleanRedirect.join(', ')}`);
+  }
 }
 
 // ---------- Clean-URL rule ----------
