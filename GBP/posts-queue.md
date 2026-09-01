@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-08-14
+
+```yaml
+id: post-hp-2026-08-14
+status: published
+published_at: 2026-08-14
+location: harris-park
+post_type: "Call to action"
+title: "Rosehill and Camellia families: a genuinely eggless cake, 5 minutes away"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1589.jpg"
+keywords_baited:
+  - Jain-friendly eggless cake Rosehill
+  - custom cake Camellia Harris Park
+  - eggless bakery open until 10pm Parramatta
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
