@@ -40,7 +40,7 @@ are not installed in the cloud sandbox. See `skills/seo-audit/VENDORED.md`.
 
 ## Anti-Repetition (blog + GBP)
 Repetition is the #1 recurring failure on this project. Before writing anything:
-- **Blog:** `ls blog/` first. Never write a post for a suburb that already has one. Check the last 10 posts in `git log --oneline -10 -- blog/` and do not reuse their angle.
+- **Blog:** `ls blog/` first. Never write a post for a suburb that already has one. Read `blog/topic-ledger.md` before picking a topic — it replaces the old "check the last 10 posts" grep as of 2026-09-01, after the prior calendar-driven process produced 359 posts with no demand validation and real cannibalization (see `blog-cluster-report.md` / `blog-gsc-per-page.md` in the repo root). Topic selection rules live in `skills/blog-write/SKILL.md`'s "Topic selection" checklist item — a topic must come from an open ledger gap or a GSC-validated query, never a fixed calendar.
 - **GBP:** follow the Anti-repetition check in the location's rules file — last 6 suburbs, last 6 angles, and a random unused image from `GBP/image-bank.md`.
 - **Images:** run the image-reuse grep in the blog-write checklist. A stock ID reused across posts is a failure, not a shortcut.
 
