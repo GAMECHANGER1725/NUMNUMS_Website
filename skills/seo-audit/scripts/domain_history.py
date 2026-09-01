@@ -5,7 +5,7 @@ Expired-domain heritage check.
 Compares a domain's registration age against the topical fingerprint
 of its current content. A site that was registered 18 years ago for
 veterinary services and now reads as a high-volume crypto signal hub
-is the canonical "expired-domain abuse" pattern under Jan 2025 QRG
+is the canonical "expired-domain abuse" pattern under current QRG
 §4.6.7.
 
 Approach
@@ -54,7 +54,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import shutil
 import socket
@@ -62,7 +61,6 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from typing import Optional
-
 
 _DATE_LABELS = {
     "created": (
@@ -93,6 +91,8 @@ def _shell_whois(domain: str) -> Optional[str]:
             check=False,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=15,
         )
         if result.returncode == 0 and result.stdout:
@@ -257,7 +257,7 @@ def assess_risk(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Expired-domain heritage check (Jan 2025 QRG §4.6.7)."
+        description="Expired-domain heritage check (current QRG §4.6.7)."
     )
     parser.add_argument("domain")
     parser.add_argument("--topic", help="Current detected topic (free text).")

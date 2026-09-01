@@ -22,9 +22,9 @@ only thing the routine can rely on.
 Every file here is byte-for-byte identical to the plugin. Verified at vendor time:
 
 ```
-SKILL.md   sha1 e9ba12443c06e38c569c36468f46524fe7e49a19   (matches plugin)
+SKILL.md   sha1 b554c9ed63f7c061f39ae03b30833d5582a0a108   (matches plugin)
 agents/    18 files, all identical
-scripts/   50 files, all identical
+scripts/   53 files, all identical
 ```
 
 **Do not add project-specific rules to `SKILL.md`.** The skill is unique and must stay
@@ -36,7 +36,7 @@ to the skill as input — not baked into the skill itself.
 To verify nothing has drifted:
 
 ```
-SRC=~/.claude/plugins/cache/agricidaniel-claude-seo/claude-seo/2.0.0
+SRC=~/.claude/plugins/cache/agricidaniel-claude-seo/claude-seo/2.2.5
 diff -r "$SRC/skills/seo-audit/SKILL.md" skills/seo-audit/SKILL.md
 diff -r "$SRC/agents"  skills/seo-audit/agents
 diff -r "$SRC/scripts" skills/seo-audit/scripts
@@ -49,15 +49,15 @@ diff -r "$SRC/scripts" skills/seo-audit/scripts
 | Upstream | https://github.com/AgriciDaniel/claude-seo |
 | Marketplace | `agricidaniel-claude-seo` |
 | Plugin | `claude-seo` |
-| Version | 2.0.0 |
+| Version | 2.2.5 |
 | License | MIT (see `LICENSE.txt`) |
-| Vendored | 2026-07-22 |
+| Vendored | 2026-07-22, re-synced 2026-09-01 |
 
 ## Contents
 
 - `SKILL.md` — the audit skill, verbatim
 - `agents/` — all 18 specialist agent prompts, verbatim
-- `scripts/` — all 50 helper scripts, verbatim
+- `scripts/` — all 53 helper scripts, verbatim
 - `reference/seo-orchestrator.md` — upstream `skills/seo/SKILL.md` (business-type detection)
 - `reference/requirements.txt` — upstream Python deps, verbatim
 

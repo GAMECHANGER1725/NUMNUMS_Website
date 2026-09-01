@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 from typing import Optional
 
@@ -31,10 +32,9 @@ if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
 from url_safety import URLSafetyError, safe_requests_session, validate_url_strict  # noqa: E402
 
-
 DEFAULT_USER_AGENT = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 ClaudeSEO/2.0"
+    "(KHTML, like Gecko) Chrome/150.0.7871.114 Safari/537.36 ClaudeSEO/2.0"
 )
 
 # Googlebot UA for prerender/dynamic rendering detection.
@@ -53,6 +53,54 @@ DEFAULT_HEADERS = {
     "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
 }
+
+_CONTENT_TYPE_CHARSET_RE = re.compile(r"charset\s*=\s*['\"]?([^;,'\"\s>]+)", re.IGNORECASE)
+_META_CHARSET_RE = re.compile(
+    r"<meta[^>]+charset\s*=\s*['\"]?([^;,'\"\s/>]+)",
+    re.IGNORECASE,
+)
+_BOMS = (
+    (b"\xef\xbb\xbf", "utf-8-sig"),
+    (b"\xff\xfe", "utf-16-le"),
+    (b"\xfe\xff", "utf-16-be"),
+)
+
+
+def _decode_bytes(raw: bytes, encoding: str) -> str:
+    try:
+        return raw.decode(encoding, errors="replace")
+    except LookupError:
+        return raw.decode("utf-8", errors="replace")
+
+
+def _extract_charset_from_content_type(content_type: str) -> str | None:
+    match = _CONTENT_TYPE_CHARSET_RE.search(content_type or "")
+    return match.group(1).strip() if match else None
+
+
+def _extract_meta_charset(raw: bytes) -> str | None:
+    head = raw[:4096].decode("ascii", errors="ignore")
+    match = _META_CHARSET_RE.search(head)
+    return match.group(1).strip() if match else None
+
+
+def _decode_response_content(response) -> str:
+    """Decode HTTP bytes deterministically for stable SEO snapshots."""
+    raw = response.content or b""
+    for marker, encoding in _BOMS:
+        if raw.startswith(marker):
+            return _decode_bytes(raw, encoding)
+
+    content_type = response.headers.get("Content-Type", "") if response.headers else ""
+    charset = _extract_charset_from_content_type(content_type)
+    if charset:
+        return _decode_bytes(raw, charset)
+
+    charset = _extract_meta_charset(raw)
+    if charset:
+        return _decode_bytes(raw, charset)
+
+    return raw.decode("utf-8", errors="replace")
 
 
 def fetch_page(
@@ -119,7 +167,7 @@ def fetch_page(
 
         result["url"] = response.url
         result["status_code"] = response.status_code
-        result["content"] = response.text
+        result["content"] = _decode_response_content(response)
         result["headers"] = dict(response.headers)
 
         if response.history:

@@ -4,9 +4,8 @@ Parasite-SEO risk scanner.
 
 Per Google's 2024-11-19 policy clarification, "no amount of first-party
 involvement alters the third-party nature" of a section. Section-level
-manual actions hit Forbes Advisor, CNN Underscored, and WSJ Buy Side
-within hours of the clarification. The risk pattern is now a Critical
-finding to surface in any audit of an established editorial domain.
+risk is now a Critical finding to surface in any audit of an established
+editorial domain.
 
 This scanner crawls a small set of representative URLs on a site,
 classifies each into a content "topic", and flags subfolders where
@@ -52,7 +51,6 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
 from url_safety import URLSafetyError, safe_requests_get  # noqa: E402
-
 
 # Indicators of third-party authored content. Each adds 1 hit per page.
 _THIRD_PARTY_BYLINE_PATTERNS = (
