@@ -1,0 +1,7 @@
+# Internal ops app. Crawling is allowed on purpose: every response carries
+# X-Robots-Tag: noindex, and a crawler blocked by Disallow could never read
+# that header — which is exactly how a private URL ends up indexed title-only.
+# There is nothing behind the sign-in to crawl anyway.
+
+User-agent: *
+Allow: /

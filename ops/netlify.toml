@@ -1,0 +1,41 @@
+# Config for the ops.numnumsbakery.com.au Netlify site ONLY.
+#
+# This site uses base directory `ops`, so Netlify reads this file instead of the
+# root netlify.toml. That is the point of the subdomain: the internal tool gets
+# its own headers and its own CSP, and the public site's config is never touched.
+#
+# Netlify site settings to match:
+#   Base directory:    ops
+#   Publish directory: .        (relative to base)
+#   Build command:     (none — static files)
+#   Auto-publish:      off, same as the main site
+
+[build]
+  publish = "."
+
+# Never cache the app shell: staff must pick up a fix on their next refresh
+# rather than sitting on a stale copy mid-shift.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "no-store"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "geolocation=(), microphone=(), payment=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # Deliberately far tighter than the public site's policy: no Stripe, no GTM,
+    # no Facebook pixel, no Tailwind CDN. Staff activity is not marketing data,
+    # and every origin left out is one that cannot exfiltrate the order book.
+    #   script-src  — jsdelivr only, for the pinned supabase-js ESM build
+    #   connect-src — the Supabase project only (REST, auth and storage)
+    #   img-src     — blob: covers the local preview before a photo uploads
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://stnmoxsojqbbtgjwkzrc.supabase.co https://numnumsbakery.com.au; connect-src 'self' https://stnmoxsojqbbtgjwkzrc.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'; worker-src 'none'"
+
+# The camera is how a custom cake gets its design photo, so it stays allowed
+# here even though the blanket policy above turns off everything else.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Permissions-Policy = "camera=(self), geolocation=(), microphone=(), payment=(), interest-cohort=()"

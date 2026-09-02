@@ -9,6 +9,7 @@ No bundler/framework for the main site — `index.html`, `cakes.html`, `order.ht
 single self-contained files (inline Tailwind + a vanilla-JS `<script>` block, no build step).
 `reviews-app/` is a separate Next.js project — see its own `AGENTS.md` — whose static export is
 deployed as the `review/` directory; treat it as an independent subproject, not part of the static site.
+`ops/` is also independent: the internal staff app on its own Netlify site and subdomain (see **Ops app** below).
 
 ## Commands
 - Dev server: `node serve.mjs` → `http://localhost:4000`. Mirrors `netlify.toml`'s clean-URL
@@ -21,6 +22,8 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
   `src/input.css`; most pages use the Tailwind CDN script instead): `npx tailwindcss -i src/input.css -o style.css`.
   No `package.json` script wraps this — run the CLI directly.
 - `reviews-app/`: `cd reviews-app && npm run dev|build|lint` (own `package.json`, own Next.js toolchain).
+- Ops app checks: `node ops/stats.test.mjs` (aggregation + Sydney date logic). Local URL is
+  `http://localhost:4000/ops/` — **the trailing slash matters**, see **Ops app** below.
 - There is no test suite or lint config for the main static site. `verify-blog.mjs` is the closest
   thing to a test for blog content; there is nothing equivalent for the other static pages.
 
@@ -37,6 +40,8 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
   Make.com webhook.
 - **Reviews**: `netlify/functions/submit-review.js` (Netlify Function) forwards review submissions to
   a Make.com webhook. `reviews-app/` is the Next.js review form; its static export is the `review/` dir.
+- **Ops app** (`ops/`): internal order log / baker queue / analytics for staff, backed by Supabase.
+  Its own Netlify site, its own `ops/netlify.toml`, its own CSP. See the dedicated section below.
 - **Skills**: project-local skills live in `skills/<name>/`, symlinked into `.claude/skills/<name>/`
   for auto-discovery — see "Skill Resolution" below before editing any skill.
 - Content workflows (blog, GBP, SEO audit) are largely cloud-routine-driven — the rest of this file
@@ -79,6 +84,36 @@ are not installed in the cloud sandbox. See `skills/seo-audit/VENDORED.md`.
   skill.
 - Requires `pip install requests beautifulsoup4 lxml`. It is not stdlib-only; `scripts/fetch_page.py`
   exits immediately without them.
+
+## Ops app (`ops/`) — internal, not part of the public site
+
+Staff-facing order system at **ops.numnumsbakery.com.au**. Replaces cake orders being relayed
+through the two WhatsApp groups, and gives Vaidik and Tarun real numbers instead of estimates.
+
+**It is a separate Netlify site off this same repo**, with base directory `ops`, so Netlify reads
+`ops/netlify.toml` and **never** the root one. Do not add ops routes, headers or CSP entries to the
+root `netlify.toml` — that file is the public marketing site only. Auto-publish is off, same as the
+main site.
+
+- **Files**: `ops/index.html` (markup + all CSS), `ops/app.mjs` (views, rendering, forms),
+  `ops/db.mjs` (every Supabase call), `ops/stats.mjs` (pure date + money logic),
+  `ops/stats.test.mjs`, `ops/supabase/functions/purge-photos/` (photo retention job).
+- **Local testing**: `node serve.mjs`, then `http://localhost:4000/ops/` **with the trailing slash**.
+  Without it the browser resolves `./app.mjs` against `/` and the modules 404. In production the app
+  sits at the subdomain root, which is why every internal reference is relative and the page links
+  no `/style.css` — it is fully self-contained.
+- **No inline `<script>`.** The ops CSP has no `'unsafe-inline'` in `script-src`, so page logic must
+  stay in `app.mjs`. Inlining it breaks in production only, never on localhost.
+- **Supabase project** `stnmoxsojqbbtgjwkzrc` (Sydney). The key in `db.mjs` is the *publishable* key
+  and is meant to be public; what guards the data is RLS plus signups being disabled. Never put a
+  service-role key in `ops/` — the purge function gets one from its own environment.
+- **Roles are enforced in Postgres, not the UI**: staff are scoped to their own store(s), the baker
+  can only change status, and `cost` lives in a separate admin-only `order_costs` table because all
+  users share one Postgres role and per-column grants cannot separate them. Hiding a field in the UI
+  proves nothing — anyone with the publishable key can call the REST API directly.
+- **Times are Sydney-local everywhere** via `stats.mjs`. Never bucket dates in UTC: it moves evening
+  pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
+- `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
 ## Anti-Repetition (blog + GBP)
 Repetition is the #1 recurring failure on this project. Before writing anything:
