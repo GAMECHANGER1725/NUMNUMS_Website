@@ -58,7 +58,7 @@
 ## Locations and hours
 
 ### Harris Park (original store)
-- **Address:** 96/96 Wigram Street, Harris Park NSW 2150
+- **Address:** Shop 1, 96–98 Wigram Street, Harris Park NSW 2150
 - **Hours:** Daily 11:00 AM – 10:00 PM (7 days)
 - **Parking:** Street parking on Wigram Street
 - **Nearby:** Harris Park train station (walking distance), Parramatta CBD (<2 km)

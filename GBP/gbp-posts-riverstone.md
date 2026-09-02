@@ -55,7 +55,7 @@ If you find yourself about to output `type: update` — STOP. The correct output
 
 ```yaml
 MAKE_WEBHOOK_URL: https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o
-GBP_LOCATION: Riverstone Shopping Centre, Riverstone NSW 2765
+GBP_LOCATION: Riverstone Shopping Centre (Riverstone Village), Riverstone NSW 2765
 DEFAULT_CTA_URL: https://numnumsbakery.com.au/#order
 MEDIA_ITEMS_MAPPING: "{{1.media_items[1]}}"   # Make.com module reference for this scenario
 ```

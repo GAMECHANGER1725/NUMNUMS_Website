@@ -13,7 +13,7 @@ year_founded: 2019
 founders:
   - "Tarun Patel"
 website: "https://numnumsbakery.com.au"
-address: "96/96 Wigram Street, Harris Park NSW 2150"
+address: "Shop 1, 96–98 Wigram Street, Harris Park NSW 2150"
 address_visible: true
 phone: "+61 425 697 725"
 ```
@@ -429,7 +429,7 @@ faq_seed:
     answer: "We are 100% eggless — not just in some products, but in everything we make. We started in Harris Park in 2019 specifically to serve vegetarian, Jain, and halal families who couldn't find a celebration cake they could eat without worry. Every cake is baked fresh to order, never frozen."
 
   - question: "Where are you located?"
-    answer: "We have two Sydney locations: Harris Park at 96/96 Wigram Street (daily 11am–10pm) and Riverstone at Shop 8, Riverstone Shopping Centre (Mon–Fri 6am–8pm, Sat–Sun 7am–7pm). Order ahead via WhatsApp for guaranteed pickup."
+    answer: "We have two Sydney locations: Harris Park at Shop 1, 96–98 Wigram Street (daily 11am–10pm) and Riverstone at Shop 8, Riverstone Shopping Centre (Mon–Fri 6am–8pm, Sat–Sun 7am–7pm). Order ahead via WhatsApp for guaranteed pickup."
 ```
 
 ---
@@ -441,7 +441,7 @@ faq_seed:
 ```yaml
 nap_master:
   name:    "Num Num's Bakery"
-  address: "96/96 Wigram Street, Harris Park NSW 2150"
+  address: "Shop 1, 96–98 Wigram Street, Harris Park NSW 2150"
   phone:   "+61 425 697 725"
 
 citation_directories:
@@ -471,7 +471,7 @@ citation_directories:
 **NAP rules:**
 - Always use `Num Num's Bakery` (with apostrophe) as the brand name in all directories
 - Always use `+61 425 697 725` format (international) OR `0425 697 725` (local) — pick ONE and stick to it
-- Address must always be `96/96 Wigram Street` — not `96 Wigram St` or any variation
+- Address must always be `Shop 1, 96–98 Wigram Street` — not `96 Wigram St` or any variation
 
 ---
 

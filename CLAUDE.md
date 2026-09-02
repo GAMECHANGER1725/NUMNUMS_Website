@@ -1,5 +1,47 @@
 # CLAUDE.md — Frontend Website Rules
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+Static multi-page HTML site for Num Nums Bakery (100% eggless cakes + Indian sweets, Sydney).
+No bundler/framework for the main site — `index.html`, `cakes.html`, `order.html`, `about.html`,
+`indian-sweet.html`, `locations.html`, `privacy-policy.html`, and every `blog/*.html` post are
+single self-contained files (inline Tailwind + a vanilla-JS `<script>` block, no build step).
+`reviews-app/` is a separate Next.js project — see its own `AGENTS.md` — whose static export is
+deployed as the `review/` directory; treat it as an independent subproject, not part of the static site.
+
+## Commands
+- Dev server: `node serve.mjs` → `http://localhost:4000`. Mirrors `netlify.toml`'s clean-URL
+  redirects (`.html` → extensionless), so local testing hits the same paths Google/Netlify see.
+- Screenshot: `node screenshot.mjs http://localhost:4000[/path] [label]` → saves to `temporary screenshots/`.
+- Blog integrity check: `node verify-blog.mjs` — validates blog invariants (index cards, sitemap.xml,
+  llms.txt, no duplicate slugs/images) against what's on disk. Run after any blog batch or merge.
+- IndexNow ping (after a prod deploy is live): `node indexnow.mjs [url ...]` or `--dry` to preview.
+- Tailwind rebuild — only needed for the handful of pages that link `/style.css` (compiled from
+  `src/input.css`; most pages use the Tailwind CDN script instead): `npx tailwindcss -i src/input.css -o style.css`.
+  No `package.json` script wraps this — run the CLI directly.
+- `reviews-app/`: `cd reviews-app && npm run dev|build|lint` (own `package.json`, own Next.js toolchain).
+- There is no test suite or lint config for the main static site. `verify-blog.mjs` is the closest
+  thing to a test for blog content; there is nothing equivalent for the other static pages.
+
+## Architecture
+- **netlify.toml** is the source of truth for redirects, rewrites, and CSP headers — check it before
+  assuming a route exists or a third-party script/fetch will work in production (CSP is stricter than
+  localhost, see the CSP memory notes below).
+- **Blog** (`blog/*.html`, ~360 posts): each post is a standalone file. `blog/index.html` holds the
+  card grid with topic filters. A new post must land in three places — `blog/index.html`, `sitemap.xml`,
+  `llms.txt` — or `verify-blog.mjs` fails.
+- **GBP automation** (`GBP/`): per-location posting rules (`gbp-posts-harris-park.md`,
+  `gbp-posts-riverstone.md`), `image-bank.md`, and a `posts-queue.md`/`used-images.txt` dedup ledger.
+  `.github/workflows/gbp-post.yml` watches `GBP/outbox/*.json` on push and relays queued posts to a
+  Make.com webhook.
+- **Reviews**: `netlify/functions/submit-review.js` (Netlify Function) forwards review submissions to
+  a Make.com webhook. `reviews-app/` is the Next.js review form; its static export is the `review/` dir.
+- **Skills**: project-local skills live in `skills/<name>/`, symlinked into `.claude/skills/<name>/`
+  for auto-discovery — see "Skill Resolution" below before editing any skill.
+- Content workflows (blog, GBP, SEO audit) are largely cloud-routine-driven — the rest of this file
+  is their non-negotiable rule set.
+
 ## Always Do First
 - **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
 - **Invoke the `blog-write` skill** before writing any blog post, every session, no exceptions — including scheduled/cloud routine runs. Never hand-write a post by copying an existing one from `blog/`.
@@ -88,9 +130,15 @@ Repetition is the #1 recurring failure on this project. Before writing anything:
 - **Depth:** Surfaces should have a layering system (base → elevated → floating), not all sit at the same z-plane.
 
 ## Deployment Workflow
-- GitHub → Netlify sync is automatic. Pushing to GitHub deploys to production.
-- **Test all changes on localhost** until the user explicitly says to push/commit to GitHub.
-- Never run `git push` or `git commit` unless the user explicitly asks.
+- GitHub → Netlify sync is automatic (Netlify builds on push), but **Netlify auto-publish is OFF** —
+  the user publishes each build manually via the Netlify UI, so a push does not go live by itself.
+- **Auto-push every code edit.** At the end of any response where you edited code (not docs-only
+  changes like this file, memory, or planning notes), `git add` the edited files, commit, and
+  `git push` to the current branch — no need to ask first. Use a concise commit message describing
+  the change; do not batch unrelated edits from earlier in the conversation into one commit unless
+  they're part of the same change.
+- Still confirm before anything destructive or history-rewriting (force-push, `reset --hard`,
+  amending a pushed commit) — auto-push covers ordinary forward commits only.
 
 ## Hard Rules
 - Do not add sections, features, or content not in the reference

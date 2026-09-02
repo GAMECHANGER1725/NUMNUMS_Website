@@ -4,6 +4,14 @@
 
 > **Verification rule applied:** every row below is either something actually observed on a public page, or marked `NOT EXTERNALLY VERIFIABLE — dashboard required`. Nothing is estimated.
 
+> **RESOLVED same day, 2026-09-02 (post-audit):** owner confirmed the correct address is
+> `Shop 1, 96–98 Wigram Street, Harris Park NSW 2150` — the site's prior `96/96 Wigram Street` was
+> itself wrong (missing suite, wrong street-number format), not just the atParramatta.com listing
+> below. Site-wide fix applied across all 236 files + GBP rule files + llms.txt in the same session.
+> The atParramatta.com NAP mismatch (P1.2) remains open — that correction still needs the owner to
+> action externally. **Rows below are left as originally observed** (pre-fix) for the audit record;
+> do not use them as the current address.
+
 ---
 
 ## 1. Observed state

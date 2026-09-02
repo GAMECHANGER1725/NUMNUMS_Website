@@ -83,8 +83,8 @@ Every actionable item in the report, bucketed. `Complete today?` reflects what a
 | L4 | Service-area pages only with real demand + substantial unique content | §3: advised only where the business regularly serves the area and can provide 800–1,200 words of unique local content, not boilerplate with the suburb name swapped | The threshold that prevents recurrence | Written into §5's approval gate | Ongoing system | High | Low | — | ✅ Yes | Report |
 | L5 | Hub-and-spoke internal linking for locations | §3: a main Locations hub linking down to suburb pages and each linking back, avoiding orphans | Prevents orphaned, doorway-like pages | Locations hub exists; suburb survivors link back. No orphans found in link QA | Ongoing | Medium | Low | — | ✅ Verified | Report |
 | L6 | NAP consistency across site and citations | §6: ensuring NAP consistency across the site and citations is foundational | Inconsistent NAP weakens local prominence and AI-citation confidence | **Found:** atParramatta.com publishes a different suite, phone and domain for Harris Park plus a savoury menu contradicting the eggless cake/sweets scope; DoorDash carries a third address form | One-off | High | Medium | **Owner must request corrections** | ⚠️ Documented, needs owner | Report |
-| L7 | Internal NAP sources must agree | §6 NAP consistency | The site contradicts itself | **Found:** factory address is `10-12A Wingate Road, Mulgrave 2756` in `locations.html` but `2/4 Nelson Road, Yennora 2161` in `llms.txt` | One-off | Medium | Low | **Owner must say which is correct** | ⚠️ Flagged | **[Implementation inference]** |
-| L8 | Venue name accuracy | §6 NAP consistency | 218 files say "Riverstone Shopping Centre"; the Uber Eats listing says "Riverstone Village Shopping Centre" | Not changed — an address must not be rewritten on an unverified guess | One-off | Medium | Low | **Owner confirmation** | ⚠️ Flagged | **[Implementation inference]** |
+| L7 | Internal NAP sources must agree | §6 NAP consistency | The site contradicts itself | **Found:** factory address is `10-12A Wingate Road, Mulgrave 2756` in `locations.html` but `2/4 Nelson Road, Yennora 2161` in `llms.txt`. Still unresolved — the 2026-09-02 owner correction covered the two shop addresses, not the factory | One-off | Medium | Low | **Owner must say which is correct** | ⚠️ Flagged | **[Implementation inference]** |
+| L8 | Venue name accuracy | §6 NAP consistency | 218 files say "Riverstone Shopping Centre"; the Uber Eats listing says "Riverstone Village Shopping Centre" | **Resolved 2026-09-02** — owner confirmed both names refer to the same centre: `Shop 8, Riverstone Shopping Centre (Riverstone Village)`. Applied to `locations.html`, `index.html`, `llms.txt`, GBP rule files | One-off | Medium | Low | Owner | ✅ Yes | **[Implementation inference]** |
 
 ## 1.5 Google Business Profile optimisation
 
@@ -289,7 +289,7 @@ Every actionable item in the report, bucketed. `Complete today?` reflects what a
 |---|---|---|---|---|---|---|---|---|---|
 | P1.1 | **Supply real per-location review figures** | Correct `aggregateRating` in `index.html` + `locations.html`, or removal | Open GBP for each store, read the true rating and count, then update both files (4 schema nodes) | 15 min | GBP dashboard | Each location carries its own real numbers, or the markup is removed | Owner | Publishing identical unverifiable ratings for two different shops risks a structured-data manual action | §6 audit for structured-data errors |
 | P1.2 | **Correct the atParramatta.com listing** | A corrected citation | Request correction of suite, phone, domain and the savoury menu description; then re-check DoorDash's address form | 30 min | Owner identity | Listing matches the site's NAP exactly | Owner | Conflicting NAP suppresses local prominence and AI-citation confidence | §6 NAP consistency; §5 citations as an AI lever |
-| P1.3 | **Resolve the two internal NAP conflicts** | One factory address; a confirmed Riverstone venue name | Decide whether the factory is Mulgrave or Yennora, and whether the centre is "Riverstone Shopping Centre" or "Riverstone Village Shopping Centre" (218 files) | 10 min to decide, 5 min to apply | Owner knowledge | Site agrees with itself and with the listings | Owner | The site contradicts itself on an address | §6 NAP consistency |
+| P1.3 | **Resolve the remaining internal NAP conflict** | One factory address | Decide whether the factory is Mulgrave or Yennora and apply site-wide. *(Riverstone venue name resolved 2026-09-02 — see L8. Harris Park suite number also corrected the same day: was `96/96 Wigram Street`, now `Shop 1, 96–98 Wigram Street`, applied across 236 files.)* | 5 min to decide, 5 min to apply | Owner knowledge | Site agrees with itself | Owner | The site contradicts itself on the factory address | §6 NAP consistency |
 | P1.4 | **Restart GBP posting** | A live post per location | Fix the CTA that points at a retired URL; retry the stored Make webhook; resume the location rules cadence | 30 min | `GBP/posts-queue.md`, Make webhook | A post publishes to each location | Owner | 80 days dark on the report's named "good performance" baseline | §6 routine GBP posts and review responses |
 | P1.5 | **Record GBP baseline metrics** | Filled baseline block in both audit files | Read review count, rating, photo count, calls, direction requests, profile views; write them into the two audit files | 15 min | GBP dashboard | All fields populated with today's values | Owner | The 4–6 week GBP comparison is impossible | Implications: calls, direction requests and GBP visibility are the meaningful outcomes |
 | P1.6 | **Decide the 62 off-menu flavour mentions** | A corrected corpus | Confirm whether Pistachio, Lotus Biscoff, Salted Caramel etc. are genuinely available; if not, rewrite those 62 mentions to the canonical 15 | 30 min | `off-menu-flavours.csv`, owner knowledge | 0 off-menu mentions, or an updated canonical list | Owner | The blog advertises flavours customers cannot order | §6 content should reflect real offerings |
@@ -519,7 +519,7 @@ Full version with observed values: `seo-baseline/2026-09-02/gbp-audit-harris-par
 **Externally verifiable (anyone can run):**
 - [ ] GBP entity exists and is distinct from Riverstone (CID `9682743011049857083`)
 - [ ] Business name string matches the site exactly — watch for `Num Nums` vs `Num Num's`
-- [ ] Address matches `96/96 Wigram Street, Harris Park NSW 2150`
+- [x] Address matches `Shop 1, 96–98 Wigram Street, Harris Park NSW 2150` — **corrected 2026-09-02, owner-confirmed** (was `96/96 Wigram Street`, itself wrong, independent of the atParramatta.com mismatch)
 - [ ] Phone matches `+61 425 697 725`
 - [ ] Website field points at `numnumsbakery.com.au` (**not** `numnums.com.au`)
 - [ ] Category reflects a bakery/cake shop, not a restaurant
@@ -546,7 +546,7 @@ Full version: `seo-baseline/2026-09-02/gbp-audit-riverstone.md`. Same structure 
 
 - [ ] GBP entity distinct from Harris Park (CID `12106213505071216931`)
 - [ ] Address matches `Shop 8, Riverstone NSW 2765`
-- [ ] **Venue name resolved** — the site says "Riverstone Shopping Centre" in 218 files; the Uber Eats listing says "Riverstone Village Shopping Centre". **Known UNRESOLVED — owner must confirm before any mass edit**
+- [x] **Venue name resolved 2026-09-02** — owner confirmed `Shop 8, Riverstone Shopping Centre (Riverstone Village)`; applied to the canonical NAP fields (schema, `llms.txt`, GBP rule files)
 - [ ] Citation footprint beyond Uber Eats and Menulog — **known FAIL, only 2 aggregators vs 5 for Harris Park**
 - [ ] Any third-party rating exists at all — **known FAIL, none found**
 - [ ] `aggregateRating` is Riverstone's own, not a copy of Harris Park's — **known FAIL, identical 4.6 / 50**
@@ -894,7 +894,7 @@ For any page, in order — stop at the first that applies:
 - [ ] **Click publish in Netlify** (auto-publish is off; nothing goes live without it)
 - [ ] Supply real per-location review count and rating → fix `aggregateRating` in `index.html` + `locations.html` (P1.1)
 - [ ] Request the atParramatta.com listing correction (P1.2)
-- [ ] Confirm the factory address and the Riverstone venue name (P1.3)
+- [ ] Confirm the factory address (Mulgrave vs Yennora) — the only remaining internal NAP conflict (P1.3). *Harris Park suite number and Riverstone venue name both resolved 2026-09-02.*
 - [ ] Restart GBP posting — 80 days dark (P1.4)
 - [ ] Record GBP baseline metrics into both audit files (P1.5)
 - [ ] Confirm the 62 off-menu flavour mentions (P1.6)

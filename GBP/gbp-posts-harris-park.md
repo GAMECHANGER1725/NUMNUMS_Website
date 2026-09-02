@@ -55,7 +55,7 @@ If you find yourself about to output `type: update` — STOP. The correct output
 
 ```yaml
 MAKE_WEBHOOK_URL: https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r
-GBP_LOCATION: 96/96 Wigram Street, Harris Park NSW 2150
+GBP_LOCATION: Shop 1, 96–98 Wigram Street, Harris Park NSW 2150
 DEFAULT_CTA_URL: https://numnumsbakery.com.au/#order
 MEDIA_ITEMS_MAPPING: "{{1.media_items[1]}}"  # Make.com module reference for this scenario
 ```

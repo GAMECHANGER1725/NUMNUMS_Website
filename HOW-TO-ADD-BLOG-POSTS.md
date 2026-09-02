@@ -516,7 +516,7 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 ### Nearest-location accuracy (suburb posts)
 
-- [ ] Num Num's has TWO shops: **Harris Park** (96/96 Wigram Street, NSW 2150, open daily 11 am–10 pm) and **Riverstone** (Shop 8, Riverstone Shopping Centre, NSW 2765, Mon–Fri 6 am–8 pm / Sat–Sun 7 am–7 pm). A suburb post must lead with the genuinely **closest** shop — do not default every suburb to Riverstone. Parramatta-LGA / western suburbs (Parramatta, Harris Park, Rosehill, Camellia, Granville, Clyde, Rydalmere, Westmead, Merrylands, Holroyd) lead with **Harris Park**; north-west suburbs (Quakers Hill, Schofields, The Ponds, Marsden Park, Box Hill, Riverstone, Tallawong) lead with **Riverstone**. Mention the other shop second as the alternate. The LocalBusiness schema `@id`, address, hours and `areaServed` must match the lead shop.
+- [ ] Num Num's has TWO shops: **Harris Park** (Shop 1, 96–98 Wigram Street, NSW 2150, open daily 11 am–10 pm) and **Riverstone** (Shop 8, Riverstone Shopping Centre, NSW 2765, Mon–Fri 6 am–8 pm / Sat–Sun 7 am–7 pm). A suburb post must lead with the genuinely **closest** shop — do not default every suburb to Riverstone. Parramatta-LGA / western suburbs (Parramatta, Harris Park, Rosehill, Camellia, Granville, Clyde, Rydalmere, Westmead, Merrylands, Holroyd) lead with **Harris Park**; north-west suburbs (Quakers Hill, Schofields, The Ponds, Marsden Park, Box Hill, Riverstone, Tallawong) lead with **Riverstone**. Mention the other shop second as the alternate. The LocalBusiness schema `@id`, address, hours and `areaServed` must match the lead shop.
 
 ### Suburb reality check (do this during research, before writing)
 
@@ -602,7 +602,7 @@ Every post must link out to at least 2 authoritative external sources placed nat
 
 ### Location accuracy — Harris Park vs Riverstone (two shops)
 
-- [ ] Num Num's has **two** locations. **Harris Park:** 96/96 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm.
+- [ ] Num Num's has **two** locations. **Harris Park:** Shop 1, 96–98 Wigram Street, Harris Park NSW 2150 — open daily 11 am–10 pm. **Riverstone:** Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765 — Mon–Fri 6 am–8 pm, Sat–Sun 7 am–7 pm.
 - [ ] For a suburb post, choose the genuinely nearest shop as the primary "nearest location": **Harris Park** for Parramatta and central/western suburbs (Harris Park, Westmead, Granville, Merrylands, North Parramatta, Auburn, Rosehill, Rydalmere); **Riverstone** for the north-west (Quakers Hill, Schofields, The Ponds, Box Hill, Marsden Park, Rouse Hill, Tallawong).
 - [ ] The LocalBusiness schema (address, geo, opening hours), the sidebar "Nearest Location" card, the footer address block, and every stated drive time/distance must all match the chosen nearest shop. Never claim a short drive time while pointing the schema or address at the farther shop. Harris Park ≈ 5 min from Parramatta CBD; Riverstone ≈ 25–30 min from Parramatta.
 

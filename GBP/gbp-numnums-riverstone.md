@@ -13,7 +13,7 @@ year_founded: 2019
 founders:
   - "Tarun Patel"
 website: "https://numnumsbakery.com.au"
-address: "Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765"
+address: "Shop 8, Riverstone Shopping Centre (Riverstone Village), Riverstone NSW 2765"
 address_visible: true
 phone: "+61 425 697 725"
 ```
@@ -430,7 +430,7 @@ faq_seed:
     answer: "We are 100% eggless in everything we make — not just some products. Founded in 2019 by Tarun Patel to serve vegetarian, Jain, and halal families who couldn't find a celebration cake they could eat without worry. Every cake is baked fresh to order, never frozen."
 
   - question: "Where is the Riverstone bakery located?"
-    answer: "We're at Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765. Hours: Monday–Friday 6am–8pm, Saturday–Sunday 7am–7pm. We're also at 96/96 Wigram Street, Harris Park (daily 11am–10pm)."
+    answer: "We're at Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765. Hours: Monday–Friday 6am–8pm, Saturday–Sunday 7am–7pm. We're also at Shop 1, 96–98 Wigram Street, Harris Park (daily 11am–10pm)."
 ```
 
 ---
@@ -442,7 +442,7 @@ faq_seed:
 ```yaml
 nap_master:
   name:    "Num Num's Bakery"
-  address: "Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765"
+  address: "Shop 8, Riverstone Shopping Centre (Riverstone Village), Riverstone NSW 2765"
   phone:   "+61 425 697 725"
 
 citation_directories:
