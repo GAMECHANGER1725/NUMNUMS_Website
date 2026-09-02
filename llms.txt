@@ -37,6 +37,7 @@ Address: 2/4 Nelson Road, Yennora NSW 2161
 
 - Homepage: https://numnumsbakery.com.au/
 - Our Cakes (gallery): https://numnumsbakery.com.au/cakes
+- Indian Sweets: https://numnumsbakery.com.au/indian-sweet
 - About Us: https://numnumsbakery.com.au/about
 - Locations: https://numnumsbakery.com.au/locations
 - Order Online: https://numnumsbakery.com.au/order
@@ -292,8 +293,8 @@ https://rsl.ai/1.0/allow-search-only
 ## Cake Sizes & Pricing
 
 Prices below are the live prices on https://numnumsbakery.com.au/cakes and are the flat price for
-that size. Flavour choice may add a surcharge (for example Rasmalai and Ferrero Rocher are labelled
-premium flavours). All cakes are 100% eggless.
+that size. Flavour choice may add a surcharge (Rasmalai and Ferrero Rocher are the premium
+flavours). There is no design-tier pricing. All cakes are 100% eggless.
 
 | Size | Serves | Price |
 |---|---|---|
@@ -309,9 +310,15 @@ Red Velvet, Butterscotch, Black Forest, White Forest, Strawberry, Mango, Cookies
 Pineapple, Tiramisu, Blueberry, Rasmalai (premium) and Ferrero Rocher (premium). No other flavours
 are on the menu.
 
-Multi-tier cakes are quoted individually. Orders are placed via WhatsApp (+61 425 697 725) or the
-order form at https://numnumsbakery.com.au/order, with a minimum 48 hours notice.
-
 Indian sweets are sold by weight — see https://numnumsbakery.com.au/indian-sweet for the current
 per-kilogram prices by range (Kaju, Barfi, Peda, Milk Sweets, Laddoos) and per-piece items
 (Gulab Jamun, Rasgulla, Rasmalai).
+
+## Ordering
+
+Num Num's Bakery does not currently sell online via a self-serve store. Cakes are custom and
+made to order. To order: WhatsApp or call +61 425 697 725, or use the order form at
+https://numnumsbakery.com.au/order, with your preferred date, design, and pickup location
+(Harris Park or Riverstone). Minimum 48 hours notice is required. Multi-tier cakes are quoted
+individually. A deposit may be requested to confirm custom orders; final pricing and payment are
+agreed directly with the bakery.
