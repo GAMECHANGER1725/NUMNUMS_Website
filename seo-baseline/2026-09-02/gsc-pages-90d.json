@@ -1,0 +1,3831 @@
+{
+  "property": "sc-domain:numnumsbakery.com.au",
+  "rows": [
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/"
+      ],
+      "clicks": 1068,
+      "impressions": 21568,
+      "ctr": 4.95,
+      "position": 13.7,
+      "page": "https://numnumsbakery.com.au/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/best-eggless-cake-shops-sydney-2026"
+      ],
+      "clicks": 148,
+      "impressions": 6345,
+      "ctr": 2.33,
+      "position": 9.6,
+      "page": "https://numnumsbakery.com.au/blog/best-eggless-cake-shops-sydney-2026"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+      ],
+      "clicks": 108,
+      "impressions": 7689,
+      "ctr": 1.4,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/photo-cake-sydney"
+      ],
+      "clicks": 99,
+      "impressions": 3797,
+      "ctr": 2.61,
+      "position": 8.5,
+      "page": "https://numnumsbakery.com.au/blog/photo-cake-sydney"
+    },
+    {
+      "keys": [
+        "http://www.numnumsbakery.com.au/"
+      ],
+      "clicks": 55,
+      "impressions": 1130,
+      "ctr": 4.87,
+      "position": 7.7,
+      "page": "http://www.numnumsbakery.com.au/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/cakes"
+      ],
+      "clicks": 53,
+      "impressions": 4769,
+      "ctr": 1.11,
+      "position": 14.4,
+      "page": "https://numnumsbakery.com.au/cakes"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/best-dessert-shop-sydney"
+      ],
+      "clicks": 35,
+      "impressions": 2438,
+      "ctr": 1.44,
+      "position": 9.2,
+      "page": "https://numnumsbakery.com.au/blog/best-dessert-shop-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/order"
+      ],
+      "clicks": 27,
+      "impressions": 2722,
+      "ctr": 0.99,
+      "position": 5.3,
+      "page": "https://numnumsbakery.com.au/order"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/indian-sweet"
+      ],
+      "clicks": 20,
+      "impressions": 2233,
+      "ctr": 0.9,
+      "position": 10.8,
+      "page": "https://numnumsbakery.com.au/indian-sweet"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-storage-freshness-guide"
+      ],
+      "clicks": 17,
+      "impressions": 3202,
+      "ctr": 0.53,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-storage-freshness-guide"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-schofields"
+      ],
+      "clicks": 17,
+      "impressions": 535,
+      "ctr": 3.18,
+      "position": 6.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-schofields"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/first-birthday-cake-sydney"
+      ],
+      "clicks": 16,
+      "impressions": 327,
+      "ctr": 4.89,
+      "position": 9.0,
+      "page": "https://numnumsbakery.com.au/blog/first-birthday-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-serving-size-guide-sydney"
+      ],
+      "clicks": 15,
+      "impressions": 1349,
+      "ctr": 1.11,
+      "position": 6.6,
+      "page": "https://numnumsbakery.com.au/blog/cake-serving-size-guide-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-price-guide-sydney"
+      ],
+      "clicks": 14,
+      "impressions": 700,
+      "ctr": 2.0,
+      "position": 6.1,
+      "page": "https://numnumsbakery.com.au/blog/cake-price-guide-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/same-day-cake-sydney"
+      ],
+      "clicks": 14,
+      "impressions": 600,
+      "ctr": 2.33,
+      "position": 8.5,
+      "page": "https://numnumsbakery.com.au/blog/same-day-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/best-cake-sydney"
+      ],
+      "clicks": 13,
+      "impressions": 2055,
+      "ctr": 0.63,
+      "position": 13.3,
+      "page": "https://numnumsbakery.com.au/blog/best-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-dean-park"
+      ],
+      "clicks": 13,
+      "impressions": 1016,
+      "ctr": 1.28,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-dean-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/number-cakes-sydney"
+      ],
+      "clicks": 12,
+      "impressions": 235,
+      "ctr": 5.11,
+      "position": 6.6,
+      "page": "https://numnumsbakery.com.au/blog/number-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/kids-birthday-cake-sydney"
+      ],
+      "clicks": 11,
+      "impressions": 252,
+      "ctr": 4.37,
+      "position": 9.1,
+      "page": "https://numnumsbakery.com.au/blog/kids-birthday-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-toddlers-sydney"
+      ],
+      "clicks": 10,
+      "impressions": 112,
+      "ctr": 8.93,
+      "position": 10.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-toddlers-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-smash-cakes-sydney"
+      ],
+      "clicks": 9,
+      "impressions": 113,
+      "ctr": 7.96,
+      "position": 7.3,
+      "page": "https://numnumsbakery.com.au/blog/cake-smash-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake"
+      ],
+      "clicks": 9,
+      "impressions": 1341,
+      "ctr": 0.67,
+      "position": 6.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-quakers-hill"
+      ],
+      "clicks": 9,
+      "impressions": 285,
+      "ctr": 3.16,
+      "position": 7.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-quakers-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/are-eggless-cakes-healthy"
+      ],
+      "clicks": 7,
+      "impressions": 494,
+      "ctr": 1.42,
+      "position": 4.8,
+      "page": "https://numnumsbakery.com.au/blog/are-eggless-cakes-healthy"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-doonside"
+      ],
+      "clicks": 7,
+      "impressions": 397,
+      "ctr": 1.76,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-doonside"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/about"
+      ],
+      "clicks": 6,
+      "impressions": 1390,
+      "ctr": 0.43,
+      "position": 4.9,
+      "page": "https://numnumsbakery.com.au/about"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-eid-milad-un-nabi-sydney"
+      ],
+      "clicks": 6,
+      "impressions": 264,
+      "ctr": 2.27,
+      "position": 6.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-eid-milad-un-nabi-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-vegetarians-sydney"
+      ],
+      "clicks": 5,
+      "impressions": 660,
+      "ctr": 0.76,
+      "position": 20.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-vegetarians-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-gender-reveal-sydney"
+      ],
+      "clicks": 5,
+      "impressions": 126,
+      "ctr": 3.97,
+      "position": 6.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-gender-reveal-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/luxury-cake-sydney"
+      ],
+      "clicks": 5,
+      "impressions": 79,
+      "ctr": 6.33,
+      "position": 12.5,
+      "page": "https://numnumsbakery.com.au/blog/luxury-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog"
+      ],
+      "clicks": 4,
+      "impressions": 543,
+      "ctr": 0.74,
+      "position": 14.5,
+      "page": "https://numnumsbakery.com.au/blog"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-ingredients-sydney"
+      ],
+      "clicks": 4,
+      "impressions": 204,
+      "ctr": 1.96,
+      "position": 9.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-ingredients-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-mid-autumn-festival-sydney"
+      ],
+      "clicks": 4,
+      "impressions": 41,
+      "ctr": 9.76,
+      "position": 7.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-mid-autumn-festival-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-northwest-sydney"
+      ],
+      "clicks": 4,
+      "impressions": 119,
+      "ctr": 3.36,
+      "position": 13.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-northwest-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/farewell-cake-sydney.html"
+      ],
+      "clicks": 4,
+      "impressions": 143,
+      "ctr": 2.8,
+      "position": 5.7,
+      "page": "https://numnumsbakery.com.au/blog/farewell-cake-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/indian-sweets-harris-park-riverstone-sydney"
+      ],
+      "clicks": 4,
+      "impressions": 358,
+      "ctr": 1.12,
+      "position": 6.3,
+      "page": "https://numnumsbakery.com.au/blog/indian-sweets-harris-park-riverstone-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/wedding-cake-sydney-north-west"
+      ],
+      "clicks": 4,
+      "impressions": 669,
+      "ctr": 0.6,
+      "position": 15.5,
+      "page": "https://numnumsbakery.com.au/blog/wedding-cake-sydney-north-west"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/birthday-cake-for-men-sydney"
+      ],
+      "clicks": 3,
+      "impressions": 88,
+      "ctr": 3.41,
+      "position": 9.1,
+      "page": "https://numnumsbakery.com.au/blog/birthday-cake-for-men-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-egg-substitutes"
+      ],
+      "clicks": 3,
+      "impressions": 1223,
+      "ctr": 0.25,
+      "position": 9.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-egg-substitutes"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-pregnancy-sydney"
+      ],
+      "clicks": 3,
+      "impressions": 124,
+      "ctr": 2.42,
+      "position": 13.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-pregnancy-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-indian-flavours"
+      ],
+      "clicks": 3,
+      "impressions": 89,
+      "ctr": 3.37,
+      "position": 9.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-indian-flavours"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-nut-free-sydney"
+      ],
+      "clicks": 3,
+      "impressions": 178,
+      "ctr": 1.69,
+      "position": 14.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-nut-free-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-the-ponds"
+      ],
+      "clicks": 3,
+      "impressions": 60,
+      "ctr": 5.0,
+      "position": 6.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-the-ponds"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-winston-hills"
+      ],
+      "clicks": 3,
+      "impressions": 180,
+      "ctr": 1.67,
+      "position": 7.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-winston-hills"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/halal-friendly-cakes-eggless-sydney"
+      ],
+      "clicks": 3,
+      "impressions": 398,
+      "ctr": 0.75,
+      "position": 10.9,
+      "page": "https://numnumsbakery.com.au/blog/halal-friendly-cakes-eggless-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/unique-birthday-cake-ideas-sydney"
+      ],
+      "clicks": 3,
+      "impressions": 254,
+      "ctr": 1.18,
+      "position": 10.4,
+      "page": "https://numnumsbakery.com.au/blog/unique-birthday-cake-ideas-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/afternoon-tea-cakes-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 101,
+      "ctr": 1.98,
+      "position": 20.6,
+      "page": "https://numnumsbakery.com.au/blog/afternoon-tea-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/birthday-cake-north-west-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 245,
+      "ctr": 0.82,
+      "position": 9.9,
+      "page": "https://numnumsbakery.com.au/blog/birthday-cake-north-west-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-design-trends-sydney-2026"
+      ],
+      "clicks": 2,
+      "impressions": 27,
+      "ctr": 7.41,
+      "position": 15.3,
+      "page": "https://numnumsbakery.com.au/blog/cake-design-trends-sydney-2026"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-birthday-cakes-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 39,
+      "ctr": 5.13,
+      "position": 10.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-birthday-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-delivery-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 148,
+      "ctr": 1.35,
+      "position": 28.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-delivery-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-flavours"
+      ],
+      "clicks": 2,
+      "impressions": 81,
+      "ctr": 2.47,
+      "position": 7.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-flavours"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-egg-allergy"
+      ],
+      "clicks": 2,
+      "impressions": 127,
+      "ctr": 1.57,
+      "position": 9.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-egg-allergy"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-texture-moist"
+      ],
+      "clicks": 2,
+      "impressions": 138,
+      "ctr": 1.45,
+      "position": 6.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-texture-moist"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-troubleshooting"
+      ],
+      "clicks": 2,
+      "impressions": 329,
+      "ctr": 0.61,
+      "position": 8.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-troubleshooting"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-auburn"
+      ],
+      "clicks": 2,
+      "impressions": 136,
+      "ctr": 1.47,
+      "position": 9.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-auburn"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-birrong"
+      ],
+      "clicks": 2,
+      "impressions": 143,
+      "ctr": 1.4,
+      "position": 6.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-birrong"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-blacktown"
+      ],
+      "clicks": 2,
+      "impressions": 40,
+      "ctr": 5.0,
+      "position": 6.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-blacktown"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-constitution-hill"
+      ],
+      "clicks": 2,
+      "impressions": 150,
+      "ctr": 1.33,
+      "position": 8.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-constitution-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-glenorie"
+      ],
+      "clicks": 2,
+      "impressions": 18,
+      "ctr": 11.11,
+      "position": 6.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-glenorie"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-hassall-grove"
+      ],
+      "clicks": 2,
+      "impressions": 66,
+      "ctr": 3.03,
+      "position": 5.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-hassall-grove"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-marayong"
+      ],
+      "clicks": 2,
+      "impressions": 62,
+      "ctr": 3.23,
+      "position": 18.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-marayong"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-north-kellyville"
+      ],
+      "clicks": 2,
+      "impressions": 103,
+      "ctr": 1.94,
+      "position": 6.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-north-kellyville"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-northmead"
+      ],
+      "clicks": 2,
+      "impressions": 204,
+      "ctr": 0.98,
+      "position": 7.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-northmead"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-plumpton"
+      ],
+      "clicks": 2,
+      "impressions": 71,
+      "ctr": 2.82,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-plumpton"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-raksha-bandhan-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 60,
+      "ctr": 3.33,
+      "position": 9.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-raksha-bandhan-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-riverstone"
+      ],
+      "clicks": 2,
+      "impressions": 365,
+      "ctr": 0.55,
+      "position": 8.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-riverstone"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-sinhala-tamil-new-year-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 37,
+      "ctr": 5.41,
+      "position": 7.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-sinhala-tamil-new-year-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-strathfield"
+      ],
+      "clicks": 2,
+      "impressions": 32,
+      "ctr": 6.25,
+      "position": 7.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-strathfield"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-tallawong"
+      ],
+      "clicks": 2,
+      "impressions": 28,
+      "ctr": 7.14,
+      "position": 14.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-tallawong"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-villawood"
+      ],
+      "clicks": 2,
+      "impressions": 169,
+      "ctr": 1.18,
+      "position": 4.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-villawood"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/how-eggless-cakes-are-made"
+      ],
+      "clicks": 2,
+      "impressions": 126,
+      "ctr": 1.59,
+      "position": 8.7,
+      "page": "https://numnumsbakery.com.au/blog/how-eggless-cakes-are-made"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/semi-naked-cake-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 38,
+      "ctr": 5.26,
+      "position": 8.4,
+      "page": "https://numnumsbakery.com.au/blog/semi-naked-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/sheet-cake-sydney"
+      ],
+      "clicks": 2,
+      "impressions": 56,
+      "ctr": 3.57,
+      "position": 7.3,
+      "page": "https://numnumsbakery.com.au/blog/sheet-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/vegan-vs-eggless-cakes-difference"
+      ],
+      "clicks": 2,
+      "impressions": 800,
+      "ctr": 0.25,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/vegan-vs-eggless-cakes-difference"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/birthday-cake-near-me-sydney-suburbs"
+      ],
+      "clicks": 1,
+      "impressions": 22,
+      "ctr": 4.55,
+      "position": 19.4,
+      "page": "https://numnumsbakery.com.au/blog/birthday-cake-near-me-sydney-suburbs"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-cutting-ceremony-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 343,
+      "ctr": 0.29,
+      "position": 12.1,
+      "page": "https://numnumsbakery.com.au/blog/cake-cutting-ceremony-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-delivery-areas-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 19,
+      "ctr": 5.26,
+      "position": 13.8,
+      "page": "https://numnumsbakery.com.au/blog/cake-delivery-areas-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-delivery-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 59,
+      "ctr": 1.69,
+      "position": 16.4,
+      "page": "https://numnumsbakery.com.au/blog/cake-delivery-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-flavour-guide-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 58,
+      "ctr": 1.72,
+      "position": 4.5,
+      "page": "https://numnumsbakery.com.au/blog/cake-flavour-guide-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-gifting-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 20,
+      "ctr": 5.0,
+      "position": 19.9,
+      "page": "https://numnumsbakery.com.au/blog/cake-gifting-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-message-ideas-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 53,
+      "ctr": 1.89,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/cake-message-ideas-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-order-online-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 15,
+      "ctr": 6.67,
+      "position": 51.2,
+      "page": "https://numnumsbakery.com.au/blog/cake-order-online-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-shop-western-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 153,
+      "ctr": 0.65,
+      "position": 14.1,
+      "page": "https://numnumsbakery.com.au/blog/cake-shop-western-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-smash-vs-first-birthday-cake-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 44,
+      "ctr": 2.27,
+      "position": 9.2,
+      "page": "https://numnumsbakery.com.au/blog/cake-smash-vs-first-birthday-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-toppers-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 149,
+      "ctr": 0.67,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/cake-toppers-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/corporate-cake-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 108,
+      "ctr": 0.93,
+      "position": 21.2,
+      "page": "https://numnumsbakery.com.au/blog/corporate-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/custom-kids-birthday-cakes-marsden-park-schofields"
+      ],
+      "clicks": 1,
+      "impressions": 23,
+      "ctr": 4.35,
+      "position": 14.5,
+      "page": "https://numnumsbakery.com.au/blog/custom-kids-birthday-cakes-marsden-park-schofields"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/dairy-free-vs-eggless-cakes"
+      ],
+      "clicks": 1,
+      "impressions": 81,
+      "ctr": 1.23,
+      "position": 6.5,
+      "page": "https://numnumsbakery.com.au/blog/dairy-free-vs-eggless-cakes"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/dashain-tihar-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 20,
+      "ctr": 5.0,
+      "position": 6.7,
+      "page": "https://numnumsbakery.com.au/blog/dashain-tihar-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-birthday-cakes-every-age-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 41,
+      "ctr": 2.44,
+      "position": 20.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-birthday-cakes-every-age-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-calories-guide-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 589,
+      "ctr": 0.17,
+      "position": 7.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-calories-guide-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-food-colouring-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 5,
+      "ctr": 20.0,
+      "position": 14.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-food-colouring-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-birthday"
+      ],
+      "clicks": 1,
+      "impressions": 48,
+      "ctr": 2.08,
+      "position": 12.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-birthday"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-pooja-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 16,
+      "ctr": 6.25,
+      "position": 24.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-pooja-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-gluten-free-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 14,
+      "ctr": 7.14,
+      "position": 20.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-gluten-free-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-nutrition-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 128,
+      "ctr": 0.78,
+      "position": 9.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-nutrition-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-reviews-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 150,
+      "ctr": 0.67,
+      "position": 12.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-reviews-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake"
+      ],
+      "clicks": 1,
+      "impressions": 92,
+      "ctr": 1.09,
+      "position": 10.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-anniversary-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 40,
+      "ctr": 2.5,
+      "position": 11.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-anniversary-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-beaumont-hills"
+      ],
+      "clicks": 1,
+      "impressions": 27,
+      "ctr": 3.7,
+      "position": 19.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-beaumont-hills"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-box-hill-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 38,
+      "ctr": 2.63,
+      "position": 12.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-box-hill-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-chuseok-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 8,
+      "ctr": 12.5,
+      "position": 4.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-chuseok-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-clyde"
+      ],
+      "clicks": 1,
+      "impressions": 13,
+      "ctr": 7.69,
+      "position": 7.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-clyde"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-dural"
+      ],
+      "clicks": 1,
+      "impressions": 10,
+      "ctr": 10.0,
+      "position": 14,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-dural"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-durga-puja-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 79,
+      "ctr": 1.27,
+      "position": 7.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-durga-puja-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-dussehra-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 28,
+      "ctr": 3.57,
+      "position": 11.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-dussehra-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-epping"
+      ],
+      "clicks": 1,
+      "impressions": 69,
+      "ctr": 1.45,
+      "position": 12.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-epping"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-girraween"
+      ],
+      "clicks": 1,
+      "impressions": 21,
+      "ctr": 4.76,
+      "position": 15.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-girraween"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-greystanes"
+      ],
+      "clicks": 1,
+      "impressions": 45,
+      "ctr": 2.22,
+      "position": 9.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-greystanes"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-harris-park"
+      ],
+      "clicks": 1,
+      "impressions": 66,
+      "ctr": 1.52,
+      "position": 5.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-harris-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-homebush"
+      ],
+      "clicks": 1,
+      "impressions": 60,
+      "ctr": 1.67,
+      "position": 15,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-homebush"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-kellyville"
+      ],
+      "clicks": 1,
+      "impressions": 39,
+      "ctr": 2.56,
+      "position": 9.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-kellyville"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-kings-park"
+      ],
+      "clicks": 1,
+      "impressions": 37,
+      "ctr": 2.7,
+      "position": 8.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-kings-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-lohri-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 11,
+      "ctr": 9.09,
+      "position": 8.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-lohri-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-maha-shivratri-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 58,
+      "ctr": 1.72,
+      "position": 15.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-maha-shivratri-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-maraylya"
+      ],
+      "clicks": 1,
+      "impressions": 17,
+      "ctr": 5.88,
+      "position": 4.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-maraylya"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-mays-hill"
+      ],
+      "clicks": 1,
+      "impressions": 120,
+      "ctr": 0.83,
+      "position": 9.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-mays-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-merrylands-west"
+      ],
+      "clicks": 1,
+      "impressions": 90,
+      "ctr": 1.11,
+      "position": 4.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-merrylands-west"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-onam-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 103,
+      "ctr": 0.97,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-onam-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-parklea"
+      ],
+      "clicks": 1,
+      "impressions": 44,
+      "ctr": 2.27,
+      "position": 7.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-parklea"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-parramatta"
+      ],
+      "clicks": 1,
+      "impressions": 29,
+      "ctr": 3.45,
+      "position": 10.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-parramatta"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-pitt-town"
+      ],
+      "clicks": 1,
+      "impressions": 79,
+      "ctr": 1.27,
+      "position": 7.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-pitt-town"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-richmond"
+      ],
+      "clicks": 1,
+      "impressions": 28,
+      "ctr": 3.57,
+      "position": 14.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-richmond"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-ryde"
+      ],
+      "clicks": 1,
+      "impressions": 57,
+      "ctr": 1.75,
+      "position": 5.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-ryde"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-soft-moist-myths-vs-facts"
+      ],
+      "clicks": 1,
+      "impressions": 350,
+      "ctr": 0.29,
+      "position": 7.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-soft-moist-myths-vs-facts"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-sydney-olympic-park"
+      ],
+      "clicks": 1,
+      "impressions": 139,
+      "ctr": 0.72,
+      "position": 6.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-sydney-olympic-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-vesak-day-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 85,
+      "ctr": 1.18,
+      "position": 14.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-vesak-day-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-west-ryde"
+      ],
+      "clicks": 1,
+      "impressions": 79,
+      "ctr": 1.27,
+      "position": 7.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-west-ryde"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-mini-cakes-cupcake-towers-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 3,
+      "ctr": 33.33,
+      "position": 7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-mini-cakes-cupcake-towers-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/grand-final-party-cake-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 11,
+      "ctr": 9.09,
+      "position": 7.2,
+      "page": "https://numnumsbakery.com.au/blog/grand-final-party-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/how-to-choose-cake-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 33,
+      "ctr": 3.03,
+      "position": 16.2,
+      "page": "https://numnumsbakery.com.au/blog/how-to-choose-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/how-to-order-cake-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 35,
+      "ctr": 2.86,
+      "position": 40.6,
+      "page": "https://numnumsbakery.com.au/blog/how-to-order-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/kids-birthday-cake-north-west-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 88,
+      "ctr": 1.14,
+      "position": 12.3,
+      "page": "https://numnumsbakery.com.au/blog/kids-birthday-cake-north-west-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/multicultural-celebration-cake-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 178,
+      "ctr": 0.56,
+      "position": 7.7,
+      "page": "https://numnumsbakery.com.au/blog/multicultural-celebration-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/push-present-cake-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 11,
+      "ctr": 9.09,
+      "position": 11.6,
+      "page": "https://numnumsbakery.com.au/blog/push-present-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/ram-navami-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 12,
+      "ctr": 8.33,
+      "position": 7.4,
+      "page": "https://numnumsbakery.com.au/blog/ram-navami-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/rosh-hashanah-cakes-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 30,
+      "ctr": 3.33,
+      "position": 8.6,
+      "page": "https://numnumsbakery.com.au/blog/rosh-hashanah-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/theme-cakes-sydney"
+      ],
+      "clicks": 1,
+      "impressions": 32,
+      "ctr": 3.12,
+      "position": 9.7,
+      "page": "https://numnumsbakery.com.au/blog/theme-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/anniversary-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 121,
+      "ctr": 0,
+      "position": 16.1,
+      "page": "https://numnumsbakery.com.au/blog/anniversary-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/assyrian-new-year-kha-b-nisan-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 10.8,
+      "page": "https://numnumsbakery.com.au/blog/assyrian-new-year-kha-b-nisan-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/autumn-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 5.8,
+      "page": "https://numnumsbakery.com.au/blog/autumn-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/basant-panchami-saraswati-puja-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 8,
+      "page": "https://numnumsbakery.com.au/blog/basant-panchami-saraswati-puja-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/best-eggless-cakes-near-me"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 24.8,
+      "page": "https://numnumsbakery.com.au/blog/best-eggless-cakes-near-me"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-consultation-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 69,
+      "ctr": 0,
+      "position": 4.7,
+      "page": "https://numnumsbakery.com.au/blog/cake-consultation-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-display-ideas-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 24,
+      "ctr": 0,
+      "position": 9.1,
+      "page": "https://numnumsbakery.com.au/blog/cake-display-ideas-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-for-new-job-promotion-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 7.2,
+      "page": "https://numnumsbakery.com.au/blog/cake-for-new-job-promotion-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-for-university-events-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 7,
+      "page": "https://numnumsbakery.com.au/blog/cake-for-university-events-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-for-work-anniversary-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 6.6,
+      "page": "https://numnumsbakery.com.au/blog/cake-for-work-anniversary-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-gifting-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 7,
+      "page": "https://numnumsbakery.com.au/blog/cake-gifting-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-school-fete-fundraiser-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 19,
+      "ctr": 0,
+      "position": 11.8,
+      "page": "https://numnumsbakery.com.au/blog/cake-school-fete-fundraiser-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-shop-near-me-marsden-park-talawong"
+      ],
+      "clicks": 0,
+      "impressions": 255,
+      "ctr": 0,
+      "position": 10.6,
+      "page": "https://numnumsbakery.com.au/blog/cake-shop-near-me-marsden-park-talawong"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cake-vs-dessert-table-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 22,
+      "ctr": 0,
+      "position": 8.9,
+      "page": "https://numnumsbakery.com.au/blog/cake-vs-dessert-table-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/cakes-near-me-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 34.2,
+      "page": "https://numnumsbakery.com.au/blog/cakes-near-me-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/celebration-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 62,
+      "ctr": 0,
+      "position": 13.8,
+      "page": "https://numnumsbakery.com.au/blog/celebration-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/christening-naming-day-cakes-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 17,
+      "ctr": 0,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/christening-naming-day-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/corporate-cake-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 5.9,
+      "page": "https://numnumsbakery.com.au/blog/corporate-cake-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/custom-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 44,
+      "ctr": 0,
+      "position": 28.2,
+      "page": "https://numnumsbakery.com.au/blog/custom-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/drip-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 78,
+      "ctr": 0,
+      "position": 7.3,
+      "page": "https://numnumsbakery.com.au/blog/drip-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-bulk-order-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 30,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-bulk-order-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-bulk-order-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-bulk-order-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-buttercream-vs-fondant"
+      ],
+      "clicks": 0,
+      "impressions": 48,
+      "ctr": 0,
+      "position": 13.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-buttercream-vs-fondant"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-cancellation-policy-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-cancellation-policy-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-catering-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 161,
+      "ctr": 0,
+      "position": 65.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-catering-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-catering-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 84,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-catering-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-customization-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 26,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-customization-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-fillings-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 17,
+      "ctr": 0,
+      "position": 15.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-fillings-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide"
+      ],
+      "clicks": 0,
+      "impressions": 22,
+      "ctr": 0,
+      "position": 12.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-diabetics-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 11.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-diabetics-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-seniors-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 66,
+      "ctr": 0,
+      "position": 11.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-seniors-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-for-toddlers-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 9.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-for-toddlers-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-gifting-guide-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 39,
+      "ctr": 0,
+      "position": 11.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-gifting-guide-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-ingredient-labels-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 46,
+      "ctr": 0,
+      "position": 6.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-ingredient-labels-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-keto-low-carb-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 7.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-keto-low-carb-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-lactose-intolerance"
+      ],
+      "clicks": 0,
+      "impressions": 189,
+      "ctr": 0,
+      "position": 9.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-lactose-intolerance"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-low-fodmap-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 55,
+      "ctr": 0,
+      "position": 9.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-low-fodmap-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-lower-sugar-options-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 41,
+      "ctr": 0,
+      "position": 7.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-lower-sugar-options-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-office-birthday-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 74,
+      "ctr": 0,
+      "position": 20.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-office-birthday-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-online-order"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 37,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-online-order"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-ordering-mistakes"
+      ],
+      "clicks": 0,
+      "impressions": 41,
+      "ctr": 0,
+      "position": 12.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-ordering-mistakes"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-price-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 23,
+      "ctr": 0,
+      "position": 11.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-price-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-school-celebration-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 4.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-school-celebration-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-seasonal-flavours"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 9.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-seasonal-flavours"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-size-guide-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 28,
+      "ctr": 0,
+      "position": 16.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-size-guide-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-small-gatherings-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 30,
+      "ctr": 0,
+      "position": 18.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-small-gatherings-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-tasting-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 39.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-tasting-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-transport-packaging-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 30,
+      "ctr": 0,
+      "position": 11.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-transport-packaging-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-trends-sydney-2026"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 6.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-trends-sydney-2026"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-types"
+      ],
+      "clicks": 0,
+      "impressions": 127,
+      "ctr": 0,
+      "position": 9.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-types"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-brownies"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 7.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-brownies"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-cheesecake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 186,
+      "ctr": 0,
+      "position": 7.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-cheesecake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-cupcakes-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 15.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-cupcakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-ice-cream-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 62,
+      "ctr": 0,
+      "position": 8.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-ice-cream-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-mud-cake"
+      ],
+      "clicks": 0,
+      "impressions": 47,
+      "ctr": 0,
+      "position": 7.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-mud-cake"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-pavlova"
+      ],
+      "clicks": 0,
+      "impressions": 23,
+      "ctr": 0,
+      "position": 8.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-pavlova"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-supermarket-cake"
+      ],
+      "clicks": 0,
+      "impressions": 59,
+      "ctr": 0,
+      "position": 7.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-supermarket-cake"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-vs-tart-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-vs-tart-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cake-wholesale-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 34,
+      "ctr": 0,
+      "position": 23.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cake-wholesale-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-acacia-gardens"
+      ],
+      "clicks": 0,
+      "impressions": 23,
+      "ctr": 0,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-acacia-gardens"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-annangrove"
+      ],
+      "clicks": 0,
+      "impressions": 28,
+      "ctr": 0,
+      "position": 8.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-annangrove"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-baby-shower-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 28,
+      "ctr": 0,
+      "position": 24.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-baby-shower-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bar-mitzvah-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 12.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bar-mitzvah-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bat-mitzvah-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 22,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bat-mitzvah-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-baulkham-hills"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 9.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-baulkham-hills"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-beecroft"
+      ],
+      "clicks": 0,
+      "impressions": 21,
+      "ctr": 0,
+      "position": 6.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-beecroft"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bella-vista"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 20.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bella-vista"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-berala.html"
+      ],
+      "clicks": 0,
+      "impressions": 49,
+      "ctr": 0,
+      "position": 14.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-berala.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-berkshire-park"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-berkshire-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bhai-dooj-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 13,
+      "ctr": 0,
+      "position": 6.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bhai-dooj-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bligh-park"
+      ],
+      "clicks": 0,
+      "impressions": 45,
+      "ctr": 0,
+      "position": 7.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bligh-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bonnyrigg"
+      ],
+      "clicks": 0,
+      "impressions": 70,
+      "ctr": 0,
+      "position": 15.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bonnyrigg"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bossley-park"
+      ],
+      "clicks": 0,
+      "impressions": 75,
+      "ctr": 0,
+      "position": 12.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bossley-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bridal-shower-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bridal-shower-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-bridal-shower-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-bridal-shower-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-cabramatta"
+      ],
+      "clicks": 0,
+      "impressions": 68,
+      "ctr": 0,
+      "position": 6.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-cabramatta"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-camellia"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 6.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-camellia"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-carlingford"
+      ],
+      "clicks": 0,
+      "impressions": 48,
+      "ctr": 0,
+      "position": 20.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-carlingford"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-castle-hill"
+      ],
+      "clicks": 0,
+      "impressions": 47,
+      "ctr": 0,
+      "position": 9.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-castle-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-cattai"
+      ],
+      "clicks": 0,
+      "impressions": 13,
+      "ctr": 0,
+      "position": 5.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-cattai"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-cherrybrook"
+      ],
+      "clicks": 0,
+      "impressions": 67,
+      "ctr": 0,
+      "position": 7.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-cherrybrook"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-chester-hill"
+      ],
+      "clicks": 0,
+      "impressions": 33,
+      "ctr": 0,
+      "position": 9.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-chester-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-chhath-puja-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 27,
+      "ctr": 0,
+      "position": 6.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-chhath-puja-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-christmas-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 15.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-christmas-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-colebee"
+      ],
+      "clicks": 0,
+      "impressions": 27,
+      "ctr": 0,
+      "position": 8.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-colebee"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-confirmation-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-confirmation-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-corporate-events-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 12,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-corporate-events-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-denistone"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 7.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-denistone"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-diwali-indian-festivals-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 22.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-diwali-indian-festivals-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-dundas"
+      ],
+      "clicks": 0,
+      "impressions": 88,
+      "ctr": 0,
+      "position": 6.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-dundas"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-dundas-valley"
+      ],
+      "clicks": 0,
+      "impressions": 97,
+      "ctr": 0,
+      "position": 14.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-dundas-valley"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-dundas-valley.html"
+      ],
+      "clicks": 0,
+      "impressions": 35,
+      "ctr": 0,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-dundas-valley.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-easter-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 9.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-easter-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-eastwood"
+      ],
+      "clicks": 0,
+      "impressions": 59,
+      "ctr": 0,
+      "position": 12.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-eastwood"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-eid-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 7.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-eid-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-eid-ul-adha-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 28,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-eid-ul-adha-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-emerton"
+      ],
+      "clicks": 0,
+      "impressions": 12,
+      "ctr": 0,
+      "position": 16.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-emerton"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-engagement-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 35,
+      "ctr": 0,
+      "position": 10.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-engagement-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-ermington"
+      ],
+      "clicks": 0,
+      "impressions": 41,
+      "ctr": 0,
+      "position": 43.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-ermington"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-fairfield"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 29.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-fairfield"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-fairfield-heights"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-fairfield-heights"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-fathers-day-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 282,
+      "ctr": 0,
+      "position": 11.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-fathers-day-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-filipino-debut-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 39,
+      "ctr": 0,
+      "position": 8.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-filipino-debut-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-first-communion-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 62,
+      "ctr": 0,
+      "position": 10.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-first-communion-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-galston"
+      ],
+      "clicks": 0,
+      "impressions": 14,
+      "ctr": 0,
+      "position": 9.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-galston"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-ganesh-chaturthi-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 14,
+      "ctr": 0,
+      "position": 15.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-ganesh-chaturthi-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-glendenning"
+      ],
+      "clicks": 0,
+      "impressions": 41,
+      "ctr": 0,
+      "position": 6.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-glendenning"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-glenhaven"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 9.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-glenhaven"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-glenwood"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 7.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-glenwood"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-graduation-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 33.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-graduation-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-grantham-farm"
+      ],
+      "clicks": 0,
+      "impressions": 71,
+      "ctr": 0,
+      "position": 22.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-grantham-farm"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-granville"
+      ],
+      "clicks": 0,
+      "impressions": 22,
+      "ctr": 0,
+      "position": 7.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-granville"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-guildford"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 9.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-guildford"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-guildford-west"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 17.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-guildford-west"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-guru-nanak-gurpurab-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 16.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-guru-nanak-gurpurab-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-hebersham"
+      ],
+      "clicks": 0,
+      "impressions": 76,
+      "ctr": 0,
+      "position": 6.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-hebersham"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-holroyd"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 7.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-holroyd"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-housewarming-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 13.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-housewarming-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-karwa-chauth-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 13,
+      "ctr": 0,
+      "position": 12.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-karwa-chauth-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-kellyville-ridge"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 9.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-kellyville-ridge"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-kenthurst"
+      ],
+      "clicks": 0,
+      "impressions": 102,
+      "ctr": 0,
+      "position": 7.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-kenthurst"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-kings-langley"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 11.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-kings-langley"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-lalor-park"
+      ],
+      "clicks": 0,
+      "impressions": 189,
+      "ctr": 0,
+      "position": 15.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-lalor-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-lethbridge-park"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 9.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-lethbridge-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-lidcombe"
+      ],
+      "clicks": 0,
+      "impressions": 50,
+      "ctr": 0,
+      "position": 12.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-lidcombe"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-lunar-new-year-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 12.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-lunar-new-year-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-marsden-park"
+      ],
+      "clicks": 0,
+      "impressions": 17,
+      "ctr": 0,
+      "position": 28.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-marsden-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-marsfield"
+      ],
+      "clicks": 0,
+      "impressions": 83,
+      "ctr": 0,
+      "position": 6.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-marsfield"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-mcgraths-hill"
+      ],
+      "clicks": 0,
+      "impressions": 60,
+      "ctr": 0,
+      "position": 8.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-mcgraths-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-meadowbank"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 8.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-meadowbank"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-mehendi-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 17,
+      "ctr": 0,
+      "position": 29.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-mehendi-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-melrose-park"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 13.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-melrose-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-merrylands"
+      ],
+      "clicks": 0,
+      "impressions": 34,
+      "ctr": 0,
+      "position": 7.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-merrylands"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-minchinbury"
+      ],
+      "clicks": 0,
+      "impressions": 209,
+      "ctr": 0,
+      "position": 6.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-minchinbury"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-mothers-day-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 9.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-mothers-day-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-mount-druitt"
+      ],
+      "clicks": 0,
+      "impressions": 149,
+      "ctr": 0,
+      "position": 7.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-mount-druitt"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-navratri-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 18,
+      "ctr": 0,
+      "position": 13.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-navratri-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-near-me-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 59,
+      "ctr": 0,
+      "position": 18.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-near-me-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-nelson-nsw"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-nelson-nsw"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-new-year-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 28,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-new-year-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-newington"
+      ],
+      "clicks": 0,
+      "impressions": 135,
+      "ctr": 0,
+      "position": 7.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-newington"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-north-parramatta"
+      ],
+      "clicks": 0,
+      "impressions": 24,
+      "ctr": 0,
+      "position": 15.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-north-parramatta"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-north-richmond"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 9.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-north-richmond"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-norwest"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-norwest"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-nowruz-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 38.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-nowruz-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-oakhurst"
+      ],
+      "clicks": 0,
+      "impressions": 28,
+      "ctr": 0,
+      "position": 8.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-oakhurst"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-oatlands"
+      ],
+      "clicks": 0,
+      "impressions": 20,
+      "ctr": 0,
+      "position": 16.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-oatlands"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-old-guildford"
+      ],
+      "clicks": 0,
+      "impressions": 16,
+      "ctr": 0,
+      "position": 6.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-old-guildford"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-old-toongabbie"
+      ],
+      "clicks": 0,
+      "impressions": 103,
+      "ctr": 0,
+      "position": 34.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-old-toongabbie"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-onam-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 10,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-onam-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-pemulwuy"
+      ],
+      "clicks": 0,
+      "impressions": 25,
+      "ctr": 0,
+      "position": 12.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-pemulwuy"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-pendle-hill"
+      ],
+      "clicks": 0,
+      "impressions": 17,
+      "ctr": 0,
+      "position": 16.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-pendle-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-pennant-hills"
+      ],
+      "clicks": 0,
+      "impressions": 52,
+      "ctr": 0,
+      "position": 6.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-pennant-hills"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-pongal-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 25,
+      "ctr": 0,
+      "position": 10.6,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-pongal-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-prairiewood"
+      ],
+      "clicks": 0,
+      "impressions": 42,
+      "ctr": 0,
+      "position": 4.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-prairiewood"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-prospect"
+      ],
+      "clicks": 0,
+      "impressions": 103,
+      "ctr": 0,
+      "position": 10.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-prospect"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-purim-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 25.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-purim-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-quinceanera-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-quinceanera-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-ramadan-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 8.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-ramadan-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-regents-park"
+      ],
+      "clicks": 0,
+      "impressions": 12,
+      "ctr": 0,
+      "position": 29.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-regents-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-retirement-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 20,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-retirement-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-retirement-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 8.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-retirement-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-rhodes"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 10.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-rhodes"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-rooty-hill"
+      ],
+      "clicks": 0,
+      "impressions": 99,
+      "ctr": 0,
+      "position": 11.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-rooty-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-rosehill"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 30.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-rosehill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-rouse-hill"
+      ],
+      "clicks": 0,
+      "impressions": 37,
+      "ctr": 0,
+      "position": 17.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-rouse-hill"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-rydalmere"
+      ],
+      "clicks": 0,
+      "impressions": 7,
+      "ctr": 0,
+      "position": 13.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-rydalmere"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-sefton"
+      ],
+      "clicks": 0,
+      "impressions": 38,
+      "ctr": 0,
+      "position": 5.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-sefton"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-seven-hills"
+      ],
+      "clicks": 0,
+      "impressions": 127,
+      "ctr": 0,
+      "position": 7.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-seven-hills"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-shalvey"
+      ],
+      "clicks": 0,
+      "impressions": 13,
+      "ctr": 0,
+      "position": 9.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-shalvey"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-shanes-park"
+      ],
+      "clicks": 0,
+      "impressions": 94,
+      "ctr": 0,
+      "position": 4.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-shanes-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-silverwater"
+      ],
+      "clicks": 0,
+      "impressions": 90,
+      "ctr": 0,
+      "position": 9.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-silverwater"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-smithfield"
+      ],
+      "clicks": 0,
+      "impressions": 79,
+      "ctr": 0,
+      "position": 11.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-smithfield"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-south-granville"
+      ],
+      "clicks": 0,
+      "impressions": 17,
+      "ctr": 0,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-south-granville"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-south-granville.html"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 4.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-south-granville.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-south-windsor"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 9.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-south-windsor"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-stanhope-gardens"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 10.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-stanhope-gardens"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-sweet-16-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 6.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-sweet-16-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-teachers-day-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 14,
+      "ctr": 0,
+      "position": 37.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-teachers-day-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-telopea.html"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 9.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-telopea.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-thaipusam-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 32,
+      "ctr": 0,
+      "position": 28.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-thaipusam-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-toongabbie"
+      ],
+      "clicks": 0,
+      "impressions": 28,
+      "ctr": 0,
+      "position": 11.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-toongabbie"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-toongabbie.html"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 21,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-toongabbie.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-tregear"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 19.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-tregear"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-ugadi-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 4.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-ugadi-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-valentines-day-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 13,
+      "ctr": 0,
+      "position": 35.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-valentines-day-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-vineyard"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-vineyard"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-vishu-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 4.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-vishu-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-wentworth-point"
+      ],
+      "clicks": 0,
+      "impressions": 29,
+      "ctr": 0,
+      "position": 11.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-wentworth-point"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-west-pennant-hills"
+      ],
+      "clicks": 0,
+      "impressions": 19,
+      "ctr": 0,
+      "position": 10.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-west-pennant-hills"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-westmead"
+      ],
+      "clicks": 0,
+      "impressions": 48,
+      "ctr": 0,
+      "position": 7.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-westmead"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-wetherill-park"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 6.9,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-wetherill-park"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-whalan"
+      ],
+      "clicks": 0,
+      "impressions": 24,
+      "ctr": 0,
+      "position": 12.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-whalan"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-wilberforce"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-wilberforce"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-willmot"
+      ],
+      "clicks": 0,
+      "impressions": 12,
+      "ctr": 0,
+      "position": 8.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-willmot"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-windsor"
+      ],
+      "clicks": 0,
+      "impressions": 22,
+      "ctr": 0,
+      "position": 8.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-windsor"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-woodcroft"
+      ],
+      "clicks": 0,
+      "impressions": 64,
+      "ctr": 0,
+      "position": 8.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-woodcroft"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-woodville"
+      ],
+      "clicks": 0,
+      "impressions": 54,
+      "ctr": 0,
+      "position": 30.7,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-woodville"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-yagoona"
+      ],
+      "clicks": 0,
+      "impressions": 49,
+      "ctr": 0,
+      "position": 8.0,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-yagoona"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-yalda-night-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 4.3,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-yalda-night-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cakes-yennora"
+      ],
+      "clicks": 0,
+      "impressions": 48,
+      "ctr": 0,
+      "position": 6.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cakes-yennora"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-chocolate-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 26,
+      "ctr": 0,
+      "position": 6.8,
+      "page": "https://numnumsbakery.com.au/blog/eggless-chocolate-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cupcakes-kids-birthday-party-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 12,
+      "ctr": 0,
+      "position": 23.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cupcakes-kids-birthday-party-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-cupcakes-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 10.4,
+      "page": "https://numnumsbakery.com.au/blog/eggless-cupcakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-fruit-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 45,
+      "ctr": 0,
+      "position": 14.2,
+      "page": "https://numnumsbakery.com.au/blog/eggless-fruit-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-red-velvet-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 31,
+      "ctr": 0,
+      "position": 10.5,
+      "page": "https://numnumsbakery.com.au/blog/eggless-red-velvet-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/eggless-wedding-cakes-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 18,
+      "ctr": 0,
+      "position": 10.1,
+      "page": "https://numnumsbakery.com.au/blog/eggless-wedding-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/halloween-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 6,
+      "page": "https://numnumsbakery.com.au/blog/halloween-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/hanukkah-cakes-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 15,
+      "page": "https://numnumsbakery.com.au/blog/hanukkah-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/how-to-design-birthday-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 218,
+      "ctr": 0,
+      "position": 13.0,
+      "page": "https://numnumsbakery.com.au/blog/how-to-design-birthday-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/how-to-order-custom-eggless-cake-online"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 9.5,
+      "page": "https://numnumsbakery.com.au/blog/how-to-order-custom-eggless-cake-online"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/hsc-results-day-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 16,
+      "ctr": 0,
+      "position": 9.9,
+      "page": "https://numnumsbakery.com.au/blog/hsc-results-day-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/naked-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 130,
+      "ctr": 0,
+      "position": 14.0,
+      "page": "https://numnumsbakery.com.au/blog/naked-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/natural-ingredients-eggless-cakes"
+      ],
+      "clicks": 0,
+      "impressions": 63,
+      "ctr": 0,
+      "position": 14.8,
+      "page": "https://numnumsbakery.com.au/blog/natural-ingredients-eggless-cakes"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/novelty-sculpted-cake-designs-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 53,
+      "ctr": 0,
+      "position": 6.4,
+      "page": "https://numnumsbakery.com.au/blog/novelty-sculpted-cake-designs-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/orthodox-christmas-cakes-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 9,
+      "page": "https://numnumsbakery.com.au/blog/orthodox-christmas-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/passover-cakes-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 8.7,
+      "page": "https://numnumsbakery.com.au/blog/passover-cakes-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/reunion-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 6,
+      "ctr": 0,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/blog/reunion-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/same-day-cake-sydney.html"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 8.2,
+      "page": "https://numnumsbakery.com.au/blog/same-day-cake-sydney.html"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/sensory-friendly-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 6.3,
+      "page": "https://numnumsbakery.com.au/blog/sensory-friendly-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/songkran-thai-new-year-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 5,
+      "page": "https://numnumsbakery.com.au/blog/songkran-thai-new-year-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/spring-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 11,
+      "ctr": 0,
+      "position": 10.5,
+      "page": "https://numnumsbakery.com.au/blog/spring-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/summer-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 4.6,
+      "page": "https://numnumsbakery.com.au/blog/summer-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/teej-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 65,
+      "ctr": 0,
+      "position": 7.4,
+      "page": "https://numnumsbakery.com.au/blog/teej-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/tet-vietnamese-new-year-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 20,
+      "ctr": 0,
+      "position": 10.8,
+      "page": "https://numnumsbakery.com.au/blog/tet-vietnamese-new-year-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/top-7-custom-eggless-cake-designs-kids-birthdays"
+      ],
+      "clicks": 0,
+      "impressions": 9,
+      "ctr": 0,
+      "position": 15.7,
+      "page": "https://numnumsbakery.com.au/blog/top-7-custom-eggless-cake-designs-kids-birthdays"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/why-we-chose-100-percent-eggless-bakery"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 7.2,
+      "page": "https://numnumsbakery.com.au/blog/why-we-chose-100-percent-eggless-bakery"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/blog/winter-cake-sydney"
+      ],
+      "clicks": 0,
+      "impressions": 5,
+      "ctr": 0,
+      "position": 6.4,
+      "page": "https://numnumsbakery.com.au/blog/winter-cake-sydney"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/category/cake/"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 3.5,
+      "page": "https://numnumsbakery.com.au/category/cake/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/contact/"
+      ],
+      "clicks": 0,
+      "impressions": 104,
+      "ctr": 0,
+      "position": 15.1,
+      "page": "https://numnumsbakery.com.au/contact/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/croissant-tart-section/"
+      ],
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 5,
+      "page": "https://numnumsbakery.com.au/croissant-tart-section/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/indian-sweet/"
+      ],
+      "clicks": 0,
+      "impressions": 15,
+      "ctr": 0,
+      "position": 7.8,
+      "page": "https://numnumsbakery.com.au/indian-sweet/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/our-team/"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 3.3,
+      "page": "https://numnumsbakery.com.au/our-team/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/pastry/"
+      ],
+      "clicks": 0,
+      "impressions": 10,
+      "ctr": 0,
+      "position": 6.2,
+      "page": "https://numnumsbakery.com.au/pastry/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/portfolio/baby-shower-cake/"
+      ],
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 82,
+      "page": "https://numnumsbakery.com.au/portfolio/baby-shower-cake/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/portfolio/berry-cupcaces/"
+      ],
+      "clicks": 0,
+      "impressions": 8,
+      "ctr": 0,
+      "position": 46.6,
+      "page": "https://numnumsbakery.com.au/portfolio/berry-cupcaces/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/portfolio/brownie-cream-cake/"
+      ],
+      "clicks": 0,
+      "impressions": 3,
+      "ctr": 0,
+      "position": 5.7,
+      "page": "https://numnumsbakery.com.au/portfolio/brownie-cream-cake/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/portfolio/tiramisu-cake/"
+      ],
+      "clicks": 0,
+      "impressions": 4,
+      "ctr": 0,
+      "position": 59.2,
+      "page": "https://numnumsbakery.com.au/portfolio/tiramisu-cake/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/portfolio/vanilla-cake/"
+      ],
+      "clicks": 0,
+      "impressions": 12,
+      "ctr": 0,
+      "position": 47.5,
+      "page": "https://numnumsbakery.com.au/portfolio/vanilla-cake/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/services/"
+      ],
+      "clicks": 0,
+      "impressions": 16,
+      "ctr": 0,
+      "position": 42.2,
+      "page": "https://numnumsbakery.com.au/services/"
+    },
+    {
+      "keys": [
+        "https://numnumsbakery.com.au/services/birthday-cakes/"
+      ],
+      "clicks": 0,
+      "impressions": 12,
+      "ctr": 0,
+      "position": 59,
+      "page": "https://numnumsbakery.com.au/services/birthday-cakes/"
+    }
+  ],
+  "totals": {
+    "clicks": 1978,
+    "impressions": 71003,
+    "ctr": 2.79,
+    "position": 11.4
+  },
+  "totals_source": "dimensionless_aggregate",
+  "totals_complete": true,
+  "quick_wins": [],
+  "warnings": [],
+  "row_count": 381,
+  "error": null,
+  "date_range": {
+    "start": "2026-06-04",
+    "end": "2026-08-30"
+  }
+}

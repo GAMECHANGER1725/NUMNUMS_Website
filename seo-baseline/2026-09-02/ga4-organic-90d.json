@@ -1,0 +1,1971 @@
+{
+  "property": "531794710",
+  "report": "organic_traffic",
+  "date_range": {
+    "start": "2026-06-04",
+    "end": "2026-09-01"
+  },
+  "totals": {
+    "sessions": 2410,
+    "users": 2092,
+    "pageviews": 5010,
+    "avg_daily_sessions": 26.8
+  },
+  "daily_data": [
+    {
+      "date": "20260604",
+      "sessions": 17,
+      "users": 13,
+      "pageviews": 35,
+      "bounce_rate": 29.4,
+      "avg_session_duration": 139.5,
+      "engagement_rate": 70.6
+    },
+    {
+      "date": "20260605",
+      "sessions": 7,
+      "users": 6,
+      "pageviews": 18,
+      "bounce_rate": 0.0,
+      "avg_session_duration": 212.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "date": "20260606",
+      "sessions": 11,
+      "users": 11,
+      "pageviews": 24,
+      "bounce_rate": 0.0,
+      "avg_session_duration": 488.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "date": "20260607",
+      "sessions": 9,
+      "users": 8,
+      "pageviews": 12,
+      "bounce_rate": 55.6,
+      "avg_session_duration": 87.3,
+      "engagement_rate": 44.4
+    },
+    {
+      "date": "20260608",
+      "sessions": 15,
+      "users": 15,
+      "pageviews": 39,
+      "bounce_rate": 13.3,
+      "avg_session_duration": 140.2,
+      "engagement_rate": 86.7
+    },
+    {
+      "date": "20260609",
+      "sessions": 8,
+      "users": 7,
+      "pageviews": 24,
+      "bounce_rate": 12.5,
+      "avg_session_duration": 148.7,
+      "engagement_rate": 87.5
+    },
+    {
+      "date": "20260610",
+      "sessions": 13,
+      "users": 11,
+      "pageviews": 29,
+      "bounce_rate": 23.1,
+      "avg_session_duration": 242.7,
+      "engagement_rate": 76.9
+    },
+    {
+      "date": "20260611",
+      "sessions": 14,
+      "users": 14,
+      "pageviews": 28,
+      "bounce_rate": 28.6,
+      "avg_session_duration": 253.5,
+      "engagement_rate": 71.4
+    },
+    {
+      "date": "20260612",
+      "sessions": 18,
+      "users": 17,
+      "pageviews": 49,
+      "bounce_rate": 16.7,
+      "avg_session_duration": 82.9,
+      "engagement_rate": 83.3
+    },
+    {
+      "date": "20260613",
+      "sessions": 12,
+      "users": 11,
+      "pageviews": 26,
+      "bounce_rate": 33.3,
+      "avg_session_duration": 71.8,
+      "engagement_rate": 66.7
+    },
+    {
+      "date": "20260614",
+      "sessions": 12,
+      "users": 12,
+      "pageviews": 23,
+      "bounce_rate": 33.3,
+      "avg_session_duration": 101.5,
+      "engagement_rate": 66.7
+    },
+    {
+      "date": "20260615",
+      "sessions": 12,
+      "users": 12,
+      "pageviews": 21,
+      "bounce_rate": 25.0,
+      "avg_session_duration": 38.6,
+      "engagement_rate": 75.0
+    },
+    {
+      "date": "20260616",
+      "sessions": 21,
+      "users": 19,
+      "pageviews": 52,
+      "bounce_rate": 23.8,
+      "avg_session_duration": 147.1,
+      "engagement_rate": 76.2
+    },
+    {
+      "date": "20260617",
+      "sessions": 12,
+      "users": 11,
+      "pageviews": 32,
+      "bounce_rate": 33.3,
+      "avg_session_duration": 161.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "date": "20260618",
+      "sessions": 12,
+      "users": 10,
+      "pageviews": 15,
+      "bounce_rate": 50.0,
+      "avg_session_duration": 52.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "date": "20260619",
+      "sessions": 19,
+      "users": 17,
+      "pageviews": 30,
+      "bounce_rate": 36.8,
+      "avg_session_duration": 263.5,
+      "engagement_rate": 63.2
+    },
+    {
+      "date": "20260620",
+      "sessions": 22,
+      "users": 19,
+      "pageviews": 50,
+      "bounce_rate": 36.4,
+      "avg_session_duration": 270.0,
+      "engagement_rate": 63.6
+    },
+    {
+      "date": "20260621",
+      "sessions": 11,
+      "users": 8,
+      "pageviews": 19,
+      "bounce_rate": 45.5,
+      "avg_session_duration": 133.7,
+      "engagement_rate": 54.5
+    },
+    {
+      "date": "20260622",
+      "sessions": 9,
+      "users": 9,
+      "pageviews": 17,
+      "bounce_rate": 44.4,
+      "avg_session_duration": 179.0,
+      "engagement_rate": 55.6
+    },
+    {
+      "date": "20260623",
+      "sessions": 16,
+      "users": 15,
+      "pageviews": 38,
+      "bounce_rate": 6.2,
+      "avg_session_duration": 192.9,
+      "engagement_rate": 93.8
+    },
+    {
+      "date": "20260624",
+      "sessions": 13,
+      "users": 12,
+      "pageviews": 30,
+      "bounce_rate": 23.1,
+      "avg_session_duration": 146.1,
+      "engagement_rate": 76.9
+    },
+    {
+      "date": "20260625",
+      "sessions": 16,
+      "users": 15,
+      "pageviews": 29,
+      "bounce_rate": 50.0,
+      "avg_session_duration": 62.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "date": "20260626",
+      "sessions": 16,
+      "users": 16,
+      "pageviews": 28,
+      "bounce_rate": 37.5,
+      "avg_session_duration": 83.0,
+      "engagement_rate": 62.5
+    },
+    {
+      "date": "20260627",
+      "sessions": 19,
+      "users": 14,
+      "pageviews": 43,
+      "bounce_rate": 31.6,
+      "avg_session_duration": 75.7,
+      "engagement_rate": 68.4
+    },
+    {
+      "date": "20260628",
+      "sessions": 18,
+      "users": 13,
+      "pageviews": 44,
+      "bounce_rate": 27.8,
+      "avg_session_duration": 134.9,
+      "engagement_rate": 72.2
+    },
+    {
+      "date": "20260629",
+      "sessions": 34,
+      "users": 32,
+      "pageviews": 76,
+      "bounce_rate": 41.2,
+      "avg_session_duration": 161.1,
+      "engagement_rate": 58.8
+    },
+    {
+      "date": "20260630",
+      "sessions": 23,
+      "users": 17,
+      "pageviews": 36,
+      "bounce_rate": 56.5,
+      "avg_session_duration": 36.9,
+      "engagement_rate": 43.5
+    },
+    {
+      "date": "20260701",
+      "sessions": 43,
+      "users": 33,
+      "pageviews": 119,
+      "bounce_rate": 27.9,
+      "avg_session_duration": 316.4,
+      "engagement_rate": 72.1
+    },
+    {
+      "date": "20260702",
+      "sessions": 38,
+      "users": 29,
+      "pageviews": 64,
+      "bounce_rate": 57.9,
+      "avg_session_duration": 79.2,
+      "engagement_rate": 42.1
+    },
+    {
+      "date": "20260703",
+      "sessions": 27,
+      "users": 25,
+      "pageviews": 78,
+      "bounce_rate": 25.9,
+      "avg_session_duration": 128.6,
+      "engagement_rate": 74.1
+    },
+    {
+      "date": "20260704",
+      "sessions": 21,
+      "users": 21,
+      "pageviews": 43,
+      "bounce_rate": 33.3,
+      "avg_session_duration": 165.5,
+      "engagement_rate": 66.7
+    },
+    {
+      "date": "20260705",
+      "sessions": 32,
+      "users": 24,
+      "pageviews": 67,
+      "bounce_rate": 31.2,
+      "avg_session_duration": 89.3,
+      "engagement_rate": 68.8
+    },
+    {
+      "date": "20260706",
+      "sessions": 26,
+      "users": 23,
+      "pageviews": 58,
+      "bounce_rate": 19.2,
+      "avg_session_duration": 199.9,
+      "engagement_rate": 80.8
+    },
+    {
+      "date": "20260707",
+      "sessions": 29,
+      "users": 25,
+      "pageviews": 53,
+      "bounce_rate": 44.8,
+      "avg_session_duration": 127.0,
+      "engagement_rate": 55.2
+    },
+    {
+      "date": "20260708",
+      "sessions": 20,
+      "users": 18,
+      "pageviews": 38,
+      "bounce_rate": 30.0,
+      "avg_session_duration": 142.9,
+      "engagement_rate": 70.0
+    },
+    {
+      "date": "20260709",
+      "sessions": 26,
+      "users": 23,
+      "pageviews": 50,
+      "bounce_rate": 26.9,
+      "avg_session_duration": 179.1,
+      "engagement_rate": 73.1
+    },
+    {
+      "date": "20260710",
+      "sessions": 22,
+      "users": 20,
+      "pageviews": 42,
+      "bounce_rate": 45.5,
+      "avg_session_duration": 51.2,
+      "engagement_rate": 54.5
+    },
+    {
+      "date": "20260711",
+      "sessions": 16,
+      "users": 15,
+      "pageviews": 22,
+      "bounce_rate": 62.5,
+      "avg_session_duration": 101.0,
+      "engagement_rate": 37.5
+    },
+    {
+      "date": "20260712",
+      "sessions": 23,
+      "users": 22,
+      "pageviews": 47,
+      "bounce_rate": 34.8,
+      "avg_session_duration": 106.5,
+      "engagement_rate": 65.2
+    },
+    {
+      "date": "20260713",
+      "sessions": 31,
+      "users": 27,
+      "pageviews": 61,
+      "bounce_rate": 19.4,
+      "avg_session_duration": 119.4,
+      "engagement_rate": 80.6
+    },
+    {
+      "date": "20260714",
+      "sessions": 29,
+      "users": 29,
+      "pageviews": 57,
+      "bounce_rate": 37.9,
+      "avg_session_duration": 135.2,
+      "engagement_rate": 62.1
+    },
+    {
+      "date": "20260715",
+      "sessions": 23,
+      "users": 20,
+      "pageviews": 58,
+      "bounce_rate": 17.4,
+      "avg_session_duration": 247.7,
+      "engagement_rate": 82.6
+    },
+    {
+      "date": "20260716",
+      "sessions": 24,
+      "users": 19,
+      "pageviews": 59,
+      "bounce_rate": 20.8,
+      "avg_session_duration": 268.4,
+      "engagement_rate": 79.2
+    },
+    {
+      "date": "20260717",
+      "sessions": 30,
+      "users": 26,
+      "pageviews": 54,
+      "bounce_rate": 26.7,
+      "avg_session_duration": 197.2,
+      "engagement_rate": 73.3
+    },
+    {
+      "date": "20260718",
+      "sessions": 20,
+      "users": 19,
+      "pageviews": 38,
+      "bounce_rate": 25.0,
+      "avg_session_duration": 124.0,
+      "engagement_rate": 75.0
+    },
+    {
+      "date": "20260719",
+      "sessions": 21,
+      "users": 18,
+      "pageviews": 45,
+      "bounce_rate": 38.1,
+      "avg_session_duration": 90.3,
+      "engagement_rate": 61.9
+    },
+    {
+      "date": "20260720",
+      "sessions": 36,
+      "users": 34,
+      "pageviews": 80,
+      "bounce_rate": 27.8,
+      "avg_session_duration": 128.2,
+      "engagement_rate": 72.2
+    },
+    {
+      "date": "20260721",
+      "sessions": 34,
+      "users": 30,
+      "pageviews": 74,
+      "bounce_rate": 29.4,
+      "avg_session_duration": 115.4,
+      "engagement_rate": 70.6
+    },
+    {
+      "date": "20260722",
+      "sessions": 36,
+      "users": 29,
+      "pageviews": 95,
+      "bounce_rate": 22.2,
+      "avg_session_duration": 256.8,
+      "engagement_rate": 77.8
+    },
+    {
+      "date": "20260723",
+      "sessions": 31,
+      "users": 27,
+      "pageviews": 50,
+      "bounce_rate": 19.4,
+      "avg_session_duration": 114.5,
+      "engagement_rate": 80.6
+    },
+    {
+      "date": "20260724",
+      "sessions": 41,
+      "users": 38,
+      "pageviews": 84,
+      "bounce_rate": 24.4,
+      "avg_session_duration": 187.9,
+      "engagement_rate": 75.6
+    },
+    {
+      "date": "20260725",
+      "sessions": 27,
+      "users": 24,
+      "pageviews": 51,
+      "bounce_rate": 51.9,
+      "avg_session_duration": 63.0,
+      "engagement_rate": 48.1
+    },
+    {
+      "date": "20260726",
+      "sessions": 24,
+      "users": 20,
+      "pageviews": 47,
+      "bounce_rate": 29.2,
+      "avg_session_duration": 69.5,
+      "engagement_rate": 70.8
+    },
+    {
+      "date": "20260727",
+      "sessions": 29,
+      "users": 27,
+      "pageviews": 43,
+      "bounce_rate": 31.0,
+      "avg_session_duration": 65.1,
+      "engagement_rate": 69.0
+    },
+    {
+      "date": "20260728",
+      "sessions": 26,
+      "users": 23,
+      "pageviews": 49,
+      "bounce_rate": 53.8,
+      "avg_session_duration": 143.0,
+      "engagement_rate": 46.2
+    },
+    {
+      "date": "20260729",
+      "sessions": 17,
+      "users": 16,
+      "pageviews": 27,
+      "bounce_rate": 52.9,
+      "avg_session_duration": 45.1,
+      "engagement_rate": 47.1
+    },
+    {
+      "date": "20260730",
+      "sessions": 31,
+      "users": 27,
+      "pageviews": 66,
+      "bounce_rate": 32.3,
+      "avg_session_duration": 120.9,
+      "engagement_rate": 67.7
+    },
+    {
+      "date": "20260731",
+      "sessions": 23,
+      "users": 19,
+      "pageviews": 37,
+      "bounce_rate": 52.2,
+      "avg_session_duration": 61.2,
+      "engagement_rate": 47.8
+    },
+    {
+      "date": "20260801",
+      "sessions": 27,
+      "users": 23,
+      "pageviews": 58,
+      "bounce_rate": 37.0,
+      "avg_session_duration": 147.8,
+      "engagement_rate": 63.0
+    },
+    {
+      "date": "20260802",
+      "sessions": 38,
+      "users": 35,
+      "pageviews": 88,
+      "bounce_rate": 21.1,
+      "avg_session_duration": 138.7,
+      "engagement_rate": 78.9
+    },
+    {
+      "date": "20260803",
+      "sessions": 42,
+      "users": 38,
+      "pageviews": 82,
+      "bounce_rate": 19.0,
+      "avg_session_duration": 123.3,
+      "engagement_rate": 81.0
+    },
+    {
+      "date": "20260804",
+      "sessions": 39,
+      "users": 34,
+      "pageviews": 77,
+      "bounce_rate": 33.3,
+      "avg_session_duration": 84.4,
+      "engagement_rate": 66.7
+    },
+    {
+      "date": "20260805",
+      "sessions": 27,
+      "users": 25,
+      "pageviews": 50,
+      "bounce_rate": 18.5,
+      "avg_session_duration": 163.1,
+      "engagement_rate": 81.5
+    },
+    {
+      "date": "20260806",
+      "sessions": 35,
+      "users": 28,
+      "pageviews": 72,
+      "bounce_rate": 28.6,
+      "avg_session_duration": 129.8,
+      "engagement_rate": 71.4
+    },
+    {
+      "date": "20260807",
+      "sessions": 31,
+      "users": 27,
+      "pageviews": 57,
+      "bounce_rate": 38.7,
+      "avg_session_duration": 162.2,
+      "engagement_rate": 61.3
+    },
+    {
+      "date": "20260808",
+      "sessions": 25,
+      "users": 21,
+      "pageviews": 50,
+      "bounce_rate": 44.0,
+      "avg_session_duration": 175.0,
+      "engagement_rate": 56.0
+    },
+    {
+      "date": "20260809",
+      "sessions": 37,
+      "users": 32,
+      "pageviews": 78,
+      "bounce_rate": 21.6,
+      "avg_session_duration": 152.0,
+      "engagement_rate": 78.4
+    },
+    {
+      "date": "20260810",
+      "sessions": 33,
+      "users": 27,
+      "pageviews": 78,
+      "bounce_rate": 27.3,
+      "avg_session_duration": 207.9,
+      "engagement_rate": 72.7
+    },
+    {
+      "date": "20260811",
+      "sessions": 33,
+      "users": 29,
+      "pageviews": 72,
+      "bounce_rate": 21.2,
+      "avg_session_duration": 98.6,
+      "engagement_rate": 78.8
+    },
+    {
+      "date": "20260812",
+      "sessions": 42,
+      "users": 34,
+      "pageviews": 69,
+      "bounce_rate": 42.9,
+      "avg_session_duration": 111.7,
+      "engagement_rate": 57.1
+    },
+    {
+      "date": "20260813",
+      "sessions": 40,
+      "users": 33,
+      "pageviews": 87,
+      "bounce_rate": 37.5,
+      "avg_session_duration": 174.3,
+      "engagement_rate": 62.5
+    },
+    {
+      "date": "20260814",
+      "sessions": 20,
+      "users": 18,
+      "pageviews": 33,
+      "bounce_rate": 25.0,
+      "avg_session_duration": 133.0,
+      "engagement_rate": 75.0
+    },
+    {
+      "date": "20260815",
+      "sessions": 32,
+      "users": 28,
+      "pageviews": 66,
+      "bounce_rate": 25.0,
+      "avg_session_duration": 168.0,
+      "engagement_rate": 75.0
+    },
+    {
+      "date": "20260816",
+      "sessions": 39,
+      "users": 34,
+      "pageviews": 79,
+      "bounce_rate": 23.1,
+      "avg_session_duration": 80.3,
+      "engagement_rate": 76.9
+    },
+    {
+      "date": "20260817",
+      "sessions": 32,
+      "users": 28,
+      "pageviews": 64,
+      "bounce_rate": 21.9,
+      "avg_session_duration": 137.0,
+      "engagement_rate": 78.1
+    },
+    {
+      "date": "20260818",
+      "sessions": 40,
+      "users": 34,
+      "pageviews": 96,
+      "bounce_rate": 17.5,
+      "avg_session_duration": 211.6,
+      "engagement_rate": 82.5
+    },
+    {
+      "date": "20260819",
+      "sessions": 33,
+      "users": 27,
+      "pageviews": 72,
+      "bounce_rate": 30.3,
+      "avg_session_duration": 126.1,
+      "engagement_rate": 69.7
+    },
+    {
+      "date": "20260820",
+      "sessions": 35,
+      "users": 27,
+      "pageviews": 88,
+      "bounce_rate": 34.3,
+      "avg_session_duration": 183.2,
+      "engagement_rate": 65.7
+    },
+    {
+      "date": "20260821",
+      "sessions": 33,
+      "users": 27,
+      "pageviews": 75,
+      "bounce_rate": 33.3,
+      "avg_session_duration": 167.2,
+      "engagement_rate": 66.7
+    },
+    {
+      "date": "20260822",
+      "sessions": 23,
+      "users": 19,
+      "pageviews": 51,
+      "bounce_rate": 30.4,
+      "avg_session_duration": 170.7,
+      "engagement_rate": 69.6
+    },
+    {
+      "date": "20260823",
+      "sessions": 34,
+      "users": 31,
+      "pageviews": 66,
+      "bounce_rate": 29.4,
+      "avg_session_duration": 153.8,
+      "engagement_rate": 70.6
+    },
+    {
+      "date": "20260824",
+      "sessions": 41,
+      "users": 33,
+      "pageviews": 98,
+      "bounce_rate": 36.6,
+      "avg_session_duration": 189.7,
+      "engagement_rate": 63.4
+    },
+    {
+      "date": "20260825",
+      "sessions": 53,
+      "users": 44,
+      "pageviews": 118,
+      "bounce_rate": 30.2,
+      "avg_session_duration": 195.6,
+      "engagement_rate": 69.8
+    },
+    {
+      "date": "20260826",
+      "sessions": 45,
+      "users": 39,
+      "pageviews": 95,
+      "bounce_rate": 22.2,
+      "avg_session_duration": 212.8,
+      "engagement_rate": 77.8
+    },
+    {
+      "date": "20260827",
+      "sessions": 50,
+      "users": 46,
+      "pageviews": 86,
+      "bounce_rate": 42.0,
+      "avg_session_duration": 128.0,
+      "engagement_rate": 58.0
+    },
+    {
+      "date": "20260828",
+      "sessions": 30,
+      "users": 26,
+      "pageviews": 51,
+      "bounce_rate": 46.7,
+      "avg_session_duration": 88.7,
+      "engagement_rate": 53.3
+    },
+    {
+      "date": "20260829",
+      "sessions": 41,
+      "users": 33,
+      "pageviews": 90,
+      "bounce_rate": 39.0,
+      "avg_session_duration": 176.7,
+      "engagement_rate": 61.0
+    },
+    {
+      "date": "20260830",
+      "sessions": 29,
+      "users": 23,
+      "pageviews": 73,
+      "bounce_rate": 27.6,
+      "avg_session_duration": 164.0,
+      "engagement_rate": 72.4
+    },
+    {
+      "date": "20260831",
+      "sessions": 42,
+      "users": 38,
+      "pageviews": 77,
+      "bounce_rate": 45.2,
+      "avg_session_duration": 133.7,
+      "engagement_rate": 54.8
+    },
+    {
+      "date": "20260901",
+      "sessions": 44,
+      "users": 37,
+      "pageviews": 91,
+      "bounce_rate": 34.1,
+      "avg_session_duration": 297.5,
+      "engagement_rate": 65.9
+    }
+  ],
+  "top_pages": [
+    {
+      "landing_page": "/",
+      "sessions": 1209,
+      "users": 1000,
+      "pageviews": 3044,
+      "bounce_rate": 20.1,
+      "engagement_rate": 79.9
+    },
+    {
+      "landing_page": "/cakes",
+      "sessions": 161,
+      "users": 108,
+      "pageviews": 256,
+      "bounce_rate": 59.6,
+      "engagement_rate": 40.4
+    },
+    {
+      "landing_page": "/blog/best-eggless-cake-shops-sydney-2026",
+      "sessions": 144,
+      "users": 135,
+      "pageviews": 336,
+      "bounce_rate": 30.6,
+      "engagement_rate": 69.4
+    },
+    {
+      "landing_page": "/order",
+      "sessions": 112,
+      "users": 87,
+      "pageviews": 161,
+      "bounce_rate": 63.4,
+      "engagement_rate": 36.6
+    },
+    {
+      "landing_page": "/blog/eggless-cake-bakery-harris-park-riverstone-sydney",
+      "sessions": 99,
+      "users": 94,
+      "pageviews": 227,
+      "bounce_rate": 23.2,
+      "engagement_rate": 76.8
+    },
+    {
+      "landing_page": "/blog/photo-cake-sydney",
+      "sessions": 96,
+      "users": 94,
+      "pageviews": 153,
+      "bounce_rate": 26.0,
+      "engagement_rate": 74.0
+    },
+    {
+      "landing_page": "(not set)",
+      "sessions": 92,
+      "users": 89,
+      "pageviews": 0,
+      "bounce_rate": 97.8,
+      "engagement_rate": 2.2
+    },
+    {
+      "landing_page": "/blog/best-dessert-shop-sydney",
+      "sessions": 33,
+      "users": 33,
+      "pageviews": 54,
+      "bounce_rate": 36.4,
+      "engagement_rate": 63.6
+    },
+    {
+      "landing_page": "/indian-sweet",
+      "sessions": 27,
+      "users": 24,
+      "pageviews": 39,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/blog/eggless-cake-storage-freshness-guide",
+      "sessions": 21,
+      "users": 17,
+      "pageviews": 21,
+      "bounce_rate": 66.7,
+      "engagement_rate": 33.3
+    },
+    {
+      "landing_page": "/blog/cake-price-guide-sydney",
+      "sessions": 19,
+      "users": 19,
+      "pageviews": 27,
+      "bounce_rate": 31.6,
+      "engagement_rate": 68.4
+    },
+    {
+      "landing_page": "/blog/first-birthday-cake-sydney",
+      "sessions": 19,
+      "users": 17,
+      "pageviews": 29,
+      "bounce_rate": 21.1,
+      "engagement_rate": 78.9
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-schofields",
+      "sessions": 18,
+      "users": 18,
+      "pageviews": 43,
+      "bounce_rate": 11.1,
+      "engagement_rate": 88.9
+    },
+    {
+      "landing_page": "/blog/cake-serving-size-guide-sydney",
+      "sessions": 16,
+      "users": 15,
+      "pageviews": 20,
+      "bounce_rate": 43.8,
+      "engagement_rate": 56.2
+    },
+    {
+      "landing_page": "/blog/best-cake-sydney",
+      "sessions": 13,
+      "users": 13,
+      "pageviews": 17,
+      "bounce_rate": 30.8,
+      "engagement_rate": 69.2
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-dean-park",
+      "sessions": 13,
+      "users": 13,
+      "pageviews": 22,
+      "bounce_rate": 30.8,
+      "engagement_rate": 69.2
+    },
+    {
+      "landing_page": "/blog/same-day-cake-sydney",
+      "sessions": 13,
+      "users": 13,
+      "pageviews": 26,
+      "bounce_rate": 23.1,
+      "engagement_rate": 76.9
+    },
+    {
+      "landing_page": "/blog/eggless-cake-vs-regular-cake",
+      "sessions": 11,
+      "users": 10,
+      "pageviews": 11,
+      "bounce_rate": 36.4,
+      "engagement_rate": 63.6
+    },
+    {
+      "landing_page": "/blog/number-cakes-sydney",
+      "sessions": 11,
+      "users": 11,
+      "pageviews": 17,
+      "bounce_rate": 18.2,
+      "engagement_rate": 81.8
+    },
+    {
+      "landing_page": "/blog/eggless-cake-for-toddlers-sydney",
+      "sessions": 9,
+      "users": 9,
+      "pageviews": 22,
+      "bounce_rate": 11.1,
+      "engagement_rate": 88.9
+    },
+    {
+      "landing_page": "/locations",
+      "sessions": 9,
+      "users": 8,
+      "pageviews": 18,
+      "bounce_rate": 55.6,
+      "engagement_rate": 44.4
+    },
+    {
+      "landing_page": "/blog/cake-smash-cakes-sydney",
+      "sessions": 8,
+      "users": 7,
+      "pageviews": 21,
+      "bounce_rate": 25.0,
+      "engagement_rate": 75.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-quakers-hill",
+      "sessions": 8,
+      "users": 8,
+      "pageviews": 16,
+      "bounce_rate": 25.0,
+      "engagement_rate": 75.0
+    },
+    {
+      "landing_page": "/blog/kids-birthday-cake-sydney",
+      "sessions": 8,
+      "users": 8,
+      "pageviews": 10,
+      "bounce_rate": 37.5,
+      "engagement_rate": 62.5
+    },
+    {
+      "landing_page": "/blog",
+      "sessions": 7,
+      "users": 4,
+      "pageviews": 10,
+      "bounce_rate": 42.9,
+      "engagement_rate": 57.1
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-doonside",
+      "sessions": 7,
+      "users": 7,
+      "pageviews": 26,
+      "bounce_rate": 14.3,
+      "engagement_rate": 85.7
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-eid-milad-un-nabi-sydney",
+      "sessions": 7,
+      "users": 7,
+      "pageviews": 8,
+      "bounce_rate": 85.7,
+      "engagement_rate": 14.3
+    },
+    {
+      "landing_page": "/blog/luxury-cake-sydney",
+      "sessions": 7,
+      "users": 7,
+      "pageviews": 10,
+      "bounce_rate": 28.6,
+      "engagement_rate": 71.4
+    },
+    {
+      "landing_page": "/cakes.html",
+      "sessions": 7,
+      "users": 5,
+      "pageviews": 7,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/are-eggless-cakes-healthy",
+      "sessions": 6,
+      "users": 6,
+      "pageviews": 6,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/about",
+      "sessions": 5,
+      "users": 5,
+      "pageviews": 7,
+      "bounce_rate": 40.0,
+      "engagement_rate": 60.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-gender-reveal-sydney",
+      "sessions": 5,
+      "users": 5,
+      "pageviews": 9,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/indian-sweets-harris-park-riverstone-sydney",
+      "sessions": 5,
+      "users": 5,
+      "pageviews": 9,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/birthday-cake-for-men-sydney",
+      "sessions": 4,
+      "users": 4,
+      "pageviews": 7,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-egg-substitutes",
+      "sessions": 4,
+      "users": 4,
+      "pageviews": 4,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-nut-free-sydney",
+      "sessions": 4,
+      "users": 4,
+      "pageviews": 4,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-texture-moist",
+      "sessions": 4,
+      "users": 3,
+      "pageviews": 4,
+      "bounce_rate": 75.0,
+      "engagement_rate": 25.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-mid-autumn-festival-sydney",
+      "sessions": 4,
+      "users": 4,
+      "pageviews": 4,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-northwest-sydney",
+      "sessions": 4,
+      "users": 4,
+      "pageviews": 5,
+      "bounce_rate": 75.0,
+      "engagement_rate": 25.0
+    },
+    {
+      "landing_page": "/blog/farewell-cake-sydney",
+      "sessions": 4,
+      "users": 3,
+      "pageviews": 5,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/wedding-cake-sydney-north-west",
+      "sessions": 4,
+      "users": 4,
+      "pageviews": 5,
+      "bounce_rate": 25.0,
+      "engagement_rate": 75.0
+    },
+    {
+      "landing_page": "/blog/cake-design-trends-sydney-2026",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 5,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/blog/eggless-cake-for-vegetarians-sydney",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 7,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-indian-flavours",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 7,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-ingredients-sydney",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 3,
+      "bounce_rate": 66.7,
+      "engagement_rate": 33.3
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-riverstone",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 4,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-the-ponds",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 9,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/blog/how-eggless-cakes-are-made",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 3,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/blog/unique-birthday-cake-ideas-sydney",
+      "sessions": 3,
+      "users": 3,
+      "pageviews": 6,
+      "bounce_rate": 33.3,
+      "engagement_rate": 66.7
+    },
+    {
+      "landing_page": "/blog/afternoon-tea-cakes-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/birthday-cake-north-west-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 4,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/cake-delivery-areas-sydney",
+      "sessions": 2,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-birthday-cakes-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 7,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-delivery-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-for-egg-allergy",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-for-pregnancy-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 5,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-troubleshooting",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-auburn",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-birrong",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-blacktown",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-constitution-hill",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 6,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-glenorie",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 9,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-kellyville",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-maha-shivratri-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-merrylands-west",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-north-kellyville",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 9,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-parramatta",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-plumpton",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 7,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-sinhala-tamil-new-year-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-strathfield",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-tallawong",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 6,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-villawood",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 6,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-wentworthville",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-winston-hills",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 9,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/farewell-cake-sydney.html",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 5,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/halal-friendly-cakes-eggless-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/multicultural-celebration-cake-sydney",
+      "sessions": 2,
+      "users": 1,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/rosh-hashanah-cakes-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/blog/semi-naked-cake-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/sheet-cake-sydney",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/vegan-vs-eggless-cakes-difference",
+      "sessions": 2,
+      "users": 2,
+      "pageviews": 19,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/locations.html",
+      "sessions": 2,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 50.0,
+      "engagement_rate": 50.0
+    },
+    {
+      "landing_page": "/about.html",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/birthday-cake-near-me-sydney-suburbs",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/cake-flavour-guide-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/cake-gifting-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/cake-message-ideas-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/cake-order-online-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/cake-shop-near-me-marsden-park-talawong",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/cake-shop-western-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/cake-smash-vs-first-birthday-cake-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/cake-toppers-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/corporate-cake-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/custom-kids-birthday-cakes-marsden-park-schofields",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/dairy-free-vs-eggless-cakes",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/dashain-tihar-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-birthday-cakes-every-age-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-food-colouring-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-for-pooja-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-gluten-free-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-price-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-types",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-vs-mud-cake",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cake-vs-sponge-cake",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-anniversary-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 5,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-beaumont-hills",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-box-hill-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-chuseok-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-clyde",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-dural",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 4,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-durga-puja-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-dussehra-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-epping",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-girraween",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-graduation-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-harris-park",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-hassall-grove",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-kings-park",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-lohri-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-marayong",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-northmead",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-onam-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-parklea",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-pitt-town",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-raksha-bandhan-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-richmond",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-rouse-hill",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-ryde",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-soft-moist-myths-vs-facts",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-sydney-olympic-park",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-vesak-day-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-cakes-west-ryde",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/eggless-mini-cakes-cupcake-towers-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 3,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/grand-final-party-cake-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/how-to-choose-cake-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/how-to-order-cake-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 2,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/kids-birthday-cake-north-west-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/push-present-cake-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/ram-navami-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/blog/theme-cakes-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    },
+    {
+      "landing_page": "/blog/tiered-cakes-sydney",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 0.0,
+      "engagement_rate": 100.0
+    },
+    {
+      "landing_page": "/order.html",
+      "sessions": 1,
+      "users": 1,
+      "pageviews": 1,
+      "bounce_rate": 100.0,
+      "engagement_rate": 0.0
+    }
+  ],
+  "quota_tokens_used": {
+    "daily_consumed": 2,
+    "daily_remaining": 199998,
+    "hourly_consumed": 2,
+    "hourly_remaining": 39998
+  },
+  "error": null
+}

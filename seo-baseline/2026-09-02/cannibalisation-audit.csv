@@ -1,0 +1,127 @@
+query,is_brand,urls,total_impr,split_impr,owner,owner_pos,best_pos,weaker_page_outranks_owner,rivals
+eggless cake near me,False,35,3537,2297,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,7.2,4.2,True,/blog/best-eggless-cake-shops-sydney-2026 | / | /blog/eggless-cakes-dean-park | /blog/eggless-cakes-doonside | /blog/eggless-cakes-minchinbury | /blog/eggless-cakes-schofields | /cakes | /blog/eggless-cakes-winston-hills
+eggless cake shop,False,6,2015,1326,/blog/best-eggless-cake-shops-sydney-2026,12.3,6.4,True,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | / | /cakes | /blog/eggless-cake-for-vegetarians-sydney | /blog/eggless-cakes-riverstone
+eggless cake sydney,False,7,1116,761,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,11.3,7.0,True,/blog/best-eggless-cake-shops-sydney-2026 | /cakes | / | /blog/eggless-cake-for-vegetarians-sydney | /blog/eggless-cake-reviews-sydney | /blog/eggless-cake-nut-free-sydney
+eggless cakes sydney,False,10,932,655,/cakes,26.8,8.8,True,/blog/best-eggless-cake-shops-sydney-2026 | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | / | /blog/eggless-cake-for-vegetarians-sydney | /blog | /order | /blog/eggless-cake-nut-free-sydney | /blog/eggless-cakes-grantham-farm
+eggless cakes near me,False,12,849,532,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,8.3,4.3,True,/ | /blog/best-eggless-cake-shops-sydney-2026 | /blog/eggless-cakes-dean-park | /cakes | /blog/eggless-cakes-doonside | /blog/eggless-cakes-riverstone | /blog/eggless-cakes-quakers-hill | /blog/eggless-cake-for-vegetarians-sydney
+eggless cakes,False,5,582,249,/blog/best-eggless-cake-shops-sydney-2026,13.7,8.1,True,/cakes | /blog/eggless-cake-for-vegetarians-sydney | / | /blog/eggless-cake-nut-free-sydney
+riverstone bakery,False,6,342,170,/,4.6,1.0,True,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /cakes | /blog/eggless-cakes-riverstone | /blog/eggless-cakes-doonside | http://www.numnumsbakery.com.au/
+eggless cake,False,3,285,131,/blog/best-eggless-cake-shops-sydney-2026,10.4,6.0,True,/ | http://www.numnumsbakery.com.au/
+egg free cakes parramatta,False,7,227,105,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,12.3,8,True,/blog/best-eggless-cake-shops-sydney-2026 | /blog/eggless-cakes-northmead | /blog/eggless-cakes-dundas | /blog/eggless-cake-for-vegetarians-sydney | / | /blog/eggless-cakes-dundas-valley.html
+cake shop harris park,False,6,227,99,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,7.4,1.6,True,/ | /blog/best-dessert-shop-sydney | /about | http://www.numnumsbakery.com.au/ | /order
+eggless cake blacktown,False,9,142,99,/blog/eggless-cakes-dean-park,6.2,4,True,/blog/eggless-cakes-doonside | /blog/eggless-cakes-lalor-park | /blog/eggless-cakes-schofields | /blog/best-eggless-cake-shops-sydney-2026 | /blog/eggless-cakes-rooty-hill | /blog/eggless-cakes-mount-druitt | /blog/eggless-cakes-prospect | /blog/eggless-cakes-riverstone
+cake shop near me,False,3,830,94,/,6.8,5.9,True,http://www.numnumsbakery.com.au/ | /cakes
+eggless cake parramatta,False,5,193,78,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,4.4,3.0,True,/ | /blog/eggless-cakes-sydney-olympic-park | /blog/eggless-cakes-dundas | /blog/eggless-cakes-northmead
+harris park cake shop,False,3,259,74,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,7.5,1.5,True,/ | http://www.numnumsbakery.com.au/
+egg free cakes sydney,False,5,182,72,/blog/best-eggless-cake-shops-sydney-2026,6.2,6.2,False,/blog/eggless-cake-for-vegetarians-sydney | /cakes | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /blog/eggless-cake-nut-free-sydney
+organic neem cake in sydney,False,2,255,68,/,58.6,58.6,False,/cakes
+dairy free cakes delivered sydney,False,2,129,64,/blog/best-eggless-cake-shops-sydney-2026,24.9,24.9,False,/
+cake shop in harris park,False,4,139,63,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,6.7,1.4,True,/ | http://www.numnumsbakery.com.au/ | /blog/best-dessert-shop-sydney
+eggless cake shop near me,False,4,111,63,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,6.0,6.0,False,/blog/best-eggless-cake-shops-sydney-2026 | / | /blog/eggless-cakes-dean-park
+nam nam bakery,False,5,122,57,/,1.8,1,True,/order | /cakes | http://www.numnumsbakery.com.au/ | /about
+number cakes sydney,False,2,146,57,/,75.9,72.4,True,/cakes
+bakery near me,False,3,353,49,/,9.3,1.3,True,http://www.numnumsbakery.com.au/ | /cakes
+eggless cake in sydney,False,5,84,47,/blog/best-eggless-cake-shops-sydney-2026,6.1,6.1,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /cakes | / | /blog/eggless-cake-for-vegetarians-sydney
+cake shop riverstone,False,3,125,45,/,1.7,1.0,True,/cakes | /blog/eggless-cake-bakery-harris-park-riverstone-sydney
+eggless cupcakes near me,False,4,87,43,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,7.0,7.0,False,/blog/best-eggless-cake-shops-sydney-2026 | / | /blog/eggless-cakes-doonside
+15 cullum street bossley park nsw 2176,False,3,106,43,/,41.1,12.8,True,/cakes | /blog/eggless-cakes-bossley-park
+dairy free cake delivery sydney,False,3,91,43,/blog/best-eggless-cake-shops-sydney-2026,25.3,25.3,False,/ | /cakes
+bakery harris park,False,2,85,41,/,3.1,3.1,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney
+harris park bakery,False,2,129,38,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,7.4,3.2,True,/
+indian cake shop near me,False,4,64,37,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,5.0,5.0,False,/blog/best-eggless-cake-shops-sydney-2026 | / | /indian-sweet
+rasmalai cake near me,False,3,132,33,/,8.3,4.6,True,/cakes | /blog/eggless-cakes-schofields
+egg free cakes mount druitt,False,5,46,33,/blog/eggless-cakes-whalan,15,2,True,/blog/best-eggless-cake-shops-sydney-2026 | /blog/eggless-cakes-mount-druitt | /blog/eggless-cake-for-vegetarians-sydney | /blog/eggless-cakes-minchinbury
+number cake sydney,False,3,118,32,/,66.0,66.0,False,/cakes | /order
+nut free cakes sydney,False,2,120,32,/blog/best-eggless-cake-shops-sydney-2026,21.2,13.1,True,/blog/eggless-cake-nut-free-sydney
+dessert near me,False,2,323,31,/,17.7,16.7,True,http://www.numnumsbakery.com.au/
+cakes near me,False,3,199,30,/,9.7,5.1,True,http://www.numnumsbakery.com.au/ | /cakes
+num noms cake,False,4,70,29,/,17.4,17.4,False,/cakes | /order | /services/birthday-cakes/
+bakery riverstone,False,3,138,28,/,3.2,3.2,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /cakes
+halal bakery sydney,False,2,148,25,/,43.8,17.3,True,/blog/halal-friendly-cakes-eggless-sydney
+nam's eggless bakes,False,3,46,22,/blog/best-eggless-cake-shops-sydney-2026,5.7,5.7,False,/ | /cakes
+15 cullum street bossley park,False,3,73,21,/,44.9,13.2,True,/cakes | /blog/eggless-cakes-bossley-park
+eggless cake delivery sydney,False,4,47,21,/blog/best-eggless-cake-shops-sydney-2026,6.4,6.4,False,/cakes | / | /blog/eggless-cake-for-vegetarians-sydney
+sydney office cakes,False,2,60,20,/blog/corporate-cake-sydney,9.6,9.6,False,/blog/eggless-cake-office-birthday-sydney
+halal cake shop sydney,False,2,85,19,/,44.2,20.8,True,/blog/halal-friendly-cakes-eggless-sydney
+cake near me,False,3,177,18,/,7.8,1.9,True,http://www.numnumsbakery.com.au/ | /cakes
+cake shops near me,False,3,114,17,/,8.8,5.2,True,http://www.numnumsbakery.com.au/ | /cakes
+eggless pastry near me,False,3,35,16,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,6.9,3.2,True,/blog/best-eggless-cake-shops-sydney-2026 | /
+eggless bakery,False,3,26,16,/blog/best-eggless-cake-shops-sydney-2026,7.2,7.2,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /
+office cakes sydney,False,2,49,16,/blog/corporate-cake-sydney,15.0,15.0,False,/blog/eggless-cake-office-birthday-sydney
+the sum of sweets eggless cake,False,3,25,16,/cakes,8.3,8.3,False,/blog/best-eggless-cake-shops-sydney-2026 | /blog
+bakery in harris park,False,2,33,15,/,4.2,4.2,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney
+riverstone cake shop,False,3,26,14,/,1.5,1,True,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /cakes
+premium bakery silverwater,False,2,53,14,/blog/eggless-cakes-silverwater,7.7,7.7,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney
+wedding cake cost sydney,False,2,30,14,/blog/wedding-cake-sydney-north-west,15.9,11,True,/blog/cake-price-guide-sydney
+nomnom cake,False,2,45,13,/,5.7,5.7,False,/cakes
+eggless cake wentworthville,False,2,36,13,/,6.0,6.0,False,/blog
+kids cake sydney,False,2,31,13,/cakes,41.8,20.9,True,/blog/kids-birthday-cake-north-west-sydney
+best eggless cake near me,False,2,28,12,/blog/best-eggless-cake-shops-sydney-2026,4.8,4.8,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney
+cake shop,False,2,105,12,/,14.9,14.8,True,http://www.numnumsbakery.com.au/
+eggless birthday cake near me,False,2,28,12,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,6.9,6.9,False,/blog/best-eggless-cake-shops-sydney-2026
+indian cakes near me,False,3,22,12,/,12.8,4.7,True,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /indian-sweet
+halal cakes sydney,False,2,56,12,/,40.9,18.3,True,/blog/halal-friendly-cakes-eggless-sydney
+indian bakery near me,False,2,61,11,/indian-sweet,8.1,8.1,False,/
+baby shower cakes sydney,False,2,36,11,/cakes,22.6,22.6,False,/
+bakery,False,2,78,11,/,9.4,9.4,False,http://www.numnumsbakery.com.au/
+bakery marsden park,False,2,29,11,/blog/best-dessert-shop-sydney,9.1,7.5,True,/
+eggless bakery near me,False,3,22,11,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,3.6,3.6,False,/ | /blog/best-eggless-cake-shops-sydney-2026
+nut free cakes parramatta,False,3,24,11,/,64.4,48.2,True,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /blog/eggless-cakes-near-me-sydney
+anniversary cake sydney,False,2,89,10,/blog/anniversary-cake-sydney,17.7,17.7,False,/blog/eggless-cakes-anniversary-sydney
+cake delivery north sydney,False,3,19,10,/,52.4,28.4,True,/blog/eggless-cake-delivery-sydney | /cakes
+custom cake consultation,False,2,24,10,/blog/custom-cake-sydney,68.5,2.3,True,/blog/cake-consultation-sydney
+egg free cakes cherrybrook,False,2,44,10,/blog/eggless-cakes-dean-park,21.7,20,True,/blog/best-eggless-cake-shops-sydney-2026
+parramatta cake shop,False,2,51,9,/,14.9,14.3,True,http://www.numnumsbakery.com.au/
+semi naked cake chatswood,False,2,22,9,/blog/naked-cake-sydney,20.9,8,True,/blog/semi-naked-cake-sydney
+buy eggless cake,False,2,18,8,/blog/best-eggless-cake-shops-sydney-2026,6.5,6.5,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney
+gulab jamun cake near me,False,2,24,8,/indian-sweet,10.8,10.8,False,/
+egg free cakes castle hill,False,2,44,8,/blog/best-eggless-cake-shops-sydney-2026,5.1,5.1,False,/blog/eggless-cakes-grantham-farm
+nut free cakes cherrybrook,False,2,22,8,/,84.1,5.6,True,/blog/eggless-cakes-cherrybrook
+semi naked cake darlinghurst,False,2,38,8,/blog/naked-cake-sydney,14.4,6,True,/blog/semi-naked-cake-sydney
+rasmalai cake,False,2,93,7,/,4.0,4.0,False,http://www.numnumsbakery.com.au/
+"""riverstone bakery"" bakery",False,2,18,7,/blog/eggless-cakes-annangrove,10.2,9.1,True,/blog/cake-shop-near-me-marsden-park-talawong
+birthday cake and smash cake,False,2,19,7,/blog/first-birthday-cake-sydney,19.3,19.1,True,/blog/cake-smash-vs-first-birthday-cake-sydney
+eggless,False,2,20,7,/blog/best-eggless-cake-shops-sydney-2026,10,2.6,True,/cakes
+indian bakery,False,2,208,7,/indian-sweet,10.6,7,True,/blog/best-eggless-cake-shops-sydney-2026
+marsden park bakery,False,2,21,7,/blog/best-dessert-shop-sydney,9.9,9.4,True,/
+sydney office cake delivery,False,2,25,7,/blog/eggless-cake-office-birthday-sydney,26,26,False,/blog/cake-delivery-sydney
+no egg cake near me,False,2,14,6,/blog/best-eggless-cake-shops-sydney-2026,6.1,4.3,True,/blog/eggless-cake-bakery-harris-park-riverstone-sydney
+"""riverstone bakery""",False,2,20,6,/blog/cake-shop-near-me-marsden-park-talawong,8.1,8.1,False,/blog/best-dessert-shop-sydney
+"""riverstone bakery"" website",False,2,85,6,/blog/cake-shop-near-me-marsden-park-talawong,7.1,7.1,False,/blog/best-dessert-shop-sydney
+cupcakes north sydney,False,2,13,6,/blog/best-dessert-shop-sydney,24.3,24.3,False,/
+dairy free cakes sydney,False,2,128,6,/blog/best-eggless-cake-shops-sydney-2026,17.7,17.7,False,/
+desserts near me,False,2,62,6,/,17.6,16.7,True,http://www.numnumsbakery.com.au/
+small cakes sydney,False,2,13,6,/,44.1,11.7,True,/blog/eggless-cake-small-gatherings-sydney
+vegan cakes cherrybrook,False,2,18,6,/,70.1,9.8,True,/blog/eggless-cakes-cherrybrook
+eggless cake order online,False,2,13,5,/blog/best-eggless-cake-shops-sydney-2026,8,6.2,True,/order
+birthday cake north sydney,False,2,11,5,/,55.7,55.7,False,/cakes
+cake eggless near me,False,2,12,5,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,9.6,4.4,True,/blog/best-eggless-cake-shops-sydney-2026
+dairy free cakes delivery sydney,False,2,56,5,/blog/best-eggless-cake-shops-sydney-2026,24.7,24.7,False,/
+do eggless cakes taste different,False,2,12,5,/blog/eggless-cake-texture-moist,6,5.2,True,/blog/eggless-cake-reviews-sydney
+donut near me,False,2,16,5,/,6.4,2.4,True,http://www.numnumsbakery.com.au/
+eggless cake bakery,False,2,10,5,/blog/eggless-cake-bakery-harris-park-riverstone-sydney,6.4,6.4,False,/blog/best-eggless-cake-shops-sydney-2026
+halal cake shop,False,2,27,5,/,42.6,22.6,True,/blog/halal-friendly-cakes-eggless-sydney
+indian cake shop,False,2,13,5,/indian-sweet,18.2,9.2,True,/
+sydney dairy free cake delivery,False,2,20,5,/blog/best-eggless-cake-shops-sydney-2026,31.7,31.7,False,/
+num num bakery,True,61,4495,3524,/,2.1,1.3,True,/order | /cakes | /about | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | http://www.numnumsbakery.com.au/ | /blog/eggless-cakes-dean-park | /blog/eggless-cakes-schofields | /blog/eggless-cakes-doonside
+numnum bakery,True,6,691,472,/,1.4,1.4,False,/order | /cakes | /about | http://www.numnumsbakery.com.au/ | /blog/eggless-cake-bakery-harris-park-riverstone-sydney
+num nums bakery,True,13,946,584,/,1.7,1.7,False,/order | /cakes | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /about | http://www.numnumsbakery.com.au/ | /blog/eggless-cakes-quakers-hill | /blog/eggless-cakes-dean-park | /blog/eggless-cakes-winston-hills
+num num bakery riverstone,True,13,1069,805,/,1.2,1.2,False,/order | /cakes | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | http://www.numnumsbakery.com.au/ | /blog/eggless-cakes-schofields | /blog/eggless-cakes-dean-park | /blog/eggless-cakes-riverstone | /blog/eggless-cakes-shanes-park
+numnums bakery,True,5,231,130,/,1.8,1.8,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /order | /cakes | /about
+num num bakery harris park,True,22,616,508,/,1.2,1,True,/order | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /about | /cakes | /blog | /blog/eggless-cakes-prairiewood | /blog/eggless-cakes-sydney-olympic-park | /blog/eggless-cakes-marsfield
+num num riverstone,True,9,464,341,/,1.0,1.0,False,/cakes | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /order | /blog/eggless-cakes-dean-park | /blog/eggless-cakes-schofields | /blog/eggless-cakes-riverstone | /blog/eggless-cakes-lalor-park | /blog
+num nums bakery riverstone menu,True,15,294,216,/,2.6,2.6,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /blog/eggless-cakes-dean-park | /indian-sweet | /cakes | /blog/eggless-cakes-mcgraths-hill | /blog/eggless-cakes-woodcroft | /blog/eggless-cake-for-vegetarians-sydney | /blog/eggless-cakes-minchinbury
+num num harris park,True,10,415,313,/,1.0,1.0,False,/order | /about | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /blog/eggless-cakes-birrong | /blog/eggless-cakes-villawood | /cakes | /blog | /blog/eggless-cakes-dundas
+nums nums bakery,True,5,88,44,/,1.5,1.2,True,/order | /about | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /cakes
+num nums bakery harris park,True,7,166,125,/,1.0,1.0,False,/order | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /about | /blog | /cakes | /blog/eggless-cakes-newington
+num num cakes,True,10,224,173,/,1.5,1.5,False,/cakes | /order | /about | /blog/best-cake-sydney | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /blog/photo-cake-sydney | /blog/eggless-cakes-schofields | /blog/cake-price-guide-sydney
+num num,True,3,406,11,/,2.6,1.2,True,/cakes | http://www.numnumsbakery.com.au/
+num nums bakery menu,True,15,259,170,/,3.3,3.3,False,/blog/eggless-cake-bakery-harris-park-riverstone-sydney | /cakes | /blog | /order | /blog/best-dessert-shop-sydney | /blog/eggless-cakes-birrong | /blog/eggless-cakes-merrylands-west | /blog/eggless-cakes-prairiewood
+num nums bakery riverstone,True,13,373,288,/,1.6,1.6,False,/cakes | /blog/eggless-cake-bakery-harris-park-riverstone-sydney | /order | /indian-sweet | /contact/ | /blog/eggless-cakes-dean-park | /blog/eggless-cakes-riverstone | /blog/eggless-cakes-castle-hill
+num nums,True,2,784,6,/,5.5,1.3,True,/cakes
+num nums bakery photos,True,8,163,95,/,2.9,2.9,False,/blog | /about | /order | /cakes | /blog/eggless-cakes-auburn | /blog/eggless-cakes-winston-hills | /blog/photo-cake-sydney
+num num bakery wentworthville,True,9,399,273,/,2.2,2.2,False,/blog | /order | /about | /contact/ | /blog/eggless-cakes-mays-hill | /blog/eggless-cakes-constitution-hill | /indian-sweet | /blog/eggless-cakes-wentworth-point
+numnums,True,2,156,6,/,3.6,1,True,/cakes
+num nums bakery reviews,True,4,166,66,/,3.8,3.8,False,/blog/eggless-cake-reviews-sydney | /order | /blog/eggless-cake-bakery-harris-park-riverstone-sydney
+num num cake wentworthville,True,3,86,32,/,4.1,4.1,False,/order | /blog
+num nums hunger bees,True,4,61,17,/,8.0,8.0,False,/order | /cakes | /about
