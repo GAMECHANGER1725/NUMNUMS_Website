@@ -24,3 +24,6 @@ temporary screenshots/
 # Python bytecode (vendored seo-audit scripts)
 __pycache__/
 *.pyc
+
+# Local-only credentials — never commit. This repo is public on GitHub.
+ops/OPS-LOGINS.md
