@@ -71,7 +71,7 @@
 
 [[redirects]]
   from = "/services/feed/"
-  to = "/blog"
+  to = "/blog/"
   status = 301
 
 [[redirects]]
@@ -127,12 +127,12 @@
 
 [[redirects]]
   from = "/the-art-of-decorating-cakes-modern-cake-designs/"
-  to = "/blog"
+  to = "/blog/"
   status = 301
 
 [[redirects]]
   from = "/the-art-of-decorating-cakes-modern-cake-designs/feed/"
-  to = "/blog"
+  to = "/blog/"
   status = 301
 
 # ── Clean-URL canonicalisation: .html → extensionless (301) ─────────────────
@@ -2287,7 +2287,7 @@
 
 [[redirects]]
   from = "/category/*"
-  to = "/blog"
+  to = "/blog/"
   status = 301
 
 [[redirects]]

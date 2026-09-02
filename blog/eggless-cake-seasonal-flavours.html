@@ -716,10 +716,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <div style="background:#fff;border-radius:1.25rem;padding:1.5rem;border:1px solid rgba(200,84,120,0.10);">
           <div class="section-label" style="margin-bottom:1rem;">Related Posts</div>
           <div style="display:flex;flex-direction:column;gap:0.9rem;">
-            <a href="eggless-cake-flavours.html" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;border-bottom:1px solid rgba(200,84,120,0.08);padding-bottom:0.9rem;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Complete Guide to Eggless Cake Flavours</a>
-            <a href="eggless-cake-flavour-pairing-guide.html" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;border-bottom:1px solid rgba(200,84,120,0.08);padding-bottom:0.9rem;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Eggless Cake Flavour Pairing Guide</a>
-            <a href="eggless-cake-for-birthday.html" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;border-bottom:1px solid rgba(200,84,120,0.08);padding-bottom:0.9rem;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Eggless Cake for Birthday — Full Guide</a>
-            <a href="eggless-cake-types.html" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Types of Eggless Cakes — A Sydney Guide</a>
+            <a href="/blog/eggless-cake-flavours" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;border-bottom:1px solid rgba(200,84,120,0.08);padding-bottom:0.9rem;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Complete Guide to Eggless Cake Flavours</a>
+            <a href="/blog/eggless-cake-flavour-pairing-guide" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;border-bottom:1px solid rgba(200,84,120,0.08);padding-bottom:0.9rem;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Eggless Cake Flavour Pairing Guide</a>
+            <a href="/blog/eggless-cake-for-birthday" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;border-bottom:1px solid rgba(200,84,120,0.08);padding-bottom:0.9rem;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Eggless Cake for Birthday — Full Guide</a>
+            <a href="/blog/eggless-cake-types" style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#2C1A0E;text-decoration:none;line-height:1.5;" onmouseover="this.style.color='#C85478'" onmouseout="this.style.color='#2C1A0E'">Types of Eggless Cakes — A Sydney Guide</a>
           </div>
         </div>
       </aside>
@@ -764,7 +764,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <a href="/about" class="footer-nav-link">About Us</a>
             <a href="/locations" class="footer-nav-link">Locations</a>
             <a href="/blog/" class="footer-nav-link">Blog</a>
-            <a href="/contact" class="footer-nav-link">Contact</a>
+            <a href="/order" class="footer-nav-link">Contact</a>
           </div>
         </div>
         <div>
@@ -784,8 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <div style="border-top:1px solid rgba(255,248,242,0.08);padding-top:1.75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
         <p style="font-family:'Jost',sans-serif;font-size:0.8rem;color:rgba(255,248,242,0.25);margin:0;">© 2026 Num Num's Bakery. All rights reserved.</p>
         <div style="display:flex;gap:1.5rem;">
-          <a href="/privacy" class="footer-nav-link" style="font-size:0.78rem;">Privacy</a>
-          <a href="/terms" class="footer-nav-link" style="font-size:0.78rem;">Terms</a>
+          <a href="/privacy-policy" class="footer-nav-link" style="font-size:0.78rem;">Privacy</a>
         </div>
       </div>
     </div>
@@ -819,7 +818,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   </script>
   <!-- Lenis smooth scroll -->
-  <script src="https://unpkg.com/@studio-freight/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
   <script>
     const lenis = new Lenis({ duration:1.2, easing:(t)=>Math.min(1,1.001-Math.pow(2,-10*t)), smoothWheel:true });
     let prog = document.createElement('div');

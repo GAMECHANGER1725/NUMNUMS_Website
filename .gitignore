@@ -20,3 +20,7 @@ node_modules/
 # Temp files
 temporary screenshots/
 *.tmp
+
+# Python bytecode (vendored seo-audit scripts)
+__pycache__/
+*.pyc
