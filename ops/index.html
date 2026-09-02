@@ -388,6 +388,99 @@ button { background: none; border: 0; cursor: pointer; }
 
 .req { color: var(--rose); }
 
+/* ── Date + time picker ─────────────────────────────────────────────────── */
+/* Replaces <input type="datetime-local">, whose popup is browser chrome and
+   cannot be styled — it arrived bright blue in the middle of a warm cream
+   sheet. This one is brand-coloured and its targets are sized for a thumb. */
+.datefield {
+  width: 100%; min-height: var(--tap);
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 13px; text-align: left;
+  background: #fff; border: 1px solid var(--dough-line); border-radius: 10px;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.datefield:hover { border-color: var(--taupe); }
+.datefield[aria-expanded="true"] {
+  border-color: var(--rose); box-shadow: 0 0 0 3px rgba(200,84,120,.14);
+}
+.datefield-value { flex: 1; font-variant-numeric: tabular-nums; }
+.datefield-value.is-empty { color: var(--taupe); }
+.datefield svg { width: 17px; height: 17px; stroke: var(--taupe); fill: none; stroke-width: 1.6; }
+
+.cal {
+  margin-top: 9px; padding: 13px;
+  background: var(--cream);
+  border: 1px solid var(--dough-line); border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+.cal-head { display: flex; align-items: center; gap: 6px; margin-bottom: 11px; }
+.cal-month {
+  flex: 1; text-align: center;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px; font-weight: 600;
+  font-variant-numeric: lining-nums;
+}
+.cal-nav {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: grid; place-items: center; color: var(--ink-soft);
+  transition: background-color .16s ease;
+}
+.cal-nav:hover { background: var(--dough); }
+.cal-nav svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+.cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-dow { margin-bottom: 3px; }
+.cal-dow span {
+  text-align: center; font-size: 10px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--taupe);
+}
+.cal-day {
+  aspect-ratio: 1; min-height: 38px; border-radius: 9px;
+  font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink);
+  transition: background-color .14s ease, color .14s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
+}
+.cal-day:hover { background: var(--dough); }
+.cal-day:active { transform: scale(.9); }
+.cal-day.is-other { color: var(--dough-line); }
+.cal-day.is-past  { color: var(--taupe); opacity: .55; }
+.cal-day.is-today { box-shadow: inset 0 0 0 1.5px var(--dough-line); font-weight: 600; }
+.cal-day.is-selected {
+  background: var(--rose); color: #fff; font-weight: 500;
+  box-shadow: 0 2px 8px -2px rgba(200,84,120,.55);
+}
+.cal-day.is-selected:hover { background: var(--rose-deep); }
+
+.cal-time {
+  display: flex; align-items: center; gap: 7px;
+  margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--dough-line);
+}
+.cal-time .select { min-height: 40px; padding: 8px 28px 8px 11px; flex: 1; }
+.cal-colon { color: var(--taupe); font-weight: 500; }
+.ampm { display: flex; gap: 2px; padding: 2px; background: var(--dough); border-radius: 9px; }
+.ampm button {
+  min-height: 36px; padding: 0 11px; border-radius: 7px;
+  font-size: 13px; font-weight: 500; color: var(--ink-soft);
+  transition: background-color .16s ease, color .16s ease;
+}
+.ampm button[aria-pressed="true"] { background: var(--cream); color: var(--ink); box-shadow: var(--shadow-card); }
+
+.cal-foot { display: flex; gap: 7px; margin-top: 11px; }
+.cal-foot .btn { flex: 1; min-height: 40px; font-size: 14px; }
+
+/* ── Photo attach / remove ──────────────────────────────────────────────── */
+.photo-shot { position: relative; flex: none; }
+.photo-remove {
+  position: absolute; top: -7px; right: -7px;
+  width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--ink); color: var(--cream);
+  font-size: 13px; line-height: 1;
+  box-shadow: 0 2px 6px rgba(44,26,14,.35);
+  transition: background-color .16s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
+}
+.photo-remove:hover { background: var(--rose-deep); }
+.photo-remove:active { transform: scale(.88); }
+
 /* ── Analytics ──────────────────────────────────────────────────────────── */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 8px; }
 .stat {

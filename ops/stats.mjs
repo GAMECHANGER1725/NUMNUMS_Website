@@ -194,3 +194,54 @@ export function bakerSections(orders, now = new Date()) {
   };
   return [...sections.entries()].sort((a, b) => rank(a[0]) - rank(b[0]));
 }
+
+/**
+ * Six Sunday-start weeks covering a month, for the date picker grid.
+ * Always six rows so the panel never changes height between months, which
+ * would make the buttons below it jump under a thumb mid-tap.
+ * `month` is 1-12. Dates are built in UTC purely as calendar arithmetic; the
+ * keys they produce are compared against Sydney day keys, never re-timezoned.
+ */
+export function monthGrid(year, month) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const first = Date.UTC(year, month - 1, 1);
+  const start = first - new Date(first).getUTCDay() * 86400000;
+
+  const weeks = [];
+  for (let w = 0; w < 6; w++) {
+    const row = [];
+    for (let d = 0; d < 7; d++) {
+      const dt = new Date(start + (w * 7 + d) * 86400000);
+      row.push({
+        key: `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`,
+        day: dt.getUTCDate(),
+        inMonth: dt.getUTCMonth() === month - 1,
+      });
+    }
+    weeks.push(row);
+  }
+  return weeks;
+}
+
+/** Step a {year, month} pair by whole months, rolling the year over. */
+export function shiftMonth(year, month, by) {
+  const i = (year * 12 + (month - 1)) + by;
+  return { year: Math.floor(i / 12), month: (i % 12) + 1 };
+}
+
+/** A Sydney day key + local hour/minute back into a real instant. */
+export function sydneyDateTimeToISO(dayKey, hour, minute) {
+  const [y, m, d] = dayKey.split('-').map(Number);
+  // Sydney is UTC+10 or +11; try both and keep whichever round-trips to the
+  // wall-clock time that was actually chosen. Beats hard-coding the DST rules.
+  for (const offset of [10, 11]) {
+    const guess = new Date(Date.UTC(y, m - 1, d, hour - offset, minute));
+    const back = sydneyParts(guess);
+    if (back.dayKey === dayKey && back.hour === hour && back.minute === minute) {
+      return guess.toISOString();
+    }
+  }
+  // Inside the skipped hour of a DST jump that wall-clock time does not exist;
+  // +10 lands on the next valid instant, which is what a clock would show.
+  return new Date(Date.UTC(y, m - 1, d, hour - 10, minute)).toISOString();
+}

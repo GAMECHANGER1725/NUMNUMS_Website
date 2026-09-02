@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, paidOn,
   summarise, weeklyStats, busiestHours, normalisePhone,
-  repeatCustomers, bakerSections,
+  repeatCustomers, bakerSections, monthGrid, shiftMonth, sydneyDateTimeToISO,
 } from './stats.mjs';
 
 let passed = 0;
@@ -153,6 +153,56 @@ test('pickup hours histogram uses Sydney time', () => {
   const h = busiestHours([{ status: 'placed', due_at: '2026-09-02T06:00:00Z' }]); // 16:00 AEST
   assert.equal(h[16], 1);
   assert.equal(h.reduce((a, b) => a + b, 0), 1);
+});
+
+// ── Date picker ─────────────────────────────────────────────────────────────
+test('month grid is six Sunday-start weeks with the month marked', () => {
+  const g = monthGrid(2026, 9);              // Sep 2026 starts on a Tuesday
+  assert.equal(g.length, 6);
+  assert.ok(g.every((w) => w.length === 7));
+  assert.equal(g[0][0].key, '2026-08-30');   // leading Sunday from August
+  assert.equal(g[0][0].inMonth, false);
+  assert.equal(g[0][2].key, '2026-09-01');   // the 1st lands on Tuesday
+  assert.equal(g[0][2].inMonth, true);
+  assert.equal(g[0][2].day, 1);
+});
+
+test('month grid holds its shape across a year boundary', () => {
+  const dec = monthGrid(2026, 12);
+  assert.equal(dec.length, 6);
+  assert.ok(dec.flat().some((d) => d.key === '2026-12-31' && d.inMonth));
+  assert.ok(dec.flat().some((d) => d.key.startsWith('2027-01')));
+});
+
+test('stepping months rolls the year over', () => {
+  assert.deepEqual(shiftMonth(2026, 12, 1), { year: 2027, month: 1 });
+  assert.deepEqual(shiftMonth(2026, 1, -1), { year: 2025, month: 12 });
+  assert.deepEqual(shiftMonth(2026, 9, 3), { year: 2026, month: 12 });
+});
+
+test('picked wall-clock time round-trips to the same Sydney time', () => {
+  // AEST (+10)
+  const a = sydneyDateTimeToISO('2026-09-03', 15, 30);
+  const pa = sydneyParts(a);
+  assert.equal(pa.dayKey, '2026-09-03');
+  assert.equal(pa.hour, 15);
+  assert.equal(pa.minute, 30);
+
+  // AEDT (+11), after the October changeover — a fixed +10 would be an hour out
+  const b = sydneyDateTimeToISO('2026-10-05', 19, 0);
+  const pb = sydneyParts(b);
+  assert.equal(pb.dayKey, '2026-10-05');
+  assert.equal(pb.hour, 19);
+});
+
+test('a late-evening pickup does not slide into the next day', () => {
+  // 11pm Sydney is already tomorrow in UTC; the stored instant must still read
+  // back as 11pm on the chosen day.
+  const iso = sydneyDateTimeToISO('2026-09-03', 23, 0);
+  assert.ok(iso.endsWith('Z'));
+  assert.equal(sydneyParts(iso).dayKey, '2026-09-03');
+  assert.equal(sydneyParts(iso).hour, 23);
+  assert.equal(dayBucket(iso, sydneyDateTimeToISO('2026-09-03', 9, 0)), 'Today');
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

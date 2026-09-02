@@ -13,6 +13,7 @@ import {
 import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, summarise, weeklyStats,
   busiestHours, repeatCustomers, bakerSections, paidOn,
+  monthGrid, shiftMonth, sydneyDateTimeToISO,
 } from './stats.mjs';
 
 const $ = (id) => document.getElementById(id);
@@ -463,8 +464,15 @@ function openNewOrder() {
       </div>
 
       <div class="field">
-        <label class="field-label" for="f-due">Pick up <span class="req">*</span></label>
-        <input class="input" id="f-due" type="datetime-local" required>
+        <span class="field-label">Pick up <span class="req">*</span></span>
+        <button type="button" class="datefield" id="f-due-btn" aria-expanded="false">
+          <span class="datefield-value is-empty" id="f-due-label">Choose a date and time</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>
+          </svg>
+        </button>
+        <div class="cal hidden" id="f-due-cal"></div>
+        <input type="hidden" id="f-due">
       </div>
 
       <div class="row-2">
@@ -491,7 +499,11 @@ function openNewOrder() {
       <div class="field" id="photo-field">
         <label class="field-label" for="f-photo">Design photo <span class="req" id="photo-req">*</span></label>
         <div class="photo-drop">
-          <img class="photo-preview hidden" id="photo-preview" alt="">
+          <span class="photo-shot hidden" id="photo-shot">
+            <img class="photo-preview" id="photo-preview" alt="Attached design photo">
+            <button type="button" class="photo-remove" id="photo-remove"
+                    aria-label="Remove this photo">✕</button>
+          </span>
           <div style="flex:1">
             <input type="file" id="f-photo" accept="image/*" capture="environment"
                    style="max-width:100%;font-size:13px;">
@@ -534,17 +546,47 @@ function openNewOrder() {
     $('f-name').focus();
   }));
 
+  // Attaching the wrong photo is easy on a phone, so it has to be undoable.
+  const showPhoto = (file) => {
+    const prev = $('photo-preview');
+    if (prev.dataset.url) URL.revokeObjectURL(prev.dataset.url);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      prev.src = url;
+      prev.dataset.url = url;
+      $('photo-shot').classList.remove('hidden');
+    } else {
+      prev.removeAttribute('src');
+      delete prev.dataset.url;
+      $('photo-shot').classList.add('hidden');
+    }
+  };
+
   $('f-photo').addEventListener('change', (e) => {
     photoFile = e.target.files[0] || null;
-    const prev = $('photo-preview');
-    if (photoFile) { prev.src = URL.createObjectURL(photoFile); prev.classList.remove('hidden'); }
-    else prev.classList.add('hidden');
+    showPhoto(photoFile);
   });
+
+  $('photo-remove').addEventListener('click', () => {
+    photoFile = null;
+    $('f-photo').value = '';   // clears the file input's own "no file chosen" text
+    showPhoto(null);
+    $('f-photo').focus();
+  });
+
+  const due = mountDuePicker();
 
   $('order-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = $('save-order'), msg = $('order-msg');
     const walkIn = kind === 'normal' && $('walkin').value === 'now';
+
+    if (!due.value()) {
+      msg.textContent = 'Pick the date and time the cake is being collected.';
+      msg.className = 'msg msg-error';
+      $('f-due-btn').focus();
+      return;
+    }
 
     if (kind === 'custom' && !photoFile) {
       msg.textContent = 'A custom cake needs a photo of the design.';
@@ -554,15 +596,13 @@ function openNewOrder() {
 
     btn.disabled = true; btn.textContent = 'Saving…'; msg.textContent = ''; msg.className = 'msg';
     try {
-      // datetime-local has no timezone; the staff member is standing in Sydney,
-      // so read it as local wall-clock time, which is what they typed.
       const order = await createOrder({
         store: mine.length > 1 ? $('f-store').value : mine[0].code,
         kind,
         walk_in: walkIn,
         customer_name: $('f-name').value.trim(),
         customer_phone: $('f-phone').value.trim() || null,
-        due_at: new Date($('f-due').value).toISOString(),
+        due_at: due.value(),
         flavour: $('f-flavour').value.trim() || null,
         size: $('f-size').value.trim() || null,
         wording: $('f-wording').value.trim() || null,
@@ -593,6 +633,153 @@ function openNewOrder() {
       btn.disabled = false; btn.textContent = 'Save order';
     }
   });
+}
+
+/**
+ * Date + time picker for the pickup field.
+ *
+ * The native <input type="datetime-local"> popup is browser chrome: it cannot
+ * be styled, and it rendered as a bright blue system panel in the middle of a
+ * cream sheet. This is a plain calendar grid plus three time controls, built
+ * from the same Sydney date helpers the rest of the app uses, so a pickup time
+ * means the same thing here as it does on the baker's list.
+ *
+ * Returns { value } — the chosen instant as an ISO string, or '' if unset.
+ */
+function mountDuePicker() {
+  const btn    = $('f-due-btn');
+  const panel  = $('f-due-cal');
+  const label  = $('f-due-label');
+  const hidden = $('f-due');
+
+  const today = sydneyParts(new Date());
+  let view = { year: today.year, month: today.month };
+  let selected = null;
+  let hour = 15, minute = 0;   // 3pm: a sane default pickup, still overridable
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const addDays = (key, n) => {
+    const [y, m, d] = key.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d + n));
+    return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`;
+  };
+  // Formatting a UTC-midnight date in UTC keeps the calendar date intact.
+  const dayLabel = (key, opts) => {
+    const [y, m, d] = key.split('-').map(Number);
+    return new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', ...opts })
+      .format(new Date(Date.UTC(y, m - 1, d)));
+  };
+  const timeLabel = () => {
+    const h12 = ((hour + 11) % 12) + 1;
+    return `${h12}:${pad(minute)} ${hour < 12 ? 'am' : 'pm'}`;
+  };
+
+  function commit() {
+    if (!selected) { hidden.value = ''; return; }
+    hidden.value = sydneyDateTimeToISO(selected, hour, minute);
+    label.textContent = `${dayLabel(selected, { weekday: 'short', day: 'numeric', month: 'short' })} · ${timeLabel()}`;
+    label.classList.remove('is-empty');
+  }
+
+  function paint() {
+    const h12 = ((hour + 11) % 12) + 1;
+    const isPm = hour >= 12;
+    const monthName = new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', month: 'long', year: 'numeric' })
+      .format(new Date(Date.UTC(view.year, view.month - 1, 15)));
+
+    panel.innerHTML = `
+      <div class="cal-head">
+        <button type="button" class="cal-nav" data-step="-1" aria-label="Previous month">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <div class="cal-month">${esc(monthName)}</div>
+        <button type="button" class="cal-nav" data-step="1" aria-label="Next month">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+
+      <div class="cal-dow">${['S','M','T','W','T','F','S'].map((d) => `<span>${d}</span>`).join('')}</div>
+
+      <div class="cal-grid">
+        ${monthGrid(view.year, view.month).flat().map((d) => `
+          <button type="button" data-day="${d.key}"
+            aria-label="${esc(dayLabel(d.key, { weekday: 'long', day: 'numeric', month: 'long' }))}"
+            aria-pressed="${d.key === selected}"
+            class="cal-day${d.inMonth ? '' : ' is-other'}${d.key === today.dayKey ? ' is-today' : ''}${d.key === selected ? ' is-selected' : ''}${d.key < today.dayKey ? ' is-past' : ''}"
+          >${d.day}</button>`).join('')}
+      </div>
+
+      <div class="cal-time">
+        <select class="select nums" id="cal-h" aria-label="Hour">
+          ${Array.from({ length: 12 }, (_, i) => i + 1).map((h) =>
+            `<option value="${h}"${h === h12 ? ' selected' : ''}>${h}</option>`).join('')}
+        </select>
+        <span class="cal-colon">:</span>
+        <select class="select nums" id="cal-m" aria-label="Minute">
+          ${Array.from({ length: 12 }, (_, i) => i * 5).map((m) =>
+            `<option value="${m}"${m === minute ? ' selected' : ''}>${pad(m)}</option>`).join('')}
+        </select>
+        <div class="ampm">
+          <button type="button" data-ampm="am" aria-pressed="${!isPm}">am</button>
+          <button type="button" data-ampm="pm" aria-pressed="${isPm}">pm</button>
+        </div>
+      </div>
+
+      <div class="cal-foot">
+        <button type="button" class="btn btn-quiet" data-quick="0">Today</button>
+        <button type="button" class="btn btn-quiet" data-quick="1">Tomorrow</button>
+        <button type="button" class="btn btn-primary" data-done>Done</button>
+      </div>`;
+
+    panel.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
+      view = shiftMonth(view.year, view.month, Number(b.dataset.step));
+      paint();
+    }));
+
+    panel.querySelectorAll('[data-day]').forEach((b) => b.addEventListener('click', () => {
+      selected = b.dataset.day;
+      commit();
+      paint();
+    }));
+
+    panel.querySelectorAll('[data-quick]').forEach((b) => b.addEventListener('click', () => {
+      selected = addDays(today.dayKey, Number(b.dataset.quick));
+      const [y, m] = selected.split('-').map(Number);
+      view = { year: y, month: m };
+      commit();
+      paint();
+    }));
+
+    const setTime = () => {
+      const h = Number($('cal-h').value) % 12;
+      hour = h + (panel.querySelector('[data-ampm="pm"]').getAttribute('aria-pressed') === 'true' ? 12 : 0);
+      minute = Number($('cal-m').value);
+      commit();
+    };
+    $('cal-h').addEventListener('change', () => { setTime(); paint(); });
+    $('cal-m').addEventListener('change', () => { setTime(); paint(); });
+    panel.querySelectorAll('[data-ampm]').forEach((b) => b.addEventListener('click', () => {
+      panel.querySelectorAll('[data-ampm]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      setTime();
+      paint();
+    }));
+
+    panel.querySelector('[data-done]').addEventListener('click', () => toggle(false));
+  }
+
+  function toggle(open) {
+    panel.classList.toggle('hidden', !open);
+    btn.setAttribute('aria-expanded', String(open));
+    if (!open) return;
+    paint();
+    // The panel opens inside a scrolling sheet, so on a phone it can appear
+    // below the fold with the month header cut off. Pull it into view.
+    requestAnimationFrame(() => panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+  }
+
+  btn.addEventListener('click', () => toggle(panel.classList.contains('hidden')));
+
+  return { value: () => hidden.value };
 }
 
 // ── Analytics ───────────────────────────────────────────────────────────────
