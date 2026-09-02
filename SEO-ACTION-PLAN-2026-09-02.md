@@ -901,6 +901,42 @@ For any page, in order — stop at the first that applies:
 
 ---
 
+# Appendix A — Defects found during end-of-day QA
+
+None of these came from the research report; all were found by verifying the day's work in a real
+browser, and all are **[Implementation inference]** fixes. They are recorded because each was a live
+functional bug on a page the report's strategy depends on.
+
+| Defect | Scope | Cause | Fix | Verified |
+|---|---|---|---|---|
+| `lenis is not defined` JS error | 16 pages incl. `/cakes`, `/order`, `/about`, `/locations`, `/blog/` | A duplicated Lenis block whose `var lenis = new Lenis(...)` line had been replaced by a comment, leaving bare `lenis.` calls | Removed the duplicate block (also drops a redundant library load) | 0 pages affected |
+| `Lenis is not defined` | 5 pages | `unpkg.com/@studio-freight/lenis@1.1.14` returns **404** — that scoped package version does not exist, so smooth scroll never worked | Repointed to `unpkg.com/lenis@1.1.14/dist/lenis.min.js` (verified 200) | All Lenis URLs resolve |
+| Mobile menu completely broken | `/privacy-policy` | An unterminated single-quoted JS string spanning a newline while building `portal.innerHTML` — the documented Netlify-minify hazard, committed into source | Joined onto one line | 0 inline JS syntax errors site-wide |
+| `tailwind is not defined` | 4 pages | An orphan `tailwind.config` block with no Tailwind script, on pages that use zero Tailwind classes and load the compiled `/style.css` (it even named fonts the pages don't load) | Removed the dead block | 0 pages affected |
+| Invalid SVG `rx="4 4 0 0"` | 2 pages | `rx` takes a single length; browsers ignored it and logged an error | `rx="4"` | Console clean |
+
+**Final QA, post-merge:** `verify-blog.mjs` passes · 247/247 JSON-LD blocks valid · 0 inline JS
+syntax errors · 0 internal-link issues · 0 serving-size contradictions · 0 redirect chains ·
+0 dead `/shop/` URLs · **16/16 sampled pages load with zero JS errors and exactly one `<h1>`.**
+
+# Appendix B — Merge with the monthly SEO routine
+
+The `NumNums-SEO-Monthly` routine pushed commit `8829d4d` (2026-09-01, 51 files) while this work was
+in progress. It was merged rather than overwritten. Two conflicts, both resolved keeping the correct
+half of each side:
+
+- **`llms.txt`** — the routine independently removed the same dead `/shop/` section, converging on
+  today's finding. Its replacement "## Ordering" section was kept, but its phrase "priced by size,
+  flavour, and **design complexity**" was corrected: design-tier pricing was reversed on 2026-08-26.
+  The final file carries the live price table, the canonical 15 flavours, and the ordering section.
+- **`blog/best-dessert-shop-sydney.html`** — took the routine's fix for a stray `</span>` and this
+  work's fix replacing the off-menu flavour name "Chocolate Fudge" with "Chocolate".
+
+`sitemap.xml` was reformatted by the routine and untouched here, so its version was taken whole.
+Both sitemaps carried 240 URLs.
+
+---
+
 ## Sources
 
 - `SEO and Content Strategy Frameworks for Num Num's Bakery.md` — the research report; sole source of recommendations
