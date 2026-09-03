@@ -146,6 +146,7 @@ button { background: none; border: 0; cursor: pointer; }
 
 .topbar {
   position: sticky; top: 0; z-index: 20;
+  padding-top: env(safe-area-inset-top, 0px);
   background: rgba(255,248,242,.93);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--dough-line);
@@ -155,9 +156,9 @@ button { background: none; border: 0; cursor: pointer; }
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   max-width: 940px; margin: 0 auto; padding-bottom: 10px;
 }
-.view-title { font-size: 21px; }
+.view-title { font-size: 21px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .whoami {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 8px; flex: none;
   font-size: 13px; color: var(--taupe);
 }
 .whoami-name { font-weight: 500; color: var(--ink-soft); }
@@ -173,7 +174,7 @@ button { background: none; border: 0; cursor: pointer; }
   max-width: 940px; margin: 0 auto 10px;
 }
 .segmented-btn {
-  flex: 1; min-height: 38px; border-radius: 8px;
+  flex: 1; min-height: 44px; border-radius: 8px;
   font-size: 14px; font-weight: 500; color: var(--ink-soft);
   transition: background-color .16s ease, color .16s ease;
 }
@@ -223,7 +224,7 @@ button { background: none; border: 0; cursor: pointer; }
 .docket.spine-done     { border-left-color: var(--slate); opacity: .72; }
 
 .docket-head {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   padding-bottom: 8px;
   border-bottom: 1px dashed var(--dough-line);
 }
@@ -258,6 +259,10 @@ button { background: none; border: 0; cursor: pointer; }
 .docket-what {
   font-size: 14px; color: var(--ink-soft); line-height: 1.35;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.docket-taken {
+  margin-top: 3px; font-size: 12px; color: var(--taupe);
+  font-variant-numeric: tabular-nums;
 }
 .docket-foot {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -295,7 +300,7 @@ button { background: none; border: 0; cursor: pointer; }
   border-top: 1px solid var(--dough-line);
 }
 .tab {
-  flex: 1; max-width: 130px;
+  flex: 1; max-width: 130px; min-height: 48px;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   padding: 6px 4px; border-radius: 10px;
   font-size: 11px; font-weight: 500; letter-spacing: .03em;
@@ -333,7 +338,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 .sheet-title { font-size: 19px; font-variant-numeric: lining-nums tabular-nums; }
 .sheet-close {
-  margin-left: auto; width: 34px; height: 34px; border-radius: 50%;
+  margin-left: auto; width: 44px; height: 44px; border-radius: 50%;
   display: grid; place-items: center; background: var(--dough); color: var(--ink-soft);
   font-size: 17px; line-height: 1;
 }
@@ -421,7 +426,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-variant-numeric: lining-nums;
 }
 .cal-nav {
-  width: 34px; height: 34px; border-radius: 9px;
+  width: 44px; height: 44px; border-radius: 9px;
   display: grid; place-items: center; color: var(--ink-soft);
   transition: background-color .16s ease;
 }
@@ -435,7 +440,7 @@ button { background: none; border: 0; cursor: pointer; }
   letter-spacing: .07em; text-transform: uppercase; color: var(--taupe);
 }
 .cal-day {
-  aspect-ratio: 1; min-height: 38px; border-radius: 9px;
+  aspect-ratio: 1; min-height: 44px; border-radius: 9px;
   font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink);
   transition: background-color .14s ease, color .14s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
 }
@@ -454,11 +459,12 @@ button { background: none; border: 0; cursor: pointer; }
   display: flex; align-items: center; gap: 7px;
   margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--dough-line);
 }
-.cal-time .select { min-height: 40px; padding: 8px 28px 8px 11px; flex: 1; }
+.cal-time-dd { flex: 1; min-width: 0; }
+.cal-time-dd .dd-btn { min-height: 44px; padding: 9px 11px; }
 .cal-colon { color: var(--taupe); font-weight: 500; }
 .ampm { display: flex; gap: 2px; padding: 2px; background: var(--dough); border-radius: 9px; }
 .ampm button {
-  min-height: 36px; padding: 0 11px; border-radius: 7px;
+  min-height: 44px; padding: 0 13px; border-radius: 7px;
   font-size: 13px; font-weight: 500; color: var(--ink-soft);
   transition: background-color .16s ease, color .16s ease;
 }
@@ -470,8 +476,8 @@ button { background: none; border: 0; cursor: pointer; }
 /* ── Photo attach / remove ──────────────────────────────────────────────── */
 .photo-shot { position: relative; flex: none; }
 .photo-remove {
-  position: absolute; top: -7px; right: -7px;
-  width: 24px; height: 24px; border-radius: 50%;
+  position: absolute; top: -9px; right: -9px;
+  width: 30px; height: 30px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--ink); color: var(--cream);
   font-size: 13px; line-height: 1;
@@ -480,6 +486,100 @@ button { background: none; border: 0; cursor: pointer; }
 }
 .photo-remove:hover { background: var(--rose-deep); }
 .photo-remove:active { transform: scale(.88); }
+
+/* ── Custom dropdown ────────────────────────────────────────────────────── */
+/* Replaces every native <select>. A native select renders the OS picker —
+   a grey iOS wheel or an Android system sheet — which is the one part of the
+   form that still looked like someone else's app. */
+.dd { position: relative; }
+.dd-btn {
+  width: 100%; min-height: var(--tap);
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 13px; text-align: left;
+  background: #fff; border: 1px solid var(--dough-line); border-radius: 10px;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.dd-btn:hover { border-color: var(--taupe); }
+.dd-btn[aria-expanded="true"] {
+  border-color: var(--rose); box-shadow: 0 0 0 3px rgba(200,84,120,.14);
+}
+.dd-val { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-val.is-empty { color: var(--taupe); }
+.dd-btn svg { width: 13px; height: 13px; flex: none; stroke: var(--taupe); fill: none; stroke-width: 2; transition: transform .18s ease; }
+.dd-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+.dd-menu {
+  position: absolute; z-index: 50; left: 0; right: 0; top: calc(100% + 5px);
+  max-height: 258px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 5px;
+  background: var(--cream);
+  border: 1px solid var(--dough-line); border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+  animation: rise .16s cubic-bezier(.2,.9,.3,1);
+}
+.dd-opt {
+  width: 100%; min-height: 44px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 11px; border-radius: 9px; text-align: left;
+  transition: background-color .14s ease;
+}
+.dd-opt:hover { background: var(--dough); }
+.dd-opt[aria-selected="true"] { background: rgba(200,84,120,.10); color: var(--rose-deep); font-weight: 500; }
+.dd-opt .dd-note { margin-left: auto; font-size: 12px; color: var(--taupe); font-variant-numeric: tabular-nums; }
+.dd-opt[aria-selected="true"] .dd-note { color: var(--rose-deep); }
+.dd-tag {
+  font-size: 9px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  padding: 2px 5px; border-radius: 4px;
+  background: rgba(200,84,120,.13); color: var(--rose-deep);
+}
+
+/* ── Money field ────────────────────────────────────────────────────────── */
+/* A bare number box gives no clue whether it wants dollars or cents. */
+.money { position: relative; }
+.money::before {
+  content: '$';
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  color: var(--taupe); font-weight: 500; pointer-events: none;
+}
+.money .input { padding-left: 26px; }
+.money-hint { font-size: 12px; color: var(--taupe); margin-top: 5px; line-height: 1.4; }
+
+/* ── Photo control ──────────────────────────────────────────────────────── */
+/* The native file input is visually hidden rather than display:none, which
+   would drop it out of the focus order and break keyboard use. */
+.photo-input {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+.photo-pick {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--tap); padding: 0 16px; border-radius: 10px;
+  background: var(--dough); color: var(--ink-soft); font-weight: 500;
+  cursor: pointer;
+  transition: background-color .16s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
+}
+.photo-pick:hover { background: var(--dough-line); }
+.photo-pick:active { transform: scale(.975); }
+.photo-input:focus-visible + .photo-pick { outline: 2px solid var(--rose); outline-offset: 2px; }
+.photo-pick svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.photo-name {
+  font-size: 13px; color: var(--ink-soft); margin-top: 6px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Paid / unpaid ──────────────────────────────────────────────────────── */
+.pay-toggle { display: flex; gap: 7px; }
+.pay-opt {
+  flex: 1; min-height: var(--tap); border-radius: 10px;
+  border: 1.5px solid var(--dough-line); background: var(--cream);
+  font-weight: 500; color: var(--ink-soft);
+  transition: border-color .16s ease, background-color .16s ease, color .16s ease;
+}
+.pay-opt[aria-pressed="true"] { border-color: var(--rose); background: rgba(200,84,120,.07); color: var(--rose-deep); }
+.tag-unpaid { background: rgba(200,84,120,.13); color: var(--rose-deep); }
+.tag-paid   { background: rgba(107,122,85,.15); color: var(--sage); }
+.tag-part   { background: rgba(179,123,44,.15); color: var(--crust); }
 
 /* ── Analytics ──────────────────────────────────────────────────────────── */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 8px; }
@@ -530,6 +630,71 @@ button { background: none; border: 0; cursor: pointer; }
 .bar.is-quiet { background: var(--dough-line); }
 .bar-label { font-size: 10px; color: var(--taupe); white-space: nowrap; }
 
+/* ── Date range filter ──────────────────────────────────────────────────── */
+.logbar {
+  display: flex; align-items: center; gap: 8px;
+  max-width: 940px; margin: 0 auto 10px;
+}
+.logbar-label { flex: 1; font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+.logbar-btn {
+  width: 44px; height: 44px; flex: none; border-radius: 10px;
+  display: grid; place-items: center;
+  background: var(--dough); color: var(--ink-soft);
+  transition: background-color .16s ease, color .16s ease;
+}
+.logbar-btn:hover { background: var(--dough-line); }
+.logbar-btn[aria-expanded="true"] { background: var(--rose); color: #fff; }
+.logbar-btn svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+.logbar-clear {
+  min-height: 36px; padding: 0 12px; border-radius: 9px;
+  font-size: 13px; font-weight: 500; color: var(--rose-deep);
+  background: rgba(200,84,120,.10);
+}
+#range-cal { max-width: 940px; margin: 0 auto 12px; }
+.range-hint {
+  font-size: 12px; color: var(--taupe); text-align: center;
+  margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--dough-line);
+}
+.cal-day.is-inrange { background: rgba(200,84,120,.12); border-radius: 0; }
+.cal-day.is-edge { background: var(--rose); color: #fff; font-weight: 500; }
+
+/* ── Collapsible panels ─────────────────────────────────────────────────── */
+/* Reference detail (who logged what, sign-in history) is worth having but not
+   worth the scroll, so it opens on demand. */
+.collapse { padding: 0; }
+.collapse-head {
+  display: flex; align-items: center; gap: 9px;
+  padding: 14px 16px; cursor: pointer;
+  list-style: none; min-height: 48px;
+}
+.collapse-head::-webkit-details-marker { display: none; }
+.collapse-head .panel-title { margin: 0; }
+.collapse-head svg {
+  margin-left: auto; width: 14px; height: 14px; flex: none;
+  stroke: var(--taupe); fill: none; stroke-width: 2;
+  transition: transform .18s ease;
+}
+details[open] > .collapse-head > svg { transform: rotate(180deg); }
+.collapse-body { padding: 0 16px 14px; }
+.sub { border-top: 1px solid var(--dough-line); }
+.sub > .collapse-head { padding: 11px 0; min-height: 44px; }
+.sub .list-row { padding-left: 4px; }
+
+.panel-warn { border-color: var(--rose); background: rgba(200,84,120,.045); }
+.panel-warn .panel-title { color: var(--rose-deep); }
+
+/* Inline share-of-total bar inside a list row. */
+.meter {
+  flex: 0 0 68px; height: 5px; border-radius: 3px;
+  background: var(--dough); overflow: hidden;
+}
+.meter-fill { display: block; height: 100%; border-radius: 3px; background: var(--rose); }
+.mix-head {
+  font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--taupe); margin: 12px 0 2px;
+}
+.mix-head:first-of-type { margin-top: 4px; }
+
 @keyframes fade { from { opacity: 0; } }
 @keyframes rise { from { transform: translateY(14px); opacity: 0; } }
 @media (min-width: 700px) {
@@ -551,8 +716,8 @@ button { background: none; border: 0; cursor: pointer; }
     <div class="login-sub">Order Desk</div>
 
     <div class="field">
-      <label class="field-label" for="who">Who's on</label>
-      <select class="select" id="who" autocomplete="username" required></select>
+      <span class="field-label">Who's on</span>
+      <div id="who"></div>
     </div>
 
     <div class="field">
@@ -577,6 +742,16 @@ button { background: none; border: 0; cursor: pointer; }
       </div>
     </div>
     <div class="segmented hidden" id="store-switch" role="tablist" aria-label="Store"></div>
+    <div class="logbar hidden" id="logbar">
+      <span class="logbar-label" id="logbar-label">All upcoming</span>
+      <button class="logbar-clear hidden" id="range-clear">Clear</button>
+      <button class="logbar-btn" id="range-btn" aria-expanded="false" aria-label="Filter orders by date">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>
+        </svg>
+      </button>
+    </div>
+    <div class="cal hidden" id="range-cal"></div>
   </header>
 
   <main class="main">

@@ -49,13 +49,17 @@ export function daysBetween(fromKey, toKey) {
   return Math.round((dayKeyToUTC(toKey) - dayKeyToUTC(fromKey)) / 86400000);
 }
 
-/** 'Overdue' | 'Today' | 'Tomorrow' | 'In N days' — the baker's day sections. */
-export function dayBucket(dueAt, now = new Date()) {
-  const diff = daysBetween(sydneyParts(now).dayKey, sydneyParts(dueAt).dayKey);
+/** 'Overdue' | 'Today' | 'Tomorrow' | 'In N days' from a whole-day offset. */
+export function dayLabel(diff) {
   if (diff < 0) return 'Overdue';
   if (diff === 0) return 'Today';
   if (diff === 1) return 'Tomorrow';
   return `In ${diff} days`;
+}
+
+/** Day section for one order, relative to now. */
+export function dayBucket(dueAt, now = new Date()) {
+  return dayLabel(daysBetween(sydneyParts(now).dayKey, sydneyParts(dueAt).dayKey));
 }
 
 /** Monday-start week, as the Sydney day key of that Monday. */
@@ -244,4 +248,135 @@ export function sydneyDateTimeToISO(dayKey, hour, minute) {
   // Inside the skipped hour of a DST jump that wall-clock time does not exist;
   // +10 lands on the next valid instant, which is what a clock would show.
   return new Date(Date.UTC(y, m - 1, d, hour - 10, minute)).toISOString();
+}
+
+// ── Windows ─────────────────────────────────────────────────────────────────
+
+/**
+ * Orders whose *sale* happened in the last `days` days.
+ *
+ * Sales windows key off `created_at`, not `due_at`. A cake booked today for a
+ * pickup three weeks out is money taken today; bucketing it by pickup date
+ * reported $0 for the week the sale actually happened and then dumped the whole
+ * amount into a future week. That mismatch is what made a freshly logged order
+ * show as "0 orders" under "last 7 days".
+ *
+ * `due_at` is still the right field for production views — what is due today,
+ * what the baker makes next, when pickups cluster — and those keep using it.
+ */
+export function soldWithin(orders, days, now = new Date()) {
+  const todayKey = sydneyParts(now).dayKey;
+  return orders.filter((o) => {
+    const d = daysBetween(sydneyParts(o.created_at).dayKey, todayKey);
+    return d >= 0 && d < days;
+  });
+}
+
+/** Orders sold in the Sydney week (Mon-Sun) containing `ref`, by sale date. */
+export function soldInWeek(orders, weekKey) {
+  return orders.filter((o) => weekStartKey(o.created_at) === weekKey);
+}
+
+/** This week vs last week by *sale* date — what the shop actually took. */
+export function salesByWeek(orders, now = new Date()) {
+  const thisKey = weekStartKey(now);
+  const lastKey = weekStartKey(new Date(dayKeyToUTC(thisKey) - 86400000));
+  return {
+    thisWeekKey: thisKey,
+    lastWeekKey: lastKey,
+    thisWeek: summarise(soldInWeek(orders, thisKey)),
+    lastWeek: summarise(soldInWeek(orders, lastKey)),
+  };
+}
+
+/** How many orders are missing a price — revenue is understated by exactly these. */
+export function missingPrice(orders) {
+  return orders.filter((o) => o.status !== 'cancelled' && (o.price == null || o.price === ''));
+}
+
+// ── Order log sections ──────────────────────────────────────────────────────
+
+/**
+ * Groups the order log into one section per day rather than lumping everything
+ * past tomorrow into "This week" / "Later". Staff plan by the day, so the
+ * section header has to name the day.
+ *
+ * Finished orders drop off after `collectedDays` so the log stays a worklist
+ * rather than an ever-growing archive.
+ */
+export function logSections(orders, now = new Date(), { collectedDays = 7 } = {}) {
+  const todayKey = sydneyParts(now).dayKey;
+  const open = new Map();
+  const collected = [];
+
+  for (const o of orders) {
+    const dueKey = sydneyParts(o.due_at).dayKey;
+    if (o.status === 'picked_up' || o.status === 'cancelled') {
+      if (daysBetween(dueKey, todayKey) <= collectedDays) collected.push(o);
+      continue;
+    }
+    const diff = daysBetween(todayKey, dueKey);
+    const label = dayLabel(diff);
+    // Every overdue day collapses into one section, sorted to the top.
+    const rank = diff < 0 ? -1 : diff;
+    if (!open.has(label)) open.set(label, { label, rank, rows: [] });
+    open.get(label).rows.push(o);
+  }
+
+  const sections = [...open.values()]
+    .sort((a, b) => a.rank - b.rank)
+    .map((s) => [s.label, s.rows]);
+
+  if (collected.length) {
+    collected.sort((a, b) => new Date(b.due_at) - new Date(a.due_at));
+    sections.push(['Collected', collected]);
+  }
+  return sections;
+}
+
+/** Orders whose pickup falls inside an inclusive Sydney day-key range. */
+export function inDateRange(orders, fromKey, toKey) {
+  const [lo, hi] = fromKey <= toKey ? [fromKey, toKey] : [toKey, fromKey];
+  return orders.filter((o) => {
+    const k = sydneyParts(o.due_at).dayKey;
+    return k >= lo && k <= hi;
+  });
+}
+
+// ── In-store sales tally ────────────────────────────────────────────────────
+
+/**
+ * What was sold over the counter on a given day, grouped by size and flavour.
+ *
+ * Walk-ins are cakes the customer saw and bought on the spot, so they are
+ * created already collected — `created_at` is the moment of sale. The baker
+ * uses this to know what actually moved and what to make more of; without it
+ * he is replenishing the counter from memory.
+ */
+export function inStoreTally(orders, dayKey, { store = null } = {}) {
+  const rows = new Map();
+  let count = 0, revenue = 0;
+
+  for (const o of orders) {
+    if (!o.walk_in || o.status === 'cancelled') continue;
+    if (store && o.store !== store) continue;
+    if (sydneyParts(o.created_at).dayKey !== dayKey) continue;
+
+    const size = o.size || '—';
+    const flavour = o.flavour || '—';
+    const key = `${size}|${flavour}`;
+    const row = rows.get(key) || { size, flavour, count: 0, revenue: 0 };
+    row.count += 1;
+    row.revenue += num(o.price);
+    rows.set(key, row);
+
+    count += 1;
+    revenue += num(o.price);
+  }
+
+  return {
+    count,
+    revenue,
+    rows: [...rows.values()].sort((a, b) => b.count - a.count || b.revenue - a.revenue),
+  };
 }

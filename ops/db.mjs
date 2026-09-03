@@ -93,11 +93,24 @@ async function attachCosts(orders) {
   return orders;
 }
 
-export async function listOrders({ store, since, until, withCosts = false } = {}) {
+/**
+ * `since` deliberately matches on EITHER date, and optionally keeps every
+ * still-open order regardless of age.
+ *
+ * Filtering the window on `due_at` alone dropped two kinds of row that matter:
+ * an order sold inside the window but due beyond it, and — worse — a cake that
+ * has been owed money on since long before the window, which is exactly what
+ * "still to collect" exists to surface. Neither was visible anywhere.
+ */
+export async function listOrders({ store, since, until, withCosts = false, includeOpen = false } = {}) {
   let q = sb.from('orders').select('*').order('due_at', { ascending: true });
-  if (store)  q = q.eq('store', store);
-  if (since)  q = q.gte('due_at', since);
-  if (until)  q = q.lte('due_at', until);
+  if (store) q = q.eq('store', store);
+  if (since) {
+    const clauses = [`due_at.gte.${since}`, `created_at.gte.${since}`];
+    if (includeOpen) clauses.push('status.in.(placed,baked,arrived)');
+    q = q.or(clauses.join(','));
+  }
+  if (until) q = q.lte('due_at', until);
   const { data, error } = await q;
   if (error) throw error;
   return withCosts ? attachCosts(data) : data;

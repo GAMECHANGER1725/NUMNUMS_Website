@@ -8,6 +8,8 @@ import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, paidOn,
   summarise, weeklyStats, busiestHours, normalisePhone,
   repeatCustomers, bakerSections, monthGrid, shiftMonth, sydneyDateTimeToISO,
+  dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
+  missingPrice,
 } from './stats.mjs';
 
 let passed = 0;
@@ -203,6 +205,145 @@ test('a late-evening pickup does not slide into the next day', () => {
   assert.equal(sydneyParts(iso).dayKey, '2026-09-03');
   assert.equal(sydneyParts(iso).hour, 23);
   assert.equal(dayBucket(iso, sydneyDateTimeToISO('2026-09-03', 9, 0)), 'Today');
+});
+
+// ── Sales windows (regression: the "0 orders" bug) ──────────────────────────
+// A Harris Park order was logged and marked picked up, yet "By store, last 7
+// days" showed 0. Cause: the window filtered on due_at, so a cake booked today
+// for a pickup even one day out fell outside "the last 7 days" entirely.
+test('an order sold today counts today, whatever its pickup date', () => {
+  const now = '2026-09-03T09:00:00Z';                      // Thu 3 Sep, 7pm Sydney
+  const orders = [
+    { status: 'picked_up', price: 56, deposit: 20, store: 'harris-park',
+      created_at: '2026-09-03T09:41:00Z', due_at: '2026-09-04T05:00:00Z' },   // due TOMORROW
+    { status: 'placed', price: 320, deposit: 100, store: 'harris-park',
+      created_at: '2026-09-03T02:00:00Z', due_at: '2026-10-01T05:00:00Z' },   // due in a MONTH
+  ];
+  const sold = soldWithin(orders, 7, now);
+  assert.equal(sold.length, 2, 'both sales happened today');
+  assert.equal(summarise(sold).revenue, 376);
+
+  // The old due_at-based window found neither of them.
+  const oldWay = orders.filter((o) => {
+    const d = daysBetween(sydneyParts(o.due_at).dayKey, sydneyParts(now).dayKey);
+    return d >= 0 && d < 7;
+  });
+  assert.equal(oldWay.length, 0, 'demonstrates the original bug');
+});
+
+test('sales windows exclude anything sold before the window', () => {
+  const now = '2026-09-10T02:00:00Z';
+  const orders = [
+    { status: 'placed', price: 10, deposit: 0, created_at: '2026-09-09T02:00:00Z', due_at: '2026-09-20T02:00:00Z' },
+    { status: 'placed', price: 20, deposit: 0, created_at: '2026-09-01T02:00:00Z', due_at: '2026-09-20T02:00:00Z' },
+  ];
+  assert.equal(soldWithin(orders, 7, now).length, 1);
+  assert.equal(summarise(soldWithin(orders, 7, now)).revenue, 10);
+});
+
+test('week over week compares sales, not pickups', () => {
+  const now = '2026-09-03T02:00:00Z';                       // Thu 3 Sep, week of Mon 31 Aug
+  const orders = [
+    { status: 'placed', price: 100, deposit: 0, created_at: '2026-09-01T02:00:00Z', due_at: '2026-12-01T02:00:00Z' },
+    { status: 'placed', price: 50,  deposit: 0, created_at: '2026-08-26T02:00:00Z', due_at: '2026-09-02T02:00:00Z' },
+  ];
+  const w = salesByWeek(orders, now);
+  assert.equal(w.thisWeek.revenue, 100);   // sold Tue this week, due December
+  assert.equal(w.lastWeek.revenue, 50);    // sold last week, due this week
+});
+
+test('orders with no price are flagged so revenue is not silently understated', () => {
+  const orders = [
+    { status: 'placed', price: null },
+    { status: 'placed', price: 56 },
+    { status: 'cancelled', price: null },
+  ];
+  assert.equal(missingPrice(orders).length, 1);
+});
+
+// ── Order log day sections ──────────────────────────────────────────────────
+test('the log names every day instead of lumping into This week / Later', () => {
+  const now = '2026-09-03T02:00:00Z';   // Thu 3 Sep, noon Sydney
+  const at = (d, h = 5) => `2026-09-${String(d).padStart(2, '0')}T0${h}:00:00Z`;
+  const orders = [
+    { status: 'placed', due_at: at(2) },   // yesterday
+    { status: 'placed', due_at: at(3) },   // today
+    { status: 'placed', due_at: at(4) },   // tomorrow
+    { status: 'placed', due_at: at(5) },
+    { status: 'placed', due_at: at(9) },   // 6 days out
+  ];
+  const labels = logSections(orders, now).map(([l]) => l);
+  assert.deepEqual(labels, ['Overdue', 'Today', 'Tomorrow', 'In 2 days', 'In 6 days']);
+});
+
+test('"In 1 day" is never rendered as "In 1 days"', () => {
+  assert.equal(dayLabel(1), 'Tomorrow');
+  assert.equal(dayLabel(2), 'In 2 days');
+  assert.equal(dayLabel(0), 'Today');
+  assert.equal(dayLabel(-3), 'Overdue');
+});
+
+test('every overdue day collapses into one section at the top', () => {
+  const now = '2026-09-10T02:00:00Z';
+  const orders = [
+    { status: 'placed', due_at: '2026-09-01T05:00:00Z' },
+    { status: 'placed', due_at: '2026-09-08T05:00:00Z' },
+    { status: 'placed', due_at: '2026-09-10T05:00:00Z' },
+  ];
+  const sections = logSections(orders, now);
+  assert.equal(sections[0][0], 'Overdue');
+  assert.equal(sections[0][1].length, 2);
+  assert.equal(sections[1][0], 'Today');
+});
+
+test('collected orders sit last and drop off after a week', () => {
+  const now = '2026-09-10T02:00:00Z';
+  const orders = [
+    { status: 'picked_up', due_at: '2026-09-08T05:00:00Z' },  // 2 days ago, keep
+    { status: 'picked_up', due_at: '2026-08-20T05:00:00Z' },  // 21 days ago, drop
+    { status: 'placed',    due_at: '2026-09-10T05:00:00Z' },
+  ];
+  const sections = logSections(orders, now);
+  assert.equal(sections[sections.length - 1][0], 'Collected');
+  assert.equal(sections[sections.length - 1][1].length, 1);
+});
+
+test('a date range filters by pickup day inclusively, either way round', () => {
+  const orders = [
+    { due_at: '2026-09-03T05:00:00Z' },
+    { due_at: '2026-09-05T05:00:00Z' },
+    { due_at: '2026-09-09T05:00:00Z' },
+  ];
+  assert.equal(inDateRange(orders, '2026-09-03', '2026-09-05').length, 2);
+  assert.equal(inDateRange(orders, '2026-09-05', '2026-09-03').length, 2); // reversed
+  assert.equal(inDateRange(orders, '2026-09-05', '2026-09-05').length, 1); // single day
+});
+
+// ── In-store tally ──────────────────────────────────────────────────────────
+test('counter sales tally by size and flavour for the day', () => {
+  const orders = [
+    { walk_in: true,  status: 'picked_up', size: '6 inch', flavour: 'Chocolate', price: 39.99, created_at: '2026-09-03T02:00:00Z', store: 'harris-park' },
+    { walk_in: true,  status: 'picked_up', size: '6 inch', flavour: 'Chocolate', price: 39.99, created_at: '2026-09-03T04:00:00Z', store: 'harris-park' },
+    { walk_in: true,  status: 'picked_up', size: 'Slice',  flavour: 'Rasmalai',  price: 8,     created_at: '2026-09-03T05:00:00Z', store: 'riverstone' },
+    { walk_in: false, status: 'picked_up', size: '8 inch', flavour: 'Mango',     price: 49.99, created_at: '2026-09-03T05:00:00Z', store: 'harris-park' },
+    { walk_in: true,  status: 'picked_up', size: '6 inch', flavour: 'Chocolate', price: 39.99, created_at: '2026-09-02T02:00:00Z', store: 'harris-park' },
+  ];
+  const t = inStoreTally(orders, '2026-09-03');
+  assert.equal(t.count, 3, 'ordered-ahead cakes and other days are excluded');
+  assert.ok(Math.abs(t.revenue - 87.98) < 1e-9);
+  assert.equal(t.rows[0].count, 2);
+  assert.equal(t.rows[0].flavour, 'Chocolate');
+  assert.equal(t.rows[0].size, '6 inch');
+
+  const hp = inStoreTally(orders, '2026-09-03', { store: 'harris-park' });
+  assert.equal(hp.count, 2, 'can be scoped to one store');
+});
+
+test('a day with no counter sales tallies to zero, not NaN', () => {
+  const t = inStoreTally([], '2026-09-03');
+  assert.equal(t.count, 0);
+  assert.equal(t.revenue, 0);
+  assert.deepEqual(t.rows, []);
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

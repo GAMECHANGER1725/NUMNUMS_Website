@@ -14,7 +14,10 @@ import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, summarise, weeklyStats,
   busiestHours, repeatCustomers, bakerSections, paidOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
+  dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
+  missingPrice,
 } from './stats.mjs';
+import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -25,22 +28,27 @@ const money2 = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AU
 const timeFmt = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', hour: 'numeric', minute: '2-digit', hour12: true });
 const dateFmt = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', weekday: 'short', day: 'numeric', month: 'short' });
 const dateTimeFmt = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true });
+const takenFmt = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true });
 
 let me = null;          // profile row
 let store = null;       // active store tab
 let view = 'log';
 let orders = [];        // orders for the active view
 let peopleById = new Map();
+let logRange = null;     // {from, to} Sydney day keys, or null for the live worklist
 
 // ── Boot ────────────────────────────────────────────────────────────────────
-$('who').innerHTML = PEOPLE.map((p) => `<option value="${esc(p.email)}">${esc(p.name)}</option>`).join('');
+const ddWho = mountDropdown($('who'), {
+  value: PEOPLE[0].email,
+  options: PEOPLE.map((p) => ({ value: p.email, label: p.name })),
+});
 
 $('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = $('login-btn'), msg = $('login-msg');
   btn.disabled = true; btn.textContent = 'Signing in…'; msg.textContent = ''; msg.className = 'msg';
   try {
-    await signIn($('who').value, $('pw').value);
+    await signIn(ddWho.value(), $('pw').value);
     $('pw').value = '';
     await start();
   } catch (err) {
@@ -118,6 +126,8 @@ async function render() {
   $('view-title').textContent = view === 'bake' ? 'To bake' : view === 'analytics' ? 'Analytics' : 'Orders';
   $('store-switch').classList.toggle('hidden',
     view !== 'log' || STORES.filter((s) => me.stores.includes(s.code)).length < 2);
+  $('logbar').classList.toggle('hidden', view !== 'log');
+  if (view !== 'log') closeRange();
 
   for (const v of ['log', 'bake', 'analytics']) $(`view-${v}`).classList.toggle('hidden', v !== view);
 
@@ -139,8 +149,8 @@ function docketHtml(o, now, { showStore = false } = {}) {
   // The baker never sees money. The database already stops him changing it,
   // but that is no reason to put every customer's balance in front of him.
   const showMoney = me.role !== 'baker';
-  const owing = Math.max(0, Number(o.price || 0) - paidOn(o));
   const what = [o.size, o.flavour].filter(Boolean).join(' · ');
+  const pay = showMoney ? payState(o) : null;
   return `
     <button class="docket ${spineFor(o, now)}" data-order="${o.id}">
       <div class="docket-head">
@@ -160,8 +170,9 @@ function docketHtml(o, now, { showStore = false } = {}) {
           <div class="docket-foot">
             <span class="status-dot st-${o.status}">${esc(STATUS_LABEL[o.status])}</span>
             ${showMoney && o.price ? `<span>${money.format(o.price)}</span>` : ''}
-            ${showMoney && owing > 0 ? `<span class="owing">${money.format(owing)} owing</span>` : ''}
+            ${pay ? `<span class="tag ${pay.cls}">${esc(pay.label)}</span>` : ''}
           </div>
+          <div class="docket-taken">Taken ${esc(takenFmt.format(new Date(o.created_at)))}</div>
         </div>
       </div>
     </button>`;
@@ -177,54 +188,38 @@ function hydrateThumbs(root) {
   });
 }
 
-function sectionsForLog(list, now) {
-  const buckets = [
-    ['Overdue',   []], ['Today', []], ['Tomorrow', []],
-    ['This week', []], ['Later', []], ['Collected', []],
-  ];
-  const by = Object.fromEntries(buckets);
-  const thisWeek = weekStartKey(now);
-
-  for (const o of list) {
-    const age = daysBetween(sydneyParts(o.due_at).dayKey, sydneyParts(now).dayKey);
-    if (['picked_up', 'cancelled'].includes(o.status)) {
-      // Finished orders stay for a week and then drop off. Otherwise the log
-      // becomes an ever-growing archive that buries the work still to do.
-      if (age <= 7) by['Collected'].push(o);
-      continue;
-    }
-    const d = daysBetween(sydneyParts(now).dayKey, sydneyParts(o.due_at).dayKey);
-    if (d < 0) by['Overdue'].push(o);
-    else if (d === 0) by['Today'].push(o);
-    else if (d === 1) by['Tomorrow'].push(o);
-    else if (weekStartKey(o.due_at) === thisWeek) by['This week'].push(o);
-    else by['Later'].push(o);
-  }
-  return buckets.filter(([, rows]) => rows.length);
-}
-
 async function renderLog() {
   const root = $('view-log');
   root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
   orders = await listOrders({ store, withCosts: me.role === 'admin' });
 
   const now = new Date();
-  const sections = sectionsForLog(orders, now);
+  // A date range is a lookup, not the daily worklist, so it keeps every
+  // collected order in the window instead of ageing them out after a week.
+  const rows = logRange ? inDateRange(orders, logRange.from, logRange.to) : orders;
+  const sections = logSections(rows, now, { collectedDays: logRange ? Infinity : 7 });
+  paintRangeLabel();
 
   if (!sections.length) {
-    root.innerHTML = `<div class="empty">
-      <div class="empty-mark">Nothing on the book</div>
-      <p class="empty-note">New orders for ${esc(storeLabel(store))} will show up here.<br>Tap <strong>New</strong> to log one.</p>
-    </div>`;
+    root.innerHTML = logRange
+      ? `<div class="empty">
+           <div class="empty-mark">No cakes in those dates</div>
+           <p class="empty-note">Nothing for ${esc(storeLabel(store))} between those days.<br>Tap <strong>Clear</strong> to go back to the worklist.</p>
+         </div>`
+      : `<div class="empty">
+           <div class="empty-mark">Nothing on the book</div>
+           <p class="empty-note">New orders for ${esc(storeLabel(store))} will show up here.<br>Tap <strong>New</strong> to log one.</p>
+         </div>`;
     return;
   }
 
   root.innerHTML = sections.map(([label, rows]) => {
-    const date = label === 'Today' || label === 'Tomorrow'
-      ? dateFmt.format(new Date(rows[0].due_at)) : '';
+    // Overdue and Collected span several days, so a single date would mislead.
+    const oneDay = label !== 'Overdue' && label !== 'Collected';
+    const date = oneDay ? dateFmt.format(new Date(rows[0].due_at)) : '';
     return `
       <div class="section-head ${label === 'Overdue' ? 'is-overdue' : ''}">
-        <span class="section-name">${label}</span>
+        <span class="section-name">${esc(label)}</span>
         ${date ? `<span class="section-date">${esc(date)}</span>` : ''}
         <span class="section-count">${rows.length}</span>
       </div>
@@ -238,23 +233,62 @@ async function renderLog() {
 async function renderBake() {
   const root = $('view-bake');
   root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
-  orders = await listToBake();
+
+  // The queue is what to make next; the tally is what already walked out the
+  // door. Both matter to the baker: without the tally he restocks the counter
+  // from memory and guesses which flavours moved.
+  const twoDays = new Date(Date.now() - 3 * 86400000).toISOString();
+  const [queue, recent] = await Promise.all([
+    listToBake(),
+    listOrders({ since: twoDays }),
+  ]);
+  orders = queue;
 
   const now = new Date();
-  const sections = bakerSections(orders, now);
+  const todayKey = sydneyParts(now).dayKey;
+  const yestKey = sydneyParts(new Date(Date.now() - 86400000)).dayKey;
+  const today = inStoreTally(recent, todayKey);
+  const yesterday = inStoreTally(recent, yestKey);
+
+  const tallyPanel = `
+    <details class="panel collapse" ${today.count ? 'open' : ''}>
+      <summary class="collapse-head">
+        <span class="panel-title">Sold in store today</span>
+        <span class="list-meta">${today.count} cake${today.count === 1 ? '' : 's'}${
+          yesterday.count ? ` · ${yesterday.count} yesterday` : ''}</span>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="collapse-body">
+        ${today.count ? today.rows.map((r) => `
+          <div class="list-row">
+            <span class="num">${r.count}×</span>
+            <span class="grow">${esc(r.size)} · ${esc(r.flavour)}</span>
+          </div>`).join('')
+        : '<div class="list-row"><span class="grow list-meta">Nothing sold off the counter yet today.</span></div>'}
+        ${yesterday.count ? `
+          <div class="mix-head">Yesterday</div>
+          ${yesterday.rows.map((r) => `
+            <div class="list-row">
+              <span class="num">${r.count}×</span>
+              <span class="grow">${esc(r.size)} · ${esc(r.flavour)}</span>
+            </div>`).join('')}` : ''}
+      </div>
+    </details>`;
+
+  const sections = bakerSections(queue, now);
 
   if (!sections.length) {
-    root.innerHTML = `<div class="empty">
+    root.innerHTML = tallyPanel + `<div class="empty">
       <div class="empty-mark">All caught up</div>
       <p class="empty-note">Nothing waiting to be baked.</p>
     </div>`;
     return;
   }
 
-  root.innerHTML = sections.map(([label, rows]) => `
+  root.innerHTML = tallyPanel + sections.map(([label, rows]) => `
     <div class="section-head ${label === 'Overdue' ? 'is-overdue' : ''}">
       <span class="section-name">${esc(label)}</span>
-      <span class="section-date">${esc(dateFmt.format(new Date(rows[0].due_at)))}</span>
+      ${label !== 'Overdue' ? `<span class="section-date">${esc(dateFmt.format(new Date(rows[0].due_at)))}</span>` : ''}
       <span class="section-count">${rows.length}</span>
     </div>
     ${rows.map((o) => docketHtml(o, now, { showStore: true })).join('')}`).join('');
@@ -266,6 +300,217 @@ async function renderBake() {
 function wireDockets(root) {
   root.querySelectorAll('[data-order]').forEach((b) =>
     b.addEventListener('click', () => openOrder(b.dataset.order)));
+}
+
+// ── Date range filter ───────────────────────────────────────────────────────
+
+/**
+ * Find every cake due between two dates.
+ *
+ * Staff asked for this to answer "what have we got on for the long weekend"
+ * without scrolling the whole book. Tap once for a single day, twice for a
+ * range; the second tap can land either side of the first.
+ */
+const dayKeyLabel = (key, opts = { weekday: 'short', day: 'numeric', month: 'short' }) => {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', ...opts })
+    .format(new Date(Date.UTC(y, m - 1, d)));
+};
+
+const addDayKey = (key, n) => {
+  const [y, m, d] = key.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + n));
+  const pad = (v) => String(v).padStart(2, '0');
+  return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`;
+};
+
+function paintRangeLabel() {
+  const label = $('logbar-label');
+  const clear = $('range-clear');
+  if (!logRange) {
+    label.textContent = 'All upcoming';
+    clear.classList.add('hidden');
+    return;
+  }
+  label.textContent = logRange.from === logRange.to
+    ? dayKeyLabel(logRange.from)
+    : `${dayKeyLabel(logRange.from)} – ${dayKeyLabel(logRange.to)}`;
+  clear.classList.remove('hidden');
+}
+
+function closeRange() {
+  $('range-cal').classList.add('hidden');
+  $('range-btn').setAttribute('aria-expanded', 'false');
+}
+
+let rangePick = { anchor: null, view: null };
+
+function paintRangePanel() {
+  const panel = $('range-cal');
+  const today = sydneyParts(new Date()).dayKey;
+  const v = rangePick.view || { year: +today.slice(0, 4), month: +today.slice(5, 7) };
+  rangePick.view = v;
+
+  const from = logRange?.from ?? rangePick.anchor;
+  const to = logRange?.to ?? rangePick.anchor;
+
+  panel.innerHTML = `
+    <div class="cal-head">
+      <button type="button" class="cal-nav" data-step="-1" aria-label="Previous month">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="cal-month">${esc(new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', month: 'long', year: 'numeric' })
+        .format(new Date(Date.UTC(v.year, v.month - 1, 15))))}</div>
+      <button type="button" class="cal-nav" data-step="1" aria-label="Next month">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="cal-dow">${['S','M','T','W','T','F','S'].map((d) => `<span>${d}</span>`).join('')}</div>
+    <div class="cal-grid">
+      ${monthGrid(v.year, v.month).flat().map((d) => {
+        const edge = d.key === from || d.key === to;
+        const inside = from && to && d.key > (from < to ? from : to) && d.key < (from < to ? to : from);
+        return `<button type="button" data-day="${d.key}"
+          aria-label="${esc(dayKeyLabel(d.key, { weekday: 'long', day: 'numeric', month: 'long' }))}"
+          class="cal-day${d.inMonth ? '' : ' is-other'}${d.key === today ? ' is-today' : ''}${edge ? ' is-edge' : ''}${inside ? ' is-inrange' : ''}"
+        >${d.day}</button>`;
+      }).join('')}
+    </div>
+    <div class="cal-foot">
+      <button type="button" class="btn btn-quiet" data-quick="today">Today</button>
+      <button type="button" class="btn btn-quiet" data-quick="week">Next 7 days</button>
+      <button type="button" class="btn btn-primary" data-done>Done</button>
+    </div>
+    <p class="range-hint">${rangePick.anchor && !logRange
+      ? 'Now tap the last day, or the same day again for just that one.'
+      : 'Tap a day, then tap another for a range.'}</p>`;
+
+  panel.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
+    rangePick.view = shiftMonth(v.year, v.month, Number(b.dataset.step));
+    paintRangePanel();
+  }));
+
+  panel.querySelectorAll('[data-day]').forEach((b) => b.addEventListener('click', () => {
+    const key = b.dataset.day;
+    if (!rangePick.anchor || logRange) {
+      rangePick.anchor = key;
+      logRange = null;
+    } else {
+      const a = rangePick.anchor;
+      logRange = { from: a <= key ? a : key, to: a <= key ? key : a };
+      rangePick.anchor = null;
+    }
+    paintRangePanel();
+    renderLog();
+  }));
+
+  panel.querySelectorAll('[data-quick]').forEach((b) => b.addEventListener('click', () => {
+    logRange = b.dataset.quick === 'today'
+      ? { from: today, to: today }
+      : { from: today, to: addDayKey(today, 6) };
+    rangePick.anchor = null;
+    paintRangePanel();
+    renderLog();
+  }));
+
+  panel.querySelector('[data-done]').addEventListener('click', closeRange);
+}
+
+$('range-btn').addEventListener('click', () => {
+  const opening = $('range-cal').classList.contains('hidden');
+  $('range-cal').classList.toggle('hidden', !opening);
+  $('range-btn').setAttribute('aria-expanded', String(opening));
+  if (opening) paintRangePanel();
+});
+
+$('range-clear').addEventListener('click', () => {
+  logRange = null;
+  rangePick = { anchor: null, view: null };
+  closeRange();
+  renderLog();
+});
+
+// ── Custom dropdown ─────────────────────────────────────────────────────────
+
+/**
+ * Replaces every native <select>.
+ *
+ * A native select hands rendering to the OS — an iOS wheel, an Android system
+ * sheet — so it was the one control that still looked like somebody else's app
+ * in the middle of a branded form. This keeps the same keyboard and
+ * screen-reader semantics (button + listbox) while looking like the rest.
+ *
+ * `options`: [{ value, label, tag?, note? }]. Returns { value, set, el }.
+ */
+function mountDropdown(host, { options, value = null, placeholder = 'Choose…', onChange } = {}) {
+  let current = value;
+  host.classList.add('dd');
+  host.innerHTML = `
+    <button type="button" class="dd-btn" aria-expanded="false" aria-haspopup="listbox">
+      <span class="dd-val"></span>
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="dd-menu hidden" role="listbox"></div>`;
+
+  const btn = host.querySelector('.dd-btn');
+  const val = host.querySelector('.dd-val');
+  const menu = host.querySelector('.dd-menu');
+  const find = (v) => options.find((o) => String(o.value) === String(v));
+
+  function paintValue() {
+    const o = find(current);
+    val.textContent = o ? o.label : placeholder;
+    val.classList.toggle('is-empty', !o);
+  }
+
+  function open(isOpen) {
+    if (isOpen) {
+      menu.innerHTML = options.map((o) => `
+        <button type="button" class="dd-opt" role="option" data-value="${esc(o.value)}"
+                aria-selected="${String(o.value) === String(current)}">
+          <span>${esc(o.label)}</span>
+          ${o.tag ? `<span class="dd-tag">${esc(o.tag)}</span>` : ''}
+          ${o.note ? `<span class="dd-note">${esc(o.note)}</span>` : ''}
+        </button>`).join('');
+      menu.querySelectorAll('[data-value]').forEach((b) => b.addEventListener('click', () => {
+        current = b.dataset.value;
+        paintValue();
+        open(false);
+        onChange?.(current, find(current));
+      }));
+    }
+    menu.classList.toggle('hidden', !isOpen);
+    btn.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    open(menu.classList.contains('hidden'));
+  });
+
+  // Close on an outside tap. Bails once the host is gone so listeners left by
+  // a torn-down sheet do not pile up across every order logged in a shift.
+  document.addEventListener('click', (e) => {
+    if (!host.isConnected) return;
+    if (!host.contains(e.target)) open(false);
+  });
+
+  paintValue();
+  return { value: () => current, set: (v) => { current = v; paintValue(); }, el: host };
+}
+
+/**
+ * How an order's payment reads on a card.
+ * "$50 owing" told staff what was missing; they asked for what was *taken*,
+ * which is the number they say out loud at the counter.
+ */
+function payState(o) {
+  const price = Number(o.price || 0);
+  const paid = paidOn(o);
+  if (!price) return null;
+  if (paid <= 0) return { label: 'Unpaid', cls: 'tag-unpaid' };
+  if (paid >= price) return { label: 'Paid', cls: 'tag-paid' };
+  return { label: `Paid ${money.format(paid)}`, cls: 'tag-part' };
 }
 
 // ── Order detail sheet ──────────────────────────────────────────────────────
@@ -322,7 +567,9 @@ async function openOrder(id) {
       ${o.design_notes ? field('Design notes', o.design_notes, 'span-2') : ''}
       ${o.notes ? field('Notes', o.notes, 'span-2') : ''}
       ${showMoney ? field('Price', o.price ? money2.format(o.price) : '') : ''}
-      ${showMoney ? field('Paid', money2.format(paidOn(o)) + (owing > 0 ? ` · ${money2.format(owing)} owing` : '')) : ''}
+      ${showMoney ? field('Paid', owing > 0
+        ? `${money2.format(paidOn(o))} of ${money2.format(o.price || 0)} — ${money2.format(owing)} still to collect`
+        : money2.format(paidOn(o))) : ''}
       ${me.role === 'admin' ? field('Cost', o.cost != null ? money2.format(o.cost) : '') : ''}
       ${field('Kind', o.kind === 'custom' ? 'Custom cake' : (o.walk_in ? 'Normal · bought in store' : 'Normal · ordered ahead'), 'span-2')}
     </div>
@@ -335,8 +582,8 @@ async function openOrder(id) {
       <hr class="rule">
       <div class="block-label">Cost to make <span style="font-weight:400;text-transform:none;letter-spacing:0;">(admin only)</span></div>
       <div class="row-2">
-        <input class="input nums" id="cost-input" type="number" step="0.01" min="0"
-               inputmode="decimal" placeholder="0.00" value="${o.cost ?? ''}">
+        <div class="money"><input class="input nums" id="cost-input" type="number" step="0.01" min="0"
+               inputmode="decimal" placeholder="0.00" value="${o.cost ?? ''}"></div>
         <button class="btn btn-outline" id="cost-save">Save cost</button>
       </div>
       <p class="msg" id="cost-msg" role="status" aria-live="polite"></p>` : ''}
@@ -346,9 +593,9 @@ async function openOrder(id) {
       <div class="block-label">Payment</div>
       <div class="row-2">
         <div><div class="detail-k">Price</div>
-          <input class="input nums" id="price-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.price ?? ''}"></div>
+          <div class="money"><input class="input nums" id="price-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.price ?? ''}"></div></div>
         <div><div class="detail-k">Deposit</div>
-          <input class="input nums" id="deposit-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.deposit ?? 0}"></div>
+          <div class="money"><input class="input nums" id="deposit-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.deposit ?? 0}"></div></div>
       </div>
       <button class="btn btn-outline" id="pay-save" style="width:100%;margin-top:9px;">Save payment</button>
       <p class="msg" id="pay-msg" role="status" aria-live="polite"></p>` : ''}
@@ -419,6 +666,7 @@ async function openOrder(id) {
 function openNewOrder() {
   let kind = null;
   let photoFile = null;
+  let priceTouched = false;          // stop size autofill from clobbering a typed price
   const mine = STORES.filter((s) => me.stores.includes(s.code));
 
   const body = openSheet('New order', `
@@ -437,19 +685,14 @@ function openNewOrder() {
       <hr class="rule">
 
       <div class="field hidden" id="walkin-field">
-        <label class="field-label" for="walkin">How was it bought</label>
-        <select class="select" id="walkin">
-          <option value="later">Ordered for later</option>
-          <option value="now">Bought in store now</option>
-        </select>
+        <span class="field-label">How was it bought</span>
+        <div id="dd-walkin"></div>
       </div>
 
       ${mine.length > 1 ? `
         <div class="field">
-          <label class="field-label" for="f-store">Store</label>
-          <select class="select" id="f-store">
-            ${mine.map((s) => `<option value="${s.code}" ${s.code === store ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}
-          </select>
+          <span class="field-label">Store</span>
+          <div id="dd-store"></div>
         </div>` : ''}
 
       <div class="row-2">
@@ -477,12 +720,12 @@ function openNewOrder() {
 
       <div class="row-2">
         <div class="field">
-          <label class="field-label" for="f-flavour">Flavour</label>
-          <input class="input" id="f-flavour" autocomplete="off">
+          <span class="field-label">Flavour</span>
+          <div id="dd-flavour"></div>
         </div>
         <div class="field">
-          <label class="field-label" for="f-size">Size</label>
-          <input class="input" id="f-size" placeholder='8 inch' autocomplete="off">
+          <span class="field-label">Size</span>
+          <div id="dd-size"></div>
         </div>
       </div>
 
@@ -497,17 +740,25 @@ function openNewOrder() {
       </div>
 
       <div class="field" id="photo-field">
-        <label class="field-label" for="f-photo">Design photo <span class="req" id="photo-req">*</span></label>
+        <span class="field-label">Design photo <span class="req">*</span></span>
         <div class="photo-drop">
           <span class="photo-shot hidden" id="photo-shot">
             <img class="photo-preview" id="photo-preview" alt="Attached design photo">
-            <button type="button" class="photo-remove" id="photo-remove"
-                    aria-label="Remove this photo">✕</button>
+            <button type="button" class="photo-remove" id="photo-remove" aria-label="Remove this photo">✕</button>
           </span>
-          <div style="flex:1">
-            <input type="file" id="f-photo" accept="image/*" capture="environment"
-                   style="max-width:100%;font-size:13px;">
-            <p class="photo-hint" id="photo-hint">Shrunk before upload, and deleted 14 days after the order.</p>
+          <div style="flex:1;min-width:0">
+            <!-- No capture attribute: on Android it makes Chrome skip the picker
+                 and open the camera, so staff could not attach a photo the
+                 customer had already sent. Without it both options appear. -->
+            <input class="photo-input" type="file" id="f-photo" accept="image/*">
+            <label class="photo-pick" for="f-photo">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.6-2.4h4.8L16 6"/>
+              </svg>
+              <span id="photo-pick-label">Add a photo</span>
+            </label>
+            <p class="photo-name hidden" id="photo-name"></p>
+            <p class="photo-hint">Camera or gallery. Shrunk before upload, and deleted 14 days after the order.</p>
           </div>
         </div>
       </div>
@@ -515,11 +766,21 @@ function openNewOrder() {
       <div class="row-2">
         <div class="field">
           <label class="field-label" for="f-price">Price</label>
-          <input class="input nums" id="f-price" type="number" step="0.01" min="0" inputmode="decimal">
+          <div class="money"><input class="input nums" id="f-price" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></div>
+          <p class="money-hint hidden" id="price-hint"></p>
         </div>
         <div class="field">
           <label class="field-label" for="f-deposit">Deposit taken</label>
-          <input class="input nums" id="f-deposit" type="number" step="0.01" min="0" inputmode="decimal" value="0">
+          <div class="money"><input class="input nums" id="f-deposit" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Payment</span>
+        <div class="pay-toggle" id="pay-toggle">
+          <button type="button" class="pay-opt" data-pay="unpaid" aria-pressed="true">Unpaid</button>
+          <button type="button" class="pay-opt" data-pay="deposit" aria-pressed="false">Deposit</button>
+          <button type="button" class="pay-opt" data-pay="paid" aria-pressed="false">Paid in full</button>
         </div>
       </div>
 
@@ -533,20 +794,79 @@ function openNewOrder() {
     </form>
   `);
 
-  body.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => {
-    kind = b.dataset.kind;
-    body.querySelectorAll('[data-kind]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    $('order-form').classList.remove('hidden');
-    // A custom cake is defined by its design, so the photo is required and the
-    // walk-in question is meaningless. A normal cake is the reverse.
-    $('walkin-field').classList.toggle('hidden', kind !== 'normal');
-    $('photo-field').classList.toggle('hidden', kind !== 'custom');
-    $('design-field').classList.toggle('hidden', kind !== 'custom');
-    $('f-photo').required = kind === 'custom';
-    $('f-name').focus();
-  }));
+  // ── Dropdowns ─────────────────────────────────────────────────────────────
+  const ddWalkin = mountDropdown($('dd-walkin'), {
+    value: 'later',
+    options: [
+      { value: 'later', label: 'Ordered for later' },
+      { value: 'now',   label: 'Bought in store now' },
+    ],
+  });
 
-  // Attaching the wrong photo is easy on a phone, so it has to be undoable.
+  const ddStore = mine.length > 1
+    ? mountDropdown($('dd-store'), {
+        value: store,
+        options: mine.map((s) => ({ value: s.code, label: s.label })),
+      })
+    : { value: () => mine[0].code };
+
+  const ddFlavour = mountDropdown($('dd-flavour'), {
+    placeholder: 'Choose flavour',
+    options: FLAVOURS.map((f) => ({
+      value: f.name, label: f.name, tag: f.premium ? 'Premium' : null,
+    })),
+    onChange: refreshPriceHint,
+  });
+
+  const ddSize = mountDropdown($('dd-size'), {
+    placeholder: 'Choose size',
+    options: SIZES.map((sz) => ({
+      value: sz.code,
+      label: sz.label,
+      note: sz.price ? money2.format(sz.price) : null,
+    })),
+    onChange: (code) => {
+      // Fill the standard price so staff only type when it differs. Never
+      // overwrite a price they have already typed.
+      const base = basePrice(code);
+      if (base != null && !priceTouched) $('f-price').value = base.toFixed(2);
+      refreshPriceHint();
+      syncPayment();
+    },
+  });
+
+  function refreshPriceHint() {
+    const hint = $('price-hint');
+    const flavour = ddFlavour.value();
+    if (flavour && isPremium(flavour)) {
+      hint.textContent = `${flavour} is a premium flavour — add the surcharge to the base price.`;
+      hint.classList.remove('hidden');
+    } else {
+      hint.classList.add('hidden');
+    }
+  }
+
+  $('f-price').addEventListener('input', () => { priceTouched = true; syncPayment(); });
+
+  // ── Payment ───────────────────────────────────────────────────────────────
+  let payMode = 'unpaid';
+  function syncPayment() {
+    const price = Number($('f-price').value || 0);
+    const dep = $('f-deposit');
+    if (payMode === 'unpaid') { dep.value = '0'; dep.disabled = true; }
+    else if (payMode === 'paid') { dep.value = price ? price.toFixed(2) : ''; dep.disabled = true; }
+    else { dep.disabled = false; }
+  }
+  $('pay-toggle').querySelectorAll('[data-pay]').forEach((b) => b.addEventListener('click', () => {
+    payMode = b.dataset.pay;
+    $('pay-toggle').querySelectorAll('[data-pay]')
+      .forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    syncPayment();
+    if (payMode === 'deposit') $('f-deposit').focus();
+  }));
+  syncPayment();
+
+  // ── Photo ─────────────────────────────────────────────────────────────────
   const showPhoto = (file) => {
     const prev = $('photo-preview');
     if (prev.dataset.url) URL.revokeObjectURL(prev.dataset.url);
@@ -555,10 +875,15 @@ function openNewOrder() {
       prev.src = url;
       prev.dataset.url = url;
       $('photo-shot').classList.remove('hidden');
+      $('photo-name').textContent = file.name;
+      $('photo-name').classList.remove('hidden');
+      $('photo-pick-label').textContent = 'Change photo';
     } else {
       prev.removeAttribute('src');
       delete prev.dataset.url;
       $('photo-shot').classList.add('hidden');
+      $('photo-name').classList.add('hidden');
+      $('photo-pick-label').textContent = 'Add a photo';
     }
   };
 
@@ -569,17 +894,30 @@ function openNewOrder() {
 
   $('photo-remove').addEventListener('click', () => {
     photoFile = null;
-    $('f-photo').value = '';   // clears the file input's own "no file chosen" text
+    $('f-photo').value = '';
     showPhoto(null);
-    $('f-photo').focus();
   });
 
   const due = mountDuePicker();
 
+  // ── Kind ──────────────────────────────────────────────────────────────────
+  body.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => {
+    kind = b.dataset.kind;
+    body.querySelectorAll('[data-kind]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    $('order-form').classList.remove('hidden');
+    // A custom cake is defined by its design, so the photo is required and the
+    // walk-in question is meaningless. A normal cake is the reverse.
+    $('walkin-field').classList.toggle('hidden', kind !== 'normal');
+    $('photo-field').classList.toggle('hidden', kind !== 'custom');
+    $('design-field').classList.toggle('hidden', kind !== 'custom');
+    $('f-name').focus();
+  }));
+
+  // ── Save ──────────────────────────────────────────────────────────────────
   $('order-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = $('save-order'), msg = $('order-msg');
-    const walkIn = kind === 'normal' && $('walkin').value === 'now';
+    const walkIn = kind === 'normal' && ddWalkin.value() === 'now';
 
     if (!due.value()) {
       msg.textContent = 'Pick the date and time the cake is being collected.';
@@ -587,7 +925,6 @@ function openNewOrder() {
       $('f-due-btn').focus();
       return;
     }
-
     if (kind === 'custom' && !photoFile) {
       msg.textContent = 'A custom cake needs a photo of the design.';
       msg.className = 'msg msg-error';
@@ -597,14 +934,14 @@ function openNewOrder() {
     btn.disabled = true; btn.textContent = 'Saving…'; msg.textContent = ''; msg.className = 'msg';
     try {
       const order = await createOrder({
-        store: mine.length > 1 ? $('f-store').value : mine[0].code,
+        store: ddStore.value(),
         kind,
         walk_in: walkIn,
         customer_name: $('f-name').value.trim(),
         customer_phone: $('f-phone').value.trim() || null,
         due_at: due.value(),
-        flavour: $('f-flavour').value.trim() || null,
-        size: $('f-size').value.trim() || null,
+        flavour: ddFlavour.value() || null,
+        size: ddSize.value() || null,
         wording: $('f-wording').value.trim() || null,
         design_notes: $('f-design').value.trim() || null,
         notes: $('f-notes').value.trim() || null,
@@ -710,15 +1047,9 @@ function mountDuePicker() {
       </div>
 
       <div class="cal-time">
-        <select class="select nums" id="cal-h" aria-label="Hour">
-          ${Array.from({ length: 12 }, (_, i) => i + 1).map((h) =>
-            `<option value="${h}"${h === h12 ? ' selected' : ''}>${h}</option>`).join('')}
-        </select>
+        <div id="cal-h" class="cal-time-dd"></div>
         <span class="cal-colon">:</span>
-        <select class="select nums" id="cal-m" aria-label="Minute">
-          ${Array.from({ length: 12 }, (_, i) => i * 5).map((m) =>
-            `<option value="${m}"${m === minute ? ' selected' : ''}>${pad(m)}</option>`).join('')}
-        </select>
+        <div id="cal-m" class="cal-time-dd"></div>
         <div class="ampm">
           <button type="button" data-ampm="am" aria-pressed="${!isPm}">am</button>
           <button type="button" data-ampm="pm" aria-pressed="${isPm}">pm</button>
@@ -750,17 +1081,25 @@ function mountDuePicker() {
       paint();
     }));
 
-    const setTime = () => {
-      const h = Number($('cal-h').value) % 12;
-      hour = h + (panel.querySelector('[data-ampm="pm"]').getAttribute('aria-pressed') === 'true' ? 12 : 0);
-      minute = Number($('cal-m').value);
-      commit();
-    };
-    $('cal-h').addEventListener('change', () => { setTime(); paint(); });
-    $('cal-m').addEventListener('change', () => { setTime(); paint(); });
+    const isPmNow = () =>
+      panel.querySelector('[data-ampm="pm"]').getAttribute('aria-pressed') === 'true';
+
+    mountDropdown($('cal-h'), {
+      value: String(h12),
+      options: Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) })),
+      onChange: (v) => { hour = (Number(v) % 12) + (isPmNow() ? 12 : 0); commit(); paint(); },
+    });
+
+    mountDropdown($('cal-m'), {
+      value: String(minute),
+      options: Array.from({ length: 12 }, (_, i) => ({ value: String(i * 5), label: pad(i * 5) })),
+      onChange: (v) => { minute = Number(v); commit(); paint(); },
+    });
+
     panel.querySelectorAll('[data-ampm]').forEach((b) => b.addEventListener('click', () => {
       panel.querySelectorAll('[data-ampm]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      setTime();
+      hour = (hour % 12) + (b.dataset.ampm === 'pm' ? 12 : 0);
+      commit();
       paint();
     }));
 
@@ -798,28 +1137,35 @@ async function renderAnalytics() {
 
   const since = new Date(Date.now() - 63 * 86400000).toISOString();
   const [all, profiles, events] = await Promise.all([
-    listOrders({ since, withCosts: true }),
+    // includeOpen keeps money still owed on old orders visible no matter how
+    // long ago it was ordered — that debt is the whole point of tracking it.
+    listOrders({ since, withCosts: true, includeOpen: true }),
     listProfiles(),
-    recentAuthEvents(12),
+    recentAuthEvents(40),
   ]);
   peopleById = new Map(profiles.map((p) => [p.id, p]));
   orders = all;
 
   const now = new Date();
   const todayKey = sydneyParts(now).dayKey;
-  const today = all.filter((o) => sydneyParts(o.due_at).dayKey === todayKey);
-  const last7 = all.filter((o) => {
-    const d = daysBetween(sydneyParts(o.due_at).dayKey, todayKey);
-    return d >= 0 && d < 7;
-  });
 
-  const w = weeklyStats(all, now);
-  const s7 = summarise(last7);
-  const sToday = summarise(today);
+  // Sales windows key off when the order was TAKEN. Bucketing them by pickup
+  // date meant a cake sold today but collected next week counted as zero this
+  // week — which is why a freshly logged order showed "0 orders".
+  const sold7  = soldWithin(all, 7, now);
+  const sold30 = soldWithin(all, 30, now);
+  const soldToday = soldWithin(all, 1, now);
+  const w = salesByWeek(all, now);
+
+  const s7 = summarise(sold7);
+  const sToday = summarise(soldToday);
   const dRev = delta(w.thisWeek.revenue, w.lastWeek.revenue);
   const dCount = delta(w.thisWeek.count, w.lastWeek.count);
 
-  // Money still to collect, on cakes not yet handed over.
+  // Operational, not financial: these legitimately belong to the pickup date.
+  const dueToday = all.filter((o) => sydneyParts(o.due_at).dayKey === todayKey);
+  const sDueToday = summarise(dueToday);
+
   const open = all.filter((o) => !['picked_up', 'cancelled'].includes(o.status));
   const owingRows = open
     .map((o) => ({ o, owing: Number(o.price || 0) - paidOn(o) }))
@@ -827,26 +1173,63 @@ async function renderAnalytics() {
     .sort((a, b) => new Date(a.o.due_at) - new Date(b.o.due_at));
   const owingTotal = owingRows.reduce((t, r) => t + r.owing, 0);
 
-  // Eight trailing weeks of revenue by pickup date.
+  const noPrice = missingPrice(sold30);
+
+  // Eight trailing weeks of sales.
   const weeks = [];
   for (let i = 7; i >= 0; i--) {
     const key = weekStartKey(new Date(Date.now() - i * 7 * 86400000));
-    const rows = all.filter((o) => weekStartKey(o.due_at) === key);
-    weeks.push({ key, revenue: summarise(rows).revenue });
+    weeks.push({ key, revenue: summarise(all.filter((o) => weekStartKey(o.created_at) === key)).revenue });
   }
   const peak = Math.max(1, ...weeks.map((x) => x.revenue));
 
-  const hours = busiestHours(last7);
+  const hours = busiestHours(all.filter((o) => {
+    const d = daysBetween(sydneyParts(o.due_at).dayKey, todayKey);
+    return d >= 0 && d < 30;             // pickups that have actually happened
+  }));
   const peakHour = hours.indexOf(Math.max(...hours));
   const hourLabel = (h) => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
 
   const repeat = repeatCustomers(all);
-  const byStore = STORES.map((s) => ({ ...s, sum: summarise(last7.filter((o) => o.store === s.code)) }));
+  const byStore = STORES.map((st) => ({ ...st, sum: summarise(sold7.filter((o) => o.store === st.code)) }));
+
+  // What sells: flavour and size mix over the last 30 days of sales.
+  const mix = (field) => {
+    const m = new Map();
+    for (const o of sold30) {
+      if (o.status === 'cancelled') continue;
+      const k = o[field] || '—';
+      const row = m.get(k) || { k, count: 0, revenue: 0 };
+      row.count += 1;
+      row.revenue += Number(o.price || 0);
+      m.set(k, row);
+    }
+    return [...m.values()].sort((a, b) => b.count - a.count);
+  };
+  const flavourMix = mix('flavour');
+  const sizeMix = mix('size');
+
+  const walkIns = sold30.filter((o) => o.walk_in && o.status !== 'cancelled');
+  const aheadOrders = sold30.filter((o) => !o.walk_in && o.status !== 'cancelled');
+
+  // Who logged what — collapsed, because it is a reference, not a headline.
+  const byStaff = new Map();
+  for (const o of sold30) {
+    const id = o.created_by;
+    const row = byStaff.get(id) || { id, count: 0, revenue: 0, orders: [] };
+    row.count += 1;
+    row.revenue += Number(o.price || 0);
+    row.orders.push(o);
+    byStaff.set(id, row);
+  }
+  const staffRows = [...byStaff.values()].sort((a, b) => b.count - a.count);
+
+  const bar = (v, max, h = 76) => Math.round((v / Math.max(1, max)) * h);
 
   root.innerHTML = `
     <div class="stat-grid">
       <div class="stat">
-        <div class="stat-k">This week</div>
+        <div class="stat-k">Sold this week</div>
         <div class="stat-v">${money.format(w.thisWeek.revenue)}</div>
         <div class="stat-delta ${dRev.cls}">${dRev.text}</div>
       </div>
@@ -861,24 +1244,55 @@ async function renderAnalytics() {
         <div class="stat-delta flat">last 7 days ${money.format(s7.avgOrder)}</div>
       </div>
       <div class="stat">
-        <div class="stat-k">Due today</div>
-        <div class="stat-v">${sToday.count}</div>
-        <div class="stat-delta flat">${money.format(sToday.revenue)} booked</div>
+        <div class="stat-k">Taken today</div>
+        <div class="stat-v">${money.format(sToday.revenue)}</div>
+        <div class="stat-delta flat">${sToday.count} order${sToday.count === 1 ? '' : 's'}</div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">Revenue, last 8 weeks</div>
-      <div class="panel-note">By pickup date, Monday weeks.</div>
+      <div class="panel-title">Today</div>
+      <div class="panel-note">What is happening in the shop right now.</div>
+      <div class="list-row"><span class="grow">Cakes due for pickup today</span><span class="num">${sDueToday.count}</span></div>
+      <div class="list-row"><span class="grow">Orders taken today</span><span class="num">${sToday.count}</span></div>
+      <div class="list-row"><span class="grow">Still to be baked</span><span class="num">${all.filter((o) => o.status === 'placed').length}</span></div>
+    </div>
+
+    ${noPrice.length ? `
+      <div class="panel panel-warn">
+        <div class="panel-title">${noPrice.length} order${noPrice.length === 1 ? '' : 's'} with no price</div>
+        <div class="panel-note">Every figure on this page is understated by whatever these were worth. Open each one and add the price.</div>
+        ${noPrice.slice(0, 6).map((o) => `
+          <div class="list-row">
+            <span class="num">${esc(o.order_no)}</span>
+            <span class="grow">${esc(o.customer_name)}</span>
+            <span class="list-meta">${esc(dateFmt.format(new Date(o.created_at)))}</span>
+          </div>`).join('')}
+      </div>` : ''}
+
+    <div class="panel">
+      <div class="panel-title">Sales, last 8 weeks</div>
+      <div class="panel-note">By the date the order was taken, Monday weeks.</div>
       <div class="bars">
         ${weeks.map((x, i) => `
           <div class="bar-col">
             <div class="bar ${i === weeks.length - 1 ? '' : 'is-quiet'}"
-                 style="height:${Math.round((x.revenue / peak) * 76)}px"
+                 style="height:${bar(x.revenue, peak)}px"
                  title="${esc(x.key)} · ${money.format(x.revenue)}"></div>
             <div class="bar-label">${esc(x.key.slice(8))}/${esc(x.key.slice(5, 7))}</div>
           </div>`).join('')}
       </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">By store, last 7 days</div>
+      <div class="panel-note">Counted against the store that took the order.</div>
+      ${byStore.map((st) => `
+        <div class="list-row">
+          <span class="grow">${esc(st.label)}</span>
+          <span class="list-meta">${st.sum.count} order${st.sum.count === 1 ? '' : 's'}</span>
+          <span class="num">${money2.format(st.sum.revenue)}</span>
+        </div>`).join('')}
     </div>
 
     <div class="panel">
@@ -896,15 +1310,35 @@ async function renderAnalytics() {
     </div>
 
     <div class="panel">
-      <div class="panel-title">By store, last 7 days</div>
-      <div class="panel-note">Pickups counted against the store they were collected from.</div>
-      ${byStore.map((s) => `
-        <div class="list-row">
-          <span class="grow">${esc(s.label)}</span>
-          <span class="list-meta">${s.sum.count} orders</span>
-          <span class="num">${money2.format(s.sum.revenue)}</span>
-        </div>`).join('')}
+      <div class="panel-title">How people buy, last 30 days</div>
+      <div class="panel-note">Walk-ins are cakes bought off the counter; ordered ahead are booked in advance.</div>
+      <div class="list-row"><span class="grow">Bought in store</span>
+        <span class="list-meta">${walkIns.length} cake${walkIns.length === 1 ? '' : 's'}</span>
+        <span class="num">${money2.format(summarise(walkIns).revenue)}</span></div>
+      <div class="list-row"><span class="grow">Ordered ahead</span>
+        <span class="list-meta">${aheadOrders.length} cake${aheadOrders.length === 1 ? '' : 's'}</span>
+        <span class="num">${money2.format(summarise(aheadOrders).revenue)}</span></div>
     </div>
+
+    ${flavourMix.length ? `
+      <div class="panel">
+        <div class="panel-title">What sells, last 30 days</div>
+        <div class="panel-note">Top flavours and sizes by number of cakes.</div>
+        <div class="mix-head">Flavour</div>
+        ${flavourMix.slice(0, 6).map((r) => `
+          <div class="list-row">
+            <span class="grow">${esc(r.k)}</span>
+            <span class="meter"><span class="meter-fill" style="width:${bar(r.count, flavourMix[0].count, 100)}%"></span></span>
+            <span class="num">${r.count}</span>
+          </div>`).join('')}
+        <div class="mix-head">Size</div>
+        ${sizeMix.slice(0, 6).map((r) => `
+          <div class="list-row">
+            <span class="grow">${esc(r.k)}</span>
+            <span class="meter"><span class="meter-fill" style="width:${bar(r.count, sizeMix[0].count, 100)}%"></span></span>
+            <span class="num">${r.count}</span>
+          </div>`).join('')}
+      </div>` : ''}
 
     <div class="panel">
       <div class="panel-title">Still to collect</div>
@@ -922,13 +1356,11 @@ async function renderAnalytics() {
 
     <div class="panel">
       <div class="panel-title">Busiest pickup times</div>
-      <div class="panel-note">${last7.length
-        ? `Last 7 days. Peak around ${hourLabel(peakHour)}.`
-        : 'No pickups in the last 7 days yet.'}</div>
+      <div class="panel-note">Pickups over the last 30 days.${hours.some(Boolean) ? ` Peak around ${hourLabel(peakHour)}.` : ''}</div>
       <div class="bars">
         ${hours.map((c, h) => (h >= 7 && h <= 20) ? `
           <div class="bar-col">
-            <div class="bar ${c ? '' : 'is-quiet'}" style="height:${Math.round((c / Math.max(1, ...hours)) * 76)}px"
+            <div class="bar ${c ? '' : 'is-quiet'}" style="height:${bar(c, Math.max(...hours))}px"
                  title="${hourLabel(h)} · ${c}"></div>
             <div class="bar-label">${[8, 12, 16, 20].includes(h) ? hourLabel(h) : ''}</div>
           </div>` : '').join('')}
@@ -937,7 +1369,7 @@ async function renderAnalytics() {
 
     <div class="panel">
       <div class="panel-title">Customers</div>
-      <div class="panel-note">Matched on phone number, so the same person typed different ways counts once.</div>
+      <div class="panel-note">Matched on phone number, over every order on record.</div>
       <div class="list-row"><span class="grow">One order only</span><span class="num">${repeat.newCount}</span></div>
       <div class="list-row"><span class="grow">Come back</span><span class="num">${repeat.returningCount}</span></div>
       ${repeat.top.slice(0, 5).map((c) => `
@@ -948,16 +1380,47 @@ async function renderAnalytics() {
         </div>`).join('')}
     </div>
 
-    <div class="panel">
-      <div class="panel-title">Who's been on</div>
-      <div class="panel-note">Sign-ins and sign-outs, most recent first.</div>
-      ${events.length ? events.map((e) => `
-        <div class="list-row">
-          <span class="grow">${esc(peopleById.get(e.user_id)?.name || 'Unknown')}</span>
-          <span class="list-meta">${e.event === 'login' ? 'signed in' : 'signed out'}</span>
-          <span class="num list-meta">${esc(dateTimeFmt.format(new Date(e.at)))}</span>
-        </div>`).join('') : '<div class="list-row"><span class="grow list-meta">Nothing recorded yet.</span></div>'}
-    </div>
+    <details class="panel collapse">
+      <summary class="collapse-head">
+        <span class="panel-title">Who logged what</span>
+        <span class="list-meta">${staffRows.length} staff · last 30 days</span>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="collapse-body">
+        ${staffRows.map((r) => `
+          <details class="sub">
+            <summary class="collapse-head">
+              <span class="grow">${esc(peopleById.get(r.id)?.name || 'Unknown')}</span>
+              <span class="list-meta">${r.count} order${r.count === 1 ? '' : 's'}</span>
+              <span class="num">${money2.format(r.revenue)}</span>
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            ${r.orders.slice(0, 25).map((o) => `
+              <div class="list-row">
+                <span class="num">${esc(o.order_no)}</span>
+                <span class="grow">${esc(o.customer_name)}</span>
+                <span class="list-meta">${esc(takenFmt.format(new Date(o.created_at)))}</span>
+                <span class="num">${o.price ? money2.format(o.price) : '—'}</span>
+              </div>`).join('')}
+          </details>`).join('')}
+      </div>
+    </details>
+
+    <details class="panel collapse">
+      <summary class="collapse-head">
+        <span class="panel-title">Who's been on</span>
+        <span class="list-meta">recent sign-ins</span>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="collapse-body">
+        ${events.length ? events.map((e) => `
+          <div class="list-row">
+            <span class="grow">${esc(peopleById.get(e.user_id)?.name || 'Unknown')}</span>
+            <span class="list-meta">${e.event === 'login' ? 'signed in' : 'signed out'}</span>
+            <span class="num list-meta">${esc(dateTimeFmt.format(new Date(e.at)))}</span>
+          </div>`).join('') : '<div class="list-row"><span class="grow list-meta">Nothing recorded yet.</span></div>'}
+      </div>
+    </details>
   `;
 }
 
