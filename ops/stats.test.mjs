@@ -9,7 +9,7 @@ import {
   summarise, weeklyStats, busiestHours, normalisePhone,
   repeatCustomers, bakerSections, monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
-  missingPrice,
+  missingPrice, searchOrders, phoneKey,
 } from './stats.mjs';
 
 let passed = 0;
@@ -344,6 +344,56 @@ test('a day with no counter sales tallies to zero, not NaN', () => {
   assert.equal(t.count, 0);
   assert.equal(t.revenue, 0);
   assert.deepEqual(t.rows, []);
+});
+
+// ── Search ──────────────────────────────────────────────────────────────────
+const book = [
+  { order_no: 'HP-0007', customer_name: 'Sush Chinna',  customer_phone: '0455 667 788', flavour: 'Red Velvet', size: '6 inch', wording: 'Happy Birthday Sush' },
+  { order_no: 'RV-0002', customer_name: 'Rahul Mehta',  customer_phone: '+61499001122', flavour: 'Mud Cake',   size: '8 inch', wording: 'Happy Birthday Ananya' },
+  { order_no: 'HP-0010', customer_name: 'Gurpreet Kaur', customer_phone: null,          flavour: 'Rasmalai',   size: '12 inch', wording: 'Happy Engagement' },
+];
+
+test('phone keys ignore how the number was typed', () => {
+  assert.equal(phoneKey('0425 697 725'), '425697725');
+  assert.equal(phoneKey('+61 425 697 725'), '425697725');
+  assert.equal(phoneKey('(02) 9633 1234'), '296331234');
+  assert.equal(phoneKey('123'), null);
+  assert.equal(phoneKey(null), null);
+});
+
+test('search finds an order by any part of the name', () => {
+  assert.equal(searchOrders(book, 'sush').length, 1);
+  assert.equal(searchOrders(book, 'MEHTA').length, 1);
+  assert.equal(searchOrders(book, 'kaur')[0].order_no, 'HP-0010');
+});
+
+test('search finds an order by docket number', () => {
+  assert.equal(searchOrders(book, 'HP-0007').length, 1);
+  assert.equal(searchOrders(book, '0010')[0].customer_name, 'Gurpreet Kaur');
+});
+
+test('search finds a phone however the query is punctuated', () => {
+  assert.equal(searchOrders(book, '0455667788').length, 1);
+  assert.equal(searchOrders(book, '667 788').length, 1);
+  assert.equal(searchOrders(book, '+61455667788').length, 1);
+  // stored as +61…, searched as local
+  assert.equal(searchOrders(book, '0499001122')[0].order_no, 'RV-0002');
+});
+
+test('search covers flavour, size and wording', () => {
+  assert.equal(searchOrders(book, 'rasmalai').length, 1);
+  assert.equal(searchOrders(book, '12 inch').length, 1);
+  assert.equal(searchOrders(book, 'engagement').length, 1);
+});
+
+test('an empty query returns everything, a miss returns nothing', () => {
+  assert.equal(searchOrders(book, '').length, 3);
+  assert.equal(searchOrders(book, '   ').length, 3);
+  assert.equal(searchOrders(book, 'zzzz').length, 0);
+});
+
+test('a customer with no phone is never matched by a number', () => {
+  assert.equal(searchOrders(book, '9999').length, 0);
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

@@ -125,6 +125,21 @@ export async function listToBake() {
   return data;
 }
 
+/**
+ * Most recent order for a phone number, so a returning customer's details fill
+ * themselves in. Matches on the generated phone_key, which ignores formatting.
+ */
+export async function findCustomerByPhone(phone) {
+  const digits = String(phone ?? '').replace(/\D/g, '');
+  if (digits.length < 6) return null;
+  const { data } = await sb.from('orders')
+    .select('customer_name,customer_phone,created_at')
+    .eq('phone_key', digits.slice(-9))
+    .order('created_at', { ascending: false })
+    .limit(1);
+  return data?.[0] ?? null;
+}
+
 export async function createOrder(fields) {
   const { data, error } = await sb.from('orders').insert(fields).select().single();
   if (error) throw error;

@@ -380,3 +380,38 @@ export function inStoreTally(orders, dayKey, { store = null } = {}) {
     rows: [...rows.values()].sort((a, b) => b.count - a.count || b.revenue - a.revenue),
   };
 }
+
+/** The stable tail of an Australian number — matches the DB's phone_key. */
+export function phoneKey(phone) {
+  const digits = String(phone ?? '').replace(/\D/g, '');
+  return digits.length >= 6 ? digits.slice(-9) : null;
+}
+
+/**
+ * Free-text order search over the things staff actually remember: the customer,
+ * the docket number, the phone, and what the cake was.
+ * Digits in the query are matched against the phone tail so "697 725",
+ * "0425697725" and "+61425697725" all find the same customer.
+ */
+export function searchOrders(orders, term) {
+  const q = String(term ?? '').trim().toLowerCase();
+  if (!q) return orders;
+  // Normalise a full number the same way the stored key is normalised, or the
+  // +61 form is longer than what it is being compared against and never matches.
+  // Shorter queries stay as-is so a partial number still works as a substring.
+  const qDigits = q.replace(/\D/g, '');
+  const qPhone = qDigits.length >= 4
+    ? (qDigits.length >= 9 ? qDigits.slice(-9) : qDigits)
+    : null;
+
+  return orders.filter((o) => {
+    const hay = [o.customer_name, o.order_no, o.flavour, o.size, o.wording]
+      .filter(Boolean).join(' ').toLowerCase();
+    if (hay.includes(q)) return true;
+    if (qPhone) {
+      const key = phoneKey(o.customer_phone);
+      if (key && key.includes(qPhone)) return true;
+    }
+    return false;
+  });
+}

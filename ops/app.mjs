@@ -8,6 +8,7 @@ import {
   sb, PEOPLE, STORES, storeLabel, STATUS_LABEL,
   signIn, signOut, currentProfile, listProfiles,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
+  findCustomerByPhone,
   recentAuthEvents, uploadPhoto, photoUrl,
 } from './db.mjs';
 import {
@@ -15,7 +16,7 @@ import {
   busiestHours, repeatCustomers, bakerSections, paidOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
-  missingPrice,
+  missingPrice, searchOrders,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
@@ -35,6 +36,7 @@ let store = null;       // active store tab
 let view = 'log';
 let orders = [];        // orders for the active view
 let peopleById = new Map();
+let logQuery = '';
 let logRange = null;     // {from, to} Sydney day keys, or null for the live worklist
 
 // ── Boot ────────────────────────────────────────────────────────────────────
@@ -127,6 +129,7 @@ async function render() {
   $('store-switch').classList.toggle('hidden',
     view !== 'log' || STORES.filter((s) => me.stores.includes(s.code)).length < 2);
   $('logbar').classList.toggle('hidden', view !== 'log');
+  $('logsearch-row').classList.toggle('hidden', view !== 'log');
   if (view !== 'log') closeRange();
 
   for (const v of ['log', 'bake', 'analytics']) $(`view-${v}`).classList.toggle('hidden', v !== view);
@@ -196,11 +199,22 @@ async function renderLog() {
   const now = new Date();
   // A date range is a lookup, not the daily worklist, so it keeps every
   // collected order in the window instead of ageing them out after a week.
-  const rows = logRange ? inDateRange(orders, logRange.from, logRange.to) : orders;
-  const sections = logSections(rows, now, { collectedDays: logRange ? Infinity : 7 });
+  // Searching or picking dates is a lookup, not the daily worklist, so both
+  // keep every collected order instead of ageing them out after a week.
+  const lookup = Boolean(logQuery || logRange);
+  let rows = logRange ? inDateRange(orders, logRange.from, logRange.to) : orders;
+  rows = searchOrders(rows, logQuery);
+  const sections = logSections(rows, now, { collectedDays: lookup ? Infinity : 7 });
   paintRangeLabel();
 
   if (!sections.length) {
+    if (logQuery) {
+      root.innerHTML = `<div class="empty">
+        <div class="empty-mark">Nothing matches</div>
+        <p class="empty-note">No order for “${esc(logQuery)}”.<br>Try part of a name, a phone number, or a docket number.</p>
+      </div>`;
+      return;
+    }
     root.innerHTML = logRange
       ? `<div class="empty">
            <div class="empty-mark">No cakes in those dates</div>
@@ -421,6 +435,13 @@ $('range-btn').addEventListener('click', () => {
   $('range-cal').classList.toggle('hidden', !opening);
   $('range-btn').setAttribute('aria-expanded', String(opening));
   if (opening) paintRangePanel();
+});
+
+let searchTimer = null;
+$('log-search').addEventListener('input', (e) => {
+  logQuery = e.target.value;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { if (view === 'log') renderLog(); }, 180);
 });
 
 $('range-clear').addEventListener('click', () => {
@@ -847,6 +868,21 @@ function openNewOrder() {
   }
 
   $('f-price').addEventListener('input', () => { priceTouched = true; syncPayment(); });
+
+  // A number we have seen before fills in the name, so staff stop retyping
+  // details already on file — and repeat customers stay linked in the numbers.
+  $('f-phone').addEventListener('change', async () => {
+    const name = $('f-name');
+    if (name.value.trim()) return;
+    try {
+      const hit = await findCustomerByPhone($('f-phone').value);
+      if (hit && !name.value.trim()) {
+        name.value = hit.customer_name;
+        name.classList.add('is-autofilled');
+        setTimeout(() => name.classList.remove('is-autofilled'), 1400);
+      }
+    } catch { /* a lookup that fails must never block taking the order */ }
+  });
 
   // ── Payment ───────────────────────────────────────────────────────────────
   let payMode = 'unpaid';
