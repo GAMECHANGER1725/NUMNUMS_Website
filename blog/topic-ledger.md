@@ -94,7 +94,7 @@ sweets range against ~150 cake pages. The GSC data confirms real demand
 
 | Proposed slug | Cluster | 90d impr | Clicks | Evidence |
 |---|---|---:|---:|---|
-| `rasmalai-cake-sydney` | Flavour | 291 | **14** | No owner page exists. "rasmalai cake near me" 123 impr/6 clicks pos 7.8; "rasmalai cake" 92 impr/5 clicks pos 4.1; "rasmalai cake sydney" 24 impr/1 click. Best click-through of any unowned theme, and Rasmalai is a real premium flavour the business sells. Currently scattered across `/`, `/cakes`, and a suburb page. |
+| ~~`rasmalai-cake-sydney`~~ | Flavour | 291 | **14** | **CLAIMED 2026-09-03** — published, see Published history below. No owner page existed. "rasmalai cake near me" 123 impr/6 clicks pos 7.8; "rasmalai cake" 92 impr/5 clicks pos 4.1; "rasmalai cake sydney" 24 impr/1 click. Best click-through of any unowned theme, and Rasmalai is a real premium flavour the business sells. Was scattered across `/`, `/cakes`, and a suburb page. |
 
 Before writing it: confirm against the doorway/cannibalisation rules in
 `SEO-ACTION-PLAN-2026-09-02.md` §5, and name `eggless-cake-flavours` as its
@@ -121,4 +121,5 @@ Append one line per post, newest at the bottom. Never rewrite existing lines.
 
 | Date | Slug | Cluster | Demand evidence | Gap claimed (if any) |
 |---|---|---|---|---|
+| 2026-09-03 | `rasmalai-cake-sydney` | Flavour | 291 impr / 14 clicks (90d, "rasmalai cake near me" + "rasmalai cake" + "rasmalai cake sydney") | Tier 3 — the one justified new URL |
 
