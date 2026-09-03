@@ -444,6 +444,20 @@ Check every post against this list before marking it done, and fix all issues fo
 
 - [ ] A 2026-07-30 run (5-post batch: South Windsor, West Ryde, Confirmation, Diabetics, Cake Smash vs First Birthday) found `node screenshot.mjs` / Puppeteer fails with "Could not find Chrome" in this project's cloud sandbox — no Chrome binary is installed, unlike the `C:/Users/nateh/...` Windows path CLAUDE.md documents for local sessions. The `blog-write` skill's own Phase 6.5 Gate 3 (patchright visual verification at 3 viewport widths) cannot run here either. Do not treat a missing screenshot pass as a blocker in this environment: substitute the structural/programmatic checks this checklist already requires (word count, Flesch score via `textstat`, JSON-LD parsing, hex/colour/tag-balance greps, link/image existence checks) and note in the delivery summary that visual verification wasn't possible, the same way the image-verification fallback below is already handled.
 
+### Size/price phrasing — avoid same-sentence "size1 ... price1 ... size2 ... price2" patterns
+
+- [ ] A 2026-09-03 run (Rasmalai Cake Sydney post) found `node verify-blog.mjs`'s price-consistency
+  regex false-positive on a Key Takeaways bullet written as `Sizes run $39.99 (6-inch) to $134.99
+  (16-inch); an 8-inch is $49.99.` — a natural, human-readable sentence. The checker's same-clause
+  window (`[^.;:,<>]{0,60}`) does not treat parentheses or the word "to" as a break, so it paired
+  "6-inch" with the *next* price in the sentence ($134.99, the 16-inch price) instead of its own
+  ($39.99), and failed the build with a fabricated contradiction. Never write two different
+  size+price pairs in one sentence with only "to"/"up to"/a space between the first size's
+  parenthetical and the second price — put the size immediately before its own price in the same
+  clause (`a 6-inch at $39.99, up to a 16-inch at $134.99`) or separate the two pairs with a period
+  or semicolon. If `verify-blog.mjs` reports a serving-size/price mismatch that looks wrong on
+  inspection, check for this adjacency pattern before assuming the price itself is actually wrong.
+
 ### Meta & SEO
 
 - [ ] **Meta description contains ≥ 2 concrete numbers** (distances, times, flavour counts, etc.). "Order in 48 hrs" alone is not enough. Target pattern: `"100% eggless [product] near [suburb] — [N] flavours, [distance] min from [location]. Order with [timeframe] notice."` — 150–160 chars.
