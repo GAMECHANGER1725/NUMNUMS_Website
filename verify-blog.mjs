@@ -211,10 +211,16 @@ const FACTS = {
   flavours: ['Vanilla', 'Chocolate', 'Red Velvet', 'Butterscotch', 'Black Forest',
              'White Forest', 'Strawberry', 'Mango', 'Cookies & Cream', 'Lychee',
              'Pineapple', 'Tiramisu', 'Blueberry', 'Rasmalai', 'Ferrero Rocher'],
-  // flavour names that have appeared on the site but are NOT orderable
+  // Flavour names that have appeared on the site but are NOT orderable. Matched
+  // case-insensitively, so keep out anything that collides with legitimate
+  // ingredient prose: "vanilla beans" and "strawberry cream" are deliberately
+  // absent because /blog/halal-friendly-cakes-eggless-sydney explains how vanilla
+  // extract is made by steeping vanilla beans in alcohol — that is a correct
+  // statement about an ingredient, not a claim that we sell the flavour.
   offMenu: ['Lotus Biscoff', 'Saffron Pistachio', 'Rose Cardamom', 'Coconut Pandan',
-            'Mango Passion', 'Lemon Zest', 'Salted Caramel', 'Kesar Pista', 'Taro',
-            'Chocolate Fudge', 'Vanilla Bean', 'Strawberry Cream'],
+            'Mango Passion', 'Mango Chilli', 'Lemon Zest', 'Salted Caramel',
+            'Kesar Pista', 'Chocolate Fudge', 'Chocolate Truffle', 'Rose Milk',
+            'kirsch'],
   addresses: {
     harrisPark: 'Shop 1, 96–98 Wigram Street',
     riverstone: 'Shop 8, Riverstone Shopping Centre',
@@ -256,7 +262,7 @@ const FACTS = {
       if (want && m[3] !== want) priceBad.push(`${f}: ${m[1]}" priced $${m[3]} but /cakes says $${want}`);
     }
     for (const fl of FACTS.offMenu) {
-      const n = (h.match(new RegExp(fl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+      const n = (h.match(new RegExp(`\\b${fl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi')) || []).length;
       if (n) offMenuHits.set(fl, (offMenuHits.get(fl) || 0) + n);
     }
     for (const m of h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
@@ -268,13 +274,16 @@ const FACTS = {
   if (serveBad.length) fail(`serving sizes: ${serveBad.length} assertion(s) contradict the canonical chart on /order → ${serveBad.slice(0, 5).join(' | ')}`);
   if (priceBad.length) fail(`prices: ${priceBad.length} assertion(s) contradict /cakes → ${priceBad.slice(0, 5).join(' | ')}`);
 
-  // Off-menu flavours are a WARNING, not a failure: 62 mentions are awaiting an
-  // owner decision on whether those flavours are genuinely unavailable. Flip this
-  // to fail() once that list is resolved to zero.
+  // HARD FAILURE as of 2026-09-02: the owner confirmed these flavours are not sold.
+  // The site previously advertised nine of them with invented supporting detail
+  // ("top sellers for Eid", "requested by parents ordering for Year 5-6 classes"),
+  // so a customer could order a cake that does not exist. Resolved to zero; this
+  // gate keeps it there. Note kirsch is in the list because "Black Forest with
+  // kirsch-soaked cherries" contradicted the site's own no-alcohol halal claim.
   if (offMenuHits.size) {
-    const top = [...offMenuHits.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6)
+    const top = [...offMenuHits.entries()].sort((a, b) => b[1] - a[1])
       .map(([k, v]) => `${k}×${v}`).join(', ');
-    notes.push(`off-menu flavours still referenced (${[...offMenuHits.values()].reduce((a, b) => a + b, 0)} mentions): ${top}. Confirm availability or rewrite to the canonical 15.`);
+    fail(`off-menu flavours: ${[...offMenuHits.values()].reduce((a, b) => a + b, 0)} mention(s) of ${offMenuHits.size} flavour(s) we do not sell → ${top}. Rewrite to the canonical 15: ${FACTS.flavours.join(', ')}.`);
   }
 
   // NAP: every page that names a shop street must use the one canonical form.
@@ -314,6 +323,36 @@ const FACTS = {
   if (linkTotal) {
     fail(`internal links: ${linkTotal} problem(s) — ${JSON.stringify(linkBad)}. Links must be absolute and extensionless. → ${linkEx.slice(0, 5).join(' | ')}`);
   }
+
+  // FAQ parity: Google requires FAQPage markup to reflect the visible page.
+  // Paraphrased schema (a real drift found on two posts) risks the rich result
+  // being dropped or flagged. Visible questions and schema questions must match
+  // exactly, in order.
+  const faqBad = [];
+  for (const f of pages) {
+    const h = read(f);
+    const vis = [...h.matchAll(/<p class="faq-q">([\s\S]*?)<\/p>/g)]
+      .map((m) => m[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim());
+    if (!vis.length) continue;
+    const qs = [];
+    for (const m of h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      let d; try { d = JSON.parse(m[1]); } catch { continue; }
+      (function walk(o) {
+        if (Array.isArray(o)) return o.forEach(walk);
+        if (o && typeof o === 'object') {
+          if (o['@type'] === 'FAQPage' && Array.isArray(o.mainEntity)) {
+            for (const q of o.mainEntity) if (q?.name) qs.push(String(q.name).replace(/\s+/g, ' ').trim());
+          }
+          Object.values(o).forEach(walk);
+        }
+      })(d);
+    }
+    if (!qs.length) continue;
+    if (vis.length !== qs.length || vis.some((v, i) => v !== qs[i])) {
+      faqBad.push(`${f} (visible ${vis.length} vs schema ${qs.length})`);
+    }
+  }
+  if (faqBad.length) fail(`FAQ parity: ${faqBad.length} page(s) whose FAQPage schema does not match the visible FAQ → ${faqBad.slice(0, 5).join(', ')}`);
 
   // Local assets must exist. A broken <img src> is a visible defect; a broken
   // schema image weakens the entity. Handles ../ prefixes and %20 escapes, both
