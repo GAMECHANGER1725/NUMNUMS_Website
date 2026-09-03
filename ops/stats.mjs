@@ -421,3 +421,69 @@ export function searchOrders(orders, term) {
     return false;
   });
 }
+
+/** Sydney weekday, 0 = Sunday. */
+export function weekdayIndex(input) {
+  const { year, month, day } = sydneyParts(input);
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+}
+
+export const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/**
+ * Pickups and takings by day of the week.
+ *
+ * Tells the shop which days actually carry the week — the difference between
+ * rostering on a feeling and rostering on the book.
+ */
+export function byWeekday(orders, field = 'due_at') {
+  const days = WEEKDAYS.map((label) => ({ label, count: 0, revenue: 0 }));
+  for (const o of orders) {
+    if (o.status === 'cancelled') continue;
+    const d = days[weekdayIndex(o[field])];
+    d.count += 1;
+    d.revenue += num(o.price);
+  }
+  return days;
+}
+
+/**
+ * How far ahead people order.
+ *
+ * Drives two decisions nothing else answers: how much notice the baker
+ * realistically gets, and how far out the counter needs stock ready. Walk-ins
+ * are excluded — bought and collected in the same breath, they have no lead
+ * time and would drag the median to zero.
+ */
+export function leadTimes(orders) {
+  const days = [];
+  for (const o of orders) {
+    if (o.status === 'cancelled' || o.walk_in) continue;
+    const d = daysBetween(sydneyParts(o.created_at).dayKey, sydneyParts(o.due_at).dayKey);
+    if (d >= 0) days.push(d);
+  }
+  days.sort((a, b) => a - b);
+
+  const bands = [
+    { label: 'Same day',     min: 0,  max: 0 },
+    { label: '1–2 days',     min: 1,  max: 2 },
+    { label: '3–6 days',     min: 3,  max: 6 },
+    { label: '1–2 weeks',    min: 7,  max: 14 },
+    { label: 'Over 2 weeks', min: 15, max: Infinity },
+  ].map((b) => ({ ...b, count: days.filter((d) => d >= b.min && d <= b.max).length }));
+
+  return {
+    count: days.length,
+    median: days.length ? days[Math.floor(days.length / 2)] : null,
+    longest: days.length ? days[days.length - 1] : null,
+    bands,
+  };
+}
+
+/**
+ * Orders with no phone number. Each one is a customer who can never be matched
+ * to a past or future order, so the repeat rate reads lower than reality.
+ */
+export function missingPhone(orders) {
+  return orders.filter((o) => o.status !== 'cancelled' && !phoneKey(o.customer_phone));
+}

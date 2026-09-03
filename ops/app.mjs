@@ -16,7 +16,7 @@ import {
   busiestHours, repeatCustomers, bakerSections, paidOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
-  missingPrice, searchOrders,
+  missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
@@ -451,6 +451,38 @@ $('range-clear').addEventListener('click', () => {
   renderLog();
 });
 
+/**
+ * In-app message instead of alert().
+ *
+ * A native alert freezes the page behind a system dialog someone has to
+ * dismiss before they can look at anything — the worst possible interruption
+ * mid-order with a customer waiting. This says the same thing and gets out of
+ * the way, while errors stay until dismissed so nothing important is missed.
+ */
+function toast(message, kind = 'ok') {
+  let host = $('toasts');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'toasts';
+    host.className = 'toasts';
+    document.body.appendChild(host);
+  }
+  const el = document.createElement('div');
+  el.className = `toast toast-${kind}`;
+  el.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  el.innerHTML = `<span class="toast-msg"></span><button class="toast-x" aria-label="Dismiss">✕</button>`;
+  el.querySelector('.toast-msg').textContent = message;
+
+  const close = () => {
+    el.classList.add('is-going');
+    setTimeout(() => el.remove(), 200);
+  };
+  el.querySelector('.toast-x').addEventListener('click', close);
+  host.appendChild(el);
+  if (kind !== 'error') setTimeout(close, 4200);
+  return close;
+}
+
 // ── Custom dropdown ─────────────────────────────────────────────────────────
 
 /**
@@ -673,7 +705,11 @@ async function openOrder(id) {
     b.addEventListener('click', async () => {
       b.disabled = true; b.textContent = 'Saving…';
       try { await setStatus(o.id, b.dataset.status); closeSheet(); await render(); }
-      catch (err) { b.disabled = false; b.textContent = STATUS_LABEL[b.dataset.status]; alert(err.message); }
+      catch (err) {
+        b.disabled = false;
+        b.textContent = STATUS_LABEL[b.dataset.status];
+        toast(err.message, 'error');
+      }
     }));
 
   if (me.role === 'admin') {
@@ -1084,12 +1120,13 @@ function openNewOrder() {
           // The order is the thing that matters; a failed photo must not lose it.
           closeSheet();
           await render();
-          alert(`Order ${order.order_no} saved, but the photo did not upload: ${err.message}\n\nOpen the order to try again.`);
+          toast(`${order.order_no} saved, but the photo did not upload. Open the order to add it again.`, 'error');
           return;
         }
       }
 
       closeSheet();
+      toast(`${order.order_no} saved for ${order.customer_name}.`);
       if (view !== 'log') go('log'); else await render();
     } catch (err) {
       msg.textContent = err.message;
@@ -1301,6 +1338,12 @@ async function renderAnalytics() {
   const owingTotal = owingRows.reduce((t, r) => t + r.owing, 0);
 
   const noPrice = missingPrice(sold30);
+  const noPhone = missingPhone(sold30);
+  const lead = leadTimes(sold30);
+  const weekdays = byWeekday(all.filter((o) => {
+    const d = daysBetween(sydneyParts(o.due_at).dayKey, todayKey);
+    return d >= 0 && d < 56;          // pickups that have already happened
+  }));
 
   // Eight trailing weeks of sales.
   const weeks = [];
@@ -1384,6 +1427,12 @@ async function renderAnalytics() {
       <div class="list-row"><span class="grow">Orders taken today</span><span class="num">${sToday.count}</span></div>
       <div class="list-row"><span class="grow">Still to be baked</span><span class="num">${all.filter((o) => o.status === 'placed').length}</span></div>
     </div>
+
+    ${noPhone.length ? `
+      <div class="panel panel-warn">
+        <div class="panel-title">${noPhone.length} order${noPhone.length === 1 ? '' : 's'} with no phone number</div>
+        <div class="panel-note">These customers can never be matched to another order, so the repeat rate above reads lower than it really is.</div>
+      </div>` : ''}
 
     ${noPrice.length ? `
       <div class="panel panel-warn">
@@ -1480,6 +1529,34 @@ async function renderAnalytics() {
           <span class="num owing">${money2.format(r.owing)}</span>
         </div>`).join('')}
     </div>
+
+    <div class="panel">
+      <div class="panel-title">Busiest days</div>
+      <div class="panel-note">Pickups over the last 8 weeks. This is what to roster against.</div>
+      ${weekdays.map((d) => `
+        <div class="list-row">
+          <span class="grow">${esc(d.label)}</span>
+          <span class="meter"><span class="meter-fill" style="width:${bar(d.count, Math.max(1, ...weekdays.map((x) => x.count)), 100)}%"></span></span>
+          <span class="list-meta">${d.count}</span>
+          <span class="num">${money.format(d.revenue)}</span>
+        </div>`).join('')}
+    </div>
+
+    ${lead.count ? `
+      <div class="panel">
+        <div class="panel-title">How far ahead people order</div>
+        <div class="panel-note">
+          Last 30 days of ordered-ahead cakes. Half are booked
+          ${lead.median === 0 ? 'the same day' : `${lead.median} day${lead.median === 1 ? '' : 's'} ahead`}
+          or less; the longest was ${lead.longest} days. Walk-ins are excluded.
+        </div>
+        ${lead.bands.map((b) => `
+          <div class="list-row">
+            <span class="grow">${esc(b.label)}</span>
+            <span class="meter"><span class="meter-fill" style="width:${bar(b.count, Math.max(1, ...lead.bands.map((x) => x.count)), 100)}%"></span></span>
+            <span class="num">${b.count}</span>
+          </div>`).join('')}
+      </div>` : ''}
 
     <div class="panel">
       <div class="panel-title">Busiest pickup times</div>

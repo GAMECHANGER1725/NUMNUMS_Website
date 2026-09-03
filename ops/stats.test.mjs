@@ -10,6 +10,7 @@ import {
   repeatCustomers, bakerSections, monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, phoneKey,
+  byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS,
 } from './stats.mjs';
 
 let passed = 0;
@@ -438,6 +439,59 @@ test('cancelled orders do not create or inflate a customer', () => {
   assert.equal(r.total, 1);
   assert.equal(r.returningCount, 0);
   assert.equal(r.rate, 0);
+});
+
+// ── Weekday and lead time ───────────────────────────────────────────────────
+test('weekday is read in Sydney, not UTC', () => {
+  // 2026-09-03T13:00:00Z is 11pm Thursday in Sydney but already Friday in UTC.
+  assert.equal(WEEKDAYS[weekdayIndex('2026-09-03T13:00:00Z')], 'Thu');
+  assert.equal(WEEKDAYS[weekdayIndex('2026-09-03T14:30:00Z')], 'Fri');
+});
+
+test('takings group by the weekday the cake goes out', () => {
+  const d = byWeekday([
+    { status: 'placed',    price: 100, due_at: '2026-09-05T05:00:00Z' }, // Sat
+    { status: 'placed',    price: 50,  due_at: '2026-09-05T07:00:00Z' }, // Sat
+    { status: 'placed',    price: 20,  due_at: '2026-09-07T05:00:00Z' }, // Mon
+    { status: 'cancelled', price: 999, due_at: '2026-09-05T05:00:00Z' },
+  ]);
+  const sat = d[WEEKDAYS.indexOf('Sat')];
+  assert.equal(sat.count, 2);
+  assert.equal(sat.revenue, 150);
+  assert.equal(d[WEEKDAYS.indexOf('Mon')].count, 1);
+  assert.equal(d[WEEKDAYS.indexOf('Sun')].count, 0);
+});
+
+test('lead time reports the median notice the baker gets', () => {
+  const mk = (madeDay, dueDay) => ({
+    status: 'placed', walk_in: false,
+    created_at: `2026-09-${String(madeDay).padStart(2, '0')}T02:00:00Z`,
+    due_at: `2026-09-${String(dueDay).padStart(2, '0')}T05:00:00Z`,
+  });
+  const lt = leadTimes([mk(1, 1), mk(1, 3), mk(1, 8), mk(1, 20), mk(1, 2)]);
+  assert.equal(lt.count, 5);
+  assert.equal(lt.median, 2);        // 0, 1, 2, 7, 19
+  assert.equal(lt.longest, 19);
+  assert.equal(lt.bands.find((b) => b.label === 'Same day').count, 1);
+  assert.equal(lt.bands.find((b) => b.label === 'Over 2 weeks').count, 1);
+});
+
+test('walk-ins are left out of lead time, not counted as same day', () => {
+  const base = { status: 'picked_up', created_at: '2026-09-03T02:00:00Z', due_at: '2026-09-03T02:00:00Z' };
+  assert.equal(leadTimes([{ ...base, walk_in: true }]).count, 0);
+  assert.equal(leadTimes([{ ...base, walk_in: false }]).count, 1);
+  assert.equal(leadTimes([]).median, null);
+});
+
+test('orders with no usable phone are flagged as unmatched customers', () => {
+  const rows = [
+    { status: 'placed', customer_phone: '0425 697 725' },
+    { status: 'placed', customer_phone: null },
+    { status: 'placed', customer_phone: '' },
+    { status: 'placed', customer_phone: '123' },        // too short to be a number
+    { status: 'cancelled', customer_phone: null },
+  ];
+  assert.equal(missingPhone(rows).length, 3);
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);
