@@ -194,6 +194,153 @@ if (!declared.size) {
   }
 }
 
+// ---------- 8. Factual consistency across the corpus ----------
+// Structural checks above prove the plumbing works. These prove the site does
+// not contradict itself on the four things customers actually ask about, and
+// that the entity graph stays consolidated. Every one of these classes has
+// silently drifted before: 81 serving-size contradictions, 223 dead /shop/
+// URLs in llms.txt, a Harris Park entity split across two @ids.
+//
+// FACTS is the single source of truth. If the business changes a price or a
+// flavour, change it HERE and on /cakes and /order — nowhere else.
+const FACTS = {
+  // size -> [serves, price] — canonical chart on /order and /cakes
+  sizes: { 6: ['6-8', '39.99'], 8: ['12-14', '49.99'], 10: ['20-22', '74.99'],
+           12: ['25-30', '89.99'], 14: ['40-45', '114.99'], 16: ['50-55', '134.99'] },
+  // the 15 orderable flavours, from the /order dropdown
+  flavours: ['Vanilla', 'Chocolate', 'Red Velvet', 'Butterscotch', 'Black Forest',
+             'White Forest', 'Strawberry', 'Mango', 'Cookies & Cream', 'Lychee',
+             'Pineapple', 'Tiramisu', 'Blueberry', 'Rasmalai', 'Ferrero Rocher'],
+  // flavour names that have appeared on the site but are NOT orderable
+  offMenu: ['Lotus Biscoff', 'Saffron Pistachio', 'Rose Cardamom', 'Coconut Pandan',
+            'Mango Passion', 'Lemon Zest', 'Salted Caramel', 'Kesar Pista', 'Taro',
+            'Chocolate Fudge', 'Vanilla Bean', 'Strawberry Cream'],
+  addresses: {
+    harrisPark: 'Shop 1, 96–98 Wigram Street',
+    riverstone: 'Shop 8, Riverstone Shopping Centre',
+  },
+  // one @id per shop — a split entity is two businesses to Google and to AI answer engines
+  entityIds: ['https://numnumsbakery.com.au/#harrispark',
+              'https://numnumsbakery.com.au/#riverstone',
+              'https://numnumsbakery.com.au/#organization'],
+};
+
+{
+  const pages = [...posts.map((s) => `blog/${s}.html`),
+    'index.html', 'cakes.html', 'order.html', 'about.html',
+    'indian-sweet.html', 'locations.html', 'privacy-policy.html'].filter((f) => existsSync(join(ROOT, f)));
+
+  const DASH = '(?:-|–|&ndash;)';
+  const SIZE = '(?:"|&quot;|”|″|-inch|\\s?inch(?:es)?)';
+  // Only same-clause assertions: no sentence/clause punctuation between the size
+  // and the number, or we match across "an 8-inch works; for 30-40 guests, size up".
+  const servesRe = new RegExp(`(6|8|10|12|14|16)\\s*${SIZE}([^.;:,<>\\d]{0,45}?)(\\d{1,2})\\s*(?:${DASH}|\\s+to\\s+)\\s*(\\d{1,2})\\s*(?:guests|people|servings|serves)`, 'gi');
+  const priceRe = new RegExp(`(6|8|10|12|14|16)\\s*${SIZE}([^.;:,<>]{0,60}?)\\$(\\d{2,3}\\.\\d{2})`, 'gi');
+  // a square / tiered / sheet cake legitimately serves a different number
+  const qualified = /square|tier|sheet|slab|rectangl|plus|\+|build/i;
+
+  const serveBad = [], priceBad = [], offMenuHits = new Map();
+  let ldBad = 0, ldTotal = 0;
+
+  for (const f of pages) {
+    const h = read(f);
+
+    for (const m of h.matchAll(servesRe)) {
+      const want = FACTS.sizes[m[1]]?.[0];
+      if (want && `${m[3]}-${m[4]}` !== want && !qualified.test(m[0])) {
+        serveBad.push(`${f}: ${m[1]}" serves "${m[3]}-${m[4]}" but /order says ${want}`);
+      }
+    }
+    for (const m of h.matchAll(priceRe)) {
+      const want = FACTS.sizes[m[1]]?.[1];
+      if (want && m[3] !== want) priceBad.push(`${f}: ${m[1]}" priced $${m[3]} but /cakes says $${want}`);
+    }
+    for (const fl of FACTS.offMenu) {
+      const n = (h.match(new RegExp(fl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+      if (n) offMenuHits.set(fl, (offMenuHits.get(fl) || 0) + n);
+    }
+    for (const m of h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      ldTotal++;
+      try { JSON.parse(m[1]); } catch { ldBad++; fail(`${f}: JSON-LD block does not parse — rich results will be dropped.`); }
+    }
+  }
+
+  if (serveBad.length) fail(`serving sizes: ${serveBad.length} assertion(s) contradict the canonical chart on /order → ${serveBad.slice(0, 5).join(' | ')}`);
+  if (priceBad.length) fail(`prices: ${priceBad.length} assertion(s) contradict /cakes → ${priceBad.slice(0, 5).join(' | ')}`);
+
+  // Off-menu flavours are a WARNING, not a failure: 62 mentions are awaiting an
+  // owner decision on whether those flavours are genuinely unavailable. Flip this
+  // to fail() once that list is resolved to zero.
+  if (offMenuHits.size) {
+    const top = [...offMenuHits.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6)
+      .map(([k, v]) => `${k}×${v}`).join(', ');
+    notes.push(`off-menu flavours still referenced (${[...offMenuHits.values()].reduce((a, b) => a + b, 0)} mentions): ${top}. Confirm availability or rewrite to the canonical 15.`);
+  }
+
+  // NAP: every page that names a shop street must use the one canonical form.
+  const hp = pages.filter((f) => /Wigram Street/.test(read(f)) && !read(f).includes(FACTS.addresses.harrisPark));
+  if (hp.length) fail(`NAP: ${hp.length} page(s) reference Wigram Street without the canonical "${FACTS.addresses.harrisPark}" → ${hp.slice(0, 5).join(', ')}`);
+
+  // Entity graph: exactly one @id per shop. A second spelling splits the entity.
+  const strayIds = new Set();
+  for (const f of pages) {
+    for (const m of read(f).matchAll(/"@id"\s*:\s*"(https:\/\/numnumsbakery\.com\.au\/#[a-z-]+)"/g)) {
+      if (!FACTS.entityIds.includes(m[1]) && !/#(website|article|breadcrumb|webpage|faq|product|logo)/.test(m[1])) strayIds.add(m[1]);
+    }
+  }
+  if (strayIds.size) fail(`entity graph: non-canonical @id(s) split the business entity → ${[...strayIds].join(', ')}. Canonical: ${FACTS.entityIds.join(', ')}`);
+
+  // Internal links must land directly on a live URL: no 301 hop, no retired target.
+  const liveSlugs = new Set(posts);
+  const topSlugs = new Set(readdirSync(ROOT).filter((f) => f.endsWith('.html')).map((f) => f.slice(0, -5)));
+  const ASSET = /\.(css|js|png|jpe?g|webp|svg|ico|xml|txt|pdf|mp4|webm|json)$/i;
+  const linkBad = { relative: 0, htmlHop: 0, retired: 0, broken: 0 };
+  const linkEx = [];
+  for (const f of pages) {
+    for (const m of read(f).matchAll(/<a\b[^>]*href="([^"]*)"/gi)) {
+      const raw = m[1];
+      if (!raw || /^(https?:|#|mailto:|tel:)/.test(raw)) continue;
+      const clean = raw.split('#')[0].split('?')[0];
+      if (!clean || ASSET.test(clean)) continue;
+      const slug = clean.replace(/\/$/, '').split('/').pop().replace(/\.html$/, '');
+      if (!raw.startsWith('/')) { linkBad.relative++; linkEx.push(`${f} → ${raw} (relative)`); continue; }
+      if (clean.endsWith('.html')) { linkBad.htmlHop++; linkEx.push(`${f} → ${raw} (.html costs a 301 hop)`); continue; }
+      const key = clean.replace(/\/$/, '');
+      if (key.startsWith('/blog/') && key !== '/blog' && !liveSlugs.has(slug)) { linkBad.retired++; linkEx.push(`${f} → ${raw} (no such post)`); continue; }
+      if (key && !key.startsWith('/blog/') && !topSlugs.has(slug) && !['blog', 'review', ''].includes(slug)) { linkBad.broken++; linkEx.push(`${f} → ${raw} (no such page)`); }
+    }
+  }
+  const linkTotal = Object.values(linkBad).reduce((a, b) => a + b, 0);
+  if (linkTotal) {
+    fail(`internal links: ${linkTotal} problem(s) — ${JSON.stringify(linkBad)}. Links must be absolute and extensionless. → ${linkEx.slice(0, 5).join(' | ')}`);
+  }
+
+  // Local assets must exist. A broken <img src> is a visible defect; a broken
+  // schema image weakens the entity. Handles ../ prefixes and %20 escapes, both
+  // of which have hidden broken paths from earlier greps.
+  const missingAssets = new Map();
+  for (const f of pages) {
+    for (const m of read(f).matchAll(/(?:src|href|content)="([^"]*(?:brand_assets|cake_photos)\/[^"]+)"/g)) {
+      const rel = decodeURIComponent(
+        m[1].split('?')[0]
+          .replace(/^https?:\/\/numnumsbakery\.com\.au/, '')  // absolute site URLs resolve locally
+          .replace(/^\.\.\//, '')
+          .replace(/^\//, ''),
+      );
+      if (/^https?:\/\//.test(m[1].replace(/^https?:\/\/numnumsbakery\.com\.au/, ''))) continue;  // off-site, can't check
+      if (!existsSync(join(ROOT, rel))) {
+        if (!missingAssets.has(m[1])) missingAssets.set(m[1], f);
+      }
+    }
+  }
+  if (missingAssets.size) {
+    const ex = [...missingAssets.entries()].slice(0, 5).map(([u, f]) => `${u} (${f})`).join(' | ');
+    fail(`assets: ${missingAssets.size} referenced file(s) do not exist → ${ex}`);
+  }
+
+  notes.push(`facts: ${pages.length} pages · ${ldTotal} JSON-LD blocks (${ldBad} invalid) · serving sizes, prices, NAP, entity @ids and internal links all checked`);
+}
+
 // ---------- Report ----------
 const n = posts.length;
 console.log(`posts ${n} | cards ${cardSlugs.length} | sitemap ${sitemapSlugs.length} | llms ${llmsSlugs.length} | redirects ${redirectSlugs.length} (= posts + 1)`);

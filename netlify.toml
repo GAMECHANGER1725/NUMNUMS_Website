@@ -1,3 +1,19 @@
+# ── Build ────────────────────────────────────────────────────────────────────
+# There is no bundler — the site is served straight from the repo root, which is
+# what `publish = "."` preserves. The build command exists purely as a QUALITY
+# GATE: verify-blog.mjs exits 1 on a broken invariant or a factual contradiction
+# (wrong price, wrong serving size, split entity @id, dead internal link), and a
+# non-zero exit fails the Netlify build so the bad state never becomes a
+# publishable deploy.
+#
+# This is safe by construction: auto-publish is OFF, so a failed build simply
+# means no new deploy appears to publish. It cannot take the live site down.
+#
+# verify-blog.mjs uses only Node stdlib — no npm install, no dependencies.
+[build]
+  command = "node verify-blog.mjs"
+  publish = "."
+
 # ── Redirects ────────────────────────────────────────────────────────────────
 
 # Canonical host: force www → non-www and http → https onto the single
