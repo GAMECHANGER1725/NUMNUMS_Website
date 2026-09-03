@@ -140,6 +140,37 @@ export async function findCustomerByPhone(phone) {
   return data?.[0] ?? null;
 }
 
+/**
+ * Customers whose name matches, most frequent first, for the name typeahead.
+ *
+ * Reads the `customers` view, which is security_invoker — so a staff member
+ * only ever sees people who ordered at their own store.
+ */
+export async function searchCustomers(term, limit = 6) {
+  // PostgREST treats , ( ) * % as filter syntax, so a name typed with any of
+  // them would corrupt the query rather than just failing to match.
+  const q = String(term ?? '').trim().replace(/[,()*%\\]/g, ' ').trim();
+  if (q.length < 2) return [];
+  const { data, error } = await sb.from('customers')
+    .select('name,phone,order_count,spend,last_order')
+    .ilike('name', `%${q}%`)
+    .order('order_count', { ascending: false })
+    .limit(limit);
+  if (error) return [];
+  return data || [];
+}
+
+/** One customer's history, by phone. Used to show "3rd order" on a docket. */
+export async function getCustomer(phone) {
+  const digits = String(phone ?? '').replace(/\D/g, '');
+  if (digits.length < 6) return null;
+  const { data } = await sb.from('customers')
+    .select('name,phone,order_count,spend,first_order')
+    .eq('phone_key', digits.slice(-9))
+    .limit(1);
+  return data?.[0] ?? null;
+}
+
 export async function createOrder(fields) {
   const { data, error } = await sb.from('orders').insert(fields).select().single();
   if (error) throw error;

@@ -396,4 +396,48 @@ test('a customer with no phone is never matched by a number', () => {
   assert.equal(searchOrders(book, '9999').length, 0);
 });
 
+// ── Repeat customer rate ────────────────────────────────────────────────────
+test('repeat customer rate is the share who ordered more than once', () => {
+  const o = (phone, name) => ({ status: 'placed', price: 50, customer_phone: phone, customer_name: name });
+  const r = repeatCustomers([
+    o('0400000001', 'A'), o('0400000001', 'A'),   // returning
+    o('0400000002', 'B'), o('0400000002', 'B'),   // returning
+    o('0400000003', 'C'),                          // one-off
+    o('0400000004', 'D'),                          // one-off
+  ]);
+  assert.equal(r.total, 4);
+  assert.equal(r.returningCount, 2);
+  assert.equal(r.newCount, 2);
+  assert.equal(r.rate, 50);
+});
+
+test('the same person in three phone formats is one returning customer', () => {
+  const r = repeatCustomers([
+    { status: 'placed', price: 10, customer_phone: '0425 697 725', customer_name: 'Anjali' },
+    { status: 'placed', price: 10, customer_phone: '+61425697725', customer_name: 'Anjali' },
+    { status: 'placed', price: 10, customer_phone: '0425697725',   customer_name: 'Anjali' },
+  ]);
+  assert.equal(r.total, 1);
+  assert.equal(r.returningCount, 1);
+  assert.equal(r.rate, 100);
+  assert.equal(r.top[0].orders, 3);
+});
+
+test('no customers reports a zero rate rather than NaN', () => {
+  const r = repeatCustomers([]);
+  assert.equal(r.total, 0);
+  assert.equal(r.rate, 0);
+});
+
+test('cancelled orders do not create or inflate a customer', () => {
+  const r = repeatCustomers([
+    { status: 'placed',    price: 10, customer_phone: '0400000001', customer_name: 'A' },
+    { status: 'cancelled', price: 10, customer_phone: '0400000001', customer_name: 'A' },
+    { status: 'cancelled', price: 10, customer_phone: '0400000009', customer_name: 'Z' },
+  ]);
+  assert.equal(r.total, 1);
+  assert.equal(r.returningCount, 0);
+  assert.equal(r.rate, 0);
+});
+
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

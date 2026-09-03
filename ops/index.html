@@ -542,7 +542,38 @@ button { background: none; border: 0; cursor: pointer; }
   color: var(--taupe); font-weight: 500; pointer-events: none;
 }
 .money .input { padding-left: 26px; }
-.is-autofilled { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(107,122,85,.16); }
+/* ── Customer typeahead ─────────────────────────────────────────────────── */
+.type-wrap { position: relative; }
+#name-suggest { top: calc(100% + 4px); }
+.sug-name { font-weight: 500; }
+.sug-phone {
+  margin-left: 8px; font-size: 13px; color: var(--taupe);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* An autofilled field stays outlined until it is edited, so nobody saves a
+   phone number they never actually checked against the customer in front of
+   them. A brief flash would be gone by the time they looked. */
+.is-autofilled {
+  border-color: var(--sage) !important;
+  background: rgba(107,122,85,.05);
+  box-shadow: 0 0 0 3px rgba(107,122,85,.14);
+}
+.autofill-note {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12.5px; color: var(--sage); font-weight: 500;
+  margin: -6px 0 14px;
+}
+.autofill-note::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--sage); flex: none;
+}
+.repeat-chip {
+  font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 4px;
+  background: rgba(107,122,85,.15); color: var(--sage);
+}
 .money-hint { font-size: 12px; color: var(--taupe); margin-top: 5px; line-height: 1.4; }
 
 /* ── Photo control ──────────────────────────────────────────────────────── */
@@ -698,6 +729,15 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
   background: var(--dough); overflow: hidden;
 }
 .meter-fill { display: block; height: 100%; border-radius: 3px; background: var(--rose); }
+.rcr { display: flex; align-items: center; gap: 16px; margin: 4px 0 10px; }
+.rcr-num {
+  font-size: 40px; font-weight: 500; line-height: 1;
+  letter-spacing: -0.03em; color: var(--rose); font-variant-numeric: tabular-nums;
+}
+.rcr-pct { font-size: 20px; color: var(--taupe); margin-left: 1px; }
+.rcr-side { flex: 1; min-width: 0; display: grid; gap: 5px; }
+.rcr-label { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+.meter-wide { flex: 1 1 auto; width: 100%; height: 7px; }
 .mix-head {
   font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
   color: var(--taupe); margin: 12px 0 2px;

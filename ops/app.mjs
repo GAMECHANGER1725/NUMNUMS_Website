@@ -8,7 +8,7 @@ import {
   sb, PEOPLE, STORES, storeLabel, STATUS_LABEL,
   signIn, signOut, currentProfile, listProfiles,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
-  findCustomerByPhone,
+  findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, uploadPhoto, photoUrl,
 } from './db.mjs';
 import {
@@ -580,6 +580,7 @@ async function openOrder(id) {
     <div class="detail-grid">
       ${field('Customer', o.customer_name)}
       ${field('Phone', o.customer_phone)}
+      <div class="span-2 hidden" id="cust-history"></div>
       ${field('Pick up', dateTimeFmt.format(new Date(o.due_at)))}
       ${field('Store', storeLabel(o.store))}
       ${field('Flavour', o.flavour)}
@@ -632,6 +633,24 @@ async function openOrder(id) {
   `);
 
   hydrateThumbs(body);
+
+  // Loaded after paint: knowing someone is a regular changes how staff greet
+  // them at the counter, but it must never hold up opening the order.
+  if (o.customer_phone) {
+    getCustomer(o.customer_phone).then((c) => {
+      const host = $('cust-history');
+      if (!c || !host || Number(c.order_count) < 2) return;
+      host.innerHTML = `
+        <div class="detail-k">Customer history</div>
+        <div class="detail-v">
+          <span class="repeat-chip">Regular</span>
+          ${c.order_count} orders · ${money2.format(Number(c.spend || 0))} all up
+          <span class="list-meta">· since ${esc(dateFmt.format(new Date(c.first_order)))}</span>
+        </div>`;
+      host.classList.remove('hidden');
+    }).catch(() => {});
+  }
+
   const detailImg = body.querySelector('.detail-photo');
   if (detailImg) photoUrl(detailImg.dataset.photo).then((u) => { if (u) detailImg.src = u; });
 
@@ -719,13 +738,19 @@ function openNewOrder() {
       <div class="row-2">
         <div class="field">
           <label class="field-label" for="f-name">Customer <span class="req">*</span></label>
-          <input class="input" id="f-name" required autocomplete="off">
+          <div class="type-wrap">
+            <input class="input" id="f-name" required autocomplete="off"
+                   role="combobox" aria-expanded="false" aria-autocomplete="list">
+            <div class="dd-menu hidden" id="name-suggest" role="listbox"></div>
+          </div>
         </div>
         <div class="field">
           <label class="field-label" for="f-phone">Phone</label>
           <input class="input nums" id="f-phone" type="tel" inputmode="tel" autocomplete="off">
         </div>
       </div>
+
+      <p class="autofill-note hidden" id="autofill-note"></p>
 
       <div class="field">
         <span class="field-label">Pick up <span class="req">*</span></span>
@@ -869,19 +894,85 @@ function openNewOrder() {
 
   $('f-price').addEventListener('input', () => { priceTouched = true; syncPayment(); });
 
-  // A number we have seen before fills in the name, so staff stop retyping
-  // details already on file — and repeat customers stay linked in the numbers.
-  $('f-phone').addEventListener('change', async () => {
-    const name = $('f-name');
-    if (name.value.trim()) return;
+  // ── Customer lookup ───────────────────────────────────────────────────────
+  // Typing a name searches people the shop has already served. Picking one
+  // fills the phone and nothing else: the cake is a fresh decision every time,
+  // so carrying over the last flavour or price would put stale details on a
+  // new order without anyone noticing.
+  const nameEl = $('f-name');
+  const phoneEl = $('f-phone');
+  const suggest = $('name-suggest');
+  const note = $('autofill-note');
+
+  const clearAutofill = () => {
+    nameEl.classList.remove('is-autofilled');
+    phoneEl.classList.remove('is-autofilled');
+    note.classList.add('hidden');
+  };
+
+  const closeSuggest = () => {
+    suggest.classList.add('hidden');
+    nameEl.setAttribute('aria-expanded', 'false');
+  };
+
+  const ordinal = (n) => {
+    const suffix = (n % 100 >= 11 && n % 100 <= 13) ? 'th'
+      : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th');
+    return `${n}${suffix}`;
+  };
+
+  function pickCustomer(c) {
+    nameEl.value = c.name;
+    phoneEl.value = c.phone || '';
+    nameEl.classList.add('is-autofilled');
+    if (c.phone) phoneEl.classList.add('is-autofilled');
+    note.textContent = `Filled from a past order — this is ${c.name.split(' ')[0]}'s ${ordinal(Number(c.order_count) + 1)} cake.`;
+    note.classList.remove('hidden');
+    closeSuggest();
+    $('f-due-btn').focus();
+  }
+
+  let nameTimer = null;
+  nameEl.addEventListener('input', () => {
+    clearAutofill();
+    clearTimeout(nameTimer);
+    const term = nameEl.value.trim();
+    if (term.length < 2) { closeSuggest(); return; }
+    nameTimer = setTimeout(async () => {
+      let hits = [];
+      try { hits = await searchCustomers(term); }
+      catch { /* never block taking an order on a lookup */ }
+      if (!hits.length || nameEl.value.trim() !== term) { closeSuggest(); return; }
+
+      suggest.innerHTML = hits.map((c, i) => `
+        <button type="button" class="dd-opt" role="option" data-i="${i}" aria-selected="false">
+          <span class="sug-name">${esc(c.name)}</span>
+          <span class="sug-phone">${esc(c.phone || '')}</span>
+          <span class="dd-note">${c.order_count}×</span>
+        </button>`).join('');
+      suggest.querySelectorAll('[data-i]').forEach((b) =>
+        b.addEventListener('mousedown', (e) => { e.preventDefault(); pickCustomer(hits[+b.dataset.i]); }));
+      suggest.classList.remove('hidden');
+      nameEl.setAttribute('aria-expanded', 'true');
+    }, 200);
+  });
+
+  phoneEl.addEventListener('input', () => phoneEl.classList.remove('is-autofilled'));
+  nameEl.addEventListener('blur', () => setTimeout(closeSuggest, 120));
+
+  // A number typed straight in still finds the customer, for staff who work
+  // phone-first because that is what the WhatsApp message leads with.
+  phoneEl.addEventListener('change', async () => {
+    if (nameEl.value.trim()) return;
     try {
-      const hit = await findCustomerByPhone($('f-phone').value);
-      if (hit && !name.value.trim()) {
-        name.value = hit.customer_name;
-        name.classList.add('is-autofilled');
-        setTimeout(() => name.classList.remove('is-autofilled'), 1400);
+      const hit = await findCustomerByPhone(phoneEl.value);
+      if (hit && !nameEl.value.trim()) {
+        nameEl.value = hit.customer_name;
+        nameEl.classList.add('is-autofilled');
+        note.textContent = 'Filled from a past order.';
+        note.classList.remove('hidden');
       }
-    } catch { /* a lookup that fails must never block taking the order */ }
+    } catch { /* lookups are a convenience, never a blocker */ }
   });
 
   // ── Payment ───────────────────────────────────────────────────────────────
@@ -1405,13 +1496,26 @@ async function renderAnalytics() {
 
     <div class="panel">
       <div class="panel-title">Customers</div>
-      <div class="panel-note">Matched on phone number, over every order on record.</div>
-      <div class="list-row"><span class="grow">One order only</span><span class="num">${repeat.newCount}</span></div>
-      <div class="list-row"><span class="grow">Come back</span><span class="num">${repeat.returningCount}</span></div>
-      ${repeat.top.slice(0, 5).map((c) => `
+      <div class="panel-note">
+        Matched on phone number, over every order on record. Repeat customer rate is
+        the share who have ordered more than once — the clearest read on whether the
+        cakes bring people back, and it needs no extra data entry.
+      </div>
+      <div class="rcr">
+        <div class="rcr-num">${repeat.rate.toFixed(0)}<span class="rcr-pct">%</span></div>
+        <div class="rcr-side">
+          <div class="rcr-label">Repeat customer rate</div>
+          <div class="meter meter-wide"><span class="meter-fill" style="width:${Math.min(100, repeat.rate).toFixed(1)}%"></span></div>
+          <div class="list-meta">${repeat.returningCount} of ${repeat.total} customers have come back</div>
+        </div>
+      </div>
+      <div class="list-row"><span class="grow">Ordered once</span><span class="num">${repeat.newCount}</span></div>
+      <div class="list-row"><span class="grow">Came back</span><span class="num">${repeat.returningCount}</span></div>
+      ${repeat.top.length ? '<div class="mix-head">Who comes back most</div>' : ''}
+      ${repeat.top.slice(0, 6).map((c) => `
         <div class="list-row">
           <span class="grow">${esc(c.name)}</span>
-          <span class="list-meta">${c.orders} orders</span>
+          <span class="repeat-chip">${c.orders}×</span>
           <span class="num">${money2.format(c.spend)}</span>
         </div>`).join('')}
     </div>

@@ -170,10 +170,16 @@ export function repeatCustomers(orders) {
     byPhone.set(key, seen);
   }
   const all = [...byPhone.values()];
+  const returning = all.filter((c) => c.orders > 1);
   return {
+    total: all.length,
     newCount: all.filter((c) => c.orders === 1).length,
-    returningCount: all.filter((c) => c.orders > 1).length,
-    top: all.filter((c) => c.orders > 1).sort((a, b) => b.orders - a.orders || b.spend - a.spend),
+    returningCount: returning.length,
+    // Repeat customer rate: the share of known customers who came back at
+    // least once. The single clearest measure of whether the cakes are good
+    // enough to bring people back, and it needs no extra data entry.
+    rate: all.length ? (returning.length / all.length) * 100 : 0,
+    top: returning.sort((a, b) => b.orders - a.orders || b.spend - a.spend),
   };
 }
 
