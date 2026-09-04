@@ -253,6 +253,91 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+  <!-- ── Order-form dropdowns ─────────────────────────────────────────────
+       A native <select> hands its list to the OS: a grey iOS wheel or an
+       Android system sheet. On a page this deliberately styled it was the one
+       control that looked like somebody else's app, and on the flavour and
+       size lists it flattened the two things a customer actually decides on —
+       whether a flavour is premium, and how many people a size feeds — into
+       one run-on line. These render the list ourselves so both sit in their
+       own column. Same grammar as the staff ops app, on purpose. -->
+  <style>
+    .nd { position: relative; }
+    .nd-btn {
+      width: 100%; display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; text-align: left; cursor: pointer;
+      border: 1px solid rgba(200,84,120,0.18); border-radius: 0.6rem;
+      background: #fff;
+      font-family: 'Jost', sans-serif; font-size: 0.82rem; color: #2C1A0E;
+      transition: border-color .16s ease, box-shadow .16s ease;
+    }
+    .nd-btn:hover { border-color: rgba(200,84,120,0.42); }
+    .nd-btn:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+    .nd-btn[aria-expanded="true"] {
+      border-color: #C85478; box-shadow: 0 0 0 3px rgba(200,84,120,0.13);
+    }
+    .nd-compact .nd-btn { padding: 7px 9px; gap: 6px; }
+
+    .nd-val { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nd-val.is-empty { color: rgba(44,26,14,0.42); }
+    .nd-caret {
+      flex: none; width: 10px; height: 10px;
+      color: rgba(92,58,34,0.4);
+      transition: transform .18s ease;
+    }
+    .nd-btn[aria-expanded="true"] .nd-caret { transform: rotate(180deg); color: #C85478; }
+
+    .nd-menu {
+      position: absolute; z-index: 40; left: 0; right: 0; top: calc(100% + 5px);
+      min-width: 100%; max-height: 264px; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px; margin: 0; list-style: none;
+      background: #FFF8F2;
+      border: 1px solid rgba(200,84,120,0.18); border-radius: 0.7rem;
+      box-shadow: 0 2px 6px rgba(44,26,14,.06), 0 18px 38px -14px rgba(44,26,14,.28);
+      animation: nd-rise .16s cubic-bezier(.2,.9,.3,1);
+    }
+    .nd-compact .nd-menu { left: 0; right: auto; }
+    @keyframes nd-rise { from { transform: translateY(8px); opacity: 0; } }
+
+    .nd-opt {
+      position: relative; width: 100%;
+      display: flex; align-items: center; gap: 8px;
+      min-height: 40px; padding: 8px 10px 8px 12px;
+      border: 0; background: none; cursor: pointer; text-align: left;
+      border-radius: 0.5rem;
+      font-family: 'Jost', sans-serif; font-size: 0.82rem; color: #2C1A0E;
+      transition: background-color .13s ease;
+    }
+    .nd-opt:hover, .nd-opt.is-active { background: rgba(200,84,120,0.07); }
+    .nd-opt:focus-visible { outline: 2px solid #C85478; outline-offset: -2px; }
+    /* The chosen option keeps a rose tab down its edge rather than a tick —
+       it reads as the pulled card in a drawer, which is how the shop's own
+       order slips are marked. */
+    .nd-opt[aria-selected="true"] { color: #A03D5E; font-weight: 500; }
+    .nd-opt[aria-selected="true"]::before {
+      content: ''; position: absolute; left: 3px; top: 8px; bottom: 8px;
+      width: 3px; border-radius: 2px; background: #C85478;
+    }
+    .nd-opt-label { flex: 1; min-width: 0; }
+    /* Guest count for a size, so the number being scanned for lines up in its
+       own column instead of trailing the diameter. */
+    .nd-opt-note {
+      flex: none; font-size: 0.72rem; color: rgba(92,58,34,0.55);
+      font-variant-numeric: tabular-nums;
+    }
+    .nd-opt[aria-selected="true"] .nd-opt-note { color: rgba(160,61,94,0.7); }
+    .nd-opt-tag {
+      flex: none; font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 2px 5px; border-radius: 3px;
+      background: rgba(200,84,120,0.13); color: #A03D5E;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nd-menu { animation: none; }
+      .nd-caret { transition: none; }
+    }
+  </style>
 </head>
 <body class="grain-bg">
 <div id="sk-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:99998;background:#FFF8F2;overflow:hidden;pointer-events:all;will-change:opacity;">
@@ -558,20 +643,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div style="display:flex;align-items:center;gap:5px;">
               <span class="material-symbols-outlined" style="font-size:1.05rem;color:rgba(92,58,34,0.4);font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;flex-shrink:0;">schedule</span>
               <div style="position:relative;">
-                <select id="ord-hour" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
+                <select id="ord-hour" data-dd="compact" data-dd-label="Pickup hour" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
                   <option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option selected>10</option><option>11</option><option>12</option>
                 </select>
                 <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
               <span style="font-family:'Jost',sans-serif;font-size:0.9rem;color:#5C3A22;font-weight:500;line-height:1;">:</span>
               <div style="position:relative;">
-                <select id="ord-min" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
+                <select id="ord-min" data-dd="compact" data-dd-label="Pickup minute" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
                   <option>00</option><option>15</option><option>30</option><option>45</option>
                 </select>
                 <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
               <div style="position:relative;">
-                <select id="ord-ampm" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
+                <select id="ord-ampm" data-dd="compact" data-dd-label="AM or PM" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
                   <option>AM</option><option>PM</option>
                 </select>
                 <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1481,5 +1566,175 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   })();
 </script>
 
+
+  <script>
+    // ── Custom dropdowns ──────────────────────────────────────────────────
+    //
+    // Upgrades every <select> on this page in place. The native element stays
+    // in the DOM, in its original wrapper, and remains the source of truth:
+    // every existing line that reads `.value`, walks `options[selectedIndex]`,
+    // or listens for `change` keeps working untouched, and the field-level
+    // error lookup in chk() still finds its sibling by walking up from the
+    // select. Only the list rendering is ours.
+    (function() {
+      var open = null;   // the one menu allowed to be open at a time
+
+      function decorate(text) {
+        // "Rasmalai ✦ Premium"      → label + tag
+        // '8" | 12-14 guests'       → label + note
+        var tag = '', note = '', label = text;
+        var star = label.indexOf('✦');
+        if (star > -1) { tag = label.slice(star + 1).trim(); label = label.slice(0, star).trim(); }
+        var pipe = label.indexOf('|');
+        if (pipe > -1) { note = label.slice(pipe + 1).trim(); label = label.slice(0, pipe).trim(); }
+        return { label: label, note: note, tag: tag };
+      }
+
+      function dress(sel) {
+        var wrap = sel.parentElement;
+        var compact = sel.dataset.dd === 'compact';
+
+        // The old chevron was drawn for the native control.
+        var oldCaret = wrap.querySelector(':scope > svg');
+        if (oldCaret) oldCaret.remove();
+
+        wrap.classList.add('nd');
+        if (compact) wrap.classList.add('nd-compact');
+
+        // Kept for its value and its position in the DOM, hidden from sight
+        // and from assistive tech — the button below carries the semantics.
+        sel.setAttribute('aria-hidden', 'true');
+        sel.setAttribute('tabindex', '-1');
+        sel.style.cssText = 'position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;';
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'nd-btn';
+        btn.setAttribute('aria-haspopup', 'listbox');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.innerHTML = '<span class="nd-val"></span>'
+          + '<svg class="nd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+          + ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+          + '<polyline points="6 9 12 15 18 9"/></svg>';
+
+        // Point the button at the field's existing label so the form still
+        // reads correctly to a screen reader.
+        var lab = sel.id && document.querySelector('label[for="' + sel.id + '"]');
+        if (lab) {
+          if (!lab.id) lab.id = sel.id + '-label';
+          btn.setAttribute('aria-labelledby', lab.id);
+        } else if (sel.dataset.ddLabel) {
+          btn.setAttribute('aria-label', sel.dataset.ddLabel);
+        }
+
+        var menu = document.createElement('div');
+        menu.className = 'nd-menu';
+        menu.setAttribute('role', 'listbox');
+        menu.hidden = true;
+        if (lab && lab.id) menu.setAttribute('aria-labelledby', lab.id);
+
+        Array.prototype.forEach.call(sel.options, function(o, i) {
+          // The "Flavour…" row exists so the native control can start empty.
+          // In a rendered list it is just a highlighted row nobody would pick,
+          // so the placeholder lives on the button and stays out of the menu.
+          if (o.value === '') return;
+          var d = decorate(o.textContent);
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'nd-opt';
+          b.setAttribute('role', 'option');
+          b.dataset.i = i;
+          b.innerHTML = '<span class="nd-opt-label"></span>'
+            + (d.tag ? '<span class="nd-opt-tag"></span>' : '')
+            + (d.note ? '<span class="nd-opt-note"></span>' : '');
+          b.querySelector('.nd-opt-label').textContent = d.label;
+          if (d.tag) b.querySelector('.nd-opt-tag').textContent = d.tag;
+          if (d.note) b.querySelector('.nd-opt-note').textContent = d.note;
+          b.addEventListener('click', function() { choose(i); });
+          menu.appendChild(b);
+        });
+
+        wrap.appendChild(btn);
+        wrap.appendChild(menu);
+
+        var items = Array.prototype.slice.call(menu.querySelectorAll('.nd-opt'));
+
+        var rowOf = function() {
+          return items.findIndex(function(it) { return +it.dataset.i === sel.selectedIndex; });
+        };
+
+        function paint() {
+          var o = sel.options[sel.selectedIndex];
+          var empty = !o || o.value === '';
+          var d = decorate(empty ? (sel.options[0] ? sel.options[0].textContent : '') : o.textContent);
+          var val = btn.querySelector('.nd-val');
+          val.textContent = d.label + (!empty && d.note && !compact ? '  ' + d.note : '');
+          val.classList.toggle('is-empty', empty);
+          items.forEach(function(it) {
+            it.setAttribute('aria-selected', String(+it.dataset.i === sel.selectedIndex));
+          });
+        }
+
+        function choose(i) {
+          sel.selectedIndex = i;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          paint();
+          toggle(false);
+          btn.focus();
+        }
+
+        function highlight(row) {
+          items.forEach(function(it) { it.classList.remove('is-active'); });
+          if (!items[row]) return;
+          items[row].classList.add('is-active');
+          items[row].scrollIntoView({ block: 'nearest' });
+        }
+
+        function toggle(want) {
+          if (want && open && open !== toggle) open(false);
+          menu.hidden = !want;
+          btn.setAttribute('aria-expanded', String(want));
+          open = want ? toggle : null;
+          if (want) highlight(Math.max(0, rowOf()));
+        }
+
+        function move(step) {
+          var at = items.findIndex(function(it) { return it.classList.contains('is-active'); });
+          if (at < 0) at = Math.max(0, rowOf());
+          highlight(Math.max(0, Math.min(items.length - 1, at + step)));
+        }
+
+        btn.addEventListener('click', function(e) { e.stopPropagation(); toggle(menu.hidden); });
+
+        wrap.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && !menu.hidden) { e.preventDefault(); toggle(false); btn.focus(); return; }
+          if (menu.hidden) {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault(); toggle(true);
+            }
+            return;
+          }
+          if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+          else if (e.key === 'Home') { e.preventDefault(); move(-items.length); }
+          else if (e.key === 'End') { e.preventDefault(); move(items.length); }
+          else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            var at = items.findIndex(function(it) { return it.classList.contains('is-active'); });
+            if (at > -1) choose(+items[at].dataset.i);
+          } else if (e.key === 'Tab') { toggle(false); }
+        });
+
+        // Anything else on the page reassigning the value — the price hint, a
+        // reset — still repaints the button.
+        sel.addEventListener('change', paint);
+        paint();
+      }
+
+      document.addEventListener('click', function() { if (open) open(false); });
+
+      document.querySelectorAll('select').forEach(dress);
+    })();
+  </script>
 </body>
 </html>
