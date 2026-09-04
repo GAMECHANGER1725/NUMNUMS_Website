@@ -170,7 +170,7 @@ button { background: none; border: 0; cursor: pointer; }
 
 .segmented {
   display: flex; gap: 3px; padding: 3px;
-  background: var(--dough); border-radius: 10px;
+  background: var(--dough); border: 1px solid var(--dough-line); border-radius: 10px;
   max-width: 940px; margin: 0 auto 10px;
 }
 .segmented-btn {
@@ -783,6 +783,101 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+/* ── Centred sheet ──────────────────────────────────────────────────────── */
+/* The order detail slides up from the bottom because it is a peek at a card
+   you just tapped. Logging an order is the opposite: a task that owns the
+   screen, so it sits in the middle rather than sliding half of itself over
+   the tab bar. */
+.sheet.sheet-center {
+  inset: 0; margin: auto;
+  height: fit-content; max-height: min(88dvh, 100dvh - 32px);
+  width: min(620px, calc(100% - 24px));
+  border-radius: 20px;
+  transform: none;
+  animation: pop .2s cubic-bezier(.2,.9,.3,1);
+  padding-bottom: 20px;
+}
+@keyframes pop { from { transform: scale(.97); opacity: 0; } }
+
+/* ── Print board ────────────────────────────────────────────────────────── */
+.tag-3d    { background: rgba(179,123,44,.16); color: var(--crust); }
+.tag-photo { background: rgba(107,122,85,.16); color: var(--sage); }
+.tag-todo  { background: rgba(200,84,120,.13); color: var(--rose-deep); }
+.tag-done  { background: rgba(139,127,118,.16); color: var(--slate); }
+
+.docket.spine-print { border-left-color: var(--crust); }
+.docket-print {
+  margin-top: 5px; font-size: 14px; color: var(--ink); line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.docket-print strong { font-weight: 500; }
+
+/* ── Order picker ───────────────────────────────────────────────────────── */
+/* Square tiles rather than a text list: dad recognises the cake by its photo
+   long before he reads a docket number. */
+.pick-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 9px; padding: 5px;
+  max-height: 340px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+.pick-tile {
+  position: relative; display: block; text-align: left;
+  border-radius: 11px; overflow: hidden;
+  border: 1.5px solid var(--dough-line); background: var(--cream);
+  transition: border-color .16s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
+}
+.pick-tile:active { transform: scale(.97); }
+.pick-tile[aria-pressed="true"] { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(200,84,120,.14); }
+.pick-shot {
+  position: relative; aspect-ratio: 1; width: 100%;
+  background: var(--dough); display: grid; place-items: center;
+  font-size: 22px; color: var(--dough-line);
+}
+.pick-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pick-no {
+  position: absolute; left: 5px; top: 5px;
+  font-size: 10px; font-weight: 600; letter-spacing: .08em;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 5px; border-radius: 4px;
+  background: rgba(44,26,14,.72); color: var(--cream);
+}
+.pick-meta { display: block; padding: 6px 8px 7px; }
+.pick-name, .pick-when {
+  display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pick-name { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.pick-when { font-size: 11px; color: var(--taupe); font-variant-numeric: tabular-nums; }
+
+.pick-summary {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px; border: 1.5px solid var(--rose); border-radius: var(--radius);
+  background: rgba(200,84,120,.05);
+}
+.pick-summary .thumb { width: 46px; height: 46px; }
+.pick-summary .grow { flex: 1; min-width: 0; }
+
+/* ── Reminder before a cake is called done ──────────────────────────────── */
+.warnbox {
+  border: 1.5px solid var(--crust); border-radius: var(--radius);
+  background: rgba(179,123,44,.06);
+  padding: 14px 15px; margin-top: 12px;
+}
+.warnbox-title { font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+.warnbox-note { font-size: 13px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 10px; }
+.warnbox .list-row:first-of-type { border-top: 1px solid rgba(179,123,44,.25); }
+.warnbox .list-row { border-color: rgba(179,123,44,.25); }
+.warnbox .action-row { margin-top: 12px; }
+
+/* A cake with something to print carries the reminder on its own card, so it
+   is visible before anyone opens it. */
+.print-flag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; letter-spacing: .04em;
+  padding: 2px 6px; border-radius: 4px;
+  background: rgba(179,123,44,.15); color: var(--crust);
+}
+.print-flag.is-done { background: rgba(139,127,118,.16); color: var(--slate); }
+
 </style>
 </head>
 <body>
@@ -846,6 +941,7 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
   <main class="main">
     <section id="view-log"></section>
     <section id="view-bake" class="hidden"></section>
+    <section id="view-prints" class="hidden"></section>
     <section id="view-analytics" class="hidden"></section>
   </main>
 

@@ -10,7 +10,7 @@ import {
   repeatCustomers, bakerSections, monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, phoneKey,
-  byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS,
+  byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
 } from './stats.mjs';
 
 let passed = 0;
@@ -492,6 +492,33 @@ test('orders with no usable phone are flagged as unmatched customers', () => {
     { status: 'cancelled', customer_phone: null },
   ];
   assert.equal(missingPhone(rows).length, 3);
+});
+
+test('print jobs group by their cake\'s pickup day, printed ones last', () => {
+  const now = new Date('2026-09-04T02:00:00Z');           // 12pm Sydney, Fri
+  const job = (id, dueKey, status, printedAt) => ({
+    id, status, printed_at: printedAt ?? null,
+    order: { due_at: `${dueKey}T05:00:00Z` },              // 3pm Sydney
+  });
+  const out = printSections([
+    job('c', '2026-09-06', 'todo'),
+    job('a', '2026-09-04', 'todo'),
+    job('b', '2026-09-05', 'todo'),
+    job('old', '2026-09-01', 'printed', '2026-09-03T02:00:00Z'),
+    job('stale', '2026-08-01', 'printed', '2026-08-01T02:00:00Z'),
+  ], now);
+
+  assert.deepEqual(out.map(([label]) => label), ['Today', 'Tomorrow', 'In 2 days', 'Printed']);
+  assert.deepEqual(out.map(([, rows]) => rows.map((r) => r.id)), [['a'], ['b'], ['c'], ['old']]);
+});
+
+test('an overdue print job sorts ahead of today', () => {
+  const now = new Date('2026-09-04T02:00:00Z');
+  const out = printSections([
+    { id: 'now', status: 'todo', order: { due_at: '2026-09-04T05:00:00Z' } },
+    { id: 'late', status: 'todo', order: { due_at: '2026-09-02T05:00:00Z' } },
+  ], now);
+  assert.deepEqual(out.map(([label]) => label), ['Overdue', 'Today']);
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

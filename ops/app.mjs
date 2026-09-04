@@ -10,6 +10,7 @@ import {
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, uploadPhoto, photoUrl,
+  listPrintJobs, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
 import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, summarise, weeklyStats,
@@ -17,6 +18,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS,
+  printSections,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
@@ -38,6 +40,9 @@ let orders = [];        // orders for the active view
 let peopleById = new Map();
 let logQuery = '';
 let logRange = null;     // {from, to} Sydney day keys, or null for the live worklist
+let printKind = '3d';    // active tab on the print board
+let printJobs = [];      // jobs for the active print view
+let printsByOrder = new Map();   // order id → its print jobs, for card flags
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 const ddWho = mountDropdown($('who'), {
@@ -101,6 +106,7 @@ const TABS = {
   log:       { label: 'Orders',    roles: ['admin', 'staff'], icon: '<path d="M4 5h16M4 12h16M4 19h10"/>' },
   new:       { label: 'New',       roles: ['admin', 'staff'], icon: '<path d="M12 5v14M5 12h14"/>' },
   bake:      { label: 'To bake',   roles: ['admin', 'baker'], icon: '<path d="M5 20h14M6 20v-6a6 6 0 0112 0v6M12 5V3"/>' },
+  prints:    { label: 'Prints',    roles: ['admin', 'baker'], icon: '<path d="M7 8V3h10v5M7 18H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z"/>' },
   analytics: { label: 'Analytics', roles: ['admin'],          icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
 };
 
@@ -125,19 +131,57 @@ function go(next) {
 
 // ── Render ──────────────────────────────────────────────────────────────────
 async function render() {
-  $('view-title').textContent = view === 'bake' ? 'To bake' : view === 'analytics' ? 'Analytics' : 'Orders';
+  const TITLE = { bake: 'To bake', analytics: 'Analytics', prints: 'Prints', log: 'Orders' };
+  $('view-title').textContent = TITLE[view] || 'Orders';
   $('store-switch').classList.toggle('hidden',
     view !== 'log' || STORES.filter((s) => me.stores.includes(s.code)).length < 2);
   $('logbar').classList.toggle('hidden', view !== 'log');
   $('logsearch-row').classList.toggle('hidden', view !== 'log');
   if (view !== 'log') closeRange();
 
-  for (const v of ['log', 'bake', 'analytics']) $(`view-${v}`).classList.toggle('hidden', v !== view);
+  for (const v of ['log', 'bake', 'prints', 'analytics']) $(`view-${v}`).classList.toggle('hidden', v !== view);
 
   if (view === 'log') await renderLog();
   else if (view === 'bake') await renderBake();
+  else if (view === 'prints') await renderPrints();
   else await renderAnalytics();
 }
+
+/**
+ * Which cakes have something waiting on the printer.
+ *
+ * Fetched once per render rather than per card, and only for the two roles the
+ * board belongs to — staff cannot read the table at all, and asking would just
+ * return an empty list on every paint.
+ */
+async function loadPrintFlags() {
+  if (me.role !== 'admin' && me.role !== 'baker') { printsByOrder = new Map(); return; }
+  try {
+    const jobs = await listPrintJobs();
+    printsByOrder = new Map();
+    for (const j of jobs) {
+      if (!printsByOrder.has(j.order_id)) printsByOrder.set(j.order_id, []);
+      printsByOrder.get(j.order_id).push(j);
+    }
+  } catch { printsByOrder = new Map(); }   // never hold up the worklist for a flag
+}
+
+/** "3D toppers", "Photo prints", or both — however the cake is described out loud. */
+const printKindsLabel = (jobs) => {
+  const kinds = [...new Set(jobs.map((j) => j.kind))];
+  return kinds.map((k) => (k === '3d' ? '3D toppers' : 'Photo prints')).join(' and ');
+};
+
+const printFlagHtml = (orderId) => {
+  const jobs = printsByOrder.get(orderId) || [];
+  if (!jobs.length) return '';
+  const left = jobs.filter((j) => j.status !== 'printed');
+  const kinds = [...new Set((left.length ? left : jobs).map((j) => j.kind))]
+    .map((k) => (k === '3d' ? '3D' : 'Photo')).join(' + ');
+  return left.length
+    ? `<span class="print-flag">${esc(kinds)} to print</span>`
+    : `<span class="print-flag is-done">${esc(kinds)} printed</span>`;
+};
 
 const spineFor = (o, now) => {
   if (['picked_up', 'cancelled'].includes(o.status)) return 'spine-done';
@@ -174,6 +218,7 @@ function docketHtml(o, now, { showStore = false } = {}) {
             <span class="status-dot st-${o.status}">${esc(STATUS_LABEL[o.status])}</span>
             ${showMoney && o.price ? `<span>${money.format(o.price)}</span>` : ''}
             ${pay ? `<span class="tag ${pay.cls}">${esc(pay.label)}</span>` : ''}
+            ${printFlagHtml(o.id)}
           </div>
           <div class="docket-taken">Taken ${esc(takenFmt.format(new Date(o.created_at)))}</div>
         </div>
@@ -194,7 +239,10 @@ function hydrateThumbs(root) {
 async function renderLog() {
   const root = $('view-log');
   root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
-  orders = await listOrders({ store, withCosts: me.role === 'admin' });
+  [orders] = await Promise.all([
+    listOrders({ store, withCosts: me.role === 'admin' }),
+    loadPrintFlags(),
+  ]);
 
   const now = new Date();
   // A date range is a lookup, not the daily worklist, so it keeps every
@@ -255,6 +303,7 @@ async function renderBake() {
   const [queue, recent] = await Promise.all([
     listToBake(),
     listOrders({ since: twoDays }),
+    loadPrintFlags(),
   ]);
   orders = queue;
 
@@ -309,6 +358,352 @@ async function renderBake() {
 
   wireDockets(root);
   hydrateThumbs(root);
+}
+
+// ── Print board ─────────────────────────────────────────────────────────────
+//
+// The original failure this fixes: dad would take an order needing 3D toppers
+// and forget to tell Vaidik, so the cake was baked with nothing on it. A job
+// here points at the order rather than restating it, so there is one record of
+// the cake and the print brief hangs off it.
+
+const PRINT_TABS = [
+  { code: '3d',    label: '3D prints' },
+  { code: 'photo', label: 'Photo prints' },
+];
+
+/** The baker may tick off a photo print; 3D toppers are Vaidik's to mark. */
+const canPrintStatus = (job) => me.role === 'admin' || job.kind === 'photo';
+
+function printCardHtml(j, now) {
+  const o = j.order;
+  const done = j.status === 'printed';
+  const what = [o.size, o.flavour].filter(Boolean).join(' · ');
+  return `
+    <button class="docket ${done ? 'spine-done' : spineFor(o, now)}" data-job="${j.id}">
+      <div class="docket-head">
+        <span class="docket-no">${esc(o.order_no)}</span>
+        <span class="tag ${j.kind === '3d' ? 'tag-3d' : 'tag-photo'}">${j.kind === '3d' ? '3D' : 'Photo'}</span>
+        <span class="tag tag-store">${esc(storeLabel(o.store))}</span>
+        <span class="docket-when">${esc(timeFmt.format(new Date(o.due_at)))}</span>
+      </div>
+      <div class="docket-body">
+        ${o.photo_path
+          ? `<img class="thumb" data-photo="${esc(o.photo_path)}" alt="" loading="lazy">`
+          : '<div class="thumb thumb-empty" aria-hidden="true">◍</div>'}
+        <div class="docket-lines">
+          <div class="docket-name">${esc(o.customer_name)}</div>
+          <div class="docket-what">${esc(what || '—')}</div>
+          <div class="docket-print"><strong>Print:</strong> ${esc(j.what)}</div>
+          <div class="docket-foot">
+            <span class="tag ${done ? 'tag-done' : 'tag-todo'}">${done ? 'Printed' : 'To print'}</span>
+            ${done && j.printed_at ? `<span>${esc(takenFmt.format(new Date(j.printed_at)))}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </button>`;
+}
+
+async function renderPrints() {
+  const root = $('view-prints');
+  root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+
+  try {
+    printJobs = await listPrintJobs();
+  } catch (err) {
+    root.innerHTML = `<div class="empty"><div class="empty-mark">Could not load the print board</div>
+      <p class="empty-note">${esc(err.message)}</p></div>`;
+    return;
+  }
+
+  const now = new Date();
+  const mine = printJobs.filter((j) => j.kind === printKind);
+  const sections = printSections(mine, now);
+  const waiting = (code) => printJobs.filter((j) => j.kind === code && j.status !== 'printed').length;
+
+  const head = `
+    <div class="segmented" role="tablist" aria-label="Print type">
+      ${PRINT_TABS.map((t) => `
+        <button class="segmented-btn" role="tab" data-pk="${t.code}"
+                aria-selected="${t.code === printKind}">${esc(t.label)}${
+          waiting(t.code) ? ` · ${waiting(t.code)}` : ''}</button>`).join('')}
+    </div>
+    ${me.role === 'admin' ? `
+      <button class="btn btn-primary" id="print-add" style="margin-bottom:6px;">Add a print job</button>` : ''}`;
+
+  const body = sections.length
+    ? sections.map(([label, rows]) => `
+        <div class="section-head ${label === 'Overdue' ? 'is-overdue' : ''}">
+          <span class="section-name">${esc(label)}</span>
+          ${label !== 'Overdue' && label !== 'Printed'
+            ? `<span class="section-date">${esc(dateFmt.format(new Date(rows[0].order.due_at)))}</span>` : ''}
+          <span class="section-count">${rows.length}</span>
+        </div>
+        ${rows.map((j) => printCardHtml(j, now)).join('')}`).join('')
+    : `<div class="empty">
+         <div class="empty-mark">Nothing to print</div>
+         <p class="empty-note">No ${printKind === '3d' ? '3D topper' : 'photo print'} jobs on the book.${
+           me.role === 'admin' ? '<br>Tap <strong>Add a print job</strong> to link one to an order.' : ''}</p>
+       </div>`;
+
+  root.innerHTML = head + body;
+
+  root.querySelectorAll('[data-pk]').forEach((b) =>
+    b.addEventListener('click', () => { printKind = b.dataset.pk; renderPrints(); }));
+  if (me.role === 'admin') $('print-add').addEventListener('click', openNewPrintJob);
+  root.querySelectorAll('[data-job]').forEach((b) =>
+    b.addEventListener('click', () => openPrintJob(b.dataset.job)));
+  hydrateThumbs(root);
+}
+
+async function openPrintJob(id) {
+  const j = printJobs.find((x) => x.id === id);
+  if (!j) return;
+  const o = j.order;
+  const done = j.status === 'printed';
+  const isAdmin = me.role === 'admin';
+
+  const body = openSheet(`${o.order_no} · ${j.kind === '3d' ? '3D print' : 'Photo print'}`, `
+    ${o.photo_path ? `<img class="detail-photo" data-photo="${esc(o.photo_path)}" alt="Cake design">` : ''}
+
+    <div class="block-label">What to print</div>
+    <p class="detail-v">${esc(j.what)}</p>
+    ${j.notes ? `<p class="detail-v quiet" style="margin-top:6px;">${esc(j.notes)}</p>` : ''}
+
+    <hr class="rule">
+    <div class="detail-grid">
+      ${field('Customer', o.customer_name)}
+      ${field('Phone', o.customer_phone)}
+      ${field('Pick up', dateTimeFmt.format(new Date(o.due_at)))}
+      ${field('Store', storeLabel(o.store))}
+      ${field('Size', o.size)}
+      ${field('Flavour', o.flavour)}
+      ${field('Wording', o.wording, 'span-2')}
+      ${o.design_notes ? field('Design notes', o.design_notes, 'span-2') : ''}
+      ${field('Cake status', STATUS_LABEL[o.status], 'span-2')}
+    </div>
+
+    <hr class="rule">
+    <div class="block-label">Print status
+      <span class="status-now"><span class="tag ${done ? 'tag-done' : 'tag-todo'}">${done ? 'Printed' : 'To print'}</span></span>
+    </div>
+    ${canPrintStatus(j)
+      ? `<div class="action-row">
+           <button class="btn ${done ? 'btn-quiet' : 'btn-primary'}" id="print-toggle">
+             ${done ? 'Move back to to-print' : 'Mark printed'}</button>
+         </div>`
+      : '<p class="panel-note" style="margin:0;">Only an admin marks a 3D topper printed — tell Vaidik when it is done.</p>'}
+    <p class="msg" id="print-msg" role="status" aria-live="polite"></p>
+
+    ${isAdmin ? `
+      <hr class="rule">
+      <div class="block-label">Edit</div>
+      <div class="field">
+        <label class="field-label" for="pj-what">What to print</label>
+        <textarea class="textarea" id="pj-what">${esc(j.what)}</textarea>
+      </div>
+      <div class="field">
+        <label class="field-label" for="pj-notes">Notes</label>
+        <textarea class="textarea" id="pj-notes">${esc(j.notes || '')}</textarea>
+      </div>
+      <div class="row-2">
+        <button class="btn btn-outline" id="pj-delete">Delete job</button>
+        <button class="btn btn-primary" id="pj-save">Save</button>
+      </div>` : ''}
+  `);
+
+  const img = body.querySelector('.detail-photo');
+  if (img) photoUrl(img.dataset.photo).then((u) => { if (u) img.src = u; });
+
+  if (canPrintStatus(j)) {
+    $('print-toggle').addEventListener('click', async () => {
+      const btn = $('print-toggle');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        await setPrintStatus(j.id, done ? 'todo' : 'printed');
+        closeSheet();
+        toast(done ? `${o.order_no} moved back to the print list.` : `${o.order_no} marked printed.`);
+        await renderPrints();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = done ? 'Move back to to-print' : 'Mark printed';
+        $('print-msg').textContent = err.message;
+        $('print-msg').className = 'msg msg-error';
+      }
+    });
+  }
+
+  if (isAdmin) {
+    $('pj-save').addEventListener('click', async () => {
+      const what = $('pj-what').value.trim();
+      const msg = $('print-msg');
+      if (!what) { msg.textContent = 'Say what needs printing.'; msg.className = 'msg msg-error'; return; }
+      try {
+        await updatePrintJob(j.id, { what, notes: $('pj-notes').value.trim() || null });
+        closeSheet();
+        toast('Print job updated.');
+        await renderPrints();
+      } catch (err) { msg.textContent = err.message; msg.className = 'msg msg-error'; }
+    });
+
+    // Two taps to delete: the first turns the button into the confirmation, so
+    // a mis-tap on a phone cannot wipe a job with no way back.
+    let armed = false;
+    $('pj-delete').addEventListener('click', async () => {
+      const btn = $('pj-delete');
+      if (!armed) {
+        armed = true;
+        btn.textContent = 'Tap again to delete';
+        setTimeout(() => { if (armed) { armed = false; btn.textContent = 'Delete job'; } }, 4000);
+        return;
+      }
+      try {
+        await deletePrintJob(j.id);
+        closeSheet();
+        toast('Print job deleted.');
+        await renderPrints();
+      } catch (err) {
+        $('print-msg').textContent = err.message;
+        $('print-msg').className = 'msg msg-error';
+      }
+    });
+  }
+}
+
+/**
+ * Add a job by pointing at an order instead of re-describing the cake.
+ *
+ * The picker is a grid of photos, not a list of docket numbers: dad recognises
+ * the cake by its picture, and picking it carries every detail — store, size,
+ * pickup day — across without anyone re-typing them.
+ */
+async function openNewPrintJob() {
+  let picked = null;
+  let kind = printKind;
+
+  const body = openSheet('New print job', `
+    <div class="kind-pick">
+      ${PRINT_TABS.map((t) => `
+        <button class="kind-card" data-pkind="${t.code}" aria-pressed="${t.code === kind}">
+          <div class="kind-name">${t.code === '3d' ? '3D' : 'Photo'}</div>
+          <div class="kind-note">${t.code === '3d' ? 'Toppers, names, figures' : 'Edible photo sheet'}</div>
+        </button>`).join('')}
+    </div>
+
+    <hr class="rule">
+
+    <div class="field">
+      <span class="field-label">Which cake <span class="req">*</span></span>
+      <button type="button" class="dd-btn" id="pick-btn" aria-expanded="false">
+        <span class="dd-val is-empty" id="pick-val">Choose an order</span>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="cal hidden" id="pick-panel"><div class="pick-grid" id="pick-grid"></div></div>
+      <div class="hidden" id="pick-summary"></div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="pj-new-what">What needs printing <span class="req">*</span></label>
+      <textarea class="textarea" id="pj-new-what" placeholder="Ganesh topper + name plate"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="pj-new-notes">Notes</label>
+      <textarea class="textarea" id="pj-new-notes" placeholder="Gold filament, matches the photo"></textarea>
+    </div>
+
+    <button class="btn btn-primary" id="pj-new-save">Save print job</button>
+    <p class="msg" id="pj-new-msg" role="status" aria-live="polite"></p>
+  `, { center: true });
+
+  body.querySelectorAll('[data-pkind]').forEach((b) => b.addEventListener('click', () => {
+    kind = b.dataset.pkind;
+    body.querySelectorAll('[data-pkind]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+
+  const grid = $('pick-grid');
+  grid.innerHTML = '<p class="empty-note" style="padding:12px;">Loading orders…</p>';
+
+  let openOrders = [];
+  try { openOrders = await listOpenOrders(); }
+  catch (err) { grid.innerHTML = `<p class="empty-note" style="padding:12px;">${esc(err.message)}</p>`; }
+
+  if (!openOrders.length) {
+    grid.innerHTML = '<p class="empty-note" style="padding:12px;">No orders are open right now.</p>';
+  } else {
+    grid.innerHTML = openOrders.map((o) => `
+      <button type="button" class="pick-tile" data-pick="${o.id}" aria-pressed="false">
+        <span class="pick-shot">
+          ${o.photo_path ? `<img data-photo="${esc(o.photo_path)}" alt="" loading="lazy">` : '◍'}
+          <span class="pick-no">${esc(o.order_no)}</span>
+        </span>
+        <span class="pick-meta">
+          <span class="pick-name">${esc(o.customer_name)}</span>
+          <span class="pick-when">${esc(dateFmt.format(new Date(o.due_at)))}</span>
+        </span>
+      </button>`).join('');
+
+    grid.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
+      picked = openOrders.find((o) => o.id === b.dataset.pick);
+      grid.querySelectorAll('[data-pick]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      $('pick-val').textContent = `${picked.order_no} · ${picked.customer_name}`;
+      $('pick-val').classList.remove('is-empty');
+      $('pick-panel').classList.add('hidden');
+      $('pick-btn').setAttribute('aria-expanded', 'false');
+
+      const what = [picked.size, picked.flavour].filter(Boolean).join(' · ');
+      const sum = $('pick-summary');
+      sum.className = 'pick-summary';
+      sum.innerHTML = `
+        ${picked.photo_path
+          ? `<img class="thumb" data-photo="${esc(picked.photo_path)}" alt="">`
+          : '<div class="thumb thumb-empty" aria-hidden="true">◍</div>'}
+        <div class="grow">
+          <div class="docket-name">${esc(picked.customer_name)}</div>
+          <div class="docket-what">${esc(what || '—')} · ${esc(storeLabel(picked.store))}</div>
+          <div class="docket-taken">Pick up ${esc(dateTimeFmt.format(new Date(picked.due_at)))}</div>
+        </div>`;
+      hydrateThumbs(sum);
+      $('pj-new-what').focus();
+    }));
+
+    // Signed URLs after paint, same as every other list of cake photos.
+    grid.querySelectorAll('img[data-photo]').forEach(async (img) => {
+      const url = await photoUrl(img.dataset.photo);
+      if (url) img.src = url; else img.replaceWith(document.createTextNode('◍'));
+    });
+  }
+
+  $('pick-btn').addEventListener('click', () => {
+    const opening = $('pick-panel').classList.contains('hidden');
+    $('pick-panel').classList.toggle('hidden', !opening);
+    $('pick-btn').setAttribute('aria-expanded', String(opening));
+  });
+
+  $('pj-new-save').addEventListener('click', async () => {
+    const msg = $('pj-new-msg');
+    const what = $('pj-new-what').value.trim();
+    if (!picked) { msg.textContent = 'Pick the order this print is for.'; msg.className = 'msg msg-error'; return; }
+    if (!what) { msg.textContent = 'Say what needs printing.'; msg.className = 'msg msg-error'; return; }
+
+    const btn = $('pj-new-save');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await createPrintJob({
+        order_id: picked.id,
+        kind,
+        what,
+        notes: $('pj-new-notes').value.trim() || null,
+      });
+      printKind = kind;
+      closeSheet();
+      toast(`${kind === '3d' ? '3D print' : 'Photo print'} added for ${picked.order_no}.`);
+      await renderPrints();
+    } catch (err) {
+      msg.textContent = err.message; msg.className = 'msg msg-error';
+      btn.disabled = false; btn.textContent = 'Save print job';
+    }
+  });
 }
 
 function wireDockets(root) {
@@ -569,11 +964,11 @@ function payState(o) {
 // ── Order detail sheet ──────────────────────────────────────────────────────
 function closeSheet() { $('sheet-root').innerHTML = ''; document.body.style.overflow = ''; }
 
-function openSheet(title, bodyHtml) {
+function openSheet(title, bodyHtml, { center = false } = {}) {
   document.body.style.overflow = 'hidden';
   $('sheet-root').innerHTML = `
     <div class="sheet-scrim" data-close></div>
-    <div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+    <div class="sheet${center ? ' sheet-center' : ''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
       <div class="sheet-head">
         <h2 class="sheet-title display">${esc(title)}</h2>
         <button class="sheet-close" data-close aria-label="Close">✕</button>
@@ -605,6 +1000,7 @@ async function openOrder(id) {
 
   const canEdit = me.role === 'admin' || me.role === 'staff';
   const showMoney = me.role !== 'baker';
+  const orderPrints = printsByOrder.get(o.id) || [];
 
   const body = openSheet(o.order_no, `
     ${o.photo_path ? '<img class="detail-photo" data-photo="' + esc(o.photo_path) + '" alt="Cake design">' : ''}
@@ -627,6 +1023,18 @@ async function openOrder(id) {
       ${me.role === 'admin' ? field('Cost', o.cost != null ? money2.format(o.cost) : '') : ''}
       ${field('Kind', o.kind === 'custom' ? 'Custom cake' : (o.walk_in ? 'Normal · bought in store' : 'Normal · ordered ahead'), 'span-2')}
     </div>
+
+    ${orderPrints.length ? `
+      <div class="warnbox" id="print-block">
+        <div class="warnbox-title">${esc(printKindsLabel(orderPrints))} on this cake</div>
+        <div class="warnbox-note">Do not call it finished until these are on it.</div>
+        ${orderPrints.map((j) => `
+          <div class="list-row">
+            <span class="tag ${j.kind === '3d' ? 'tag-3d' : 'tag-photo'}">${j.kind === '3d' ? '3D' : 'Photo'}</span>
+            <span class="grow">${esc(j.what)}</span>
+            <span class="tag ${j.status === 'printed' ? 'tag-done' : 'tag-todo'}">${j.status === 'printed' ? 'Printed' : 'To print'}</span>
+          </div>`).join('')}
+      </div>` : ''}
 
     ${canEdit ? `<button type="button" class="btn btn-outline" id="edit-toggle" style="width:100%;margin-top:2px;">Edit details</button>` : ''}
 
@@ -685,6 +1093,7 @@ async function openOrder(id) {
     <hr class="rule">
     <div class="block-label">Status <span id="status-now" class="status-now"></span></div>
     <div class="action-row" id="status-actions"></div>
+    <div id="print-warn"></div>
 
     ${me.role === 'admin' ? `
       <hr class="rule">
@@ -755,15 +1164,70 @@ async function openOrder(id) {
   $('status-now').innerHTML =
     `<span class="status-dot st-${o.status}">${esc(STATUS_LABEL[o.status])}</span>`;
 
+  const commitStatus = async (status, b) => {
+    b.disabled = true; b.textContent = 'Saving…';
+    try { await setStatus(o.id, status); closeSheet(); await render(); }
+    catch (err) {
+      b.disabled = false;
+      b.textContent = STATUS_LABEL[status];
+      toast(err.message, 'error');
+    }
+  };
+
+  // The whole reason this app exists is that a cake went out without its
+  // toppers. Calling one baked or collected is the last moment anyone can
+  // catch that, so it asks first instead of saving silently.
+  function askAboutPrints(status, b) {
+    const left = orderPrints.filter((j) => j.status !== 'printed');
+    const host = $('print-warn');
+    $('print-block')?.classList.add('hidden');
+    host.innerHTML = `
+      <div class="warnbox">
+        <div class="warnbox-title">${esc(printKindsLabel(orderPrints))} — are they on the cake?</div>
+        <div class="warnbox-note">${left.length
+          ? `${left.length} of ${orderPrints.length} ${left.length === 1 ? 'is' : 'are'} still marked as not printed.`
+          : 'All printed — just confirming they made it onto the cake.'}</div>
+        ${left.map((j) => `
+          <div class="list-row">
+            <span class="tag ${j.kind === '3d' ? 'tag-3d' : 'tag-photo'}">${j.kind === '3d' ? '3D' : 'Photo'}</span>
+            <span class="grow">${esc(j.what)}</span>
+            ${canPrintStatus(j)
+              ? `<button class="logbar-clear" data-mark="${orderPrints.indexOf(j)}">Mark printed</button>`
+              : '<span class="tag tag-todo">To print</span>'}
+          </div>`).join('')}
+        <div class="action-row">
+          <button class="btn btn-quiet" data-warn="no">Not yet</button>
+          <button class="btn btn-primary" data-warn="yes">Yes — ${esc(STATUS_LABEL[status])}</button>
+        </div>
+      </div>`;
+
+    host.querySelectorAll('[data-mark]').forEach((mb) => mb.addEventListener('click', async () => {
+      const j = orderPrints[Number(mb.dataset.mark)];
+      mb.disabled = true; mb.textContent = 'Saving…';
+      try {
+        Object.assign(j, await setPrintStatus(j.id, 'printed'));
+        askAboutPrints(status, b);
+      } catch (err) { toast(err.message, 'error'); mb.disabled = false; mb.textContent = 'Mark printed'; }
+    }));
+
+    host.querySelector('[data-warn="no"]').addEventListener('click', () => {
+      host.innerHTML = '';
+      $('print-block')?.classList.remove('hidden');
+      b.disabled = false; b.textContent = STATUS_LABEL[status];
+    });
+    host.querySelector('[data-warn="yes"]').addEventListener('click', () => commitStatus(status, b));
+    host.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
   $('status-actions').querySelectorAll('[data-status]').forEach((b) =>
-    b.addEventListener('click', async () => {
-      b.disabled = true; b.textContent = 'Saving…';
-      try { await setStatus(o.id, b.dataset.status); closeSheet(); await render(); }
-      catch (err) {
-        b.disabled = false;
-        b.textContent = STATUS_LABEL[b.dataset.status];
-        toast(err.message, 'error');
+    b.addEventListener('click', () => {
+      const status = b.dataset.status;
+      if (orderPrints.length && (status === 'baked' || status === 'picked_up')) {
+        b.disabled = true;
+        askAboutPrints(status, b);
+        return;
       }
+      commitStatus(status, b);
     }));
 
   if (me.role === 'admin') {
@@ -994,7 +1458,7 @@ function openNewOrder() {
       <button class="btn btn-primary" id="save-order" type="submit">Save order</button>
       <p class="msg" id="order-msg" role="status" aria-live="polite"></p>
     </form>
-  `);
+  `, { center: true });
 
   // ── Dropdowns ─────────────────────────────────────────────────────────────
   const ddWalkin = mountDropdown($('dd-walkin'), {

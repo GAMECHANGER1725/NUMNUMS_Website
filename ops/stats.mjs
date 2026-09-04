@@ -487,3 +487,43 @@ export function leadTimes(orders) {
 export function missingPhone(orders) {
   return orders.filter((o) => o.status !== 'cancelled' && !phoneKey(o.customer_phone));
 }
+
+/**
+ * Print jobs grouped the same way the baker's queue is: by the pickup day of
+ * the cake they belong to, soonest first, so "what has to be printed before
+ * Saturday" is one glance rather than a scan of every job.
+ *
+ * Finished jobs collapse into a single trailing section and age out after a
+ * week — long enough to notice a mistake, short enough that the board stays
+ * a worklist instead of an archive.
+ */
+export function printSections(jobs, now = new Date()) {
+  const todayKey = sydneyParts(now).dayKey;
+  const sections = new Map();
+
+  const pending = jobs
+    .filter((j) => j.status !== 'printed')
+    .sort((a, b) => new Date(a.order.due_at) - new Date(b.order.due_at));
+
+  for (const j of pending) {
+    const label = dayBucket(j.order.due_at, now);
+    if (!sections.has(label)) sections.set(label, []);
+    sections.get(label).push(j);
+  }
+
+  const rank = (label) => {
+    if (label === 'Overdue') return -1;
+    if (label === 'Today') return 0;
+    if (label === 'Tomorrow') return 1;
+    return Number(label.match(/\d+/)[0]);
+  };
+  const out = [...sections.entries()].sort((a, b) => rank(a[0]) - rank(b[0]));
+
+  const done = jobs
+    .filter((j) => j.status === 'printed' && j.printed_at
+      && daysBetween(sydneyParts(j.printed_at).dayKey, todayKey) < 7)
+    .sort((a, b) => new Date(b.printed_at) - new Date(a.printed_at));
+  if (done.length) out.push(['Printed', done]);
+
+  return out;
+}

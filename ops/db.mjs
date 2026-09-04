@@ -251,3 +251,48 @@ export async function photoUrl(path) {
   signedCache.set(path, { url: data.signedUrl, expires: Date.now() + 3000 * 1000 });
   return data.signedUrl;
 }
+
+// ── Print jobs ──────────────────────────────────────────────────────────────
+// A cake that also needs 3D toppers or photo prints. The job hangs off the
+// order instead of repeating its details, so nobody re-types a design brief
+// into a second place and nobody has to relay it over WhatsApp.
+
+export const PRINT_KIND_LABEL = { '3d': '3D prints', photo: 'Photo prints' };
+
+/** Every print job with its order embedded. The table stays small — a handful
+ *  a week — so one fetch beats a per-order lookup on every card. */
+export async function listPrintJobs() {
+  const { data, error } = await sb.from('print_jobs')
+    .select('*, order:orders(*)')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).filter((j) => j.order);
+}
+
+/** Orders still in play, for the "which cake is this for" picker. */
+export async function listOpenOrders() {
+  const { data, error } = await sb.from('orders').select('*')
+    .in('status', ['placed', 'baked', 'arrived'])
+    .order('due_at', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createPrintJob(fields) {
+  const { data, error } = await sb.from('print_jobs').insert(fields).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updatePrintJob(id, fields) {
+  const { data, error } = await sb.from('print_jobs').update(fields).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export const setPrintStatus = (id, status) => updatePrintJob(id, { status });
+
+export async function deletePrintJob(id) {
+  const { error } = await sb.from('print_jobs').delete().eq('id', id);
+  if (error) throw error;
+}

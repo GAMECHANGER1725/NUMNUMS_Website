@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Before Editing
+- **Pull from GitHub first.** At the start of any message that asks you to change something in the
+  website's files, run `git pull` before making edits, so you're working from the latest commit —
+  other sessions/routines push directly to `main`. Skip this for read-only questions that involve
+  no file changes.
+
 ## Project Overview
 Static multi-page HTML site for Num Nums Bakery (100% eggless cakes + Indian sweets, Sydney).
 No bundler/framework for the main site — `index.html`, `cakes.html`, `order.html`, `about.html`,
@@ -97,7 +103,14 @@ main site.
 
 - **Files**: `ops/index.html` (markup + all CSS), `ops/app.mjs` (views, rendering, forms),
   `ops/db.mjs` (every Supabase call), `ops/stats.mjs` (pure date + money logic),
-  `ops/stats.test.mjs`, `ops/supabase/functions/purge-photos/` (photo retention job).
+  `ops/stats.test.mjs`, `ops/catalog.mjs` (canonical sizes/flavours, mirrors `verify-blog.mjs`'s
+  `FACTS`), `ops/supabase/functions/purge-photos/` (photo retention job).
+- **Print jobs** (`print_jobs` table, "Prints" tab): a cake needing 3D toppers or a photo print
+  gets a job pointing at its **order id** — never a re-typed brief or a second photo upload. Admin
+  and baker only; staff cannot read the table at all. The baker may change the status of a `photo`
+  job and nothing else — enforced by `guard_print_job_updates()`, not by the UI. Marking an order
+  **baked** or **picked up** interrupts with a reminder listing its prints; that interrupt is the
+  whole point of the feature, so do not "streamline" it away.
 - **Local testing**: `node serve.mjs`, then `http://localhost:4000/ops/` **with the trailing slash**.
   Without it the browser resolves `./app.mjs` against `/` and the modules 404. In production the app
   sits at the subdomain root, which is why every internal reference is relative and the page links
