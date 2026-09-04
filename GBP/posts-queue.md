@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-04
+
+```yaml
+id: post-rs-2026-09-04
+status: published
+published_at: 2026-09-04
+location: riverstone
+post_type: "Call to action"
+title: "Pickup your custom eggless cake before work — Riverstone opens at 6am"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0920.jpg"
+keywords_baited:
+  - custom eggless cake Marsden Park
+  - Riverstone Schofields pickup before work
+  - custom eggless cake before a shift starts
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
