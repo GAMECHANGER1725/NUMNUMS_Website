@@ -309,6 +309,20 @@ test('collected orders sit last and drop off after a week', () => {
   assert.equal(sections[sections.length - 1][1].length, 1);
 });
 
+test('cancelled orders get their own section, after collected', () => {
+  const now = '2026-09-10T02:00:00Z';
+  const orders = [
+    { id: 'a', status: 'picked_up', due_at: '2026-09-08T05:00:00Z' },
+    { id: 'b', status: 'cancelled', due_at: '2026-09-09T05:00:00Z' },
+    { id: 'c', status: 'cancelled', due_at: '2026-08-20T05:00:00Z' },  // aged out
+    { id: 'd', status: 'placed',    due_at: '2026-09-10T05:00:00Z' },
+  ];
+  const labels = logSections(orders, now).map(([l]) => l);
+  assert.deepEqual(labels, ['Today', 'Collected', 'Cancelled']);
+  const cancelled = logSections(orders, now).find(([l]) => l === 'Cancelled')[1];
+  assert.deepEqual(cancelled.map((o) => o.id), ['b']);
+});
+
 test('a date range filters by pickup day inclusively, either way round', () => {
   const orders = [
     { due_at: '2026-09-03T05:00:00Z' },

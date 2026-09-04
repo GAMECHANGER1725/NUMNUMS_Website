@@ -181,6 +181,7 @@ button { background: none; border: 0; cursor: pointer; }
 .segmented-btn[aria-selected="true"] { background: var(--cream); color: var(--ink); box-shadow: var(--shadow-card); }
 
 .main { flex: 1; padding: 16px 16px calc(96px + var(--safe-b)); max-width: 940px; margin: 0 auto; width: 100%; }
+body:has(#menu-btn:not(.hidden)) .main { padding-bottom: calc(140px + var(--safe-b)); }
 
 /* ── Day sections ───────────────────────────────────────────────────────── */
 .section-head {
@@ -878,6 +879,97 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 }
 .print-flag.is-done { background: rgba(139,127,118,.16); color: var(--slate); }
 
+/* ── More menu ──────────────────────────────────────────────────────────── */
+/* The tab bar is for the four things done during a shift. Analytics is read
+   at the end of the day, sometimes across several pages, so it lives behind a
+   drawer instead of taking a fifth of the bar it would rarely be tapped on. */
+.menu-btn {
+  position: fixed; z-index: 31;
+  right: 14px; bottom: calc(74px + var(--safe-b));
+  width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--ink); color: var(--cream);
+  box-shadow: 0 3px 10px rgba(44,26,14,.22), 0 12px 28px -10px rgba(44,26,14,.5);
+  transition: transform .22s cubic-bezier(.2,.9,.3,1), opacity .18s ease, background-color .16s ease;
+}
+.menu-btn:hover  { background: var(--ink-soft); }
+.menu-btn.is-tucked {
+  transform: translateY(84px);
+  opacity: 0; pointer-events: none;
+}
+.menu-btn:active { transform: scale(.92); }
+.menu-btn svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+
+.drawer-scrim {
+  position: fixed; inset: 0; z-index: 44;
+  background: rgba(44,26,14,.42); backdrop-filter: blur(2px);
+  animation: fade .18s ease;
+}
+.drawer {
+  position: fixed; z-index: 45; top: 0; right: 0; bottom: 0;
+  width: min(310px, 86vw);
+  display: flex; flex-direction: column;
+  background: var(--cream);
+  border-left: 1px solid var(--dough-line);
+  box-shadow: var(--shadow-lift);
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 0 calc(14px + var(--safe-b));
+  animation: slide-in .24s cubic-bezier(.2,.9,.3,1);
+  overflow-y: auto;
+}
+@keyframes slide-in { from { transform: translateX(22px); opacity: 0; } }
+
+.drawer-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 16px 14px; margin-bottom: 8px;
+  border-bottom: 1px solid var(--dough-line);
+}
+.drawer-mark {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 21px; font-weight: 600; letter-spacing: -0.01em; flex: 1;
+}
+.drawer-x {
+  width: 40px; height: 40px; border-radius: 50%; flex: none;
+  display: grid; place-items: center;
+  background: var(--dough); color: var(--ink-soft); font-size: 15px;
+}
+.drawer-x:hover { background: var(--dough-line); }
+
+/* A group heading opens its own list rather than going anywhere — the pages
+   are the leaves, the way Search Console reads. */
+.nav-head {
+  width: 100%; min-height: 48px;
+  display: flex; align-items: center; gap: 11px;
+  padding: 0 16px; text-align: left;
+  font-size: 15px; font-weight: 500; color: var(--ink);
+  transition: background-color .14s ease;
+}
+.nav-head:hover { background: var(--dough); }
+.nav-head > svg:first-child { width: 19px; height: 19px; flex: none; stroke: var(--taupe); fill: none; stroke-width: 1.7; }
+.nav-head .grow { flex: 1; }
+.nav-chev { width: 13px; height: 13px; flex: none; stroke: var(--taupe); fill: none; stroke-width: 2; transition: transform .18s ease; }
+.nav-head[aria-expanded="true"] .nav-chev { transform: rotate(180deg); }
+
+.nav-kids { display: grid; padding: 2px 0 6px; }
+/* A hairline runs down the indent so the children read as one branch. */
+.nav-item {
+  position: relative;
+  min-height: 46px; display: flex; flex-direction: column; justify-content: center;
+  padding: 6px 16px 6px 47px; text-align: left;
+  transition: background-color .14s ease;
+}
+.nav-item::before {
+  content: ''; position: absolute; left: 26px; top: 0; bottom: 0;
+  width: 1px; background: var(--dough-line);
+}
+.nav-item:first-child::before { top: 6px; }
+.nav-item:last-child::before  { bottom: 6px; }
+.nav-item:hover { background: var(--dough); }
+.nav-item-name { font-size: 14.5px; color: var(--ink-soft); line-height: 1.25; }
+.nav-item-note { font-size: 12px; color: var(--taupe); line-height: 1.35; margin-top: 1px; }
+.nav-item[aria-current="page"] { background: rgba(200,84,120,.08); }
+.nav-item[aria-current="page"] .nav-item-name { color: var(--rose-deep); font-weight: 500; }
+.nav-item[aria-current="page"]::before { background: var(--rose); width: 2px; left: 25.5px; }
+
 </style>
 </head>
 <body>
@@ -946,7 +1038,15 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
   </main>
 
   <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
+
+  <button class="menu-btn hidden" id="menu-btn" aria-expanded="false" aria-label="More">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16"/>
+    </svg>
+  </button>
 </div>
+
+<div id="drawer-root"></div>
 
 <div id="sheet-root"></div>
 

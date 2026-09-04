@@ -26,8 +26,10 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
-const money2 = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' });
+// One formatter, cents always shown. The old whole-dollar variant rounded, so
+// a $130.50 cake read as $131 on its docket and every analytics total was off
+// by the accumulated rounding — the exact opposite of what this app is for.
+const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' });
 const timeFmt = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', hour: 'numeric', minute: '2-digit', hour12: true });
 const dateFmt = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', weekday: 'short', day: 'numeric', month: 'short' });
 const dateTimeFmt = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true });
@@ -43,6 +45,7 @@ let logRange = null;     // {from, to} Sydney day keys, or null for the live wor
 let printKind = '3d';    // active tab on the print board
 let printJobs = [];      // jobs for the active print view
 let printsByOrder = new Map();   // order id → its print jobs, for card flags
+let analyticsPage = 'finance';   // which analytics page the drawer last opened
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 const ddWho = mountDropdown($('who'), {
@@ -107,7 +110,6 @@ const TABS = {
   new:       { label: 'New',       roles: ['admin', 'staff'], icon: '<path d="M12 5v14M5 12h14"/>' },
   bake:      { label: 'To bake',   roles: ['admin', 'baker'], icon: '<path d="M5 20h14M6 20v-6a6 6 0 0112 0v6M12 5V3"/>' },
   prints:    { label: 'Prints',    roles: ['admin', 'baker'], icon: '<path d="M7 8V3h10v5M7 18H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z"/>' },
-  analytics: { label: 'Analytics', roles: ['admin'],          icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
 };
 
 function buildTabs() {
@@ -131,8 +133,12 @@ function go(next) {
 
 // ── Render ──────────────────────────────────────────────────────────────────
 async function render() {
-  const TITLE = { bake: 'To bake', analytics: 'Analytics', prints: 'Prints', log: 'Orders' };
-  $('view-title').textContent = TITLE[view] || 'Orders';
+  const TITLE = { bake: 'To bake', prints: 'Prints', log: 'Orders' };
+  $('view-title').textContent = view === 'analytics'
+    ? (ANALYTICS_TITLE[analyticsPage] || 'Analytics')
+    : (TITLE[view] || 'Orders');
+  // Nothing but analytics lives in the drawer yet, so nobody else gets a button.
+  $('menu-btn').classList.toggle('hidden', !menuGroups().length);
   $('store-switch').classList.toggle('hidden',
     view !== 'log' || STORES.filter((s) => me.stores.includes(s.code)).length < 2);
   $('logbar').classList.toggle('hidden', view !== 'log');
@@ -579,16 +585,20 @@ async function openPrintJob(id) {
  */
 async function openNewPrintJob() {
   let picked = null;
-  let kind = printKind;
+  // Plenty of cakes need a topper AND a photo sheet. They stay two rows — the
+  // baker owns the photo and Vaidik owns the topper, and they finish at
+  // different times — but they get logged in one pass off one order.
+  const kinds = new Set([printKind]);
 
   const body = openSheet('New print job', `
     <div class="kind-pick">
       ${PRINT_TABS.map((t) => `
-        <button class="kind-card" data-pkind="${t.code}" aria-pressed="${t.code === kind}">
+        <button class="kind-card" data-pkind="${t.code}" aria-pressed="${kinds.has(t.code)}">
           <div class="kind-name">${t.code === '3d' ? '3D' : 'Photo'}</div>
           <div class="kind-note">${t.code === '3d' ? 'Toppers, names, figures' : 'Edible photo sheet'}</div>
         </button>`).join('')}
     </div>
+    <p class="panel-note" style="margin:-2px 0 0;">Tap both if this cake needs both.</p>
 
     <hr class="rule">
 
@@ -602,9 +612,14 @@ async function openNewPrintJob() {
       <div class="hidden" id="pick-summary"></div>
     </div>
 
-    <div class="field">
-      <label class="field-label" for="pj-new-what">What needs printing <span class="req">*</span></label>
-      <textarea class="textarea" id="pj-new-what" placeholder="Ganesh topper + name plate"></textarea>
+    <div class="field" id="what-3d">
+      <label class="field-label" for="pj-what-3d">What to 3D print <span class="req">*</span></label>
+      <textarea class="textarea" id="pj-what-3d" placeholder="Ganesh topper + name plate"></textarea>
+    </div>
+
+    <div class="field" id="what-photo">
+      <label class="field-label" for="pj-what-photo">What to photo print <span class="req">*</span></label>
+      <textarea class="textarea" id="pj-what-photo" placeholder="The family picture from WhatsApp"></textarea>
     </div>
 
     <div class="field">
@@ -616,10 +631,26 @@ async function openNewPrintJob() {
     <p class="msg" id="pj-new-msg" role="status" aria-live="polite"></p>
   `, { center: true });
 
+  function paintKinds() {
+    body.querySelectorAll('[data-pkind]').forEach((x) =>
+      x.setAttribute('aria-pressed', String(kinds.has(x.dataset.pkind))));
+    $('what-3d').classList.toggle('hidden', !kinds.has('3d'));
+    $('what-photo').classList.toggle('hidden', !kinds.has('photo'));
+    // One kind selected needs no disambiguating label; two do.
+    $('what-3d').querySelector('.field-label').firstChild.textContent =
+      kinds.size > 1 ? 'What to 3D print ' : 'What needs printing ';
+    $('what-photo').querySelector('.field-label').firstChild.textContent =
+      kinds.size > 1 ? 'What to photo print ' : 'What needs printing ';
+  }
+
   body.querySelectorAll('[data-pkind]').forEach((b) => b.addEventListener('click', () => {
-    kind = b.dataset.pkind;
-    body.querySelectorAll('[data-pkind]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    const k = b.dataset.pkind;
+    // Never let both come off — a job with no kind is not a job.
+    if (kinds.has(k)) { if (kinds.size > 1) kinds.delete(k); }
+    else kinds.add(k);
+    paintKinds();
   }));
+  paintKinds();
 
   const grid = $('pick-grid');
   grid.innerHTML = '<p class="empty-note" style="padding:12px;">Loading orders…</p>';
@@ -664,7 +695,7 @@ async function openNewPrintJob() {
           <div class="docket-taken">Pick up ${esc(dateTimeFmt.format(new Date(picked.due_at)))}</div>
         </div>`;
       hydrateThumbs(sum);
-      $('pj-new-what').focus();
+      body.querySelector('#what-3d:not(.hidden) textarea, #what-photo:not(.hidden) textarea')?.focus();
     }));
 
     // Signed URLs after paint, same as every other list of cake photos.
@@ -682,22 +713,31 @@ async function openNewPrintJob() {
 
   $('pj-new-save').addEventListener('click', async () => {
     const msg = $('pj-new-msg');
-    const what = $('pj-new-what').value.trim();
+    const wants = PRINT_TABS.map((t) => t.code).filter((k) => kinds.has(k))
+      .map((k) => ({ kind: k, what: $(k === '3d' ? 'pj-what-3d' : 'pj-what-photo').value.trim() }));
+
     if (!picked) { msg.textContent = 'Pick the order this print is for.'; msg.className = 'msg msg-error'; return; }
-    if (!what) { msg.textContent = 'Say what needs printing.'; msg.className = 'msg msg-error'; return; }
+    const blank = wants.find((w) => !w.what);
+    if (blank) {
+      msg.textContent = wants.length > 1
+        ? `Say what to ${blank.kind === '3d' ? '3D' : 'photo'} print.`
+        : 'Say what needs printing.';
+      msg.className = 'msg msg-error';
+      return;
+    }
 
     const btn = $('pj-new-save');
     btn.disabled = true; btn.textContent = 'Saving…';
+    const notes = $('pj-new-notes').value.trim() || null;
     try {
-      await createPrintJob({
-        order_id: picked.id,
-        kind,
-        what,
-        notes: $('pj-new-notes').value.trim() || null,
-      });
-      printKind = kind;
+      for (const w of wants) {
+        await createPrintJob({ order_id: picked.id, kind: w.kind, what: w.what, notes });
+      }
+      printKind = wants[0].kind;
       closeSheet();
-      toast(`${kind === '3d' ? '3D print' : 'Photo print'} added for ${picked.order_no}.`);
+      toast(wants.length > 1
+        ? `3D and photo prints added for ${picked.order_no}.`
+        : `${wants[0].kind === '3d' ? '3D print' : 'Photo print'} added for ${picked.order_no}.`);
       await renderPrints();
     } catch (err) {
       msg.textContent = err.message; msg.className = 'msg msg-error';
@@ -1016,11 +1056,11 @@ async function openOrder(id) {
       ${field('Wording', o.wording, 'span-2')}
       ${o.design_notes ? field('Design notes', o.design_notes, 'span-2') : ''}
       ${o.notes ? field('Notes', o.notes, 'span-2') : ''}
-      ${showMoney ? field('Price', o.price ? money2.format(o.price) : '') : ''}
+      ${showMoney ? field('Price', o.price ? money.format(o.price) : '') : ''}
       ${showMoney ? field('Paid', owing > 0
-        ? `${money2.format(paidOn(o))} of ${money2.format(o.price || 0)} — ${money2.format(owing)} still to collect`
-        : money2.format(paidOn(o))) : ''}
-      ${me.role === 'admin' ? field('Cost', o.cost != null ? money2.format(o.cost) : '') : ''}
+        ? `${money.format(paidOn(o))} of ${money.format(o.price || 0)} — ${money.format(owing)} still to collect`
+        : money.format(paidOn(o))) : ''}
+      ${me.role === 'admin' ? field('Cost', o.cost != null ? money.format(o.cost) : '') : ''}
       ${field('Kind', o.kind === 'custom' ? 'Custom cake' : (o.walk_in ? 'Normal · bought in store' : 'Normal · ordered ahead'), 'span-2')}
     </div>
 
@@ -1139,7 +1179,7 @@ async function openOrder(id) {
         <div class="detail-k">Customer history</div>
         <div class="detail-v">
           <span class="repeat-chip">Regular</span>
-          ${c.order_count} orders · ${money2.format(Number(c.spend || 0))} all up
+          ${c.order_count} orders · ${money.format(Number(c.spend || 0))} all up
           <span class="list-meta">· since ${esc(dateFmt.format(new Date(c.first_order)))}</span>
         </div>`;
       host.classList.remove('hidden');
@@ -1276,7 +1316,7 @@ async function openOrder(id) {
         });
         editSize = mountDropdown($('edit-dd-size'), {
           value: o.size, placeholder: 'Choose size',
-          options: SIZES.map((sz) => ({ value: sz.code, label: sz.label, note: sz.price ? money2.format(sz.price) : null })),
+          options: SIZES.map((sz) => ({ value: sz.code, label: sz.label })),
         });
       }
     });
@@ -1486,11 +1526,7 @@ function openNewOrder() {
 
   const ddSize = mountDropdown($('dd-size'), {
     placeholder: 'Choose size',
-    options: SIZES.map((sz) => ({
-      value: sz.code,
-      label: sz.label,
-      note: sz.price ? money2.format(sz.price) : null,
-    })),
+    options: SIZES.map((sz) => ({ value: sz.code, label: sz.label })),
     onChange: (code) => {
       // Fill the standard price so staff only type when it differs. Never
       // overwrite a price they have already typed.
@@ -1880,6 +1916,98 @@ function mountDuePicker(prefix = 'f-due', initialISO = null) {
   return { value: () => hidden.value };
 }
 
+// ── More menu ───────────────────────────────────────────────────────────────
+//
+// Analytics is several pages now, and none of them are touched mid-shift, so
+// they sit behind a drawer rather than a fifth tab. Groups expand in place and
+// the leaves are the pages — the shape of Search Console's sidebar, which is
+// where dad already reads numbers.
+
+const MENU = [{
+  label: 'Analytics',
+  roles: ['admin'],
+  icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  children: [
+    { key: 'finance',   label: 'Finance',   note: 'Sales, margin, money still owed' },
+    { key: 'customers', label: 'Customers', note: 'Repeat rate, how far ahead people book' },
+    { key: 'data',      label: 'Data',      note: 'Stores, what sells, who logged what' },
+  ],
+}];
+
+const ANALYTICS_TITLE = { finance: 'Finance', customers: 'Customers', data: 'Data' };
+
+const menuGroups = () => MENU.filter((g) => g.roles.includes(me.role));
+
+let navOpen = new Set(['Analytics']);   // the only group, so it starts open
+
+function closeDrawer() {
+  $('drawer-root').innerHTML = '';
+  $('menu-btn').setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+function openDrawer() {
+  document.body.style.overflow = 'hidden';
+  $('menu-btn').setAttribute('aria-expanded', 'true');
+  $('drawer-root').innerHTML = `
+    <div class="drawer-scrim" data-drawer-close></div>
+    <nav class="drawer" aria-label="More">
+      <div class="drawer-head">
+        <span class="drawer-mark display">Num Num's</span>
+        <button class="drawer-x" data-drawer-close aria-label="Close">✕</button>
+      </div>
+      ${menuGroups().map((g) => `
+        <button class="nav-head" data-group="${esc(g.label)}" aria-expanded="${navOpen.has(g.label)}">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g.icon}</svg>
+          <span class="grow">${esc(g.label)}</span>
+          <svg class="nav-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="nav-kids${navOpen.has(g.label) ? '' : ' hidden'}">
+          ${g.children.map((c) => `
+            <button class="nav-item" data-page="${esc(c.key)}"
+                    aria-current="${view === 'analytics' && analyticsPage === c.key ? 'page' : 'false'}">
+              <span class="nav-item-name">${esc(c.label)}</span>
+              <span class="nav-item-note">${esc(c.note)}</span>
+            </button>`).join('')}
+        </div>`).join('')}
+    </nav>`;
+
+  $('drawer-root').querySelectorAll('[data-drawer-close]')
+    .forEach((b) => b.addEventListener('click', closeDrawer));
+
+  $('drawer-root').querySelectorAll('[data-group]').forEach((b) => b.addEventListener('click', () => {
+    const g = b.dataset.group;
+    if (navOpen.has(g)) navOpen.delete(g); else navOpen.add(g);
+    openDrawer();
+  }));
+
+  $('drawer-root').querySelectorAll('[data-page]').forEach((b) => b.addEventListener('click', () => {
+    analyticsPage = b.dataset.page;
+    view = 'analytics';
+    closeDrawer();
+    buildTabs();
+    render();
+  }));
+}
+
+$('menu-btn').addEventListener('click', () =>
+  ($('drawer-root').innerHTML ? closeDrawer() : openDrawer()));
+
+// Tuck the button away while reading down a page and bring it back on the way
+// up. Without this it parks itself over the right-hand column of every list,
+// which on these pages is the amounts.
+let lastScrollY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (Math.abs(y - lastScrollY) < 6) return;
+  $('menu-btn').classList.toggle('is-tucked', y > lastScrollY && y > 90);
+  lastScrollY = y;
+}, { passive: true });
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && $('drawer-root').innerHTML) closeDrawer();
+});
+
 // ── Analytics ───────────────────────────────────────────────────────────────
 const delta = (now, before) => {
   if (!before) return { cls: 'flat', text: before === 0 && now > 0 ? 'first week' : '—' };
@@ -1991,7 +2119,10 @@ async function renderAnalytics() {
 
   const bar = (v, max, h = 76) => Math.round((v / Math.max(1, max)) * h);
 
-  root.innerHTML = `
+  // Three pages off one fetch. Splitting the query per page would triple the
+  // round trips for numbers that all come out of the same 63 days of orders.
+  const PAGES = {
+    finance: `
     <div class="stat-grid">
       <div class="stat">
         <div class="stat-k">Sold this week</div>
@@ -2016,32 +2147,6 @@ async function renderAnalytics() {
     </div>
 
     <div class="panel">
-      <div class="panel-title">Today</div>
-      <div class="panel-note">What is happening in the shop right now.</div>
-      <div class="list-row"><span class="grow">Cakes due for pickup today</span><span class="num">${sDueToday.count}</span></div>
-      <div class="list-row"><span class="grow">Orders taken today</span><span class="num">${sToday.count}</span></div>
-      <div class="list-row"><span class="grow">Still to be baked</span><span class="num">${all.filter((o) => o.status === 'placed').length}</span></div>
-    </div>
-
-    ${noPhone.length ? `
-      <div class="panel panel-warn">
-        <div class="panel-title">${noPhone.length} order${noPhone.length === 1 ? '' : 's'} with no phone number</div>
-        <div class="panel-note">These customers can never be matched to another order, so the repeat rate above reads lower than it really is.</div>
-      </div>` : ''}
-
-    ${noPrice.length ? `
-      <div class="panel panel-warn">
-        <div class="panel-title">${noPrice.length} order${noPrice.length === 1 ? '' : 's'} with no price</div>
-        <div class="panel-note">Every figure on this page is understated by whatever these were worth. Open each one and add the price.</div>
-        ${noPrice.slice(0, 6).map((o) => `
-          <div class="list-row">
-            <span class="num">${esc(o.order_no)}</span>
-            <span class="grow">${esc(o.customer_name)}</span>
-            <span class="list-meta">${esc(dateFmt.format(new Date(o.created_at)))}</span>
-          </div>`).join('')}
-      </div>` : ''}
-
-    <div class="panel">
       <div class="panel-title">Sales, last 8 weeks</div>
       <div class="panel-note">By the date the order was taken, Monday weeks.</div>
       <div class="bars">
@@ -2056,17 +2161,6 @@ async function renderAnalytics() {
     </div>
 
     <div class="panel">
-      <div class="panel-title">By store, last 7 days</div>
-      <div class="panel-note">Counted against the store that took the order.</div>
-      ${byStore.map((st) => `
-        <div class="list-row">
-          <span class="grow">${esc(st.label)}</span>
-          <span class="list-meta">${st.sum.count} order${st.sum.count === 1 ? '' : 's'}</span>
-          <span class="num">${money2.format(st.sum.revenue)}</span>
-        </div>`).join('')}
-    </div>
-
-    <div class="panel">
       <div class="panel-title">Margin, last 7 days</div>
       <div class="panel-note">
         ${s7.costedCount
@@ -2074,10 +2168,24 @@ async function renderAnalytics() {
           : 'No costs recorded yet — add a cost on an order to see margin here.'}
       </div>
       ${s7.margin != null ? `
-        <div class="list-row"><span class="grow">Revenue</span><span class="num">${money2.format(s7.revenue)}</span></div>
-        <div class="list-row"><span class="grow">Cost recorded</span><span class="num">${money2.format(s7.cost)}</span></div>
+        <div class="list-row"><span class="grow">Revenue</span><span class="num">${money.format(s7.revenue)}</span></div>
+        <div class="list-row"><span class="grow">Cost recorded</span><span class="num">${money.format(s7.cost)}</span></div>
         <div class="list-row"><span class="grow"><strong>Gross margin</strong></span>
-          <span class="num"><strong>${money2.format(s7.margin)}</strong> · ${s7.marginPct.toFixed(0)}%</span></div>` : ''}
+          <span class="num"><strong>${money.format(s7.margin)}</strong> · ${s7.marginPct.toFixed(0)}%</span></div>` : ''}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Still to collect</div>
+      <div class="panel-note">${owingRows.length
+        ? `${money.format(owingTotal)} across ${owingRows.length} order${owingRows.length === 1 ? '' : 's'} not yet handed over.`
+        : 'Nothing outstanding.'}</div>
+      ${owingRows.slice(0, 8).map((r) => `
+        <div class="list-row">
+          <span class="num">${esc(r.o.order_no)}</span>
+          <span class="grow">${esc(r.o.customer_name)}</span>
+          <span class="list-meta">${esc(dateFmt.format(new Date(r.o.due_at)))}</span>
+          <span class="num owing">${money.format(r.owing)}</span>
+        </div>`).join('')}
     </div>
 
     <div class="panel">
@@ -2085,10 +2193,91 @@ async function renderAnalytics() {
       <div class="panel-note">Walk-ins are cakes bought off the counter; ordered ahead are booked in advance.</div>
       <div class="list-row"><span class="grow">Bought in store</span>
         <span class="list-meta">${walkIns.length} cake${walkIns.length === 1 ? '' : 's'}</span>
-        <span class="num">${money2.format(summarise(walkIns).revenue)}</span></div>
+        <span class="num">${money.format(summarise(walkIns).revenue)}</span></div>
       <div class="list-row"><span class="grow">Ordered ahead</span>
         <span class="list-meta">${aheadOrders.length} cake${aheadOrders.length === 1 ? '' : 's'}</span>
-        <span class="num">${money2.format(summarise(aheadOrders).revenue)}</span></div>
+        <span class="num">${money.format(summarise(aheadOrders).revenue)}</span></div>
+    </div>
+
+    ${noPrice.length ? `
+      <div class="panel panel-warn">
+        <div class="panel-title">${noPrice.length} order${noPrice.length === 1 ? '' : 's'} with no price</div>
+        <div class="panel-note">Every figure on this page is understated by whatever these were worth. Open each one and add the price.</div>
+        ${noPrice.slice(0, 6).map((o) => `
+          <div class="list-row">
+            <span class="num">${esc(o.order_no)}</span>
+            <span class="grow">${esc(o.customer_name)}</span>
+            <span class="list-meta">${esc(dateFmt.format(new Date(o.created_at)))}</span>
+          </div>`).join('')}
+      </div>` : ''}
+    `,
+    customers: `
+    <div class="panel">
+      <div class="panel-title">Customers</div>
+      <div class="panel-note">
+        Matched on phone number, over every order on record. Repeat customer rate is
+        the share who have ordered more than once — the clearest read on whether the
+        cakes bring people back, and it needs no extra data entry.
+      </div>
+      <div class="rcr">
+        <div class="rcr-num">${repeat.rate.toFixed(0)}<span class="rcr-pct">%</span></div>
+        <div class="rcr-side">
+          <div class="rcr-label">Repeat customer rate</div>
+          <div class="meter meter-wide"><span class="meter-fill" style="width:${Math.min(100, repeat.rate).toFixed(1)}%"></span></div>
+          <div class="list-meta">${repeat.returningCount} of ${repeat.total} customers have come back</div>
+        </div>
+      </div>
+      <div class="list-row"><span class="grow">Ordered once</span><span class="num">${repeat.newCount}</span></div>
+      <div class="list-row"><span class="grow">Came back</span><span class="num">${repeat.returningCount}</span></div>
+      ${repeat.top.length ? '<div class="mix-head">Who comes back most</div>' : ''}
+      ${repeat.top.slice(0, 6).map((c) => `
+        <div class="list-row">
+          <span class="grow">${esc(c.name)}</span>
+          <span class="repeat-chip">${c.orders}×</span>
+          <span class="num">${money.format(c.spend)}</span>
+        </div>`).join('')}
+    </div>
+
+    ${lead.count ? `
+      <div class="panel">
+        <div class="panel-title">How far ahead people order</div>
+        <div class="panel-note">
+          Last 30 days of ordered-ahead cakes. Half are booked
+          ${lead.median === 0 ? 'the same day' : `${lead.median} day${lead.median === 1 ? '' : 's'} ahead`}
+          or less; the longest was ${lead.longest} days. Walk-ins are excluded.
+        </div>
+        ${lead.bands.map((b) => `
+          <div class="list-row">
+            <span class="grow">${esc(b.label)}</span>
+            <span class="meter"><span class="meter-fill" style="width:${bar(b.count, Math.max(1, ...lead.bands.map((x) => x.count)), 100)}%"></span></span>
+            <span class="num">${b.count}</span>
+          </div>`).join('')}
+      </div>` : ''}
+
+    ${noPhone.length ? `
+      <div class="panel panel-warn">
+        <div class="panel-title">${noPhone.length} order${noPhone.length === 1 ? '' : 's'} with no phone number</div>
+        <div class="panel-note">These customers can never be matched to another order, so the repeat rate above reads lower than it really is.</div>
+      </div>` : ''}
+    `,
+    data: `
+    <div class="panel">
+      <div class="panel-title">Today</div>
+      <div class="panel-note">What is happening in the shop right now.</div>
+      <div class="list-row"><span class="grow">Cakes due for pickup today</span><span class="num">${sDueToday.count}</span></div>
+      <div class="list-row"><span class="grow">Orders taken today</span><span class="num">${sToday.count}</span></div>
+      <div class="list-row"><span class="grow">Still to be baked</span><span class="num">${all.filter((o) => o.status === 'placed').length}</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">By store, last 7 days</div>
+      <div class="panel-note">Counted against the store that took the order.</div>
+      ${byStore.map((st) => `
+        <div class="list-row">
+          <span class="grow">${esc(st.label)}</span>
+          <span class="list-meta">${st.sum.count} order${st.sum.count === 1 ? '' : 's'}</span>
+          <span class="num">${money.format(st.sum.revenue)}</span>
+        </div>`).join('')}
     </div>
 
     ${flavourMix.length ? `
@@ -2112,20 +2301,6 @@ async function renderAnalytics() {
       </div>` : ''}
 
     <div class="panel">
-      <div class="panel-title">Still to collect</div>
-      <div class="panel-note">${owingRows.length
-        ? `${money2.format(owingTotal)} across ${owingRows.length} order${owingRows.length === 1 ? '' : 's'} not yet handed over.`
-        : 'Nothing outstanding.'}</div>
-      ${owingRows.slice(0, 8).map((r) => `
-        <div class="list-row">
-          <span class="num">${esc(r.o.order_no)}</span>
-          <span class="grow">${esc(r.o.customer_name)}</span>
-          <span class="list-meta">${esc(dateFmt.format(new Date(r.o.due_at)))}</span>
-          <span class="num owing">${money2.format(r.owing)}</span>
-        </div>`).join('')}
-    </div>
-
-    <div class="panel">
       <div class="panel-title">Busiest days</div>
       <div class="panel-note">Pickups over the last 8 weeks. This is what to roster against.</div>
       ${weekdays.map((d) => `
@@ -2136,22 +2311,6 @@ async function renderAnalytics() {
           <span class="num">${money.format(d.revenue)}</span>
         </div>`).join('')}
     </div>
-
-    ${lead.count ? `
-      <div class="panel">
-        <div class="panel-title">How far ahead people order</div>
-        <div class="panel-note">
-          Last 30 days of ordered-ahead cakes. Half are booked
-          ${lead.median === 0 ? 'the same day' : `${lead.median} day${lead.median === 1 ? '' : 's'} ahead`}
-          or less; the longest was ${lead.longest} days. Walk-ins are excluded.
-        </div>
-        ${lead.bands.map((b) => `
-          <div class="list-row">
-            <span class="grow">${esc(b.label)}</span>
-            <span class="meter"><span class="meter-fill" style="width:${bar(b.count, Math.max(1, ...lead.bands.map((x) => x.count)), 100)}%"></span></span>
-            <span class="num">${b.count}</span>
-          </div>`).join('')}
-      </div>` : ''}
 
     <div class="panel">
       <div class="panel-title">Busiest pickup times</div>
@@ -2166,32 +2325,6 @@ async function renderAnalytics() {
       </div>
     </div>
 
-    <div class="panel">
-      <div class="panel-title">Customers</div>
-      <div class="panel-note">
-        Matched on phone number, over every order on record. Repeat customer rate is
-        the share who have ordered more than once — the clearest read on whether the
-        cakes bring people back, and it needs no extra data entry.
-      </div>
-      <div class="rcr">
-        <div class="rcr-num">${repeat.rate.toFixed(0)}<span class="rcr-pct">%</span></div>
-        <div class="rcr-side">
-          <div class="rcr-label">Repeat customer rate</div>
-          <div class="meter meter-wide"><span class="meter-fill" style="width:${Math.min(100, repeat.rate).toFixed(1)}%"></span></div>
-          <div class="list-meta">${repeat.returningCount} of ${repeat.total} customers have come back</div>
-        </div>
-      </div>
-      <div class="list-row"><span class="grow">Ordered once</span><span class="num">${repeat.newCount}</span></div>
-      <div class="list-row"><span class="grow">Came back</span><span class="num">${repeat.returningCount}</span></div>
-      ${repeat.top.length ? '<div class="mix-head">Who comes back most</div>' : ''}
-      ${repeat.top.slice(0, 6).map((c) => `
-        <div class="list-row">
-          <span class="grow">${esc(c.name)}</span>
-          <span class="repeat-chip">${c.orders}×</span>
-          <span class="num">${money2.format(c.spend)}</span>
-        </div>`).join('')}
-    </div>
-
     <details class="panel collapse">
       <summary class="collapse-head">
         <span class="panel-title">Who logged what</span>
@@ -2204,7 +2337,7 @@ async function renderAnalytics() {
             <summary class="collapse-head">
               <span class="grow">${esc(peopleById.get(r.id)?.name || 'Unknown')}</span>
               <span class="list-meta">${r.count} order${r.count === 1 ? '' : 's'}</span>
-              <span class="num">${money2.format(r.revenue)}</span>
+              <span class="num">${money.format(r.revenue)}</span>
               <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
             ${r.orders.slice(0, 25).map((o) => `
@@ -2212,7 +2345,7 @@ async function renderAnalytics() {
                 <span class="num">${esc(o.order_no)}</span>
                 <span class="grow">${esc(o.customer_name)}</span>
                 <span class="list-meta">${esc(takenFmt.format(new Date(o.created_at)))}</span>
-                <span class="num">${o.price ? money2.format(o.price) : '—'}</span>
+                <span class="num">${o.price ? money.format(o.price) : '—'}</span>
               </div>`).join('')}
           </details>`).join('')}
       </div>
@@ -2233,7 +2366,10 @@ async function renderAnalytics() {
           </div>`).join('') : '<div class="list-row"><span class="grow list-meta">Nothing recorded yet.</span></div>'}
       </div>
     </details>
-  `;
+    `,
+  };
+
+  root.innerHTML = PAGES[analyticsPage] || PAGES.finance;
 }
 
 // ── Keep a waking phone current ─────────────────────────────────────────────

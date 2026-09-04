@@ -108,9 +108,17 @@ main site.
 - **Print jobs** (`print_jobs` table, "Prints" tab): a cake needing 3D toppers or a photo print
   gets a job pointing at its **order id** — never a re-typed brief or a second photo upload. Admin
   and baker only; staff cannot read the table at all. The baker may change the status of a `photo`
-  job and nothing else — enforced by `guard_print_job_updates()`, not by the UI. Marking an order
-  **baked** or **picked up** interrupts with a reminder listing its prints; that interrupt is the
-  whole point of the feature, so do not "streamline" it away.
+  job and nothing else — enforced by `guard_print_job_updates()`, not by the UI. A cake needing
+  both gets **two rows**, one per kind (they finish at different times and belong to different
+  people) — the form just creates both in one pass. Marking an order **baked** or **picked up**
+  interrupts with a reminder listing its prints; that interrupt is the whole point of the feature,
+  so do not "streamline" it away.
+- **Navigation**: the tab bar holds only what is touched mid-shift (Orders, New, To bake, Prints).
+  Analytics lives behind the floating menu button (bottom-right, admin only) as three pages —
+  Finance, Customers, Data — all rendered from one 63-day fetch in `renderAnalytics`. Add new
+  reporting as a fourth page or a new drawer group, not a fifth tab.
+- **Money is never rounded.** One `money` formatter, cents always shown. A whole-dollar variant
+  turned a $130.50 cake into "$131" and quietly skewed every total; do not reintroduce one.
 - **Local testing**: `node serve.mjs`, then `http://localhost:4000/ops/` **with the trailing slash**.
   Without it the browser resolves `./app.mjs` against `/` and the modules 404. In production the app
   sits at the subdomain root, which is why every internal reference is relative and the page links

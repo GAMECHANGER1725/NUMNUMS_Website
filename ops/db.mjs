@@ -21,10 +21,10 @@ export const PEOPLE = [
   { name: 'Vaidik',         email: 'vaidik@ops.numnumsbakery.com.au' },
   { name: 'Tarun',          email: 'tarun@ops.numnumsbakery.com.au' },
   { name: 'Saahil',         email: 'saahil@ops.numnumsbakery.com.au' },
-  { name: 'Janvi Job',      email: 'janvi@ops.numnumsbakery.com.au' },
-  { name: 'Jashan Job',     email: 'jashan@ops.numnumsbakery.com.au' },
+  { name: 'Janvi',          email: 'janvi@ops.numnumsbakery.com.au' },
+  { name: 'Jashan',         email: 'jashan@ops.numnumsbakery.com.au' },
   { name: 'Kirandeep Kaur', email: 'kirandeep@ops.numnumsbakery.com.au' },
-  { name: 'Parita Job',     email: 'parita@ops.numnumsbakery.com.au' },
+  { name: 'Parita',         email: 'parita@ops.numnumsbakery.com.au' },
 ];
 
 export const STORES = [

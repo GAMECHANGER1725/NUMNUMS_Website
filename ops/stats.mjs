@@ -314,10 +314,18 @@ export function logSections(orders, now = new Date(), { collectedDays = 7 } = {}
   const todayKey = sydneyParts(now).dayKey;
   const open = new Map();
   const collected = [];
+  const cancelled = [];
 
   for (const o of orders) {
     const dueKey = sydneyParts(o.due_at).dayKey;
-    if (o.status === 'picked_up' || o.status === 'cancelled') {
+    // A cancelled cake is not a finished one. Filed together they read as the
+    // same outcome, and staff could not tell a collected order from a dropped
+    // one without opening it.
+    if (o.status === 'cancelled') {
+      if (daysBetween(dueKey, todayKey) <= collectedDays) cancelled.push(o);
+      continue;
+    }
+    if (o.status === 'picked_up') {
       if (daysBetween(dueKey, todayKey) <= collectedDays) collected.push(o);
       continue;
     }
@@ -336,6 +344,10 @@ export function logSections(orders, now = new Date(), { collectedDays = 7 } = {}
   if (collected.length) {
     collected.sort((a, b) => new Date(b.due_at) - new Date(a.due_at));
     sections.push(['Collected', collected]);
+  }
+  if (cancelled.length) {
+    cancelled.sort((a, b) => new Date(b.due_at) - new Date(a.due_at));
+    sections.push(['Cancelled', cancelled]);
   }
   return sections;
 }
