@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-04
+
+```yaml
+id: post-hp-2026-09-04
+status: published
+published_at: 2026-09-04
+location: harris-park
+post_type: "Call to action"
+title: "Jain-friendly eggless cakes for Rosehill and Camellia, made in Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5752.jpeg"
+keywords_baited:
+  - Jain-friendly eggless cake
+  - Rosehill Camellia Harris Park
+  - does this cake have egg in it
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
