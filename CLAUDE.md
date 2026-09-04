@@ -114,9 +114,15 @@ main site.
   interrupts with a reminder listing its prints; that interrupt is the whole point of the feature,
   so do not "streamline" it away.
 - **Navigation**: the tab bar holds only what is touched mid-shift (Orders, New, To bake, Prints).
-  Analytics lives behind the floating menu button (bottom-right, admin only) as three pages —
-  Finance, Customers, Data — all rendered from one 63-day fetch in `renderAnalytics`. Add new
-  reporting as a fourth page or a new drawer group, not a fifth tab.
+  Everything read at the end of a day lives behind the floating menu button (bottom-right) as
+  drawer groups — Analytics (Finance / Customers / Data, all from one 63-day fetch), Customers
+  (Directory), Staff, Export. Each group declares its own `roles`, and the button hides itself when
+  a role has no groups. Add new reporting as another leaf, not a fifth tab.
+- **Export** writes CSV in the browser via `toCsv`/`csvCell` in `stats.mjs`. Both hazards it closes
+  are tested: a comma or quote in a cake's wording would shift every later column, and a value
+  starting `= + - @` is executed as a formula by Excel and Sheets. Do not "simplify" that escaping.
+- **The staff page is read-only.** Roles and store scoping are what RLS enforces; they get changed
+  in Supabase so the change is deliberate, not by an admin mis-tapping their own row.
 - **Money is never rounded.** One `money` formatter, cents always shown. A whole-dollar variant
   turned a $130.50 cake into "$131" and quietly skewed every total; do not reintroduce one.
 - **Local testing**: `node serve.mjs`, then `http://localhost:4000/ops/` **with the trailing slash**.

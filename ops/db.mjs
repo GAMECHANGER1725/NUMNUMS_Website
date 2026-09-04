@@ -296,3 +296,70 @@ export async function deletePrintJob(id) {
   const { error } = await sb.from('print_jobs').delete().eq('id', id);
   if (error) throw error;
 }
+
+// ── Customer directory ──────────────────────────────────────────────────────
+// Reads the `customers` view, which is security_invoker: a staff member only
+// ever sees people who ordered at their own store, without that rule being
+// restated here.
+
+const SORTS = {
+  orders: { col: 'order_count', asc: false },
+  spend:  { col: 'spend',       asc: false },
+  recent: { col: 'last_order',  asc: false },
+  name:   { col: 'name',        asc: true  },
+};
+
+/** One page of the directory. `term` matches a name, or a phone if it is digits. */
+export async function listCustomers({ term = '', sort = 'recent', limit = 60 } = {}) {
+  const s = SORTS[sort] || SORTS.recent;
+  let q = sb.from('customers')
+    .select('phone_key,name,phone,order_count,spend,first_order,last_order')
+    .order(s.col, { ascending: s.asc })
+    .limit(limit);
+
+  const raw = String(term ?? '').trim();
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length >= 3 && digits.length >= raw.replace(/[\s+()-]/g, '').length) {
+    // Typed as a number. Stored keys are the last 9 digits, so a longer query
+    // (+61…) has to be cut down to match at all.
+    q = q.like('phone_key', `%${digits.length >= 9 ? digits.slice(-9) : digits}%`);
+  } else if (raw.length >= 2) {
+    // PostgREST reads , ( ) * % as filter syntax.
+    q = q.ilike('name', `%${raw.replace(/[,()*%\\]/g, ' ').trim()}%`);
+  }
+
+  const { data, error } = await q;
+  if (error) throw error;
+  return data || [];
+}
+
+/** Everything one customer has ordered, newest first. */
+export async function ordersForCustomer(phoneKey) {
+  const { data, error } = await sb.from('orders').select('*')
+    .eq('phone_key', phoneKey)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+/** Sign-in trail. Admin only — the policy returns [] for everyone else. */
+export async function authTrail(limit = 200) {
+  const { data } = await sb.from('auth_events')
+    .select('event,at,user_id').order('at', { ascending: false }).limit(limit);
+  return data || [];
+}
+
+/** Every order in a window, for the bookkeeper export. */
+export async function ordersBetween(fromISO, toISO) {
+  const { data, error } = await sb.from('orders').select('*')
+    .gte('created_at', fromISO).lte('created_at', toISO)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  const rows = data || [];
+  if (!rows.length) return rows;
+  const { data: costs } = await sb.from('order_costs')
+    .select('order_id,cost').in('order_id', rows.map((o) => o.id));
+  const byId = new Map((costs || []).map((c) => [c.order_id, c.cost]));
+  for (const o of rows) o.cost = byId.has(o.id) ? Number(byId.get(o.id)) : null;
+  return rows;
+}

@@ -996,6 +996,77 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 .store-margin.is-thin { color: var(--taupe); }
 .store-margin.is-thin .store-cover { color: var(--crust); }
 
+/* ── Customer directory ─────────────────────────────────────────────────── */
+.cust-row {
+  display: block; width: 100%; text-align: left;
+  background: var(--cream); border: 1px solid var(--dough-line);
+  border-radius: var(--radius); padding: 11px 13px; margin-bottom: 8px;
+  box-shadow: var(--shadow-card);
+  transition: transform .13s cubic-bezier(.34,1.56,.64,1), box-shadow .16s ease;
+}
+.cust-row:hover  { box-shadow: var(--shadow-lift); }
+.cust-row:active { transform: scale(.99); }
+.cust-head { display: flex; align-items: center; gap: 8px; }
+.cust-name { font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cust-phone {
+  margin-top: 2px; font-size: 13.5px; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.cust-facts {
+  display: flex; flex-wrap: wrap; gap: 3px 11px;
+  margin-top: 5px; font-size: 12.5px; color: var(--taupe);
+  font-variant-numeric: tabular-nums;
+}
+.sortbar { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 12px; padding-bottom: 2px; }
+.sortbar button {
+  flex: none; min-height: 36px; padding: 0 13px; border-radius: 20px;
+  font-size: 13px; font-weight: 500; color: var(--ink-soft);
+  background: var(--dough); border: 1px solid transparent;
+  transition: background-color .16s ease, color .16s ease, border-color .16s ease;
+}
+.sortbar button[aria-pressed="true"] {
+  background: rgba(200,84,120,.10); color: var(--rose-deep); border-color: rgba(200,84,120,.3);
+}
+
+/* ── Staff ──────────────────────────────────────────────────────────────── */
+.person {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 0; border-bottom: 1px solid var(--dough-line);
+}
+.person:last-child { border-bottom: 0; }
+.person-dot {
+  width: 36px; height: 36px; flex: none; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--dough); color: var(--ink-soft);
+  font-weight: 500; font-size: 14px;
+}
+.person-lines { flex: 1; min-width: 0; }
+.person-name { font-weight: 500; line-height: 1.3; }
+.person-meta { font-size: 12.5px; color: var(--taupe); }
+.person-when { font-size: 12px; color: var(--taupe); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ── Export ─────────────────────────────────────────────────────────────── */
+.range-pick { display: grid; gap: 8px; margin-bottom: 4px; }
+.range-opt {
+  display: flex; align-items: center; gap: 11px;
+  width: 100%; min-height: 58px; padding: 10px 13px; text-align: left;
+  background: var(--cream); border: 1.5px solid var(--dough-line);
+  border-radius: var(--radius);
+  transition: border-color .16s ease, background-color .16s ease;
+}
+.range-opt[aria-pressed="true"] { border-color: var(--rose); background: rgba(200,84,120,.06); }
+.range-opt .grow { flex: 1; min-width: 0; }
+.range-opt-name { font-weight: 500; }
+.range-opt-note { font-size: 12.5px; color: var(--taupe); font-variant-numeric: tabular-nums; }
+.range-tick {
+  width: 20px; height: 20px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--dough-line);
+  display: grid; place-items: center;
+}
+.range-opt[aria-pressed="true"] .range-tick { border-color: var(--rose); background: var(--rose); }
+.range-tick svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 2.6; opacity: 0; }
+.range-opt[aria-pressed="true"] .range-tick svg { opacity: 1; }
+
 </style>
 </head>
 <body>
@@ -1061,6 +1132,9 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
     <section id="view-bake" class="hidden"></section>
     <section id="view-prints" class="hidden"></section>
     <section id="view-analytics" class="hidden"></section>
+    <section id="view-directory" class="hidden"></section>
+    <section id="view-staff" class="hidden"></section>
+    <section id="view-export" class="hidden"></section>
   </main>
 
   <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>

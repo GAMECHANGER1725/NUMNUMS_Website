@@ -10,6 +10,7 @@ import {
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, uploadPhoto, photoUrl,
+  listCustomers, ordersForCustomer, authTrail, ordersBetween,
   listPrintJobs, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
 import {
@@ -18,7 +19,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS,
-  printSections, storeBreakdown,
+  printSections, storeBreakdown, exportRanges, toCsv,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
@@ -133,10 +134,9 @@ function go(next) {
 
 // ── Render ──────────────────────────────────────────────────────────────────
 async function render() {
-  const TITLE = { bake: 'To bake', prints: 'Prints', log: 'Orders' };
   $('view-title').textContent = view === 'analytics'
     ? (ANALYTICS_TITLE[analyticsPage] || 'Analytics')
-    : (TITLE[view] || 'Orders');
+    : (VIEW_TITLE[view] || 'Orders');
   // Nothing but analytics lives in the drawer yet, so nobody else gets a button.
   $('menu-btn').classList.toggle('hidden', !menuGroups().length);
   $('store-switch').classList.toggle('hidden',
@@ -145,12 +145,14 @@ async function render() {
   $('logsearch-row').classList.toggle('hidden', view !== 'log');
   if (view !== 'log') closeRange();
 
-  for (const v of ['log', 'bake', 'prints', 'analytics']) $(`view-${v}`).classList.toggle('hidden', v !== view);
+  for (const v of ['log', 'bake', 'prints', ...DRAWER_VIEWS]) $(`view-${v}`).classList.toggle('hidden', v !== view);
 
-  if (view === 'log') await renderLog();
-  else if (view === 'bake') await renderBake();
-  else if (view === 'prints') await renderPrints();
-  else await renderAnalytics();
+  const PAINT = {
+    log: renderLog, bake: renderBake, prints: renderPrints,
+    analytics: renderAnalytics, directory: renderDirectory,
+    staff: renderStaff, export: renderExport,
+  };
+  await (PAINT[view] || renderLog)();
 }
 
 /**
@@ -1923,28 +1925,69 @@ function mountDuePicker(prefix = 'f-due', initialISO = null) {
 // the leaves are the pages — the shape of Search Console's sidebar, which is
 // where dad already reads numbers.
 
-const MENU = [{
-  label: 'Analytics',
-  roles: ['admin'],
-  icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-  children: [
-    { key: 'finance',   label: 'Finance',   note: 'Sales, margin, money still owed' },
-    { key: 'customers', label: 'Customers', note: 'Repeat rate, how far ahead people book' },
-    { key: 'data',      label: 'Data',      note: 'Stores, what sells, who logged what' },
-  ],
-}];
+const MENU = [
+  {
+    label: 'Analytics',
+    roles: ['admin'],
+    icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    children: [
+      { view: 'analytics', page: 'finance',   label: 'Finance',   note: 'Sales, margin, money still owed' },
+      { view: 'analytics', page: 'customers', label: 'Customers', note: 'Repeat rate, how far ahead people book' },
+      { view: 'analytics', page: 'data',      label: 'Data',      note: 'Stores, what sells, who logged what' },
+    ],
+  },
+  {
+    label: 'Customers',
+    // Staff get this too: the person asking "I ordered last month" is standing
+    // at their counter, not Vaidik's. The view is security_invoker, so they
+    // still only see people who ordered at their own store.
+    roles: ['admin', 'staff'],
+    icon: '<path d="M16 20v-1.5a4 4 0 00-4-4H7a4 4 0 00-4 4V20M9.5 6.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM21 20v-1.5a4 4 0 00-3-3.87M16.5 3.6a4 4 0 010 7.75"/>',
+    children: [
+      { view: 'directory', label: 'Directory', note: 'Look someone up by name or number' },
+    ],
+  },
+  {
+    label: 'Staff',
+    roles: ['admin'],
+    icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M16 7a4 4 0 11-8 0 4 4 0 018 0z"/>',
+    children: [
+      { view: 'staff', label: 'People & sign-ins', note: 'Who has an account, and who has been on' },
+    ],
+  },
+  {
+    label: 'Export',
+    roles: ['admin'],
+    icon: '<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+    children: [
+      { view: 'export', label: 'Orders for the bookkeeper', note: 'Download a month or a financial year as CSV' },
+    ],
+  },
+];
 
+const VIEW_TITLE = {
+  log: 'Orders', bake: 'To bake', prints: 'Prints',
+  directory: 'Customers', staff: 'Staff', export: 'Export',
+};
 const ANALYTICS_TITLE = { finance: 'Finance', customers: 'Customers', data: 'Data' };
+
+/** Every view the drawer can reach, so render() knows what to show and hide. */
+const DRAWER_VIEWS = ['analytics', 'directory', 'staff', 'export'];
 
 const menuGroups = () => MENU.filter((g) => g.roles.includes(me.role));
 
-let navOpen = new Set(['Analytics']);   // the only group, so it starts open
+// Only Analytics starts open. With four groups, expanding them all would push
+// the last one under the fold on a phone.
+let navOpen = new Set(['Analytics']);
 
 function closeDrawer() {
   $('drawer-root').innerHTML = '';
   $('menu-btn').setAttribute('aria-expanded', 'false');
   document.body.style.overflow = '';
 }
+
+const isCurrent = (c) =>
+  view === c.view && (!c.page || analyticsPage === c.page);
 
 function openDrawer() {
   document.body.style.overflow = 'hidden';
@@ -1964,8 +2007,8 @@ function openDrawer() {
         </button>
         <div class="nav-kids${navOpen.has(g.label) ? '' : ' hidden'}">
           ${g.children.map((c) => `
-            <button class="nav-item" data-page="${esc(c.key)}"
-                    aria-current="${view === 'analytics' && analyticsPage === c.key ? 'page' : 'false'}">
+            <button class="nav-item" data-view="${esc(c.view)}" data-page="${esc(c.page || '')}"
+                    aria-current="${isCurrent(c) ? 'page' : 'false'}">
               <span class="nav-item-name">${esc(c.label)}</span>
               <span class="nav-item-note">${esc(c.note)}</span>
             </button>`).join('')}
@@ -1981,9 +2024,9 @@ function openDrawer() {
     openDrawer();
   }));
 
-  $('drawer-root').querySelectorAll('[data-page]').forEach((b) => b.addEventListener('click', () => {
-    analyticsPage = b.dataset.page;
-    view = 'analytics';
+  $('drawer-root').querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
+    view = b.dataset.view;
+    if (b.dataset.page) analyticsPage = b.dataset.page;
     closeDrawer();
     buildTabs();
     render();
@@ -2007,6 +2050,307 @@ window.addEventListener('scroll', () => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && $('drawer-root').innerHTML) closeDrawer();
 });
+
+// ── Customer directory ──────────────────────────────────────────────────────
+//
+// Customer data existed already — it just had nowhere to be looked at. It
+// surfaced as a typeahead while logging an order and a top-six in analytics,
+// so "she says she ordered here last month" had no answer at the counter.
+
+let custSort = 'recent';
+let custQuery = '';
+let custTimer = null;
+
+const CUST_SORTS = [
+  { key: 'recent', label: 'Recent' },
+  { key: 'orders', label: 'Most orders' },
+  { key: 'spend',  label: 'Biggest spend' },
+  { key: 'name',   label: 'A–Z' },
+];
+
+async function renderDirectory() {
+  const root = $('view-directory');
+  const first = !root.querySelector('#cust-search');
+
+  if (first) {
+    root.innerHTML = `
+      <div class="logbar" style="max-width:none;">
+        <span class="logbar-search">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+          </svg>
+          <input class="input" id="cust-search" type="search" autocomplete="off"
+                 placeholder="Search a name or number" aria-label="Search customers">
+        </span>
+      </div>
+      <div class="sortbar" id="cust-sort" role="group" aria-label="Sort customers"></div>
+      <div id="cust-list"></div>`;
+
+    $('cust-search').addEventListener('input', (e) => {
+      custQuery = e.target.value;
+      clearTimeout(custTimer);
+      custTimer = setTimeout(() => { if (view === 'directory') paintDirectory(); }, 200);
+    });
+  }
+
+  $('cust-sort').innerHTML = CUST_SORTS.map((s) => `
+    <button data-sort="${s.key}" aria-pressed="${s.key === custSort}">${esc(s.label)}</button>`).join('');
+  $('cust-sort').querySelectorAll('[data-sort]').forEach((b) => b.addEventListener('click', () => {
+    custSort = b.dataset.sort;
+    renderDirectory();
+  }));
+
+  await paintDirectory();
+}
+
+async function paintDirectory() {
+  const list = $('cust-list');
+  list.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+
+  let rows = [];
+  try { rows = await listCustomers({ term: custQuery, sort: custSort }); }
+  catch (err) {
+    list.innerHTML = `<div class="empty"><div class="empty-mark">Could not load customers</div>
+      <p class="empty-note">${esc(err.message)}</p></div>`;
+    return;
+  }
+
+  if (!rows.length) {
+    list.innerHTML = custQuery
+      ? `<div class="empty"><div class="empty-mark">Nobody matches</div>
+           <p class="empty-note">No customer for “${esc(custQuery)}”.<br>Try part of a name, or the last few digits of a number.</p></div>`
+      : `<div class="empty"><div class="empty-mark">No customers yet</div>
+           <p class="empty-note">Everyone who orders shows up here once they have a phone number on the docket.</p></div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map((c) => {
+    const n = Number(c.order_count);
+    return `
+      <button class="cust-row" data-cust="${esc(c.phone_key)}">
+        <div class="cust-head">
+          <span class="cust-name">${esc(c.name)}</span>
+          ${n > 1 ? `<span class="repeat-chip">${n}×</span>` : ''}
+        </div>
+        <div class="cust-phone">${esc(c.phone || 'No number')}</div>
+        <div class="cust-facts">
+          <span>${money.format(Number(c.spend || 0))} all up</span>
+          <span>last ${esc(dateFmt.format(new Date(c.last_order)))}</span>
+          <span>since ${esc(dateFmt.format(new Date(c.first_order)))}</span>
+        </div>
+      </button>`;
+  }).join('');
+
+  list.querySelectorAll('[data-cust]').forEach((b) =>
+    b.addEventListener('click', () => openCustomer(b.dataset.cust, rows.find((r) => r.phone_key === b.dataset.cust))));
+}
+
+async function openCustomer(phoneKey, c) {
+  const body = openSheet(c.name, `
+    <div class="detail-grid">
+      ${field('Phone', c.phone)}
+      ${field('Orders', String(c.order_count))}
+      ${field('Spent', money.format(Number(c.spend || 0)))}
+      ${field('Average', money.format(Number(c.spend || 0) / Math.max(1, Number(c.order_count))))}
+      ${field('First order', dateFmt.format(new Date(c.first_order)))}
+      ${field('Last order', dateFmt.format(new Date(c.last_order)))}
+    </div>
+    <hr class="rule">
+    <div class="block-label">Every order</div>
+    <div id="cust-orders"><p class="empty-note">Loading…</p></div>
+  `, { center: true });
+
+  let rows = [];
+  try { rows = await ordersForCustomer(phoneKey); }
+  catch (err) { $('cust-orders').innerHTML = `<p class="empty-note">${esc(err.message)}</p>`; return; }
+
+  const showMoney = me.role !== 'baker';
+  $('cust-orders').innerHTML = rows.map((o) => `
+    <div class="list-row">
+      <span class="num">${esc(o.order_no)}</span>
+      <span class="grow">${esc([o.size, o.flavour].filter(Boolean).join(' · ') || '—')}</span>
+      <span class="list-meta">${esc(dateFmt.format(new Date(o.created_at)))}</span>
+      ${showMoney ? `<span class="num">${o.price ? money.format(o.price) : '—'}</span>` : ''}
+    </div>`).join('');
+  void body;
+}
+
+// ── Staff ───────────────────────────────────────────────────────────────────
+//
+// Read-only on purpose. Roles and store scoping are what RLS enforces, so they
+// are changed in Supabase where the change is deliberate — an admin fat-
+// fingering their own row here could lock the shop out of its own order book.
+
+async function renderStaff() {
+  const root = $('view-staff');
+  root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+
+  const [profiles, events] = await Promise.all([listProfiles(), authTrail(200)]);
+  peopleById = new Map(profiles.map((p) => [p.id, p]));
+
+  const lastSeen = new Map();
+  for (const e of events) if (!lastSeen.has(e.user_id)) lastSeen.set(e.user_id, e);
+
+  const ROLE_ORDER = { admin: 0, baker: 1, staff: 2 };
+  const people = [...profiles].sort((a, b) =>
+    (ROLE_ORDER[a.role] - ROLE_ORDER[b.role]) || a.name.localeCompare(b.name));
+
+  const storeText = (p) => {
+    const mine = (p.stores || []).map((c) => storeLabel(c));
+    return mine.length === STORES.length ? 'Both stores' : (mine.join(', ') || 'No store');
+  };
+
+  const seenText = (p) => {
+    const e = lastSeen.get(p.id);
+    if (!e) return 'Never signed in';
+    return `${e.event === 'login' ? 'On since' : 'Left'} ${takenFmt.format(new Date(e.at))}`;
+  };
+
+  root.innerHTML = `
+    <div class="panel">
+      <div class="panel-title">People</div>
+      <div class="panel-note">
+        Roles and store scoping are enforced in the database, not here — change
+        them in Supabase so the change is deliberate.
+      </div>
+      ${people.map((p) => `
+        <div class="person">
+          <span class="person-dot">${esc(p.name.slice(0, 1))}</span>
+          <span class="person-lines">
+            <span class="person-name">${esc(p.name)}</span>
+            <span class="person-meta">${esc(p.role)} · ${esc(storeText(p))}</span>
+          </span>
+          <span class="person-when">${esc(seenText(p))}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Sign-in history</div>
+      <div class="panel-note">The last ${events.length} sign-ins and sign-outs, newest first.</div>
+      ${events.length ? events.map((e) => `
+        <div class="list-row">
+          <span class="grow">${esc(peopleById.get(e.user_id)?.name || 'Unknown')}</span>
+          <span class="list-meta">${e.event === 'login' ? 'signed in' : 'signed out'}</span>
+          <span class="num list-meta">${esc(dateTimeFmt.format(new Date(e.at)))}</span>
+        </div>`).join('')
+      : '<div class="list-row"><span class="grow list-meta">Nothing recorded yet.</span></div>'}
+    </div>`;
+}
+
+// ── Export ──────────────────────────────────────────────────────────────────
+//
+// The point of logging any of this was to hand a bookkeeper real numbers.
+// Windows are named months and the Australian financial year rather than a
+// free-form range, so the file still means something a week later.
+
+let exportKey = 'last-month';
+
+async function renderExport() {
+  const root = $('view-export');
+  const ranges = exportRanges(new Date());
+  const chosen = ranges.find((r) => r.key === exportKey) || ranges[0];
+
+  root.innerHTML = `
+    <div class="panel">
+      <div class="panel-title">Orders for the bookkeeper</div>
+      <div class="panel-note">
+        One row per order, by the date it was taken. Includes cost, so treat the
+        file the way you would treat the books.
+      </div>
+      <div class="range-pick">
+        ${ranges.map((r) => `
+          <button class="range-opt" data-range="${esc(r.key)}" aria-pressed="${r.key === exportKey}">
+            <span class="range-tick">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="grow">
+              <span class="range-opt-name">${esc(r.label)}</span><br>
+              <span class="range-opt-note">${esc(r.note)} · ${esc(dayKeyLabel(r.fromKey))} – ${esc(dayKeyLabel(r.toKey))}</span>
+            </span>
+          </button>`).join('')}
+      </div>
+      <button class="btn btn-primary" id="export-go" style="margin-top:12px;">Download CSV</button>
+      <p class="msg" id="export-msg" role="status" aria-live="polite"></p>
+    </div>`;
+
+  root.querySelectorAll('[data-range]').forEach((b) => b.addEventListener('click', () => {
+    exportKey = b.dataset.range;
+    renderExport();
+  }));
+
+  $('export-go').addEventListener('click', () => downloadOrders(chosen));
+}
+
+const CSV_COLUMNS = [
+  ['Order',        (o) => o.order_no],
+  ['Store',        (o) => storeLabel(o.store)],
+  ['Taken',        (o) => csvDate(o.created_at)],
+  ['Taken time',   (o) => timeFmt.format(new Date(o.created_at))],
+  ['Pickup',       (o) => csvDate(o.due_at)],
+  ['Status',       (o) => STATUS_LABEL[o.status] || o.status],
+  ['Kind',         (o) => (o.kind === 'custom' ? 'Custom' : o.walk_in ? 'Normal (in store)' : 'Normal (ordered)')],
+  ['Customer',     (o) => o.customer_name],
+  ['Phone',        (o) => o.customer_phone],
+  ['Flavour',      (o) => o.flavour],
+  ['Size',         (o) => o.size],
+  ['Wording',      (o) => o.wording],
+  ['Notes',        (o) => o.notes],
+  ['Price',        (o) => (o.price == null ? '' : Number(o.price).toFixed(2))],
+  ['Deposit',      (o) => Number(o.deposit || 0).toFixed(2)],
+  ['Balance',      (o) => (o.price == null ? '' : (Number(o.price) - paidOn(o)).toFixed(2))],
+  ['Cost',         (o) => (o.cost == null ? '' : Number(o.cost).toFixed(2))],
+  ['Logged by',    (o) => peopleById.get(o.created_by)?.name || ''],
+];
+
+// ISO dates, not Australian ones: a spreadsheet reads 03/09 as March in half
+// the world, and a bookkeeper's machine is not necessarily set to en-AU.
+function csvDate(iso) {
+  const p = sydneyParts(iso);
+  return p.dayKey;
+}
+
+async function downloadOrders(range) {
+  const btn = $('export-go');
+  const msg = $('export-msg');
+  btn.disabled = true; btn.textContent = 'Building…';
+  msg.textContent = ''; msg.className = 'msg';
+
+  try {
+    if (!peopleById.size) peopleById = new Map((await listProfiles()).map((p) => [p.id, p]));
+
+    const rows = await ordersBetween(
+      sydneyDateTimeToISO(range.fromKey, 0, 0),
+      sydneyDateTimeToISO(range.toKey, 23, 59),
+    );
+
+    if (!rows.length) {
+      msg.textContent = `No orders were taken in ${range.label}.`;
+      msg.className = 'msg msg-error';
+      return;
+    }
+
+    const csv = toCsv(CSV_COLUMNS.map((c) => c[0]), rows.map((o) => CSV_COLUMNS.map((c) => c[1](o))));
+    // The BOM is what makes Excel open a UTF-8 file without mangling the ’ and
+    // the — that customers put in cake wording.
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `numnums-orders-${range.fromKey}-to-${range.toKey}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+
+    msg.textContent = `${rows.length} order${rows.length === 1 ? '' : 's'} downloaded.`;
+    msg.className = 'msg msg-ok';
+  } catch (err) {
+    msg.textContent = err.message;
+    msg.className = 'msg msg-error';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Download CSV';
+  }
+}
 
 // ── Analytics ───────────────────────────────────────────────────────────────
 const delta = (now, before) => {

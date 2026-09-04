@@ -11,7 +11,7 @@ import {
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, phoneKey,
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
-  storeBreakdown,
+  storeBreakdown, exportRanges, csvCell, toCsv,
 } from './stats.mjs';
 
 let passed = 0;
@@ -565,6 +565,50 @@ test('a margin drawn from a thin slice of orders is flagged untrusted', () => {
   assert.equal(r.costedCount, 1);
   assert.equal(r.marginPct, 60);                // the rate itself is right...
   assert.equal(r.marginTrusted, false);         // ...but 1 of 10 must not be read as fact
+});
+
+test('export windows are Sydney months and the Australian financial year', () => {
+  const r = exportRanges(new Date('2026-09-04T09:00:00Z'));      // 7pm Fri, Sydney
+  assert.deepEqual(r.map((x) => x.key), ['this-month', 'last-month', 'quarter', 'fy']);
+  assert.deepEqual([r[0].fromKey, r[0].toKey], ['2026-09-01', '2026-09-04']);
+  assert.deepEqual([r[1].fromKey, r[1].toKey], ['2026-08-01', '2026-08-31']);   // full month
+  assert.equal(r[3].fromKey, '2026-07-01');
+  assert.equal(r[3].label, 'FY 2026–27');
+
+  // Before July, the financial year still runs from the previous 1 July.
+  const may = exportRanges(new Date('2026-05-04T02:00:00Z'));
+  assert.equal(may[3].fromKey, '2025-07-01');
+  assert.equal(may[3].label, 'FY 2025–26');
+  // January must roll "last month" back a year, not to month zero.
+  const jan = exportRanges(new Date('2027-01-15T02:00:00Z'));
+  assert.deepEqual([jan[1].fromKey, jan[1].toKey], ['2026-12-01', '2026-12-31']);
+});
+
+test('a leap February exports its 29th', () => {
+  const r = exportRanges(new Date('2028-03-10T02:00:00Z'));
+  assert.equal(r[1].toKey, '2028-02-29');
+});
+
+test('csv escapes quotes and commas instead of shifting every later column', () => {
+  assert.equal(csvCell('plain'), 'plain');
+  assert.equal(csvCell('Happy Birthday, Sam'), '"Happy Birthday, Sam"');
+  assert.equal(csvCell('she said "hi"'), '"she said ""hi"""');
+  assert.equal(csvCell('two\nlines'), '"two\nlines"');
+  assert.equal(csvCell(null), '');
+  assert.equal(csvCell(0), '0');
+});
+
+test('csv defuses values a spreadsheet would run as a formula', () => {
+  // Excel and Sheets execute these on open; the books are not a place for it.
+  assert.equal(csvCell('=1+1'), "'=1+1");
+  assert.equal(csvCell('+61425697725'), "'+61425697725");
+  assert.equal(csvCell('-5'), "'-5");
+  assert.equal(csvCell('@SUM(A1)'), "'@SUM(A1)");
+});
+
+test('toCsv joins with CRLF and keeps the header first', () => {
+  const out = toCsv(['a', 'b'], [['1', 'x,y'], ['2', null]]);
+  assert.equal(out, 'a,b\r\n1,"x,y"\r\n2,');
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

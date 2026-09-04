@@ -565,3 +565,67 @@ export function storeBreakdown(orders, storeCodes) {
   }
   return { rows: rows.sort((a, b) => b.revenue - a.revenue), total };
 }
+
+// ── Bookkeeper export ───────────────────────────────────────────────────────
+
+const pad2 = (n) => String(n).padStart(2, '0');
+const lastDayOf = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();   // m is 1-12
+
+/**
+ * The windows a bookkeeper actually asks for. Months and the Australian
+ * financial year (1 July – 30 June), not a free-form range nobody can name
+ * afterwards when the file is sitting in their inbox.
+ *
+ * Boundaries are Sydney days, so an order taken at 9pm on the 31st belongs to
+ * that month rather than the next one.
+ */
+export function exportRanges(now = new Date()) {
+  const t = sydneyParts(now);
+  const monthKeys = (y, m) => ({ fromKey: `${y}-${pad2(m)}-01`, toKey: `${y}-${pad2(m)}-${pad2(lastDayOf(y, m))}` });
+  const monthName = (y, m) => new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', month: 'long', year: 'numeric' })
+    .format(new Date(Date.UTC(y, m - 1, 15)));
+
+  const prevY = t.month === 1 ? t.year - 1 : t.year;
+  const prevM = t.month === 1 ? 12 : t.month - 1;
+
+  // The FY that today sits in: starts 1 July of this year if we are past June.
+  const fyStart = t.month >= 7 ? t.year : t.year - 1;
+
+  return [
+    { key: 'this-month', label: monthName(t.year, t.month), note: 'This month so far',
+      ...monthKeys(t.year, t.month), toKey: t.dayKey },
+    { key: 'last-month', label: monthName(prevY, prevM), note: 'Last full month',
+      ...monthKeys(prevY, prevM) },
+    { key: 'quarter', label: 'Last 90 days', note: 'Rolling',
+      fromKey: addDayKey(t.dayKey, -89), toKey: t.dayKey },
+    { key: 'fy', label: `FY ${fyStart}–${String(fyStart + 1).slice(2)}`, note: 'From 1 July',
+      fromKey: `${fyStart}-07-01`, toKey: t.dayKey },
+  ];
+}
+
+function addDayKey(key, n) {
+  const [y, m, d] = key.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + n));
+  return `${dt.getUTCFullYear()}-${pad2(dt.getUTCMonth() + 1)}-${pad2(dt.getUTCDate())}`;
+}
+
+/**
+ * CSV a spreadsheet will open without mangling anything.
+ *
+ * Two hazards this closes. Quotes and commas inside a cake's notes would end
+ * the field early and shunt every later column across by one — silently, and
+ * only on the rows where someone typed a comma. And a value opening with
+ * = + - @ is executed as a formula by Excel and Sheets, so a notes field is a
+ * live injection into whoever opens the books; those get a leading apostrophe,
+ * which the spreadsheet strips on display.
+ */
+export function csvCell(value) {
+  if (value == null) return '';
+  let s = String(value);
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+export function toCsv(headers, rows) {
+  return [headers, ...rows].map((r) => r.map(csvCell).join(',')).join('\r\n');
+}
