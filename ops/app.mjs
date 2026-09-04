@@ -18,7 +18,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS,
-  printSections,
+  printSections, storeBreakdown,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
@@ -2084,7 +2084,9 @@ async function renderAnalytics() {
   const hourLabel = (h) => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
 
   const repeat = repeatCustomers(all);
-  const byStore = STORES.map((st) => ({ ...st, sum: summarise(sold7.filter((o) => o.store === st.code)) }));
+  // 30 days, not 7: a week of one shop's trading is noise, and this panel is
+  // the one that has to answer whether a store is worth keeping open.
+  const stores = storeBreakdown(sold30, STORES.map((st) => st.code));
 
   // What sells: flavour and size mix over the last 30 days of sales.
   const mix = (field) => {
@@ -2270,14 +2272,37 @@ async function renderAnalytics() {
     </div>
 
     <div class="panel">
-      <div class="panel-title">By store, last 7 days</div>
-      <div class="panel-note">Counted against the store that took the order.</div>
-      ${byStore.map((st) => `
-        <div class="list-row">
-          <span class="grow">${esc(st.label)}</span>
-          <span class="list-meta">${st.sum.count} order${st.sum.count === 1 ? '' : 's'}</span>
-          <span class="num">${money.format(st.sum.revenue)}</span>
-        </div>`).join('')}
+      <div class="panel-title">By store, last 30 days</div>
+      <div class="panel-note">
+        Counted against the store that took the order. Margin is worked out from
+        the orders that have a cost recorded, so it is only as good as how many
+        of them do — that count is shown against each store.
+      </div>
+      ${stores.rows.map((r) => {
+        const st = STORES.find((x) => x.code === r.code);
+        return `
+        <div class="store-row">
+          <div class="store-head">
+            <span class="store-name">${esc(st ? st.label : r.code)}</span>
+            <span class="num store-rev">${money.format(r.revenue)}</span>
+          </div>
+          <div class="meter meter-wide"><span class="meter-fill" style="width:${r.share.toFixed(1)}%"></span></div>
+          <div class="store-facts">
+            <span>${r.count} order${r.count === 1 ? '' : 's'}</span>
+            <span>avg ${money.format(r.avgOrder)}</span>
+            <span>${r.share.toFixed(0)}% of takings</span>
+          </div>
+          <div class="store-margin${r.margin == null ? ' is-thin' : r.marginTrusted ? '' : ' is-thin'}">
+            ${r.margin == null
+              ? `<span>No costs recorded yet — add a cost on ${r.count ? 'these orders' : 'an order'} to see margin here.</span>`
+              : `<span><strong>${money.format(r.margin)}</strong> gross margin · ${r.marginPct.toFixed(0)}%</span>
+                 <span class="store-cover">${r.marginTrusted
+                    ? `from ${r.costedCount} of ${r.count}`
+                    : `only ${r.costedCount} of ${r.count} costed — treat as a hint`}</span>`}
+          </div>
+        </div>`;
+      }).join('')}
+      ${stores.total ? '' : '<div class="list-row"><span class="grow list-meta">No sales in the last 30 days.</span></div>'}
     </div>
 
     ${flavourMix.length ? `

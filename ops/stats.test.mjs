@@ -11,6 +11,7 @@ import {
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, phoneKey,
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
+  storeBreakdown,
 } from './stats.mjs';
 
 let passed = 0;
@@ -533,6 +534,37 @@ test('an overdue print job sorts ahead of today', () => {
     { id: 'late', status: 'todo', order: { due_at: '2026-09-02T05:00:00Z' } },
   ], now);
   assert.deepEqual(out.map(([label]) => label), ['Overdue', 'Today']);
+});
+
+test('store breakdown splits revenue, share and margin per store', () => {
+  const o = (store, price, cost, status) => ({ store, price, cost, deposit: 0, status: status || 'picked_up' });
+  const { rows, total } = storeBreakdown([
+    o('harris-park', 100, 40),
+    o('harris-park', 200, 80),
+    o('riverstone',  50,  null),
+    o('harris-park', 100, null, 'cancelled'),   // cancelled never counts
+  ], ['harris-park', 'riverstone']);
+
+  assert.equal(total, 350);
+  assert.equal(rows[0].code, 'harris-park');    // sorted by revenue
+  assert.equal(rows[0].revenue, 300);
+  assert.equal(rows[0].count, 2);
+  assert.equal(rows[0].margin, 180);            // 300 revenue - 120 cost
+  assert.equal(Math.round(rows[0].share), 86);
+  assert.equal(rows[0].marginTrusted, true);    // 2 of 2 costed
+
+  assert.equal(rows[1].code, 'riverstone');
+  assert.equal(rows[1].margin, null);           // nothing costed
+  assert.equal(rows[1].marginTrusted, false);
+});
+
+test('a margin drawn from a thin slice of orders is flagged untrusted', () => {
+  const rows = [];
+  for (let i = 0; i < 10; i++) rows.push({ store: 'riverstone', price: 100, deposit: 0, cost: i === 0 ? 40 : null, status: 'picked_up' });
+  const r = storeBreakdown(rows, ['riverstone']).rows[0];
+  assert.equal(r.costedCount, 1);
+  assert.equal(r.marginPct, 60);                // the rate itself is right...
+  assert.equal(r.marginTrusted, false);         // ...but 1 of 10 must not be read as fact
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

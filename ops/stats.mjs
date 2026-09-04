@@ -539,3 +539,29 @@ export function printSections(jobs, now = new Date()) {
 
   return out;
 }
+
+/**
+ * Per-store trading summary.
+ *
+ * "Is Riverstone actually profitable" was one of the two questions this whole
+ * app was built to answer, and until now the store panel showed revenue and a
+ * count — which tells you which shop is busier, not which one makes money.
+ *
+ * Margin here is deliberately computed off only the orders that have a cost
+ * recorded, and the coverage is returned alongside it, because a 60% margin
+ * drawn from two of twenty cakes is worse than no number at all.
+ */
+export function storeBreakdown(orders, storeCodes) {
+  const rows = storeCodes.map((code) => {
+    const mine = orders.filter((o) => o.store === code);
+    return { code, ...summarise(mine) };
+  });
+
+  const total = rows.reduce((t, r) => t + r.revenue, 0);
+  for (const r of rows) {
+    r.share = total ? (r.revenue / total) * 100 : 0;
+    // Enough of the sample priced up to be worth reading as a rate.
+    r.marginTrusted = r.count > 0 && r.costedCount / r.count >= 0.5;
+  }
+  return { rows: rows.sort((a, b) => b.revenue - a.revenue), total };
+}
