@@ -609,7 +609,7 @@ async function openOrder(id) {
   const body = openSheet(o.order_no, `
     ${o.photo_path ? '<img class="detail-photo" data-photo="' + esc(o.photo_path) + '" alt="Cake design">' : ''}
 
-    <div class="detail-grid">
+    <div class="detail-grid" id="detail-view">
       ${field('Customer', o.customer_name)}
       ${field('Phone', o.customer_phone)}
       <div class="span-2 hidden" id="cust-history"></div>
@@ -626,6 +626,60 @@ async function openOrder(id) {
         : money2.format(paidOn(o))) : ''}
       ${me.role === 'admin' ? field('Cost', o.cost != null ? money2.format(o.cost) : '') : ''}
       ${field('Kind', o.kind === 'custom' ? 'Custom cake' : (o.walk_in ? 'Normal · bought in store' : 'Normal · ordered ahead'), 'span-2')}
+    </div>
+
+    ${canEdit ? `<button type="button" class="btn btn-outline" id="edit-toggle" style="width:100%;margin-top:2px;">Edit details</button>` : ''}
+
+    <div class="hidden" id="edit-panel">
+      <div class="row-2">
+        <div class="field">
+          <label class="field-label" for="edit-name">Customer</label>
+          <input class="input" id="edit-name" value="${esc(o.customer_name)}">
+        </div>
+        <div class="field">
+          <label class="field-label" for="edit-phone">Phone</label>
+          <input class="input nums" id="edit-phone" type="tel" inputmode="tel" value="${esc(o.customer_phone || '')}">
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Pick up</span>
+        <button type="button" class="datefield" id="edit-due-btn" aria-expanded="false">
+          <span class="datefield-value is-empty" id="edit-due-label">Choose a date and time</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>
+          </svg>
+        </button>
+        <div class="cal hidden" id="edit-due-cal"></div>
+        <input type="hidden" id="edit-due">
+      </div>
+
+      <div class="row-2">
+        <div class="field"><span class="field-label">Flavour</span><div id="edit-dd-flavour"></div></div>
+        <div class="field"><span class="field-label">Size</span><div id="edit-dd-size"></div></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="edit-wording">Wording on cake</label>
+        <input class="input" id="edit-wording" value="${esc(o.wording || '')}">
+      </div>
+
+      ${o.kind === 'custom' ? `
+      <div class="field">
+        <label class="field-label" for="edit-design">Design notes</label>
+        <textarea class="textarea" id="edit-design">${esc(o.design_notes || '')}</textarea>
+      </div>` : ''}
+
+      <div class="field">
+        <label class="field-label" for="edit-notes">Anything else</label>
+        <textarea class="textarea" id="edit-notes">${esc(o.notes || '')}</textarea>
+      </div>
+
+      <div class="row-2">
+        <button class="btn btn-quiet" type="button" id="edit-cancel">Cancel</button>
+        <button class="btn btn-primary" type="button" id="edit-save">Save changes</button>
+      </div>
+      <p class="msg" id="edit-msg" role="status" aria-live="polite"></p>
     </div>
 
     <hr class="rule">
@@ -734,6 +788,72 @@ async function openOrder(id) {
         Object.assign(o, updated);
         msg.textContent = 'Payment saved.'; msg.className = 'msg msg-ok';
       } catch (err) { msg.textContent = err.message; msg.className = 'msg msg-error'; }
+    });
+
+    // ── Edit details ─────────────────────────────────────────────────────────
+    // Everything a customer might ring up and ask to change: name, phone, cake,
+    // and pickup time. Store and kind are not editable here — moving an order
+    // between stores or between custom and normal is a different order, not a
+    // correction, and would silently break the per-store docket numbering.
+    let editMounted = false;
+    let editDue = null, editFlavour = null, editSize = null;
+
+    $('edit-toggle').addEventListener('click', () => {
+      $('detail-view').classList.add('hidden');
+      $('edit-toggle').classList.add('hidden');
+      $('edit-panel').classList.remove('hidden');
+
+      if (!editMounted) {
+        editMounted = true;
+        editDue = mountDuePicker('edit-due', o.due_at);
+        editFlavour = mountDropdown($('edit-dd-flavour'), {
+          value: o.flavour, placeholder: 'Choose flavour',
+          options: FLAVOURS.map((f) => ({ value: f.name, label: f.name, tag: f.premium ? 'Premium' : null })),
+        });
+        editSize = mountDropdown($('edit-dd-size'), {
+          value: o.size, placeholder: 'Choose size',
+          options: SIZES.map((sz) => ({ value: sz.code, label: sz.label, note: sz.price ? money2.format(sz.price) : null })),
+        });
+      }
+    });
+
+    const closeEdit = () => {
+      $('edit-panel').classList.add('hidden');
+      $('detail-view').classList.remove('hidden');
+      $('edit-toggle').classList.remove('hidden');
+      $('edit-msg').textContent = '';
+    };
+    $('edit-cancel').addEventListener('click', closeEdit);
+
+    $('edit-save').addEventListener('click', async () => {
+      const msg = $('edit-msg');
+      const name = $('edit-name').value.trim();
+      if (!name) { msg.textContent = 'Customer name cannot be blank.'; msg.className = 'msg msg-error'; return; }
+      if (!editDue.value()) { msg.textContent = 'Pick a date and time.'; msg.className = 'msg msg-error'; return; }
+
+      const btn = $('edit-save');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const patch = {
+          customer_name: name,
+          customer_phone: $('edit-phone').value.trim() || null,
+          due_at: editDue.value(),
+          flavour: editFlavour.value() || null,
+          size: editSize.value() || null,
+          wording: $('edit-wording').value.trim() || null,
+          notes: $('edit-notes').value.trim() || null,
+        };
+        if (o.kind === 'custom') patch.design_notes = $('edit-design').value.trim() || null;
+
+        const updated = await updateOrder(o.id, patch);
+        Object.assign(o, updated);
+        closeSheet();
+        toast(`${o.order_no} updated.`);
+        await render();
+      } catch (err) {
+        msg.textContent = err.message; msg.className = 'msg msg-error';
+        btn.disabled = false; btn.textContent = 'Save changes';
+      }
     });
   }
 }
@@ -1147,16 +1267,25 @@ function openNewOrder() {
  *
  * Returns { value } — the chosen instant as an ISO string, or '' if unset.
  */
-function mountDuePicker() {
-  const btn    = $('f-due-btn');
-  const panel  = $('f-due-cal');
-  const label  = $('f-due-label');
-  const hidden = $('f-due');
+function mountDuePicker(prefix = 'f-due', initialISO = null) {
+  const btn    = $(`${prefix}-btn`);
+  const panel  = $(`${prefix}-cal`);
+  const label  = $(`${prefix}-label`);
+  const hidden = $(prefix);
 
   const today = sydneyParts(new Date());
   let view = { year: today.year, month: today.month };
   let selected = null;
   let hour = 15, minute = 0;   // 3pm: a sane default pickup, still overridable
+
+  // Editing an order starts from its current pickup time rather than empty.
+  if (initialISO) {
+    const p = sydneyParts(initialISO);
+    selected = p.dayKey;
+    hour = p.hour;
+    minute = p.minute;
+    view = { year: p.year, month: p.month };
+  }
 
   const pad = (n) => String(n).padStart(2, '0');
   const addDays = (key, n) => {
@@ -1281,6 +1410,8 @@ function mountDuePicker() {
   }
 
   btn.addEventListener('click', () => toggle(panel.classList.contains('hidden')));
+
+  if (initialISO) commit();   // show the existing pickup time immediately, not "Choose a date"
 
   return { value: () => hidden.value };
 }
