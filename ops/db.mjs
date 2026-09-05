@@ -254,15 +254,56 @@ export async function uploadPhoto(order, file) {
 }
 
 const signedCache = new Map();
+const SIGNED_FOR = 3600;
+// Re-sign a little before the URL actually dies, so a long-open list does not
+// start showing broken thumbnails.
+const holdFor = 3000 * 1000;
+
+const cachedUrl = (path) => {
+  const hit = signedCache.get(path);
+  return hit && hit.expires > Date.now() ? hit.url : null;
+};
+
+/**
+ * Sign a whole list of photos in one request.
+ *
+ * A thumbnail per docket meant a round trip per docket: eighteen cakes on the
+ * board cost eighteen calls before a single picture appeared, which on shop
+ * wifi is the whole reason the list looks empty for a moment. Storage will
+ * sign them all at once.
+ */
+export async function photoUrls(paths) {
+  const want = [...new Set(paths.filter(Boolean))];
+  const out = new Map();
+  const missing = [];
+
+  for (const path of want) {
+    const url = cachedUrl(path);
+    if (url) out.set(path, url); else missing.push(path);
+  }
+  if (!missing.length) return out;
+
+  const { data, error } = await sb.storage.from('cake-photos').createSignedUrls(missing, SIGNED_FOR);
+  if (error) return out;
+
+  for (const row of data || []) {
+    // Storage answers per path: one missing file does not fail the batch.
+    if (row.error || !row.signedUrl) continue;
+    const path = row.path ?? missing[data.indexOf(row)];
+    signedCache.set(path, { url: row.signedUrl, expires: Date.now() + holdFor });
+    out.set(path, row.signedUrl);
+  }
+  return out;
+}
 
 export async function photoUrl(path) {
   if (!path) return null;
-  const hit = signedCache.get(path);
-  if (hit && hit.expires > Date.now()) return hit.url;
+  const hit = cachedUrl(path);
+  if (hit) return hit;
 
-  const { data, error } = await sb.storage.from('cake-photos').createSignedUrl(path, 3600);
+  const { data, error } = await sb.storage.from('cake-photos').createSignedUrl(path, SIGNED_FOR);
   if (error) return null;
-  signedCache.set(path, { url: data.signedUrl, expires: Date.now() + 3000 * 1000 });
+  signedCache.set(path, { url: data.signedUrl, expires: Date.now() + holdFor });
   return data.signedUrl;
 }
 

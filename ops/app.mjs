@@ -9,7 +9,7 @@ import {
   signIn, signOut, currentProfile, listProfiles,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
-  recentAuthEvents, uploadPhoto, photoUrl,
+  recentAuthEvents, uploadPhoto, photoUrl, photoUrls,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween,
   writeStamp,
   listPrintJobs, listPrintFlags, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
@@ -294,14 +294,17 @@ function docketHtml(o, now, { showStore = false } = {}) {
     </button>`;
 }
 
-/** Signed URLs are fetched after paint so a long list is not held up by them. */
-function hydrateThumbs(root) {
-  root.querySelectorAll('img[data-photo]').forEach(async (img) => {
-    const url = await photoUrl(img.dataset.photo);
+/** Signed after paint, and all in one request — see photoUrls. */
+async function hydrateThumbs(root) {
+  const imgs = [...root.querySelectorAll('img[data-photo]')];
+  if (!imgs.length) return;
+  const urls = await photoUrls(imgs.map((i) => i.dataset.photo));
+  for (const img of imgs) {
+    const url = urls.get(img.dataset.photo);
     if (url) img.src = url;
     else img.replaceWith(Object.assign(document.createElement('div'),
       { className: 'thumb thumb-empty', textContent: '◍' }));
-  });
+  }
 }
 
 /**
@@ -862,10 +865,13 @@ async function openNewPrintJob() {
       body.querySelector('#what-3d:not(.hidden) textarea, #what-photo:not(.hidden) textarea')?.focus();
     }));
 
-    // Signed URLs after paint, same as every other list of cake photos.
-    grid.querySelectorAll('img[data-photo]').forEach(async (img) => {
-      const url = await photoUrl(img.dataset.photo);
-      if (url) img.src = url; else img.replaceWith(document.createTextNode('◍'));
+    // Signed after paint, in one request, same as every other list of photos.
+    const tiles = [...grid.querySelectorAll('img[data-photo]')];
+    photoUrls(tiles.map((i) => i.dataset.photo)).then((urls) => {
+      for (const img of tiles) {
+        const url = urls.get(img.dataset.photo);
+        if (url) img.src = url; else img.replaceWith(document.createTextNode('◍'));
+      }
     });
   }
 

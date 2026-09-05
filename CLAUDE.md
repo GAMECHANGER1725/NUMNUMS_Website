@@ -128,6 +128,9 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **Sign photo URLs in a batch** (`photoUrls`), never one per thumbnail. A docket list is the
+  common case and a call per cake made eighteen round trips before the first picture appeared.
+  Storage answers per path, so a deleted photo returns its own error and the rest still resolve.
 - **Shop wifi drops; the app must not.** `render()` catches every view failure and paints a retry
   state — without it a rejected fetch left the view on "Loading…" for the rest of the shift. A
   failed refresh falls back to the held copy (`orFallback`) with a banner saying so, because the
