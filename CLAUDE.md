@@ -128,6 +128,10 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **Phone first, but not phone only.** Card lists (`.docket-grid`, `#cust-list`) go two-up from
+  720px for the counter tablet and Vaidik's laptop; below that nothing changes. Audited at 320 /
+  375 / 430 / 820 / 1440 for horizontal scroll, overflow and sub-32px tap targets — re-run that
+  sweep after any layout change rather than eyeballing one width.
 - **Sign photo URLs in a batch** (`photoUrls`), never one per thumbnail. A docket list is the
   common case and a call per cake made eighteen round trips before the first picture appeared.
   Storage answers per path, so a deleted photo returns its own error and the rest still resolve.

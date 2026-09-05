@@ -422,7 +422,7 @@ async function renderLog() {
         ${date ? `<span class="section-date">${esc(date)}</span>` : ''}
         <span class="section-count">${rows.length}</span>
       </div>
-      ${rows.map((o) => docketHtml(o, now)).join('')}`;
+      <div class="docket-grid">${rows.map((o) => docketHtml(o, now)).join('')}</div>`;
   }).join('');
 
   wireDockets(root);
@@ -526,7 +526,7 @@ async function renderBake() {
       ${label !== 'Overdue' ? `<span class="section-date">${esc(dateFmt.format(new Date(rows[0].due_at)))}</span>` : ''}
       <span class="section-count">${rows.length}</span>
     </div>
-    ${rows.map((o) => docketHtml(o, now, { showStore: bakeStore === 'all' })).join('')}`).join('');
+    <div class="docket-grid">${rows.map((o) => docketHtml(o, now, { showStore: bakeStore === 'all' })).join('')}</div>`).join('');
 
   wireBar();
   wireDockets(root);
@@ -612,7 +612,7 @@ async function renderPrints() {
             ? `<span class="section-date">${esc(dateFmt.format(new Date(rows[0].order.due_at)))}</span>` : ''}
           <span class="section-count">${rows.length}</span>
         </div>
-        ${rows.map((j) => printCardHtml(j, now)).join('')}`).join('')
+        <div class="docket-grid">${rows.map((j) => printCardHtml(j, now)).join('')}</div>`).join('')
     : `<div class="empty">
          <div class="empty-mark">Nothing to print</div>
          <p class="empty-note">No ${printKind === '3d' ? '3D topper' : 'photo print'} jobs on the book.${

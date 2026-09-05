@@ -1231,6 +1231,22 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 }
 .empty .btn { max-width: 220px; margin: 16px auto 0; }
 
+/* ── Wider screens ──────────────────────────────────────────────────────── */
+/* The app is built for a phone in an apron pocket, and that stays the default.
+   But Vaidik reads the analytics on a laptop and the shop has a tablet on the
+   counter, where a single column of cards is one short line of text per band
+   of empty space. Two columns from 720px up; nothing below it changes. */
+@media (min-width: 720px) {
+  .docket-grid, #cust-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 9px; align-items: start;
+  }
+  .docket-grid .docket, #cust-list .cust-row { margin-bottom: 0; }
+
+  /* A day heading belongs to the whole row of cards under it, not one column. */
+  .section-head { grid-column: 1 / -1; }
+}
+
 </style>
 </head>
 <body>
