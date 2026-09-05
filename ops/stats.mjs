@@ -795,3 +795,58 @@ export function weekdayNorm(orders, weeks = 6, now = new Date()) {
   }
   return counts.map((c) => c / weeks);
 }
+
+/**
+ * How each flavour or size actually trades.
+ *
+ * Counting cakes says what is popular, which is not the same question as what
+ * is worth making. The cheapest sponge can top the list on volume and sit near
+ * the bottom on money earned, and until margin is on the same row nobody can
+ * see that.
+ *
+ * Margin comes only from the orders with a cost recorded, and the coverage
+ * rides along, for the same reason it does per store: a rate drawn from two of
+ * twenty cakes is a hint, not a fact.
+ */
+export function productMix(orders, field) {
+  const m = new Map();
+
+  for (const o of orders) {
+    if (o.status === 'cancelled') continue;
+    const k = o[field] || '—';
+    const row = m.get(k) || { k, count: 0, revenue: 0, cost: 0, costedCount: 0, costedRevenue: 0 };
+    row.count += 1;
+    row.revenue += num(o.price);
+    if (o.cost != null) {
+      row.costedCount += 1;
+      row.cost += num(o.cost);
+      row.costedRevenue += num(o.price);
+    }
+    m.set(k, row);
+  }
+
+  const rows = [...m.values()];
+  const total = rows.reduce((t, r) => t + r.revenue, 0);
+
+  for (const r of rows) {
+    r.avgPrice = r.count ? r.revenue / r.count : 0;
+    r.margin = r.costedCount ? r.costedRevenue - r.cost : null;
+    r.marginPct = r.costedRevenue ? ((r.costedRevenue - r.cost) / r.costedRevenue) * 100 : null;
+    r.share = total ? (r.revenue / total) * 100 : 0;
+    r.marginTrusted = r.count > 0 && r.costedCount / r.count >= 0.5;
+    // What this line actually contributed, not the rate — a thin-margin cake
+    // sold constantly can still be the one paying the rent.
+    r.marginTotal = r.marginPct == null ? null : (r.marginPct / 100) * r.revenue;
+  }
+  return rows;
+}
+
+/** Sort a product mix by the measure being asked about. */
+export function sortMix(rows, by = 'count') {
+  const key = {
+    count: (r) => r.count,
+    revenue: (r) => r.revenue,
+    margin: (r) => (r.marginTotal == null ? -1 : r.marginTotal),
+  }[by] || ((r) => r.count);
+  return [...rows].sort((a, b) => key(b) - key(a) || b.revenue - a.revenue);
+}

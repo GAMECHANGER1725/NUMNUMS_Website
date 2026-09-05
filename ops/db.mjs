@@ -283,6 +283,17 @@ export async function listPrintJobs() {
   return (data || []).filter((j) => j.order);
 }
 
+/**
+ * Just enough to badge an order card. The board's own fetch embeds the whole
+ * order behind every job; for a flag that reads "3D to print" that is the
+ * entire orders table pulled twice on every trip to the log.
+ */
+export async function listPrintFlags() {
+  const { data, error } = await sb.from('print_jobs').select('order_id,kind,status');
+  if (error) throw error;
+  return data || [];
+}
+
 /** Orders still in play, for the "which cake is this for" picker. */
 export async function listOpenOrders() {
   const { data, error } = await sb.from('orders').select('*')

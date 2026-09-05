@@ -13,6 +13,7 @@ import {
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
+  productMix, sortMix,
 } from './stats.mjs';
 
 let passed = 0;
@@ -729,6 +730,47 @@ test('weekday norm averages finished pickups only, never the day itself', () => 
   const norm = weekdayNorm(rows, 6, now);
   assert.equal(norm[weekdayIndex('2026-08-28T05:00:00Z')], 1);       // 6 cakes over a 6-week window
   assert.equal(norm[weekdayIndex('2026-09-01T05:00:00Z')], 0);       // a Tuesday with nothing
+});
+
+test('product mix separates what sells from what earns', () => {
+  const o = (flavour, price, cost, status) => ({ flavour, price, cost, status: status || 'picked_up' });
+  const rows = productMix([
+    // cheap and popular: four cakes, thin margin
+    o('Vanilla', 50, 40), o('Vanilla', 50, 40), o('Vanilla', 50, 40), o('Vanilla', 50, 40),
+    // dear and rare: one cake, fat margin
+    o('Rasmalai', 250, 60),
+    o('Mango', 100, null),            // no cost recorded
+    o('Mango', 999, null, 'cancelled'),
+  ], 'flavour');
+
+  const v = rows.find((r) => r.k === 'Vanilla');
+  const r = rows.find((r) => r.k === 'Rasmalai');
+  const m = rows.find((r) => r.k === 'Mango');
+
+  assert.equal(v.count, 4);
+  assert.equal(v.revenue, 200);
+  assert.equal(v.marginPct, 20);          // 200 rev - 160 cost
+  assert.equal(r.count, 1);
+  assert.equal(r.marginPct, 76);          // (250 - 60) / 250
+  assert.equal(m.count, 1);               // the cancelled one never counts
+  assert.equal(m.margin, null);
+  assert.equal(m.marginTrusted, false);
+
+  // Volume says Vanilla; money earned says Rasmalai. That is the whole point.
+  assert.equal(sortMix(rows, 'count')[0].k, 'Vanilla');
+  assert.equal(sortMix(rows, 'revenue')[0].k, 'Rasmalai');
+  assert.equal(sortMix(rows, 'margin')[0].k, 'Rasmalai');
+  assert.equal(v.marginTotal, 40);        // 20% of 200
+  assert.equal(r.marginTotal, 190);       // 76% of 250
+});
+
+test('a mix row with no costs sorts last on margin rather than first', () => {
+  const rows = productMix([
+    { flavour: 'Priced', price: 100, cost: 10, status: 'picked_up' },
+    { flavour: 'Unknown', price: 900, cost: null, status: 'picked_up' },
+  ], 'flavour');
+  assert.deepEqual(sortMix(rows, 'margin').map((r) => r.k), ['Priced', 'Unknown']);
+  assert.equal(sortMix(rows, 'revenue')[0].k, 'Unknown');   // it still out-sold
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

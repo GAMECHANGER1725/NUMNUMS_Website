@@ -12,7 +12,7 @@ import {
   recentAuthEvents, uploadPhoto, photoUrl,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween,
   writeStamp,
-  listPrintJobs, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
+  listPrintJobs, listPrintFlags, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
 import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, summarise, weeklyStats,
@@ -20,7 +20,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
-  printSections, storeBreakdown, exportRanges, toCsv,
+  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
@@ -168,7 +168,7 @@ async function render() {
 async function loadPrintFlags() {
   if (me.role !== 'admin' && me.role !== 'baker') { printsByOrder = new Map(); return; }
   try {
-    const jobs = await listPrintJobs();
+    const jobs = await listPrintFlags();
     printsByOrder = new Map();
     for (const j of jobs) {
       if (!printsByOrder.has(j.order_id)) printsByOrder.set(j.order_id, []);
@@ -2422,6 +2422,40 @@ async function downloadOrders(range) {
   }
 }
 
+// ── What sells ──────────────────────────────────────────────────────────────
+
+const MIX_SORTS = [
+  { key: 'count',   label: 'By cakes' },
+  { key: 'revenue', label: 'By takings' },
+  { key: 'margin',  label: 'By margin' },
+];
+
+let mixSort = 'count';
+
+/** One flavour or size, with the measure being ranked on carrying the bar. */
+function mixBlock(title, rows) {
+  const measure = (r) => ({ count: r.count, revenue: r.revenue, margin: r.marginTotal ?? 0 }[mixSort]);
+  const best = Math.max(1, ...rows.map(measure));
+
+  return `<div class="mix-head">${esc(title)}</div>` + rows.slice(0, 6).map((r) => `
+    <div class="mix-row">
+      <span class="mix-name">${esc(r.k)}</span>
+      <span class="mix-bar"><span class="meter"><span class="meter-fill"
+        style="width:${Math.max(0, (measure(r) / best) * 100).toFixed(0)}%"></span></span></span>
+      <span class="mix-nums">
+        <span class="mix-lead">${mixSort === 'count' ? `${r.count}×`
+          : mixSort === 'revenue' ? money.format(r.revenue)
+          : (r.marginTotal == null ? '—' : money.format(r.marginTotal))}</span>
+        <span class="mix-sub${r.marginPct != null && !r.marginTrusted ? ' is-thin' : ''}">${
+          mixSort === 'count' ? `${money.format(r.revenue)}`
+          : mixSort === 'revenue' ? `${r.count} cake${r.count === 1 ? '' : 's'} · avg ${money.format(r.avgPrice)}`
+          : (r.marginPct == null
+              ? 'no costs recorded'
+              : `${r.marginPct.toFixed(0)}%${r.marginTrusted ? '' : ` · only ${r.costedCount} of ${r.count} costed`}`)}</span>
+      </span>
+    </div>`).join('');
+}
+
 // ── Customer leaderboard ────────────────────────────────────────────────────
 
 const BOARDS = [
@@ -2717,20 +2751,8 @@ async function renderAnalytics({ force = false } = {}) {
   const stores = storeBreakdown(sold30, STORES.map((st) => st.code));
 
   // What sells: flavour and size mix over the last 30 days of sales.
-  const mix = (field) => {
-    const m = new Map();
-    for (const o of sold30) {
-      if (o.status === 'cancelled') continue;
-      const k = o[field] || '—';
-      const row = m.get(k) || { k, count: 0, revenue: 0 };
-      row.count += 1;
-      row.revenue += Number(o.price || 0);
-      m.set(k, row);
-    }
-    return [...m.values()].sort((a, b) => b.count - a.count);
-  };
-  const flavourMix = mix('flavour');
-  const sizeMix = mix('size');
+  const flavourMix = productMix(sold30, 'flavour');
+  const sizeMix = productMix(sold30, 'size');
 
   const walkIns = sold30.filter((o) => o.walk_in && o.status !== 'cancelled');
   const aheadOrders = sold30.filter((o) => !o.walk_in && o.status !== 'cancelled');
@@ -2979,21 +3001,15 @@ async function renderAnalytics({ force = false } = {}) {
     ${flavourMix.length ? `
       <div class="panel">
         <div class="panel-title">What sells, last 30 days</div>
-        <div class="panel-note">Top flavours and sizes by number of cakes.</div>
-        <div class="mix-head">Flavour</div>
-        ${flavourMix.slice(0, 6).map((r) => `
-          <div class="list-row">
-            <span class="grow">${esc(r.k)}</span>
-            <span class="meter"><span class="meter-fill" style="width:${bar(r.count, flavourMix[0].count, 100)}%"></span></span>
-            <span class="num">${r.count}</span>
-          </div>`).join('')}
-        <div class="mix-head">Size</div>
-        ${sizeMix.slice(0, 6).map((r) => `
-          <div class="list-row">
-            <span class="grow">${esc(r.k)}</span>
-            <span class="meter"><span class="meter-fill" style="width:${bar(r.count, sizeMix[0].count, 100)}%"></span></span>
-            <span class="num">${r.count}</span>
-          </div>`).join('')}
+        <div class="panel-note">
+          Counting cakes says what is popular; it does not say what is worth
+          making. Margin uses only the orders with a cost recorded.
+        </div>
+        <div class="sortbar" id="mix-tabs" role="group" aria-label="Rank products by">
+          ${MIX_SORTS.map((t) => `
+            <button data-mix="${t.key}" aria-pressed="${t.key === mixSort}">${esc(t.label)}</button>`).join('')}
+        </div>
+        <div id="mix-rows"></div>
       </div>` : ''}
 
     <div class="panel">
@@ -3086,6 +3102,18 @@ async function renderAnalytics({ force = false } = {}) {
     $('fresh-when').textContent = 'Refreshing…';
     await renderAnalytics({ force: true });
   });
+
+  if (analyticsPage === 'data' && flavourMix.length) {
+    const paintMix = () => {
+      $('mix-tabs').querySelectorAll('[data-mix]')
+        .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mix === mixSort)));
+      $('mix-rows').innerHTML =
+        mixBlock('Flavour', sortMix(flavourMix, mixSort)) + mixBlock('Size', sortMix(sizeMix, mixSort));
+    };
+    $('mix-tabs').querySelectorAll('[data-mix]').forEach((b) =>
+      b.addEventListener('click', () => { mixSort = b.dataset.mix; paintMix(); }));
+    paintMix();
+  }
 
   if (analyticsPage === 'customers') {
     $('board-tabs').querySelectorAll('[data-board]').forEach((b) =>

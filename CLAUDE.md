@@ -138,6 +138,10 @@ main site.
   candidates through a colour-blindness check; the obvious rose/sage pairing failed at ΔE 5.7
   under deuteranopia. Re-run that check before changing them. Every chart ships a `chartTable`
   under it — the numbers are the accessible record.
+- **Margin figures always carry their coverage.** `storeBreakdown` and `productMix` compute margin
+  from only the orders with a cost recorded and return `costedCount` / `marginTrusted` beside it;
+  the UI mutes the number and says so when under half the orders are costed. Never surface a
+  margin without that caveat — a rate from two of twenty cakes reads as fact and is not one.
 - **Leaderboards and repeat-customer rate read the `customers` view, not the 63-day analytics
   fetch.** A "gone quiet" board computed off that window is permanently empty by definition.
 - **Money is never rounded.** One `money` formatter, cents always shown. A whole-dollar variant
