@@ -19,9 +19,9 @@ import {
   busiestHours, bakerSections, paidOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
-  missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS,
+  missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
   printSections, storeBreakdown, exportRanges, toCsv,
-  dailyTakings, weeklyByStore, customerLeaderboard,
+  dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
@@ -49,6 +49,7 @@ let printKind = '3d';    // active tab on the print board
 let printJobs = [];      // jobs for the active print view
 let printsByOrder = new Map();   // order id → its print jobs, for card flags
 let analyticsPage = 'finance';   // which analytics page the drawer last opened
+let bakeStore = 'all';           // store filter on the baker's queue
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 const ddWho = mountDropdown($('who'), {
@@ -193,6 +194,17 @@ const printFlagHtml = (orderId) => {
     : `<span class="print-flag is-done">${esc(kinds)} printed</span>`;
 };
 
+/**
+ * Custom or normal, on the card itself.
+ *
+ * It rides next to the pickup time because that is the pair being read
+ * together — what has to be made, and by when — and because the answer used to
+ * cost opening the order.
+ */
+const kindTag = (o) => o.kind === 'custom'
+  ? '<span class="tag tag-custom">Custom</span>'
+  : '<span class="tag tag-normal">Normal</span>';
+
 const spineFor = (o, now) => {
   if (['picked_up', 'cancelled'].includes(o.status)) return 'spine-done';
   const d = daysBetween(sydneyParts(now).dayKey, sydneyParts(o.due_at).dayKey);
@@ -212,10 +224,9 @@ function docketHtml(o, now, { showStore = false } = {}) {
     <button class="docket ${spineFor(o, now)}" data-order="${o.id}">
       <div class="docket-head">
         <span class="docket-no">${esc(o.order_no)}</span>
-        ${o.kind === 'custom' ? '<span class="tag tag-custom">Custom</span>' : ''}
         ${o.walk_in ? '<span class="tag tag-walkin">In store</span>' : ''}
         ${showStore ? `<span class="tag tag-store">${esc(storeLabel(o.store))}</span>` : ''}
-        <span class="docket-when">${timeFmt.format(new Date(o.due_at))}</span>
+        <span class="docket-when">${kindTag(o)}${timeFmt.format(new Date(o.due_at))}</span>
       </div>
       <div class="docket-body">
         ${o.photo_path
@@ -348,24 +359,43 @@ async function renderBake() {
       </div>
     </details>`;
 
-  const sections = bakerSections(queue, now);
+  const BAKE_TABS = [{ code: 'all', label: 'Both stores' },
+    ...STORES.map((st) => ({ code: st.code, label: st.label }))];
+  const waiting = (code) => (code === 'all' ? queue.length : queue.filter((o) => o.store === code).length);
+  const storeBar = `
+    <div class="segmented" role="tablist" aria-label="Store">
+      ${BAKE_TABS.map((t) => `
+        <button class="segmented-btn" role="tab" data-bakestore="${t.code}"
+                aria-selected="${t.code === bakeStore}">${esc(t.label)}${
+          waiting(t.code) ? ` · ${waiting(t.code)}` : ''}</button>`).join('')}
+    </div>`;
+
+  const wireBar = () => root.querySelectorAll('[data-bakestore]').forEach((b) =>
+    b.addEventListener('click', () => { bakeStore = b.dataset.bakestore; renderBake(); }));
+
+  const mine = bakeStore === 'all' ? queue : queue.filter((o) => o.store === bakeStore);
+  const sections = bakerSections(mine, now);
 
   if (!sections.length) {
-    root.innerHTML = tallyPanel + `<div class="empty">
+    root.innerHTML = storeBar + tallyPanel + `<div class="empty">
       <div class="empty-mark">All caught up</div>
-      <p class="empty-note">Nothing waiting to be baked.</p>
+      <p class="empty-note">${bakeStore === 'all'
+        ? 'Nothing waiting to be baked.'
+        : `Nothing waiting for ${esc(BAKE_TABS.find((t) => t.code === bakeStore).label)}.`}</p>
     </div>`;
+    wireBar();
     return;
   }
 
-  root.innerHTML = tallyPanel + sections.map(([label, rows]) => `
+  root.innerHTML = storeBar + tallyPanel + sections.map(([label, rows]) => `
     <div class="section-head ${label === 'Overdue' ? 'is-overdue' : ''}">
       <span class="section-name">${esc(label)}</span>
       ${label !== 'Overdue' ? `<span class="section-date">${esc(dateFmt.format(new Date(rows[0].due_at)))}</span>` : ''}
       <span class="section-count">${rows.length}</span>
     </div>
-    ${rows.map((o) => docketHtml(o, now, { showStore: true })).join('')}`).join('');
+    ${rows.map((o) => docketHtml(o, now, { showStore: bakeStore === 'all' })).join('')}`).join('');
 
+  wireBar();
   wireDockets(root);
   hydrateThumbs(root);
 }
@@ -395,7 +425,7 @@ function printCardHtml(j, now) {
         <span class="docket-no">${esc(o.order_no)}</span>
         <span class="tag ${j.kind === '3d' ? 'tag-3d' : 'tag-photo'}">${j.kind === '3d' ? '3D' : 'Photo'}</span>
         <span class="tag tag-store">${esc(storeLabel(o.store))}</span>
-        <span class="docket-when">${esc(timeFmt.format(new Date(o.due_at)))}</span>
+        <span class="docket-when">${kindTag(o)}${esc(timeFmt.format(new Date(o.due_at)))}</span>
       </div>
       <div class="docket-body">
         ${o.photo_path
@@ -674,7 +704,7 @@ async function openNewPrintJob() {
         </span>
         <span class="pick-meta">
           <span class="pick-name">${esc(o.customer_name)}</span>
-          <span class="pick-when">${esc(dateFmt.format(new Date(o.due_at)))}</span>
+          <span class="pick-when">${o.kind === 'custom' ? 'Custom' : 'Normal'} · ${esc(dateFmt.format(new Date(o.due_at)))}</span>
         </span>
       </button>`).join('');
 
@@ -2207,6 +2237,7 @@ async function openCustomer(phoneKey, c) {
   $('cust-orders').innerHTML = rows.map((o) => `
     <div class="list-row">
       <span class="num">${esc(o.order_no)}</span>
+      <span class="tag ${o.kind === 'custom' ? 'tag-custom' : 'tag-normal'}">${o.kind === 'custom' ? 'Custom' : 'Normal'}</span>
       <span class="grow">${esc([o.size, o.flavour].filter(Boolean).join(' · ') || '—')}</span>
       <span class="list-meta">${esc(dateFmt.format(new Date(o.created_at)))}</span>
       ${showMoney ? `<span class="num">${o.price ? money.format(o.price) : '—'}</span>` : ''}
@@ -2671,6 +2702,8 @@ async function renderAnalytics({ force = false } = {}) {
   const daily = dailyTakings(all, 30, now);
   const weeks = weeklyByStore(all, STORES.map((st) => st.code), 8, now);
   const board = customerLeaderboard(customerRows, now);
+  const ahead = forwardBook(all, 7, now);
+  const norm = weekdayNorm(all, 6, now);
 
   const hours = busiestHours(all.filter((o) => {
     const d = daysBetween(sydneyParts(o.due_at).dayKey, todayKey);
@@ -2741,6 +2774,36 @@ async function renderAnalytics({ force = false } = {}) {
         <div class="stat-v">${money.format(sToday.revenue)}</div>
         <div class="stat-delta flat">${sToday.count} order${sToday.count === 1 ? '' : 's'}</div>
       </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">The week ahead</div>
+      <div class="panel-note">${ahead.count
+        ? `${ahead.count} cake${ahead.count === 1 ? '' : 's'} booked${ahead.custom ? `, ${ahead.custom} of them custom` : ''} — ${money.format(ahead.value)} on the book, ${money.format(ahead.owing)} of it still to collect.`
+        : 'Nothing booked for the next seven days.'}</div>
+      ${ahead.rows.map((r, i) => {
+        const usual = norm[weekdayIndex(`${r.dayKey}T03:00:00Z`)];
+        // A count only means something against what that weekday usually holds.
+        // The baseline is an average, so it is routinely fractional — demanding
+        // usual >= 1 let a Monday running seven times its norm slip through
+        // because that norm was 0.83. A weekday with no history at all still
+        // counts: three cakes on a day that normally has none is the same news.
+        const heavy = r.count >= 3 && (usual === 0 || r.count >= usual * 1.6);
+        return `
+        <div class="ahead-row${r.count ? '' : ' is-empty'}">
+          <span class="ahead-day">
+            <span class="ahead-name">${i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : esc(dayKeyLabel(r.dayKey, { weekday: 'long' }))}</span>
+            <span class="ahead-date">${esc(dayKeyLabel(r.dayKey, { day: 'numeric', month: 'short' }))}</span>
+          </span>
+          <span class="ahead-bar"><span class="meter"><span class="meter-fill"
+            style="width:${((r.count / Math.max(1, ahead.busiest.count)) * 100).toFixed(0)}%"></span></span></span>
+          <span class="ahead-nums">
+            <span class="ahead-count">${r.count || '—'}${heavy ? '<span class="ahead-heavy">heavy</span>' : ''}</span>
+            <span class="ahead-money">${r.count ? money.format(r.value) : ''}</span>
+          </span>
+        </div>`;
+      }).join('')}
+      ${ahead.unpriced ? `<p class="ahead-warn">${ahead.unpriced} of these ${ahead.unpriced === 1 ? 'has' : 'have'} no price yet, so the totals above are understated.</p>` : ''}
     </div>
 
     <div class="panel">

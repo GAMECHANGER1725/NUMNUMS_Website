@@ -238,10 +238,15 @@ body:has(#menu-btn:not(.hidden)) .main { padding-bottom: calc(140px + var(--safe
   padding: 2px 6px; border-radius: 4px;
 }
 .tag-custom { background: rgba(200,84,120,.13); color: var(--rose-deep); }
+/* Normal cakes need a tag of their own: without one, no tag had to be read as
+   "normal", which is the same thing an unloaded card looks like. Quieter than
+   Custom, because a custom cake is the one that changes what the baker does. */
+.tag-normal { background: var(--dough); color: var(--taupe); }
 .tag-walkin { background: rgba(139,127,118,.16); color: var(--slate); }
 .tag-store  { background: var(--dough); color: var(--ink-soft); }
 .docket-when {
-  margin-left: auto; font-size: 13px; font-weight: 500;
+  margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500;
   font-variant-numeric: tabular-nums; color: var(--ink-soft);
 }
 .docket-body { display: flex; gap: 11px; padding-top: 9px; }
@@ -1139,6 +1144,35 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 .freshbar-btn:hover { background: var(--dough-line); }
 .freshbar-btn[disabled] { opacity: .55; cursor: default; }
 .freshbar-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+
+/* ── The week ahead ─────────────────────────────────────────────────────── */
+.ahead-row {
+  display: flex; align-items: center; gap: 11px;
+  padding: 8px 0; border-bottom: 1px solid var(--dough-line);
+}
+.ahead-row:last-of-type { border-bottom: 0; }
+.ahead-row.is-empty { opacity: .5; }
+.ahead-day { flex: 0 0 88px; min-width: 0; }
+.ahead-name {
+  display: block; font-size: 14px; font-weight: 500; line-height: 1.25;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ahead-date { display: block; font-size: 11.5px; color: var(--taupe); font-variant-numeric: tabular-nums; }
+.ahead-bar { flex: 1; min-width: 0; }
+/* .meter is a bare <span>; without display:block width and height are ignored. */
+.ahead-bar .meter { display: block; flex: none; width: 100%; height: 6px; }
+.ahead-nums { flex: 0 0 84px; text-align: right; }
+.ahead-count {
+  display: flex; align-items: center; justify-content: flex-end; gap: 5px;
+  font-weight: 500; font-variant-numeric: tabular-nums;
+}
+.ahead-heavy {
+  font-size: 9px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+  padding: 2px 5px; border-radius: 3px;
+  background: rgba(179,123,44,.16); color: var(--crust);
+}
+.ahead-money { display: block; font-size: 12px; color: var(--taupe); font-variant-numeric: tabular-nums; }
+.ahead-warn { margin-top: 10px; font-size: 12.5px; color: var(--crust); line-height: 1.45; }
 
 </style>
 </head>

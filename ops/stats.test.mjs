@@ -12,7 +12,7 @@ import {
   missingPrice, searchOrders, phoneKey,
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
-  dailyTakings, weeklyByStore, customerLeaderboard,
+  dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 
 let passed = 0;
@@ -685,5 +685,50 @@ test('"gone quiet" needs a window wider than the charts, or it is always empty',
   assert.equal(b.lapsed[0].daysSince, 96);
 });
 
+
+test('the forward book counts only what is still coming, per day', () => {
+  const now = new Date('2026-09-04T02:00:00Z');           // Fri 12pm Sydney
+  const o = (dueKey, price, deposit, status, kind) => ({
+    due_at: `${dueKey}T05:00:00Z`, price, deposit, status: status || 'placed', kind: kind || 'normal',
+  });
+  const b = forwardBook([
+    o('2026-09-04', 100, 40),                              // today, part paid
+    o('2026-09-04', 200, 0, 'placed', 'custom'),
+    o('2026-09-05', 150, 150),                             // paid in full
+    o('2026-09-06', null, 0),                              // no price yet
+    o('2026-09-04', 999, 0, 'picked_up'),                  // already collected
+    o('2026-09-04', 999, 0, 'cancelled'),
+    o('2026-09-20', 999, 0),                               // beyond the window
+  ], 7, now);
+
+  assert.equal(b.rows.length, 7);
+  assert.equal(b.rows[0].dayKey, '2026-09-04');
+  assert.equal(b.rows[0].count, 2);
+  assert.equal(b.rows[0].custom, 1);
+  assert.equal(b.rows[0].value, 300);
+  assert.equal(b.rows[0].owing, 260);                      // 300 booked, 40 taken
+  assert.equal(b.count, 4);
+  assert.equal(b.value, 450);
+  assert.equal(b.collected, 190);
+  assert.equal(b.owing, 260);                              // the fully-paid day adds nothing
+  assert.equal(b.unpriced, 1);
+  assert.equal(b.busiest.dayKey, '2026-09-04');
+});
+
+test('weekday norm averages finished pickups only, never the day itself', () => {
+  const now = new Date('2026-09-04T02:00:00Z');            // Friday
+  const rows = [];
+  // three Fridays back, two cakes each
+  for (const d of ['2026-08-28', '2026-08-21', '2026-08-14']) {
+    rows.push({ due_at: `${d}T05:00:00Z`, status: 'picked_up' });
+    rows.push({ due_at: `${d}T06:00:00Z`, status: 'picked_up' });
+  }
+  rows.push({ due_at: '2026-09-04T05:00:00Z', status: 'placed' });   // today, must not count
+  rows.push({ due_at: '2026-09-11T05:00:00Z', status: 'placed' });   // future, must not count
+
+  const norm = weekdayNorm(rows, 6, now);
+  assert.equal(norm[weekdayIndex('2026-08-28T05:00:00Z')], 1);       // 6 cakes over a 6-week window
+  assert.equal(norm[weekdayIndex('2026-09-01T05:00:00Z')], 0);       // a Tuesday with nothing
+});
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

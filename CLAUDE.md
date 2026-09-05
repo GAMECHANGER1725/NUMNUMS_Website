@@ -123,6 +123,11 @@ main site.
   starting `= + - @` is executed as a formula by Excel and Sheets. Do not "simplify" that escaping.
 - **The staff page is read-only.** Roles and store scoping are what RLS enforces; they get changed
   in Supabase so the change is deliberate, not by an admin mis-tapping their own row.
+- **Every card shows Custom or Normal beside its pickup time** (`kindTag` in `app.mjs`, used by
+  the order log, the baker's queue and the print board). A normal cake carrying no tag meant a
+  blank had to be read as "normal", which is what an unloaded card also looks like.
+- **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
+  working view; the per-store tabs are for loading a van or checking one shop's book.
 - **The three analytics pages share one fetch**, cached in `app.mjs` and invalidated by
   `writeStamp` in `db.mjs`, which every mutating query bumps. Add the bump to any new writer —
   a cache each caller has to remember to clear is one the next caller forgets. The pages carry a

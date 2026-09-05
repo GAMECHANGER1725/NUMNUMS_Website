@@ -729,3 +729,69 @@ export function customerLeaderboard(customers, now = new Date(), limit = 8) {
                 (a, b) => b.daysSince - a.daysSince || b.spend - a.spend),
   };
 }
+
+// ── The forward book ────────────────────────────────────────────────────────
+
+/**
+ * What is already booked for the days ahead.
+ *
+ * Every other panel in this app looks backwards, which answers how trading
+ * went but not the question actually asked at the end of a shift: what have we
+ * got on. For a shop that takes orders a week out, the forward book is the
+ * half you can still do something about — roster against it, buy against it,
+ * and chase the deposits sitting inside it.
+ *
+ * Collected orders are excluded: a cake already handed over is not "coming up",
+ * even on a day that has not finished yet.
+ */
+export function forwardBook(orders, days = 7, now = new Date()) {
+  const todayKey = sydneyParts(now).dayKey;
+  const rows = [];
+  for (let i = 0; i < days; i++) {
+    rows.push({ dayKey: addDayKey(todayKey, i), count: 0, custom: 0, value: 0, collected: 0, owing: 0, unpriced: 0 });
+  }
+  const index = new Map(rows.map((r) => [r.dayKey, r]));
+
+  for (const o of orders) {
+    if (o.status === 'picked_up' || o.status === 'cancelled') continue;
+    const r = index.get(sydneyParts(o.due_at).dayKey);
+    if (!r) continue;
+    r.count += 1;
+    if (o.kind === 'custom') r.custom += 1;
+    r.value += num(o.price);
+    r.collected += paidOn(o);
+    if (o.price == null) r.unpriced += 1;
+  }
+  for (const r of rows) r.owing = Math.max(0, r.value - r.collected);
+
+  const sum = (k) => rows.reduce((t, r) => t + r[k], 0);
+  return {
+    rows,
+    count: sum('count'),
+    custom: sum('custom'),
+    value: sum('value'),
+    collected: sum('collected'),
+    owing: sum('owing'),
+    unpriced: sum('unpriced'),
+    busiest: rows.reduce((b, r) => (r.count > b.count ? r : b), rows[0]),
+  };
+}
+
+/**
+ * Average pickups per weekday over the trailing weeks, so a day in the forward
+ * book can be read against what that weekday normally holds. Four booked on a
+ * Tuesday means nothing until you know Tuesday usually runs two.
+ */
+export function weekdayNorm(orders, weeks = 6, now = new Date()) {
+  const todayKey = sydneyParts(now).dayKey;
+  const counts = WEEKDAYS.map(() => 0);
+
+  for (const o of orders) {
+    if (o.status === 'cancelled') continue;
+    const key = sydneyParts(o.due_at).dayKey;
+    const age = daysBetween(key, todayKey);
+    if (age <= 0 || age > weeks * 7) continue;      // finished days only
+    counts[weekdayIndex(o.due_at)] += 1;
+  }
+  return counts.map((c) => c / weeks);
+}
