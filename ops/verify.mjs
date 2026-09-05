@@ -72,7 +72,18 @@ const missing = [...new Set([...app.matchAll(/\$\('([^']+)'\)/g)].map((m) => m[1
 if (missing.length) fail(`$() reaches for ids that do not exist: ${missing.join(', ')}`);
 else pass('every $() id exists in the markup');
 
-// ── 5. the gallery picker must never carry `capture` ────────────────────────
+// ── 5. every sticky element declares a z-index ──────────────────────────────
+// position:sticky alone does not lift anything. With z-index auto it paints in
+// the same step as positioned wrappers further down the DOM, so the sheet
+// header ended up underneath the store dropdown and the customer field as they
+// scrolled past it. Cheap to state, and it shipped once without being stated.
+const stickyMissingZ = [...html.matchAll(/([^{}]+)\{([^}]*position:\s*sticky[^}]*)\}/g)]
+  .filter(([, , body]) => !/z-index\s*:/.test(body))
+  .map(([, sel]) => sel.trim().split('\n').pop().trim());
+if (stickyMissingZ.length) fail(`position:sticky without z-index (it will be painted over): ${stickyMissingZ.join(', ')}`);
+else pass('sticky elements all declare a z-index');
+
+// ── 6. the gallery picker must never carry `capture` ────────────────────────
 // With capture on it, Android skips the chooser and opens the camera, so a
 // photo the customer already sent cannot be attached. That shipped once. The
 // camera button is a separate input and is the only one allowed to have it.
@@ -86,7 +97,7 @@ else if (gallery.capture) fail('#f-photo has capture — Android will skip the p
 else if (!camera.capture) fail('#f-photo-cam has lost capture — the camera button will open the file picker instead');
 else pass('photo inputs: picker without capture, camera with it');
 
-// ── 6. the catalogue has not drifted from the build gate ────────────────────
+// ── 7. the catalogue has not drifted from the build gate ────────────────────
 // catalog.mjs mirrors FACTS in verify-blog.mjs. Nothing enforced that, so the
 // ops app could quote a price the public site had already moved on from.
 const facts = readFileSync(join(here, '..', 'verify-blog.mjs'), 'utf8');

@@ -336,7 +336,12 @@ body:has(#menu-btn:not(.hidden)) .main { padding-bottom: calc(140px + var(--safe
   .sheet { inset: auto auto 0 50%; transform: translateX(-50%); width: 620px; border-radius: 20px 20px 0 0; }
 }
 .sheet-head {
-  position: sticky; top: 0;
+  /* Sticky alone does not lift it: with z-index auto it lands in the same
+     paint step as the positioned wrappers in the body below it (.dd, .money,
+     .type-wrap), and those come later in the DOM, so they scrolled over the
+     title and the close button. An open dropdown menu is z-index 50 and still
+     covers it, which is what a menu should do. */
+  position: sticky; top: 0; z-index: 2;
   display: flex; align-items: center; gap: 12px;
   padding: 15px 18px 12px;
   background: var(--cream);
