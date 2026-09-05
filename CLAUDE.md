@@ -198,6 +198,12 @@ main site.
   margin without that caveat — a rate from two of twenty cakes reads as fact and is not one.
 - **Leaderboards and repeat-customer rate read the `customers` view, not the 63-day analytics
   fetch.** A "gone quiet" board computed off that window is permanently empty by definition.
+- **`ordered_at` vs `created_at`.** `ordered_at` is when the customer placed the order;
+  `created_at` is when someone typed it in, shown as **Log time**. They differ whenever an order
+  is relayed off WhatsApp later. Read it as `orderedAt(o)` (`ordered_at ?? created_at`) — null
+  means nobody recorded it, which is true of rows from before the column existed. **Analytics
+  still buckets sales on `created_at`**; switching them to the order time is a separate decision
+  because it moves every historical figure.
 - **Money is never rounded.** One `money` formatter, cents always shown. A whole-dollar variant
   turned a $130.50 cake into "$131" and quietly skewed every total; do not reintroduce one.
 - **Local testing**: `node serve.mjs`, then `http://localhost:4000/ops/` **with the trailing slash**.

@@ -253,6 +253,14 @@ const kindTag = (o) => o.kind === 'custom'
   ? '<span class="tag tag-custom">Custom</span>'
   : '<span class="tag tag-normal">Normal</span>';
 
+/** When the customer ordered. Falls back to the log time for rows written
+ *  before the column existed, or by the older build still in production. */
+const orderedAt = (o) => new Date(o.ordered_at || o.created_at);
+
+/** Only worth showing both times when they are actually different. */
+const loggedLater = (o) =>
+  Boolean(o.ordered_at) && Math.abs(new Date(o.created_at) - new Date(o.ordered_at)) > 60000;
+
 const spineFor = (o, now) => {
   if (['picked_up', 'cancelled'].includes(o.status)) return 'spine-done';
   const d = daysBetween(sydneyParts(now).dayKey, sydneyParts(o.due_at).dayKey);
@@ -289,7 +297,8 @@ function docketHtml(o, now, { showStore = false } = {}) {
             ${pay ? `<span class="tag ${pay.cls}">${esc(pay.label)}</span>` : ''}
             ${printFlagHtml(o.id)}
           </div>
-          <div class="docket-taken">Taken ${esc(takenFmt.format(new Date(o.created_at)))}</div>
+          <div class="docket-taken">Ordered ${esc(takenFmt.format(orderedAt(o)))}${
+            loggedLater(o) ? ` · Log time ${esc(takenFmt.format(new Date(o.created_at)))}` : ''}</div>
         </div>
       </div>
     </button>`;
@@ -1276,7 +1285,8 @@ async function openOrder(id) {
   const author = peopleById.get(o.created_by);
 
   const timeline = [
-    ['Logged',     o.created_at],
+    ...(loggedLater(o) ? [['Ordered', o.ordered_at]] : []),
+    ['Log time',   o.created_at],
     ['Baked',      o.baked_at],
     ['At store',   o.arrived_at],
     ['Picked up',  o.picked_up_at],
@@ -1293,6 +1303,7 @@ async function openOrder(id) {
       ${field('Customer', o.customer_name)}
       ${field('Phone', o.customer_phone)}
       <div class="span-2 hidden" id="cust-history"></div>
+      ${field('Order time', dateTimeFmt.format(orderedAt(o)))}
       ${field('Pick up', dateTimeFmt.format(new Date(o.due_at)))}
       ${field('Store', storeLabel(o.store))}
       ${field('Flavour', o.flavour)}
@@ -1332,6 +1343,18 @@ async function openOrder(id) {
           <label class="field-label" for="edit-phone">Phone</label>
           <input class="input nums" id="edit-phone" type="tel" inputmode="tel" value="${esc(o.customer_phone || '')}">
         </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Order time</span>
+        <button type="button" class="datefield" id="edit-ordered-btn" aria-expanded="false">
+          <span class="datefield-value is-empty" id="edit-ordered-label">Choose a date and time</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+          </svg>
+        </button>
+        <div class="cal hidden" id="edit-ordered-cal"></div>
+        <input type="hidden" id="edit-ordered">
       </div>
 
       <div class="field">
@@ -1406,7 +1429,7 @@ async function openOrder(id) {
     <div class="timeline">
       ${timeline.map(([k, t]) => `
         <div class="tl-item"><span>${k}</span>
-          ${k === 'Logged' && author ? `<span class="list-meta">by ${esc(author.name)}</span>` : ''}
+          ${k === 'Log time' && author ? `<span class="list-meta">by ${esc(author.name)}</span>` : ''}
           <span class="tl-when">${esc(dateTimeFmt.format(new Date(t)))}</span></div>`).join('')}
     </div>
   `);
@@ -1544,7 +1567,7 @@ async function openOrder(id) {
     // between stores or between custom and normal is a different order, not a
     // correction, and would silently break the per-store docket numbering.
     let editMounted = false;
-    let editDue = null, editFlavour = null, editSize = null;
+    let editDue = null, editOrdered = null, editFlavour = null, editSize = null;
 
     $('edit-toggle').addEventListener('click', () => {
       $('detail-view').classList.add('hidden');
@@ -1554,6 +1577,7 @@ async function openOrder(id) {
       if (!editMounted) {
         editMounted = true;
         editDue = mountDuePicker('edit-due', o.due_at);
+        editOrdered = mountDuePicker('edit-ordered', o.ordered_at || o.created_at);
         editFlavour = mountDropdown($('edit-dd-flavour'), {
           value: o.flavour, placeholder: 'Choose flavour',
           options: FLAVOURS.map((f) => ({ value: f.name, label: f.name, tag: f.premium ? 'Premium' : null })),
@@ -1586,6 +1610,7 @@ async function openOrder(id) {
           customer_name: name,
           customer_phone: $('edit-phone').value.trim() || null,
           due_at: editDue.value(),
+          ordered_at: editOrdered.value() || null,
           flavour: editFlavour.value() || null,
           size: editSize.value() || null,
           wording: $('edit-wording').value.trim() || null,
@@ -1655,6 +1680,19 @@ function openNewOrder() {
       </div>
 
       <p class="autofill-note hidden" id="autofill-note"></p>
+
+      <div class="field">
+        <span class="field-label">Order time</span>
+        <button type="button" class="datefield" id="f-ordered-btn" aria-expanded="false">
+          <span class="datefield-value" id="f-ordered-label">Choose a date and time</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+          </svg>
+        </button>
+        <div class="cal hidden" id="f-ordered-cal"></div>
+        <input type="hidden" id="f-ordered">
+        <p class="money-hint">When the customer actually ordered. Starts at now — change it for one relayed off WhatsApp earlier.</p>
+      </div>
 
       <div class="field">
         <span class="field-label">Pick up <span class="req">*</span></span>
@@ -1952,6 +1990,9 @@ function openNewOrder() {
   });
 
   const due = mountDuePicker();
+  // Defaults to right now, because the common case is logging an order as it
+  // is taken; the field only earns its keep when the two differ.
+  const ordered = mountDuePicker('f-ordered', new Date().toISOString());
 
   // ── Kind ──────────────────────────────────────────────────────────────────
   body.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => {
@@ -1993,6 +2034,7 @@ function openNewOrder() {
         customer_name: $('f-name').value.trim(),
         customer_phone: $('f-phone').value.trim() || null,
         due_at: due.value(),
+        ordered_at: ordered.value() || null,
         flavour: ddFlavour.value() || null,
         size: ddSize.value() || null,
         wording: $('f-wording').value.trim() || null,
@@ -2480,7 +2522,7 @@ async function openCustomer(phoneKey, c) {
       <span class="num">${esc(o.order_no)}</span>
       <span class="tag ${o.kind === 'custom' ? 'tag-custom' : 'tag-normal'}">${o.kind === 'custom' ? 'Custom' : 'Normal'}</span>
       <span class="grow">${esc([o.size, o.flavour].filter(Boolean).join(' · ') || '—')}</span>
-      <span class="list-meta">${esc(dateFmt.format(new Date(o.created_at)))}</span>
+      <span class="list-meta">${esc(dateFmt.format(orderedAt(o)))}</span>
       ${showMoney ? `<span class="num">${o.price ? money.format(o.price) : '—'}</span>` : ''}
     </div>`).join('');
   void body;
@@ -2595,8 +2637,9 @@ async function renderExport() {
 const CSV_COLUMNS = [
   ['Order',        (o) => o.order_no],
   ['Store',        (o) => storeLabel(o.store)],
-  ['Taken',        (o) => csvDate(o.created_at)],
-  ['Taken time',   (o) => timeFmt.format(new Date(o.created_at))],
+  ['Ordered',      (o) => csvDate(o.ordered_at || o.created_at)],
+  ['Ordered time', (o) => timeFmt.format(orderedAt(o))],
+  ['Logged',       (o) => csvDate(o.created_at)],
   ['Pickup',       (o) => csvDate(o.due_at)],
   ['Status',       (o) => STATUS_LABEL[o.status] || o.status],
   ['Kind',         (o) => (o.kind === 'custom' ? 'Custom' : o.walk_in ? 'Normal (in store)' : 'Normal (ordered)')],
