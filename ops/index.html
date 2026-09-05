@@ -366,7 +366,24 @@ button { background: none; border: 0; cursor: pointer; }
 }
 .detail-v { font-size: 15px; color: var(--ink); line-height: 1.45; overflow-wrap: anywhere; }
 .detail-v.quiet { color: var(--taupe); }
-.detail-photo { width: 100%; border-radius: 11px; border: 1px solid var(--dough-line); margin-bottom: 14px; display: block; }
+/* Several references per cake is normal, so this is a swipe strip rather than
+   a stack — eight full-width photos would bury the order details under them.
+   With one photo it looks exactly like the single image it replaced. */
+.detail-gallery {
+  display: flex; gap: 8px; margin-bottom: 14px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+.detail-photo {
+  flex: 0 0 100%; scroll-snap-align: center;
+  width: 100%; border-radius: 11px; border: 1px solid var(--dough-line); display: block;
+}
+.gallery-note {
+  margin: -8px 0 12px; font-size: 12px; color: var(--taupe);
+  letter-spacing: .02em; text-align: center;
+}
+.addphoto { margin-bottom: 14px; }
+.addphoto .photo-pick { width: 100%; }
 
 .rule { height: 1px; background: var(--dough-line); margin: 16px 0; border: 0; }
 .block-label {
@@ -397,12 +414,28 @@ button { background: none; border: 0; cursor: pointer; }
 .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
 @media (max-width: 400px) { .row-2 { grid-template-columns: 1fr; } }
 
+/* Wraps, because the thumbnail strip is now several photos wide and pushing
+   the two picker buttons off the side of the sheet is worse than a second row. */
 .photo-drop {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
   padding: 12px; border: 1.5px dashed var(--dough-line); border-radius: var(--radius);
   background: var(--cream);
 }
-.photo-preview { width: 58px; height: 58px; border-radius: 9px; object-fit: cover; border: 1px solid var(--dough-line); }
+/* The strip scrolls on its own rather than stretching the sheet: eight
+   references at 58px is 500px of width a phone does not have. */
+.photo-strip {
+  display: flex; gap: 12px; padding: 9px 4px 4px;
+  overflow-x: auto; max-width: 100%;
+  scrollbar-width: thin;
+}
+.photo-cover {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 1px 0; border-radius: 0 0 8px 8px;
+  background: rgba(44,26,14,.72); color: var(--cream);
+  font-size: 9px; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; text-align: center;
+}
+.photo-preview { display: block; width: 58px; height: 58px; border-radius: 9px; object-fit: cover; border: 1px solid var(--dough-line); }
 .photo-hint { font-size: 13px; color: var(--taupe); line-height: 1.4; }
 
 .req { color: var(--rose); }
@@ -428,6 +461,7 @@ button { background: none; border: 0; cursor: pointer; }
 
 .cal {
   margin-top: 9px; padding: 13px;
+  max-width: 372px;
   background: var(--cream);
   border: 1px solid var(--dough-line); border-radius: var(--radius);
   box-shadow: var(--shadow-card);
@@ -447,14 +481,23 @@ button { background: none; border: 0; cursor: pointer; }
 .cal-nav:hover { background: var(--dough); }
 .cal-nav svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-.cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+/* The sheet is 620px on a laptop, so seven 1fr columns of square cells made a
+   calendar ~500px tall that ran off the bottom of the screen. Capping the grid
+   width caps the cell, and therefore the height. */
+.cal-dow, .cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+  max-width: 322px; margin-inline: auto;
+}
 .cal-dow { margin-bottom: 3px; }
 .cal-dow span {
   text-align: center; font-size: 10px; font-weight: 600;
   letter-spacing: .07em; text-transform: uppercase; color: var(--taupe);
 }
+/* Sized off the viewport rather than a fixed 44px floor: on a 320px phone a
+   44px square in a seven-column grid is wider than the cell it sits in, which
+   is what pushed the month off the side of the sheet. Never below 34px. */
 .cal-day {
-  aspect-ratio: 1; min-height: 44px; border-radius: 9px;
+  aspect-ratio: 1; height: clamp(34px, 10.5vw, 44px); border-radius: 9px;
   font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink);
   transition: background-color .14s ease, color .14s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
 }
@@ -470,22 +513,27 @@ button { background: none; border: 0; cursor: pointer; }
 .cal-day.is-selected:hover { background: var(--rose-deep); }
 
 .cal-time {
-  display: flex; align-items: center; gap: 7px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
   margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--dough-line);
 }
-.cal-time-dd { flex: 1; min-width: 0; }
+.cal-time-dd { flex: 1 1 54px; min-width: 0; }
 .cal-time-dd .dd-btn { min-height: 44px; padding: 9px 11px; }
 .cal-colon { color: var(--taupe); font-weight: 500; }
-.ampm { display: flex; gap: 2px; padding: 2px; background: var(--dough); border-radius: 9px; }
+.ampm { display: flex; flex: 0 0 auto; gap: 2px; padding: 2px; background: var(--dough); border-radius: 9px; }
 .ampm button {
-  min-height: 44px; padding: 0 13px; border-radius: 7px;
+  min-height: 44px; padding: 0 11px; border-radius: 7px;
   font-size: 13px; font-weight: 500; color: var(--ink-soft);
   transition: background-color .16s ease, color .16s ease;
 }
 .ampm button[aria-pressed="true"] { background: var(--cream); color: var(--ink); box-shadow: var(--shadow-card); }
 
 .cal-foot { display: flex; gap: 7px; margin-top: 11px; }
-.cal-foot .btn { flex: 1; min-height: 40px; font-size: 14px; }
+/* All three stay on one row at 320px: wrapping them cost 47px of height in the
+   one place there is least of it. */
+.cal-foot .btn {
+  flex: 1 1 0; min-width: 0; min-height: 40px;
+  font-size: 13px; padding-inline: 6px; white-space: nowrap;
+}
 
 /* ── Photo attach / remove ──────────────────────────────────────────────── */
 .photo-shot { position: relative; flex: none; }
@@ -1251,6 +1299,97 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
   .section-head { grid-column: 1 / -1; }
 }
 
+/* ── Receipt ────────────────────────────────────────────────────────────── */
+/* Hidden on screen and printed on its own. Building it here rather than in a
+   new tab is not a shortcut: the ops CSP blocks inline script, so a popup
+   document could never call print() on itself. */
+.detail-hint {
+  font-size: 12px; color: var(--taupe); line-height: 1.5;
+  margin: 7px 0 0; text-align: center;
+}
+#receipt-root { display: none; }
+
+@media print {
+  /* Everything the app draws lives in these three roots; the receipt replaces
+     the lot rather than being positioned over them, so nothing bleeds onto
+     page two. */
+  #app, #login, #sheet-root, #drawer-root, #toasts { display: none !important; }
+  #receipt-root {
+    display: block;
+    font-family: 'Jost', system-ui, sans-serif;
+    color: #2C1A0E; background: #fff;
+    padding: 0; margin: 0;
+  }
+  @page { margin: 18mm 16mm; }
+}
+
+#receipt-root .rc-head {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+  padding-bottom: 14px; border-bottom: 2px solid #C85478;
+}
+#receipt-root .rc-brand {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 26pt; font-weight: 600; line-height: 1.1; letter-spacing: -.01em;
+}
+#receipt-root .rc-sub { font-size: 9pt; color: #8B7F76; letter-spacing: .04em; margin-top: 3px; }
+#receipt-root .rc-meta { text-align: right; font-size: 9pt; color: #8B7F76; }
+#receipt-root .rc-no {
+  font-size: 13pt; font-weight: 600; color: #2C1A0E;
+  font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+#receipt-root .rc-from { font-size: 8.5pt; color: #8B7F76; line-height: 1.6; margin-top: 10px; }
+
+#receipt-root .rc-title {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17pt; font-weight: 600; margin: 26px 0 12px;
+}
+#receipt-root .rc-stamp {
+  font-family: 'Jost', system-ui, sans-serif;
+  font-size: 8pt; font-weight: 600; letter-spacing: .1em;
+  padding: 4px 10px; border-radius: 3px;
+  border: 1.5px solid currentColor;
+}
+#receipt-root .rc-paid      { color: #6B7A55; }
+#receipt-root .rc-deposit   { color: #B37B2C; }
+#receipt-root .rc-unpaid    { color: #A03D5E; }
+#receipt-root .rc-cancelled { color: #8B7F76; }
+
+#receipt-root table { width: 100%; border-collapse: collapse; }
+#receipt-root .rc-kv th {
+  text-align: left; font-weight: 400; font-size: 9pt; color: #8B7F76;
+  width: 33%; padding: 4px 0; vertical-align: top;
+}
+#receipt-root .rc-kv td { font-size: 10pt; padding: 4px 0; }
+
+#receipt-root .rc-items { margin-top: 22px; }
+#receipt-root .rc-items thead th {
+  text-align: left; font-size: 8pt; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: #8B7F76;
+  border-bottom: 1px solid #E8DDD2; padding-bottom: 6px;
+}
+#receipt-root .rc-items td { padding: 12px 0; vertical-align: top; border-bottom: 1px solid #E8DDD2; }
+#receipt-root .rc-item { font-size: 11pt; font-weight: 500; }
+#receipt-root .rc-note { font-size: 9pt; color: #5C3A22; line-height: 1.5; margin-top: 3px; }
+#receipt-root .rc-amt { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+#receipt-root .rc-totals { margin-top: 14px; margin-left: auto; width: 58%; }
+#receipt-root .rc-totals th {
+  text-align: left; font-weight: 400; font-size: 10pt; color: #5C3A22; padding: 5px 0;
+}
+#receipt-root .rc-totals td {
+  text-align: right; font-size: 10pt; padding: 5px 0;
+  font-variant-numeric: tabular-nums;
+}
+#receipt-root .rc-due th, #receipt-root .rc-due td {
+  font-size: 12pt; font-weight: 600; color: #2C1A0E;
+  border-top: 1.5px solid #2C1A0E; padding-top: 9px;
+}
+#receipt-root .rc-foot {
+  margin-top: 34px; padding-top: 14px; border-top: 1px solid #E8DDD2;
+  font-size: 8.5pt; color: #8B7F76; line-height: 1.7;
+}
+
 </style>
 </head>
 <body>
@@ -1328,6 +1467,9 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 <div id="drawer-root"></div>
 
 <div id="sheet-root"></div>
+
+<!-- Print-only: the receipt is rendered here and nothing else is printed. -->
+<div id="receipt-root"></div>
 
 <script type="module" src="./app.mjs"></script>
 </body>

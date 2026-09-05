@@ -5,11 +5,11 @@
 // Inlining this would silently break only in production, where the CSP applies.
 
 import {
-  sb, PEOPLE, STORES, storeLabel, STATUS_LABEL,
+  sb, PEOPLE, STORES, BUSINESS, storeLabel, STATUS_LABEL,
   signIn, signOut, currentProfile, listProfiles,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
-  recentAuthEvents, uploadPhoto, photoUrl, photoUrls,
+  recentAuthEvents, orderEvents, uploadPhotos, orderPhotos, photoUrls,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote,
   writeStamp,
@@ -388,20 +388,21 @@ function logFresh(forStore) {
   return Boolean(hit) && !hit.expired && hit.stamp === writeStamp.v && Date.now() - hit.at < LOG_TTL;
 }
 
-// The worklist only ever shows open orders plus the last week of collected
-// ones, but it was fetching the store's entire history to do it — every column
-// of every order ever taken. PostgREST stops at 1000 rows, so at their volume
-// the log would have started silently dropping orders inside two months.
-// `includeOpen` is what makes the window safe: nothing unfinished ages out of
-// it, however old.
-const LOG_WINDOW_DAYS = 14;
+// The worklist shows open orders plus the last 90 days of collected ones,
+// rather than the store's entire history — every column of every order ever
+// taken. `includeOpen` is what makes the window safe: nothing unfinished ages
+// out of it, however old. Supabase keeps everything regardless; the window is
+// only what the phone downloads, and search and date ranges still reach the
+// whole book server-side. Paged, because 90 days will pass 1000 rows and
+// PostgREST truncates at that without raising.
+const LOG_WINDOW_DAYS = 90;
 
 async function logData(forStore) {
   if (logFresh(forStore)) return logCache.get(forStore).rows;
   return orFallback(async () => {
     const since = new Date(Date.now() - LOG_WINDOW_DAYS * 86400000).toISOString();
     const [rows] = await Promise.all([
-      listOrders({ store: forStore, since, includeOpen: true, withCosts: me.role === 'admin' }),
+      listOrders({ store: forStore, since, includeOpen: true, complete: true, withCosts: me.role === 'admin' }),
       loadPrintFlags(),
     ]);
     logCache.set(forStore, { at: Date.now(), stamp: writeStamp.v, rows });
@@ -699,7 +700,9 @@ async function openPrintJob(id) {
   const isAdmin = me.role === 'admin';
 
   const body = openSheet(`${o.order_no} · ${j.kind === '3d' ? '3D print' : 'Photo print'}`, `
-    ${o.photo_path ? `<img class="detail-photo" data-photo="${esc(o.photo_path)}" alt="Cake design">` : ''}
+    ${orderPhotos(o).length ? `<div class="detail-gallery">${orderPhotos(o).map((path, i) =>
+        `<img class="detail-photo" data-photo="${esc(path)}" alt="Cake design ${i + 1}">`).join('')}</div>
+      ${orderPhotos(o).length > 1 ? `<p class="gallery-note">Swipe — ${orderPhotos(o).length} photos on this order</p>` : ''}` : ''}
 
     <div class="block-label">What to print</div>
     <p class="detail-v">${esc(j.what)}</p>
@@ -747,8 +750,7 @@ async function openPrintJob(id) {
       </div>` : ''}
   `);
 
-  const img = body.querySelector('.detail-photo');
-  if (img) photoUrl(img.dataset.photo).then((u) => { if (u) img.src = u; });
+  hydrateThumbs(body);
 
   if (canPrintStatus(j)) {
     $('print-toggle').addEventListener('click', async () => {
@@ -1305,14 +1307,33 @@ async function openOrder(id) {
     ['Baked',      o.baked_at],
     ['At store',   o.arrived_at],
     ['Picked up',  o.picked_up_at],
+    ['Cancelled',  o.cancelled_at],
   ].filter(([, t]) => t);
 
   const canEdit = me.role === 'admin' || me.role === 'staff';
   const showMoney = me.role !== 'baker';
   const orderPrints = printsByOrder.get(o.id) || [];
 
+  // Several reference photos is the normal case, so the detail sheet shows the
+  // lot. The first is the cover the dockets already show; the rest sit beside it.
+  const photos = orderPhotos(o);
+
   const body = openSheet(o.order_no, `
-    ${o.photo_path ? '<img class="detail-photo" data-photo="' + esc(o.photo_path) + '" alt="Cake design">' : ''}
+    ${photos.length ? `<div class="detail-gallery">${photos.map((path, i) =>
+        `<img class="detail-photo" data-photo="${esc(path)}"
+              alt="Cake design ${i + 1}">`).join('')}</div>
+      ${photos.length > 1 ? `<p class="gallery-note">Swipe — ${photos.length} photos on this order</p>` : ''}` : ''}
+    ${canEdit ? `
+      <div class="addphoto">
+        <input class="photo-input" type="file" id="add-photo" accept="image/*" multiple>
+        <label class="photo-pick" for="add-photo">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          <span>${photos.length ? 'Add more photos' : 'Add a photo'}</span>
+        </label>
+        <p class="msg" id="add-photo-msg" role="status" aria-live="polite"></p>
+      </div>` : ''}
 
     <div class="detail-grid" id="detail-view">
       ${field('Customer', o.customer_name)}
@@ -1447,7 +1468,43 @@ async function openOrder(id) {
           ${k === 'Log time' && author ? `<span class="list-meta">by ${esc(author.name)}</span>` : ''}
           <span class="tl-when">${esc(dateTimeFmt.format(new Date(t)))}</span></div>`).join('')}
     </div>
+    <div id="edit-trail"></div>
+
+    ${me.role === 'admin' ? `
+      <hr class="rule">
+      <button type="button" class="btn btn-outline" id="receipt-btn" style="width:100%;">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+             style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;vertical-align:-3px;margin-right:7px;">
+          <path d="M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/>
+        </svg>Download receipt
+      </button>
+      <p class="detail-hint">Opens your printer dialog — choose <strong>Save as PDF</strong> to send it to the customer.</p>` : ''}
   `);
+
+  if (me.role === 'admin') $('receipt-btn').addEventListener('click', () => printReceipt(o));
+
+  // The timeline above says what state the order reached. This says what was
+  // changed on the way — a price corrected after the customer called, a pickup
+  // moved. Loaded after paint and silent on failure: it is a record, not a
+  // reason to hold up the sheet.
+  if (me.role === 'admin') {
+    orderEvents(o.id).then((events) => {
+      const edits = events.filter((e) => e.kind === 'edit');
+      const host = $('edit-trail');
+      if (!edits.length || !host) return;
+      host.innerHTML = `
+        <div class="block-label" style="margin-top:14px;">Changes</div>
+        <div class="timeline">
+          ${edits.map((e) => `
+            <div class="tl-item">
+              <span>${esc([...new Set(Object.keys(e.detail).map(fieldLabel))].join(', '))}</span>
+              ${peopleById.get(e.actor)
+                ? `<span class="list-meta">by ${esc(peopleById.get(e.actor).name)}</span>` : ''}
+              <span class="tl-when">${esc(dateTimeFmt.format(new Date(e.at)))}</span>
+            </div>`).join('')}
+        </div>`;
+    }).catch(() => {});
+  }
 
   hydrateThumbs(body);
 
@@ -1468,8 +1525,23 @@ async function openOrder(id) {
     }).catch(() => {});
   }
 
-  const detailImg = body.querySelector('.detail-photo');
-  if (detailImg) photoUrl(detailImg.dataset.photo).then((u) => { if (u) detailImg.src = u; });
+  if (canEdit) $('add-photo').addEventListener('change', async (e) => {
+    const picked = [...e.target.files];
+    e.target.value = '';
+    if (!picked.length) return;
+    const note = $('add-photo-msg');
+    note.className = 'msg';
+    note.textContent = `Uploading ${picked.length} photo${picked.length === 1 ? '' : 's'}…`;
+    try {
+      await uploadPhotos(o, picked, { append: true });
+      closeSheet();
+      await render();
+      toast(`${picked.length} photo${picked.length === 1 ? '' : 's'} added to ${o.order_no}.`);
+    } catch (err) {
+      note.className = 'msg msg-error';
+      note.textContent = err.message;
+    }
+  });
 
   // Status buttons the database will actually accept for this role — the guard
   // trigger rejects anything else, so offering it would only produce an error.
@@ -1592,7 +1664,7 @@ async function openOrder(id) {
       if (!editMounted) {
         editMounted = true;
         editDue = mountDuePicker('edit-due', o.due_at);
-        editOrdered = mountDuePicker('edit-ordered', o.ordered_at || o.created_at);
+        editOrdered = mountDuePicker('edit-ordered', o.ordered_at || o.created_at, { back: true });
         editFlavour = mountDropdown($('edit-dd-flavour'), {
           value: o.flavour, placeholder: 'Choose flavour',
           options: FLAVOURS.map((f) => ({ value: f.name, label: f.name, tag: f.premium ? 'Premium' : null })),
@@ -1649,7 +1721,7 @@ async function openOrder(id) {
 // ── New order ───────────────────────────────────────────────────────────────
 function openNewOrder() {
   let kind = null;
-  let photoFile = null;
+  let photoFiles = [];
   let priceTouched = false;          // stop size autofill from clobbering a typed price
   const mine = STORES.filter((s) => me.stores.includes(s.code));
 
@@ -1743,12 +1815,12 @@ function openNewOrder() {
       </div>
 
       <div class="field" id="photo-field">
-        <span class="field-label">Design photo <span class="req">*</span></span>
+        <span class="field-label">Design photos <span class="req">*</span></span>
         <div class="photo-drop">
-          <span class="photo-shot hidden" id="photo-shot">
-            <img class="photo-preview" id="photo-preview" alt="Attached design photo">
-            <button type="button" class="photo-remove" id="photo-remove" aria-label="Remove this photo">✕</button>
-          </span>
+          <!-- Customers routinely send three or four reference pictures, so
+               this is a strip that grows rather than one slot that replaces
+               itself. The first is the cover the dockets show. -->
+          <div class="photo-strip hidden" id="photo-strip"></div>
           <div style="flex:1;min-width:0">
             <div class="photo-pickers">
               <!-- capture opens the camera straight away. It belongs on this
@@ -1765,16 +1837,16 @@ function openNewOrder() {
                    picker and opens the camera, so the photo the customer
                    already sent over WhatsApp cannot be attached at all. That
                    was the bug; verify.mjs now fails the build if it comes back. -->
-              <input class="photo-input" type="file" id="f-photo" accept="image/*">
+              <input class="photo-input" type="file" id="f-photo" accept="image/*" multiple>
               <label class="photo-pick" for="f-photo">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9.5" r="1.4"/>
                 </svg>
-                <span>Choose photo</span>
+                <span>Choose photos</span>
               </label>
             </div>
             <p class="photo-name hidden" id="photo-name"></p>
-            <p class="photo-hint">Shrunk before upload, and deleted 14 days after the order.</p>
+            <p class="photo-hint">Add as many as the customer sent. Shrunk before upload, and deleted 14 days after the order.</p>
           </div>
         </div>
       </div>
@@ -1966,48 +2038,49 @@ function openNewOrder() {
   }));
   syncPayment();
 
-  // ── Photo ─────────────────────────────────────────────────────────────────
-  const showPhoto = (file) => {
-    const prev = $('photo-preview');
-    if (prev.dataset.url) URL.revokeObjectURL(prev.dataset.url);
-    if (file) {
-      const url = URL.createObjectURL(file);
-      prev.src = url;
-      prev.dataset.url = url;
-      $('photo-shot').classList.remove('hidden');
-      $('photo-name').textContent = file.name;
-      $('photo-name').classList.remove('hidden');
-    } else {
-      prev.removeAttribute('src');
-      delete prev.dataset.url;
-      $('photo-shot').classList.add('hidden');
-      $('photo-name').textContent = '';
-      $('photo-name').classList.add('hidden');
-    }
+  // ── Photos ────────────────────────────────────────────────────────────────
+  const MAX_PHOTOS = 8;
+
+  const drawPhotos = () => {
+    const strip = $('photo-strip');
+    strip.querySelectorAll('img[data-url]').forEach((i) => URL.revokeObjectURL(i.dataset.url));
+    strip.classList.toggle('hidden', !photoFiles.length);
+    strip.innerHTML = photoFiles.map((f, i) => {
+      const url = URL.createObjectURL(f);
+      return `<span class="photo-shot">
+          <img class="photo-preview" src="${url}" data-url="${url}" alt="Design photo ${i + 1}">
+          ${i === 0 ? '<span class="photo-cover">Cover</span>' : ''}
+          <button type="button" class="photo-remove" data-drop="${i}"
+            aria-label="Remove photo ${i + 1}">✕</button>
+        </span>`;
+    }).join('');
+    strip.querySelectorAll('[data-drop]').forEach((b) => b.addEventListener('click', () => {
+      photoFiles.splice(Number(b.dataset.drop), 1);
+      drawPhotos();
+    }));
+    $('photo-name').textContent = photoFiles.length
+      ? `${photoFiles.length} photo${photoFiles.length === 1 ? '' : 's'} attached`
+      : '';
+    $('photo-name').classList.toggle('hidden', !photoFiles.length);
   };
 
   const PHOTO_INPUTS = ['f-photo', 'f-photo-cam'];
 
   PHOTO_INPUTS.forEach((id) => $(id).addEventListener('change', (e) => {
-    const picked = e.target.files[0] || null;
-    if (!picked) return;   // a cancelled camera or picker must not clear the photo already attached
-    photoFile = picked;
-    // Only one photo per cake, so the other input is cleared: leaving a stale
-    // selection there makes re-picking the same file fire no change event.
-    PHOTO_INPUTS.filter((other) => other !== id).forEach((other) => { $(other).value = ''; });
-    showPhoto(photoFile);
+    const picked = [...e.target.files];
+    if (!picked.length) return;   // a cancelled camera or picker must not clear what is already attached
+    const room = MAX_PHOTOS - photoFiles.length;
+    if (room <= 0) { toast(`That is the ${MAX_PHOTOS} photo limit.`, 'error'); }
+    photoFiles = photoFiles.concat(picked.slice(0, Math.max(0, room)));
+    // Both inputs are cleared, or re-picking the same file fires no change event.
+    PHOTO_INPUTS.forEach((other) => { $(other).value = ''; });
+    drawPhotos();
   }));
-
-  $('photo-remove').addEventListener('click', () => {
-    photoFile = null;
-    PHOTO_INPUTS.forEach((id) => { $(id).value = ''; });
-    showPhoto(null);
-  });
 
   const due = mountDuePicker();
   // Defaults to right now, because the common case is logging an order as it
   // is taken; the field only earns its keep when the two differ.
-  const ordered = mountDuePicker('f-ordered', new Date().toISOString());
+  const ordered = mountDuePicker('f-ordered', new Date().toISOString(), { back: true });
 
   // ── Kind ──────────────────────────────────────────────────────────────────
   body.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => {
@@ -2034,7 +2107,7 @@ function openNewOrder() {
       $('f-due-btn').focus();
       return;
     }
-    if (kind === 'custom' && !photoFile) {
+    if (kind === 'custom' && !photoFiles.length) {
       msg.textContent = 'A custom cake needs a photo of the design.';
       msg.className = 'msg msg-error';
       return;
@@ -2059,15 +2132,16 @@ function openNewOrder() {
         deposit: Number($('f-deposit').value || 0),
       });
 
-      if (photoFile) {
-        btn.textContent = 'Uploading photo…';
+      if (photoFiles.length) {
+        btn.textContent = photoFiles.length > 1
+          ? `Uploading ${photoFiles.length} photos…` : 'Uploading photo…';
         try {
-          await uploadPhoto(order, photoFile);
+          await uploadPhotos(order, photoFiles);
         } catch (err) {
           // The order is the thing that matters; a failed photo must not lose it.
           closeSheet();
           await render();
-          toast(`${order.order_no} saved, but the photo did not upload. Open the order to add it again.`, 'error');
+          toast(`${order.order_no} saved, but the photos did not upload. Open the order to add them again.`, 'error');
           return;
         }
       }
@@ -2094,7 +2168,12 @@ function openNewOrder() {
  *
  * Returns { value } — the chosen instant as an ISO string, or '' if unset.
  */
-function mountDuePicker(prefix = 'f-due', initialISO = null) {
+/**
+ * `back: true` flips which half of the calendar reads as unavailable. A pickup
+ * is always ahead of you, but the time a customer placed the order is always
+ * behind you — greying yesterday on that field said the opposite of the truth.
+ */
+function mountDuePicker(prefix = 'f-due', initialISO = null, { back = false } = {}) {
   const btn    = $(`${prefix}-btn`);
   const panel  = $(`${prefix}-cal`);
   const label  = $(`${prefix}-label`);
@@ -2162,7 +2241,7 @@ function mountDuePicker(prefix = 'f-due', initialISO = null) {
           <button type="button" data-day="${d.key}"
             aria-label="${esc(dayLabel(d.key, { weekday: 'long', day: 'numeric', month: 'long' }))}"
             aria-pressed="${d.key === selected}"
-            class="cal-day${d.inMonth ? '' : ' is-other'}${d.key === today.dayKey ? ' is-today' : ''}${d.key === selected ? ' is-selected' : ''}${d.key < today.dayKey ? ' is-past' : ''}"
+            class="cal-day${d.inMonth ? '' : ' is-other'}${d.key === today.dayKey ? ' is-today' : ''}${d.key === selected ? ' is-selected' : ''}${(back ? d.key > today.dayKey : d.key < today.dayKey) ? ' is-past' : ''}"
           >${d.day}</button>`).join('')}
       </div>
 
@@ -2178,7 +2257,7 @@ function mountDuePicker(prefix = 'f-due', initialISO = null) {
 
       <div class="cal-foot">
         <button type="button" class="btn btn-quiet" data-quick="0">Today</button>
-        <button type="button" class="btn btn-quiet" data-quick="1">Tomorrow</button>
+        <button type="button" class="btn btn-quiet" data-quick="${back ? -1 : 1}">${back ? 'Yesterday' : 'Tomorrow'}</button>
         <button type="button" class="btn btn-primary" data-done>Done</button>
       </div>`;
 
@@ -2241,6 +2320,117 @@ function mountDuePicker(prefix = 'f-due', initialISO = null) {
   if (initialISO) commit();   // show the existing pickup time immediately, not "Choose a date"
 
   return { value: () => hidden.value };
+}
+
+
+// ── Receipt ─────────────────────────────────────────────────────────────────
+//
+// Printed from the page itself rather than opened in a new tab: the ops CSP has
+// no 'unsafe-inline' in script-src, so a blob: document could not run the
+// window.print() that makes it a PDF. A print-only <div> in this page can.
+// Browsers offer "Save as PDF" from the print dialog on desktop, iOS and
+// Android alike, which is the download.
+
+/** Column name -> what it is called on the form. */
+const FIELD_LABEL = {
+  customer_name: 'Customer', customer_phone: 'Phone', due_at: 'Pick up',
+  ordered_at: 'Order time', flavour: 'Flavour', size: 'Size',
+  wording: 'Wording', design_notes: 'Design notes', notes: 'Notes',
+  price: 'Price', deposit: 'Deposit', photo_path: 'Photos', photo_paths: 'Photos',
+  store: 'Store', kind: 'Cake type', walk_in: 'Walk-in',
+};
+const fieldLabel = (k) => FIELD_LABEL[k] || k.replace(/_/g, ' ');
+
+const receiptLine = (k, v) => (v
+  ? `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>` : '');
+
+function receiptHtml(o) {
+  const store = STORES.find((s) => s.code === o.store);
+  const price = Number(o.price || 0);
+  const paid = paidOn(o);
+  const owing = Math.max(0, price - paid);
+
+  // Three states worth naming on paper, because "Paid $50" alone does not tell
+  // the customer whether anything is still owed at pickup.
+  const stamp = o.status === 'cancelled' ? 'CANCELLED'
+    : price > 0 && owing === 0 ? 'PAID IN FULL'
+      : paid > 0 ? 'DEPOSIT PAID'
+        : 'UNPAID';
+
+  const item = [
+    o.kind === 'custom' ? 'Custom cake' : 'Cake',
+    o.flavour,
+    o.size,
+  ].filter(Boolean).join(' · ');
+
+  return `
+    <div class="rc-head">
+      <div>
+        <div class="rc-brand">${esc(BUSINESS.name)}</div>
+        <div class="rc-sub">${esc(BUSINESS.tagline)}</div>
+      </div>
+      <div class="rc-meta">
+        <div class="rc-no">${esc(o.order_no)}</div>
+        <div>${esc(dateFmt.format(orderedAt(o)))}</div>
+      </div>
+    </div>
+
+    <div class="rc-from">
+      ${esc(store ? `${store.label} — ${store.address}` : storeLabel(o.store))}<br>
+      ${esc(BUSINESS.phone)} · ${esc(BUSINESS.email)} · ${esc(BUSINESS.site)}
+    </div>
+
+    <div class="rc-title">Receipt <span class="rc-stamp rc-${stamp.split(' ')[0].toLowerCase()}">${stamp}</span></div>
+
+    <table class="rc-kv">
+      ${receiptLine('Billed to', o.customer_name)}
+      ${receiptLine('Phone', o.customer_phone)}
+      ${receiptLine('Order placed', dateTimeFmt.format(orderedAt(o)))}
+      ${receiptLine('Pick up', dateTimeFmt.format(new Date(o.due_at)))}
+      ${receiptLine('Collected', o.picked_up_at ? dateTimeFmt.format(new Date(o.picked_up_at)) : '')}
+    </table>
+
+    <table class="rc-items">
+      <thead><tr><th>Description</th><th class="rc-amt">Amount</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="rc-item">${esc(item)}</div>
+            ${o.wording ? `<div class="rc-note">Wording: “${esc(o.wording)}”</div>` : ''}
+            ${o.design_notes ? `<div class="rc-note">${esc(o.design_notes)}</div>` : ''}
+            ${o.notes ? `<div class="rc-note">${esc(o.notes)}</div>` : ''}
+          </td>
+          <td class="rc-amt">${price ? esc(money.format(price)) : '—'}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="rc-totals">
+      <tr><th>Total</th><td>${price ? esc(money.format(price)) : '—'}</td></tr>
+      <tr><th>${paid > 0 && owing > 0 ? 'Deposit paid' : 'Paid'}</th><td>${esc(money.format(paid))}</td></tr>
+      <tr class="rc-due"><th>${owing > 0 ? 'Balance due at pickup' : 'Balance'}</th><td>${esc(money.format(owing))}</td></tr>
+    </table>
+
+    <p class="rc-foot">
+      Thank you for ordering with ${esc(BUSINESS.name)}. Every cake we make is 100% eggless.<br>
+      Questions about this order? Quote ${esc(o.order_no)} when you call ${esc(BUSINESS.phone)}.
+    </p>`;
+}
+
+/**
+ * Renders into the print-only container and opens the print dialog. The page
+ * title becomes the suggested filename in Save-as-PDF, so it is swapped for
+ * the order number and put back afterwards.
+ */
+function printReceipt(o) {
+  $('receipt-root').innerHTML = receiptHtml(o);
+  const title = document.title;
+  document.title = `Receipt ${o.order_no} — ${o.customer_name}`;
+  const restore = () => { document.title = title; };
+  window.addEventListener('afterprint', restore, { once: true });
+  window.print();
+  // Safari fires afterprint unreliably; this is the belt to that braces.
+  setTimeout(restore, 4000);
 }
 
 // ── More menu ───────────────────────────────────────────────────────────────

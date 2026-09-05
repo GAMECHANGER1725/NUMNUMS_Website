@@ -1,6 +1,7 @@
 // Deletes cake photos once their retention window closes, then clears the
-// order's photo_path. The order row and every number on it are kept forever —
-// only the image goes.
+// order's photo_path and photo_paths. An order can carry several reference
+// photos, so photos_to_purge returns one row per file, not per order. The
+// order row and every number on it are kept forever — only the image goes.
 //
 // The rule itself lives in the database (public.photos_to_purge), not here, so
 // there is one definition of "expired" rather than two that can drift.
@@ -33,13 +34,13 @@ Deno.serve(async () => {
     return Response.json({ ok: false, stage: 'storage', error: rmError.message }, { status: 500 });
   }
 
-  // Only clear photo_path after the files are actually gone. If this update
+  // Only clear the columns after the files are actually gone. If this update
   // fails the next run simply retries; clearing first would orphan the files
   // with nothing left pointing at them.
   const { error: updError } = await supabase
     .from('orders')
-    .update({ photo_path: null })
-    .in('id', expired.map((r: { id: string }) => r.id));
+    .update({ photo_path: null, photo_paths: [] })
+    .in('id', [...new Set(expired.map((r: { id: string }) => r.id))]);
   if (updError) {
     return Response.json({ ok: false, stage: 'update', error: updError.message }, { status: 500 });
   }

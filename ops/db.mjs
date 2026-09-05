@@ -27,10 +27,22 @@ export const PEOPLE = [
   { name: 'Parita',         email: 'parita@ops.numnumsbakery.com.au' },
 ];
 
+// `address` is only read by the receipt, but it belongs here beside the label
+// rather than in a second list that can disagree with the website's footer.
 export const STORES = [
-  { code: 'harris-park', label: 'Harris Park', short: 'HP' },
-  { code: 'riverstone',  label: 'Riverstone',  short: 'RV' },
+  { code: 'harris-park', label: 'Harris Park', short: 'HP',
+    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150' },
+  { code: 'riverstone',  label: 'Riverstone',  short: 'RV',
+    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765' },
 ];
+
+export const BUSINESS = {
+  name: "Num Num's Bakery",
+  tagline: '100% eggless cakes & Indian sweets',
+  phone: '+61 425 697 725',
+  email: 'info.numnumsbakery@gmail.com',
+  site: 'numnumsbakery.com.au',
+};
 
 export const storeLabel = (code) => STORES.find((s) => s.code === code)?.label ?? code;
 
@@ -304,6 +316,21 @@ export async function setCost(orderId, cost) {
   wrote();
 }
 
+/**
+ * Everything that has ever happened to one order — who changed a price, when a
+ * cake was cancelled, what a name was before it was corrected. Written by a
+ * trigger, not by this app, so it cannot be forgotten at a call site. Admin
+ * only, by RLS.
+ */
+export async function orderEvents(orderId) {
+  const { data, error } = await sb.from('order_events')
+    .select('at,actor,kind,detail')
+    .eq('order_id', orderId)
+    .order('at', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
 export async function recentAuthEvents(limit = 30) {
   const { data } = await sb.from('auth_events')
     .select('event,at,user_id').order('at', { ascending: false }).limit(limit);
@@ -339,18 +366,37 @@ export async function downscale(file, maxEdge = 1400, quality = 0.8) {
 }
 
 /** Uploads after the order row exists, keyed by its id — the storage read
- *  policy checks the order, so the row has to be there first. */
-export async function uploadPhoto(order, file) {
-  const blob = await downscale(file);
-  const path = `${order.store}/${order.id}.jpg`;
+ *  policy checks the order, so the row has to be there first.
+ *
+ *  A customer often sends several reference pictures, so this takes a list.
+ *  `photo_paths` holds all of them and `photo_path` stays the cover: every
+ *  thumbnail, the print board and the retention rule read that one column, and
+ *  none of them need to know there are others behind it. The first file keeps
+ *  the old `<id>.jpg` key so photos taken before this change still resolve. */
+export async function uploadPhotos(order, files, { append = false } = {}) {
+  const list = [...files].filter(Boolean);
+  if (!list.length) return [];
 
-  const { error } = await sb.storage.from('cake-photos')
-    .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
-  if (error) throw error;
+  const kept = append ? orderPhotos(order) : [];
+  const paths = [];
+  for (const [n, file] of list.entries()) {
+    const i = kept.length + n;
+    const blob = await downscale(file);
+    const path = `${order.store}/${order.id}${i ? `-${i + 1}` : ''}.jpg`;
+    const { error } = await sb.storage.from('cake-photos')
+      .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+    if (error) throw error;
+    paths.push(path);
+  }
 
-  await updateOrder(order.id, { photo_path: path });
-  return path;
+  const all = kept.concat(paths);
+  await updateOrder(order.id, { photo_path: all[0], photo_paths: all });
+  return all;
 }
+
+/** Every design photo on an order, oldest schema included. */
+export const orderPhotos = (o) =>
+  (o?.photo_paths?.length ? o.photo_paths : [o?.photo_path]).filter(Boolean);
 
 const signedCache = new Map();
 const SIGNED_FOR = 3600;
@@ -552,7 +598,7 @@ export async function allCustomers(max = 4000) {
  */
 export async function ordersWithPhotos() {
   const { data, error } = await sb.from('orders')
-    .select('id,order_no,customer_name,created_at,due_at,status,photo_path')
+    .select('id,order_no,customer_name,created_at,due_at,status,photo_path,photo_paths')
     .not('photo_path', 'is', null)
     .order('created_at', { ascending: true });
   if (error) throw error;

@@ -664,6 +664,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
 
+          <!-- FULL NAME -->
+          <div style="margin-bottom:0.85rem;" id="form-row-0">
+            <div>
+              <label for="cake-name" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Full name</label>
+              <input type="text" id="cake-name" autocomplete="name" placeholder="Your full name" style="width:100%;padding:8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;outline:none;">
+              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
+            </div>
+          </div>
+
           <!-- FLAVOUR + OCCASION -->
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-bottom:0.85rem;" id="form-row-1">
             <div>
@@ -1324,9 +1333,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           function chk(id) {
             var el  = document.getElementById(id);
             var err = el ? el.closest('div').parentElement.querySelector('.form-field-error') : null;
-            if (!el || !el.value) { if(err) err.style.display='block'; ok=false; }
+            if (!el || !el.value.trim()) { if(err) err.style.display='block'; ok=false; }
             else { if(err) err.style.display='none'; }
           }
+          chk('cake-name');
           chk('cake-flavour');
           chk('cake-occasion');
           chk('cake-size');
@@ -1343,9 +1353,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var size    = document.getElementById('cake-size').value;
           var estEl   = document.getElementById('price-hint-amt');
           var est     = estEl ? (estEl.textContent||'').trim() : '';
+          var custName = (document.getElementById('cake-name').value||'').trim();
           var wording  = (document.getElementById('cake-wording').value||'').trim();
           var notes    = (document.getElementById('cake-notes').value||'').trim();
           var msg = "Hi! I'd like to order a custom cake from Num Num's Bakery. Here are my details:\n" +
+            'Name: '             + custName                       + '\n' +
             'Flavour: '          + flavour                        + '\n' +
             'Occasion: '         + occasion                       + '\n' +
             'Wording on cake: '  + (wording||'None')              + '\n' +

@@ -134,12 +134,33 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **Design photos are a list, not a photo.** `photo_paths` holds every reference
+  picture the customer sent; `photo_path` is the cover, and it is what the dockets,
+  the print board and the retention rule read — none of them need to know there are
+  others behind it. Read them with `orderPhotos(o)`, which falls back to `photo_path`
+  for rows written before the column existed. `photos_to_purge()` returns one row per
+  *file*, so a multi-photo order hands storage every key.
+- **The order-time calendar greys the future; the pickup calendar greys the past.**
+  Same `mountDuePicker`, opposite `back` flag. An order can only have been placed
+  before now and a cake can only be collected after it, so one direction is wrong on
+  each field — greying yesterday on Order time was telling staff the opposite of the truth.
+- **The receipt prints from this page, not a popup.** The ops CSP has no
+  `'unsafe-inline'` in `script-src`, so a `blob:` or `about:blank` document could never
+  call the `window.print()` that turns it into a PDF. `#receipt-root` is rendered here
+  and `@media print` hides everything else. `document.title` is swapped first because
+  it becomes the suggested filename in Save-as-PDF.
+- **Nothing about an order is ever lost.** `order_events` records every insert, status
+  change and field edit — old value, new value, who, when — written by an AFTER trigger
+  so it cannot be forgotten at a call site, and readable by admins only. `cancelled_at`
+  exists for the same reason: cancelling used to be the one status change that left no
+  time behind. The 90-day log window is only what a phone downloads; Supabase keeps
+  everything, and search and date ranges reach the whole book server-side.
 - **PostgREST stops at 1000 rows and does not raise.** A query past the cap returns a short array
   with the truth only in `Content-Range`, so a list silently loses rows. Two ways out, and the
   choice matters: bound the query, or page it with `pageAll()`. Results that must be complete —
   the bookkeeper export, the analytics figures (`listOrders({ complete: true })`), print jobs —
-  are paged. Results that only need to be current are bounded: the order log is 14 days plus every
-  still-open order (`includeOpen`), with search and date ranges server-side
+  are paged. Results that only need to be current are bounded: the order log is 90 days plus every
+  still-open order (`includeOpen`) and is itself paged, with search and date ranges server-side
   (`searchOrdersRemote`, `ordersDueBetween`) so a lookup still reaches the whole book. Anything
   left unbounded goes through `capped()`, which warns.
 - **An `.in()` filter puts every id in the URL.** A thousand uuids is a ~37KB query string; the
