@@ -128,6 +128,11 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **Shop wifi drops; the app must not.** `render()` catches every view failure and paints a retry
+  state — without it a rejected fetch left the view on "Loading…" for the rest of the shift. A
+  failed refresh falls back to the held copy (`orFallback`) with a banner saying so, because the
+  baker mid-shift still needs the queue from two minutes ago. `expireCaches()` marks copies stale
+  with a flag and never discards them, or the fallback has nothing to fall back to.
 - **Filtering never refetches.** The order log (per store), the baker's queue and the analytics
   payload are each cached in `app.mjs` and invalidated by `writeStamp`. Search, date ranges and
   the bake store tabs filter what is already in memory — typing a four-letter name used to cost

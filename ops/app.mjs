@@ -155,7 +155,54 @@ async function render() {
     analytics: renderAnalytics, directory: renderDirectory,
     staff: renderStaff, export: renderExport,
   };
-  await (PAINT[view] || renderLog)();
+  // Supabase retries a failed request internally before giving up, so a dead
+  // connection sits on "Loading…" for about ten seconds. Say something at four.
+  const painting = view;
+  const slow = setTimeout(() => {
+    const root = $(`view-${painting}`);
+    if (root && view === painting && /Loading/.test(root.textContent)) {
+      root.innerHTML = '<p class="empty"><span class="empty-note">Still trying — the connection may be slow.</span></p>';
+    }
+  }, 4000);
+
+  try {
+    await (PAINT[view] || renderLog)();
+  } catch (err) {
+    // Without this the promise rejects into nothing and the view sits on
+    // "Loading…" for the rest of the shift, with no error and no way back.
+    console.warn('view failed:', err);   // the detail belongs in the console
+    renderViewError(view);
+  } finally {
+    clearTimeout(slow);
+  }
+  paintOfflineBar();
+}
+
+// A baker cannot act on "TypeError: Failed to fetch".
+const offlineReason = () => (navigator.onLine === false
+  ? 'This phone has no connection.'
+  : 'Could not reach the order book — the shop internet may be down.');
+
+function renderViewError(v) {
+  const root = $(`view-${v}`);
+  if (!root) return;
+  root.innerHTML = `
+    <div class="empty">
+      <div class="empty-mark">Nothing loaded</div>
+      <p class="empty-note">${esc(offlineReason())}<br>Nothing has been lost — the orders are on the server.</p>
+      <button class="btn btn-primary" data-retry>Try again</button>
+    </div>`;
+  root.querySelector('[data-retry]').addEventListener('click', () => render());
+}
+
+/** Says the list on screen is a held copy, and offers the way out. */
+function paintOfflineBar() {
+  const bar = $('offlinebar');
+  if (!staleSince) { bar.classList.add('hidden'); return; }
+  bar.innerHTML = `<span>Showing the copy from ${esc(agoText(Date.now() - staleSince))} — could not refresh.</span>
+    <button data-retry>Retry</button>`;
+  bar.querySelector('[data-retry]').addEventListener('click', () => render());
+  bar.classList.remove('hidden');
 }
 
 /**
@@ -270,19 +317,58 @@ function hydrateThumbs(root) {
 let logCache = new Map();
 const LOG_TTL = 120000;
 
+/**
+ * When a refresh fails.
+ *
+ * Shop wifi drops mid-shift. Blowing a loaded list away and showing an error
+ * is the wrong trade — the baker still needs the queue from two minutes ago —
+ * so a held copy is served instead, with the banner saying so. Only a view
+ * with nothing held at all raises.
+ */
+let staleSince = null;
+
+/**
+ * Mark every held copy out of date without throwing it away.
+ *
+ * A phone picked back up should refetch, but discarding the rows first means a
+ * wake-up on bad wifi lands on an error page instead of the list that was on
+ * screen a moment ago. Expiring keeps them available as the fallback.
+ */
+function expireCaches() {
+  // A flag, not `at = 0`: `at` is also how old the copy is, and zeroing it made
+  // the "showing a held copy" banner think there was nothing held.
+  for (const hit of logCache.values()) hit.expired = true;
+  if (bakeCache) bakeCache.expired = true;
+  if (analyticsCache) analyticsCache.expired = true;
+}
+
+async function orFallback(fetchFn, held) {
+  try {
+    const v = await fetchFn();
+    staleSince = null;
+    return v;
+  } catch (err) {
+    if (!held) throw err;
+    staleSince = held.at;
+    return held.rows;
+  }
+}
+
 function logFresh(forStore) {
   const hit = logCache.get(forStore);
-  return Boolean(hit) && hit.stamp === writeStamp.v && Date.now() - hit.at < LOG_TTL;
+  return Boolean(hit) && !hit.expired && hit.stamp === writeStamp.v && Date.now() - hit.at < LOG_TTL;
 }
 
 async function logData(forStore) {
   if (logFresh(forStore)) return logCache.get(forStore).rows;
-  const [rows] = await Promise.all([
-    listOrders({ store: forStore, withCosts: me.role === 'admin' }),
-    loadPrintFlags(),
-  ]);
-  logCache.set(forStore, { at: Date.now(), stamp: writeStamp.v, rows });
-  return rows;
+  return orFallback(async () => {
+    const [rows] = await Promise.all([
+      listOrders({ store: forStore, withCosts: me.role === 'admin' }),
+      loadPrintFlags(),
+    ]);
+    logCache.set(forStore, { at: Date.now(), stamp: writeStamp.v, rows });
+    return rows;
+  }, logCache.get(forStore));
 }
 
 async function renderLog() {
@@ -343,20 +429,23 @@ async function renderLog() {
 let bakeCache = null;
 
 const bakeFresh = () =>
-  bakeCache && bakeCache.stamp === writeStamp.v && Date.now() - bakeCache.at < LOG_TTL;
+  Boolean(bakeCache) && !bakeCache.expired
+  && bakeCache.stamp === writeStamp.v && Date.now() - bakeCache.at < LOG_TTL;
 
 /** The queue and the in-store tally. Flipping the store tabs filters these in
  *  memory — every cake is already here — so only a write reloads them. */
 async function bakeData() {
   if (bakeFresh()) return bakeCache.rows;
-  const twoDays = new Date(Date.now() - 3 * 86400000).toISOString();
-  const rows = await Promise.all([
-    listToBake(),
-    listOrders({ since: twoDays }),
-    loadPrintFlags(),
-  ]);
-  bakeCache = { at: Date.now(), stamp: writeStamp.v, rows };
-  return rows;
+  return orFallback(async () => {
+    const twoDays = new Date(Date.now() - 3 * 86400000).toISOString();
+    const rows = await Promise.all([
+      listToBake(),
+      listOrders({ since: twoDays }),
+      loadPrintFlags(),
+    ]);
+    bakeCache = { at: Date.now(), stamp: writeStamp.v, rows };
+    return rows;
+  }, bakeCache);
 }
 
 async function renderBake() {
@@ -2718,24 +2807,27 @@ const ANALYTICS_TTL = 120000;
 
 const cacheAge = () => (analyticsCache ? Date.now() - analyticsCache.at : 0);
 const cacheFresh = () =>
-  analyticsCache && analyticsCache.stamp === writeStamp.v && cacheAge() < ANALYTICS_TTL;
+  Boolean(analyticsCache) && !analyticsCache.expired
+  && analyticsCache.stamp === writeStamp.v && cacheAge() < ANALYTICS_TTL;
 
 async function analyticsData({ force = false } = {}) {
   if (!force && cacheFresh()) return analyticsCache.data;
 
-  const since = new Date(Date.now() - 63 * 86400000).toISOString();
-  const [all, profiles, events, customerRows] = await Promise.all([
-    // includeOpen keeps money still owed on old orders visible no matter how
-    // long ago it was ordered — that debt is the whole point of tracking it.
-    listOrders({ since, withCosts: true, includeOpen: true }),
-    listProfiles(),
-    recentAuthEvents(40),
-    // Over every order ever, not the 63-day window the charts use.
-    allCustomers().catch(() => []),
-  ]);
-
-  analyticsCache = { at: Date.now(), stamp: writeStamp.v, data: { all, profiles, events, customerRows } };
-  return analyticsCache.data;
+  const held = analyticsCache && { at: analyticsCache.at, rows: analyticsCache.data };
+  return orFallback(async () => {
+    const since = new Date(Date.now() - 63 * 86400000).toISOString();
+    const [all, profiles, events, customerRows] = await Promise.all([
+      // includeOpen keeps money still owed on old orders visible no matter how
+      // long ago it was ordered — that debt is the whole point of tracking it.
+      listOrders({ since, withCosts: true, includeOpen: true }),
+      listProfiles(),
+      recentAuthEvents(40),
+      // Over every order ever, not the 63-day window the charts use.
+      allCustomers().catch(() => []),
+    ]);
+    analyticsCache = { at: Date.now(), stamp: writeStamp.v, data: { all, profiles, events, customerRows } };
+    return analyticsCache.data;
+  }, held);
 }
 
 /** "just now" / "4 min ago" — enough to know whether to hit Refresh. */
@@ -3195,8 +3287,7 @@ async function renderAnalytics({ force = false } = {}) {
 // ── Keep a waking phone current ─────────────────────────────────────────────
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible' || !me || $('sheet-root').innerHTML) return;
-  // A phone picked back up wants the truth, not a cached copy.
-  analyticsCache = null; logCache = new Map(); bakeCache = null;
+  expireCaches();
   render();
 });
 

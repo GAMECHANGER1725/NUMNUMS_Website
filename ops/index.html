@@ -1208,6 +1208,29 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 .fix-go { width: 13px; height: 13px; flex: none; stroke: var(--rose); fill: none; stroke-width: 2; }
 .fix-more { margin-top: 9px; font-size: 12.5px; color: var(--taupe); }
 
+/* ── Lost connection ────────────────────────────────────────────────────── */
+/* Shop wifi drops. When it does, a held copy beats an error page — the baker
+   mid-shift still needs the queue he loaded two minutes ago — but he has to
+   know it is held, or he will trust a list that has stopped updating. */
+.offlinebar {
+  display: flex; align-items: center; gap: 8px;
+  max-width: 940px; margin: 0 auto 10px; padding: 8px 11px;
+  border: 1px solid var(--crust); border-radius: 9px;
+  background: rgba(179,123,44,.08);
+  font-size: 12.5px; color: var(--ink-soft); line-height: 1.35;
+}
+.offlinebar span { flex: 1; }
+.offlinebar::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: var(--crust);
+}
+.offlinebar button {
+  flex: none; min-height: 30px; padding: 0 10px; border-radius: 15px;
+  font-size: 12.5px; font-weight: 500;
+  background: var(--crust); color: var(--cream);
+}
+.empty .btn { max-width: 220px; margin: 16px auto 0; }
+
 </style>
 </head>
 <body>
@@ -1266,6 +1289,7 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
       </button>
     </div>
     <div class="cal hidden" id="range-cal"></div>
+    <div class="offlinebar hidden" id="offlinebar" role="status" aria-live="polite"></div>
   </header>
 
   <main class="main">
