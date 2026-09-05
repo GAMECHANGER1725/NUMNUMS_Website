@@ -872,3 +872,48 @@ export function staleOpen(orders, now = new Date(), grace = 1) {
     .map((o) => ({ ...o, daysLate: daysBetween(sydneyParts(o.due_at).dayKey, todayKey) }))
     .sort((a, b) => b.daysLate - a.daysLate);
 }
+
+// ── Photo retention ─────────────────────────────────────────────────────────
+
+const DAY = 86400000;
+const RETAIN_DAYS = 14;
+
+/**
+ * Photos the nightly purge should already have deleted.
+ *
+ * Mirrors `photos_to_purge()` in Postgres exactly:
+ *   kept 14 days from the order date; but a cake due beyond that window keeps
+ *   its photo until the order is finished.
+ *
+ * Held here because nothing else can tell whether the purge is actually
+ * working. The cron reports success as soon as it has *dispatched* the HTTP
+ * call — pg_net is fire-and-forget — so a job that fires nightly and deletes
+ * nothing looks identical to a healthy one. A photo still present after its
+ * date has passed is the only honest signal, and the cost of missing it is
+ * the storage quota filling until uploads start failing mid-shift.
+ */
+export function photosToPurge(orders, now = new Date()) {
+  const t = now.getTime();
+  return orders.filter((o) => {
+    if (!o.photo_path) return false;
+    const made = new Date(o.created_at).getTime();
+    const due = new Date(o.due_at).getTime();
+    const cutoff = made + RETAIN_DAYS * DAY;
+    return due <= cutoff
+      ? t >= cutoff
+      : (o.status === 'picked_up' || o.status === 'cancelled');
+  });
+}
+
+/** What the photo store is holding, and whether the purge is keeping up. */
+export function photoHealth(orders, now = new Date()) {
+  const held = orders.filter((o) => o.photo_path);
+  const overdue = photosToPurge(orders, now);
+  const ages = held.map((o) => Math.floor((now.getTime() - new Date(o.created_at).getTime()) / DAY));
+  return {
+    held: held.length,
+    overdue: overdue.length,
+    oldestDays: ages.length ? Math.max(...ages) : 0,
+    rows: overdue.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)),
+  };
+}

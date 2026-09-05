@@ -443,3 +443,19 @@ export async function allCustomers(limit = 2000) {
   if (error) throw error;
   return data || [];
 }
+
+/**
+ * Every order still holding a photo.
+ *
+ * Its own query rather than a slice of the analytics fetch: that window is 63
+ * days, and a photo the purge failed to delete six months ago is exactly the
+ * one that would not appear in it. In a healthy shop this returns a handful.
+ */
+export async function ordersWithPhotos() {
+  const { data, error } = await sb.from('orders')
+    .select('id,order_no,customer_name,created_at,due_at,status,photo_path')
+    .not('photo_path', 'is', null)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}

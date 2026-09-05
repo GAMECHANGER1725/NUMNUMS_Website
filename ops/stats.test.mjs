@@ -13,7 +13,7 @@ import {
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
-  productMix, sortMix, staleOpen,
+  productMix, sortMix, staleOpen, photosToPurge, photoHealth,
 } from './stats.mjs';
 
 let passed = 0;
@@ -798,6 +798,47 @@ test('a cake due later today is not late yet', () => {
   assert.equal(staleOpen(later, now).length, 0);
   // …and with no grace at all it still is not, because the day has not passed
   assert.equal(staleOpen(later, now, 0).length, 1);        // grace 0 means "today counts"
+});
+
+test('photo purge rule matches the one in Postgres', () => {
+  const now = new Date('2026-09-30T00:00:00Z');
+  const o = (id, createdKey, dueKey, status, photo = 'p.jpg') =>
+    ({ id, created_at: `${createdKey}T00:00:00Z`, due_at: `${dueKey}T00:00:00Z`, status, photo_path: photo });
+
+  const rows = [
+    // due inside the 14-day window: goes at day 14 regardless of status
+    o('a', '2026-09-01', '2026-09-03', 'picked_up'),   // 29 days old -> purge
+    o('b', '2026-09-20', '2026-09-22', 'picked_up'),   // 10 days old -> keep
+    o('c', '2026-09-01', '2026-09-03', 'placed'),      // still open, but past 14 days -> purge
+    // due beyond the window: kept until the order is finished, however old
+    o('d', '2026-08-01', '2026-10-30', 'placed'),      // 60 days old, not finished -> keep
+    o('e', '2026-08-01', '2026-10-30', 'picked_up'),   // finished -> purge
+    o('f', '2026-08-01', '2026-10-30', 'cancelled'),   // finished -> purge
+    o('g', '2026-09-01', '2026-09-03', 'picked_up', null),  // no photo at all
+  ];
+
+  assert.deepEqual(photosToPurge(rows, now).map((r) => r.id).sort(), ['a', 'c', 'e', 'f']);
+});
+
+test('exactly fourteen days is the boundary, not fifteen', () => {
+  const made = '2026-09-01T00:00:00Z';
+  const row = [{ id: 'x', created_at: made, due_at: '2026-09-02T00:00:00Z', status: 'picked_up', photo_path: 'p' }];
+  assert.equal(photosToPurge(row, new Date('2026-09-14T23:59:00Z')).length, 0);   // day 13
+  assert.equal(photosToPurge(row, new Date('2026-09-15T00:00:00Z')).length, 1);   // day 14
+});
+
+test('photo health reports what is held and what is overdue', () => {
+  const now = new Date('2026-09-30T00:00:00Z');
+  const rows = [
+    { id: 'a', created_at: '2026-08-01T00:00:00Z', due_at: '2026-08-02T00:00:00Z', status: 'picked_up', photo_path: 'p' },
+    { id: 'b', created_at: '2026-09-28T00:00:00Z', due_at: '2026-09-29T00:00:00Z', status: 'placed', photo_path: 'p' },
+    { id: 'c', created_at: '2026-09-28T00:00:00Z', due_at: '2026-09-29T00:00:00Z', status: 'placed', photo_path: null },
+  ];
+  const h = photoHealth(rows, now);
+  assert.equal(h.held, 2);           // the one with no photo is not held
+  assert.equal(h.overdue, 1);
+  assert.equal(h.oldestDays, 60);
+  assert.equal(h.rows[0].id, 'a');
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

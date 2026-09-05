@@ -10,7 +10,7 @@ import {
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, uploadPhoto, photoUrl, photoUrls,
-  listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween,
+  listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   writeStamp,
   listPrintJobs, listPrintFlags, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
@@ -20,7 +20,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
-  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen,
+  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
@@ -2822,7 +2822,7 @@ async function analyticsData({ force = false } = {}) {
   const held = analyticsCache && { at: analyticsCache.at, rows: analyticsCache.data };
   return orFallback(async () => {
     const since = new Date(Date.now() - 63 * 86400000).toISOString();
-    const [all, profiles, events, customerRows] = await Promise.all([
+    const [all, profiles, events, customerRows, photoRows] = await Promise.all([
       // includeOpen keeps money still owed on old orders visible no matter how
       // long ago it was ordered — that debt is the whole point of tracking it.
       listOrders({ since, withCosts: true, includeOpen: true }),
@@ -2830,8 +2830,9 @@ async function analyticsData({ force = false } = {}) {
       recentAuthEvents(40),
       // Over every order ever, not the 63-day window the charts use.
       allCustomers().catch(() => []),
+      ordersWithPhotos().catch(() => []),
     ]);
-    analyticsCache = { at: Date.now(), stamp: writeStamp.v, data: { all, profiles, events, customerRows } };
+    analyticsCache = { at: Date.now(), stamp: writeStamp.v, data: { all, profiles, events, customerRows, photoRows } };
     return analyticsCache.data;
   }, held);
 }
@@ -2848,7 +2849,7 @@ async function renderAnalytics({ force = false } = {}) {
   const root = $('view-analytics');
   if (force || !cacheFresh()) root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
 
-  const { all, profiles, events, customerRows } = await analyticsData({ force });
+  const { all, profiles, events, customerRows, photoRows } = await analyticsData({ force });
   peopleById = new Map(profiles.map((p) => [p.id, p]));
   orders = all;
 
@@ -2892,6 +2893,7 @@ async function renderAnalytics({ force = false } = {}) {
   const board = customerLeaderboard(customerRows, now);
   const ahead = forwardBook(all, 7, now);
   const stale = staleOpen(all, now);
+  const photos = photoHealth(photoRows || [], now);
   const norm = weekdayNorm(all, 6, now);
 
   const hours = busiestHours(all.filter((o) => {
@@ -3127,6 +3129,23 @@ async function renderAnalytics({ force = false } = {}) {
       <div class="list-row"><span class="grow">Cakes due for pickup today</span><span class="num">${sDueToday.count}</span></div>
       <div class="list-row"><span class="grow">Orders taken today</span><span class="num">${sToday.count}</span></div>
       <div class="list-row"><span class="grow">Still to be baked</span><span class="num">${all.filter((o) => o.status === 'placed').length}</span></div>
+    </div>
+
+    <div class="panel${photos.overdue ? ' panel-warn' : ''}">
+      <div class="panel-title">${photos.overdue
+        ? `${photos.overdue} design photo${photos.overdue === 1 ? '' : 's'} should already be deleted`
+        : 'Photo storage'}</div>
+      <div class="panel-note">
+        Photos go 14 days after the order, or once a long-lead cake is finished.
+        ${photos.overdue
+          ? 'The nightly job reports success the moment it fires, so anything still here means it is not actually deleting. Left alone the storage quota fills and photo uploads start failing mid-shift.'
+          : 'The nightly job reports success the moment it fires, so this count is the only real check that it works.'}
+      </div>
+      <div class="list-row"><span class="grow">Photos held</span><span class="num">${photos.held}</span></div>
+      <div class="list-row"><span class="grow">Oldest</span><span class="num">${photos.oldestDays} day${photos.oldestDays === 1 ? '' : 's'}</span></div>
+      ${photos.overdue ? photos.rows.slice(0, 6).map((o) =>
+        fixRow(o, `${Math.floor((now - new Date(o.created_at)) / 86400000)} days old`)).join('') : ''}
+      ${photos.overdue > 6 ? `<p class="fix-more">and ${photos.overdue - 6} more</p>` : ''}
     </div>
 
     <div class="panel">

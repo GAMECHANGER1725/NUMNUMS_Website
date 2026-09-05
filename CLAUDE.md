@@ -128,6 +128,11 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **The photo purge has no other watchdog.** `photosToPurge` in `stats.mjs` mirrors
+  `photos_to_purge()` in Postgres exactly, and the Data page shows anything overdue. The cron
+  reports success as soon as `pg_net` dispatches the call, so a job that fires nightly and deletes
+  nothing is indistinguishable from a healthy one — a photo still present past its date is the only
+  honest signal. If you change the retention rule, change it in both places and re-check they agree.
 - **Phone first, but not phone only.** Card lists (`.docket-grid`, `#cust-list`) go two-up from
   720px for the counter tablet and Vaidik's laptop; below that nothing changes. Audited at 320 /
   375 / 430 / 820 / 1440 for horizontal scroll, overflow and sub-32px tap targets — re-run that
