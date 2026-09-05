@@ -76,6 +76,17 @@ export async function listProfiles() {
   return data || [];
 }
 
+/**
+ * Bumped by every write in this file.
+ *
+ * Anything caching a read can watch this and know its copy is stale without
+ * having to guess a TTL short enough to catch its own edits. It lives here,
+ * not in the views, because every writer already routes through this module —
+ * a cache that has to be invalidated by each caller gets missed by the next one.
+ */
+export const writeStamp = { v: 0 };
+const wrote = () => { writeStamp.v += 1; };
+
 // ── Orders ──────────────────────────────────────────────────────────────────
 
 /**
@@ -174,12 +185,14 @@ export async function getCustomer(phone) {
 export async function createOrder(fields) {
   const { data, error } = await sb.from('orders').insert(fields).select().single();
   if (error) throw error;
+  wrote();
   return data;
 }
 
 export async function updateOrder(id, fields) {
   const { data, error } = await sb.from('orders').update(fields).eq('id', id).select().single();
   if (error) throw error;
+  wrote();
   return data;
 }
 
@@ -189,6 +202,7 @@ export async function setCost(orderId, cost) {
   const { error } = await sb.from('order_costs')
     .upsert({ order_id: orderId, cost: cost === '' || cost == null ? null : Number(cost) });
   if (error) throw error;
+  wrote();
 }
 
 export async function recentAuthEvents(limit = 30) {
@@ -281,12 +295,14 @@ export async function listOpenOrders() {
 export async function createPrintJob(fields) {
   const { data, error } = await sb.from('print_jobs').insert(fields).select().single();
   if (error) throw error;
+  wrote();
   return data;
 }
 
 export async function updatePrintJob(id, fields) {
   const { data, error } = await sb.from('print_jobs').update(fields).eq('id', id).select().single();
   if (error) throw error;
+  wrote();
   return data;
 }
 
@@ -295,6 +311,7 @@ export const setPrintStatus = (id, status) => updatePrintJob(id, { status });
 export async function deletePrintJob(id) {
   const { error } = await sb.from('print_jobs').delete().eq('id', id);
   if (error) throw error;
+  wrote();
 }
 
 // ── Customer directory ──────────────────────────────────────────────────────

@@ -11,6 +11,7 @@ import {
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, uploadPhoto, photoUrl,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween,
+  writeStamp,
   listPrintJobs, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
 import {
@@ -2583,9 +2584,23 @@ const delta = (now, before) => {
   };
 };
 
-async function renderAnalytics() {
-  const root = $('view-analytics');
-  root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+/**
+ * One fetch behind three pages.
+ *
+ * Finance, Customers and Data are three views of the same 63 days, and every
+ * tap between them was re-running five round trips — including the whole
+ * customer table — for bytes the page already had. Held until something is
+ * written (see writeStamp) or the data goes stale, whichever comes first.
+ */
+let analyticsCache = null;
+const ANALYTICS_TTL = 120000;
+
+const cacheAge = () => (analyticsCache ? Date.now() - analyticsCache.at : 0);
+const cacheFresh = () =>
+  analyticsCache && analyticsCache.stamp === writeStamp.v && cacheAge() < ANALYTICS_TTL;
+
+async function analyticsData({ force = false } = {}) {
+  if (!force && cacheFresh()) return analyticsCache.data;
 
   const since = new Date(Date.now() - 63 * 86400000).toISOString();
   const [all, profiles, events, customerRows] = await Promise.all([
@@ -2597,6 +2612,24 @@ async function renderAnalytics() {
     // Over every order ever, not the 63-day window the charts use.
     allCustomers().catch(() => []),
   ]);
+
+  analyticsCache = { at: Date.now(), stamp: writeStamp.v, data: { all, profiles, events, customerRows } };
+  return analyticsCache.data;
+}
+
+/** "just now" / "4 min ago" — enough to know whether to hit Refresh. */
+function agoText(ms) {
+  const mins = Math.floor(ms / 60000);
+  if (mins < 1) return 'just now';
+  if (mins === 1) return '1 min ago';
+  return `${mins} min ago`;
+}
+
+async function renderAnalytics({ force = false } = {}) {
+  const root = $('view-analytics');
+  if (force || !cacheFresh()) root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+
+  const { all, profiles, events, customerRows } = await analyticsData({ force });
   peopleById = new Map(profiles.map((p) => [p.id, p]));
   orders = all;
 
@@ -2969,7 +3002,27 @@ async function renderAnalytics() {
     `,
   };
 
-  root.innerHTML = PAGES[analyticsPage] || PAGES.finance;
+  // A cache the reader cannot see is a cache they cannot trust, so the page
+  // says how old it is and offers the way out.
+  const freshRow = `
+    <div class="freshbar">
+      <span id="fresh-when">Updated ${esc(agoText(cacheAge()))}</span>
+      <button class="freshbar-btn" id="fresh-go">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 11a8 8 0 10-2.3 5.7M20 5v6h-6"/>
+        </svg>
+        Refresh
+      </button>
+    </div>`;
+
+  root.innerHTML = freshRow + (PAGES[analyticsPage] || PAGES.finance);
+
+  $('fresh-go').addEventListener('click', async () => {
+    const btn = $('fresh-go');
+    btn.disabled = true;
+    $('fresh-when').textContent = 'Refreshing…';
+    await renderAnalytics({ force: true });
+  });
 
   if (analyticsPage === 'customers') {
     $('board-tabs').querySelectorAll('[data-board]').forEach((b) =>
@@ -2980,7 +3033,9 @@ async function renderAnalytics() {
 
 // ── Keep a waking phone current ─────────────────────────────────────────────
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && me && !$('sheet-root').innerHTML) render();
+  if (document.visibilityState !== 'visible' || !me || $('sheet-root').innerHTML) return;
+  analyticsCache = null;   // a phone picked back up wants the truth, not a cached copy
+  render();
 });
 
 // Restore an existing session so it is one sign-in per phone, not per shift.

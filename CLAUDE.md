@@ -123,6 +123,10 @@ main site.
   starting `= + - @` is executed as a formula by Excel and Sheets. Do not "simplify" that escaping.
 - **The staff page is read-only.** Roles and store scoping are what RLS enforces; they get changed
   in Supabase so the change is deliberate, not by an admin mis-tapping their own row.
+- **The three analytics pages share one fetch**, cached in `app.mjs` and invalidated by
+  `writeStamp` in `db.mjs`, which every mutating query bumps. Add the bump to any new writer —
+  a cache each caller has to remember to clear is one the next caller forgets. The pages carry a
+  visible "Updated …/Refresh" row because a cache the reader cannot see is one they cannot trust.
 - **Charts** are hand-rolled inline SVG in `app.mjs` (`takingsChart`, `weeklyStoreChart`) — no
   charting library: the CSP allows one CDN and a bundle would be the heaviest thing on a page
   staff open over shop wifi. The two series colours (`#A03D5E`, `#C08A2E`) were picked by running
