@@ -21,7 +21,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
-  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats,
+  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
@@ -2974,6 +2974,7 @@ async function renderAnalytics({ force = false } = {}) {
   const stale = staleOpen(all, now);
   const photos = photoHealth(photoRows || [], now);
   const cancels = cancellationStats(all, 63, now);
+  const pricing = pricingGaps(all, basePrice, { days: 30, now });
   const norm = weekdayNorm(all, 6, now);
 
   const hours = busiestHours(all.filter((o) => {
@@ -3174,6 +3175,21 @@ async function renderAnalytics({ force = false } = {}) {
         <span class="list-meta">${aheadOrders.length} cake${aheadOrders.length === 1 ? '' : 's'}</span>
         <span class="num">${money.format(summarise(aheadOrders).revenue)}</span></div>
     </div>
+
+    ${pricing.under.length ? `
+      <div class="panel panel-warn">
+        <div class="panel-title">${pricing.under.length} cake${pricing.under.length === 1 ? '' : 's'} sold under the list price</div>
+        <div class="panel-note">
+          ${money.format(pricing.shortfall)} below what those sizes list at, across
+          ${pricing.checked} priced order${pricing.checked === 1 ? '' : 's'} in the last 30 days.
+          Some will be discounts you meant to give; a large gap is usually a missing
+          digit. Slices and sizes with no list price are not counted, and a premium
+          flavour can only push a price up, so nothing here is flagged for being Rasmalai.
+        </div>
+        ${pricing.under.slice(0, 8).map((o) =>
+          fixRow(o, `${money.format(o.price)} vs ${money.format(o.base)}`)).join('')}
+        ${pricing.under.length > 8 ? `<p class="fix-more">and ${pricing.under.length - 8} more</p>` : ''}
+      </div>` : ''}
 
     ${noPrice.length ? `
       <div class="panel panel-warn">

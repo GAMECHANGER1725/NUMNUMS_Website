@@ -13,7 +13,7 @@ import {
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
-  productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats,
+  productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats, pricingGaps,
 } from './stats.mjs';
 
 let passed = 0;
@@ -884,6 +884,39 @@ test('no orders at all does not divide by zero', () => {
   assert.equal(c.rate, 0);
   assert.equal(c.confident, false);
   assert.deepEqual(c.byStore, []);
+});
+
+test('pricing gaps flag only what was undercharged', () => {
+  const now = new Date('2026-09-30T02:00:00Z');
+  const baseFor = (size) => ({ '8 inch': 49.99, '10 inch': 74.99, Slice: null }[size] ?? null);
+  const o = (id, size, price, opts = {}) => ({
+    id, size, price, status: opts.status || 'picked_up',
+    created_at: `${opts.day || '2026-09-20'}T02:00:00Z`,
+  });
+
+  const g = pricingGaps([
+    o('under',    '8 inch', 40.00),                       // $9.99 short
+    o('way-off',  '10 inch', 7.50),                       // a missing digit: $67.49 short
+    o('exact',    '8 inch', 49.99),                       // on list
+    o('premium',  '8 inch', 74.99),                       // Rasmalai, above list — fine
+    o('slice',    'Slice',  6.00),                        // no list price to judge
+    o('nolist',   '20 inch', 5.00),                       // size not in the catalogue
+    o('unpriced', '8 inch', null),
+    o('void',     '8 inch', 1.00, { status: 'cancelled' }),
+    o('old',      '8 inch', 1.00, { day: '2026-01-01' }), // outside the window
+  ], baseFor, { days: 30, now });
+
+  assert.equal(g.checked, 4);                             // under, way, exact, premium
+  assert.deepEqual(g.under.map((r) => r.id), ['way-off', 'under']);   // biggest shortfall first
+  assert.equal(Math.round(g.shortfall * 100) / 100, 77.48);
+  assert.equal(g.under[0].base, 74.99);
+});
+
+test('a penny of floating point noise is not a discount', () => {
+  const now = new Date('2026-09-30T02:00:00Z');
+  const baseFor = () => 0.1 + 0.2;                        // 0.30000000000000004
+  const rows = [{ id: 'x', size: '8 inch', price: 0.3, status: 'picked_up', created_at: '2026-09-20T02:00:00Z' }];
+  assert.equal(pricingGaps(rows, baseFor, { days: 30, now }).under.length, 0);
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

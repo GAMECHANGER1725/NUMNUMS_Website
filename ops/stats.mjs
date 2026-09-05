@@ -969,3 +969,41 @@ export function cancellationStats(orders, days = 90, now = new Date()) {
       .sort((a, b) => b.rate - a.rate),
   };
 }
+
+/**
+ * Cakes sold under the standard price.
+ *
+ * Staff type the price by hand, so it drifts: a discount nobody logged, a
+ * missing digit, a size charged at the rate below it. Nothing in the shop
+ * compares what was charged against what the size lists at, so the money never
+ * shows up as missing — it just makes every average slightly wrong.
+ *
+ * Only a shortfall counts. A premium flavour can only push the expected price
+ * up, so a cake priced *below* its size is unambiguous whatever is in it;
+ * anything above may simply be Rasmalai. Sizes with no list price (a slice) and
+ * orders with no price at all cannot be judged and are left out of the count.
+ *
+ * `baseFor` is passed in rather than imported so this stays pure data logic and
+ * the catalogue remains the single place a price is written down.
+ */
+export function pricingGaps(orders, baseFor, { days = 30, now = new Date() } = {}) {
+  const todayKey = sydneyParts(now).dayKey;
+  let checked = 0;
+  const under = [];
+
+  for (const o of orders) {
+    if (o.status === 'cancelled') continue;
+    const age = daysBetween(sydneyParts(o.created_at).dayKey, todayKey);
+    if (age < 0 || age >= days) continue;
+
+    const base = baseFor(o.size);
+    if (base == null || o.price == null) continue;
+    checked += 1;
+
+    const gap = base - num(o.price);
+    if (gap > 0.005) under.push({ ...o, base, gap });
+  }
+
+  under.sort((a, b) => b.gap - a.gap);
+  return { checked, under, shortfall: under.reduce((t, r) => t + r.gap, 0) };
+}

@@ -144,6 +144,10 @@ main site.
   way pops that entry so history never fills with dead steps. `popstate` is a no-op when nothing is
   open — that is what makes our own `history.back()` safe. Any new overlay must go through
   `pushOverlay` and take a `{ fromHistory }` argument, or back will leave the app again.
+- **`catalog.mjs` is the only place a price is written down.** `pricingGaps` takes the lookup as
+  an argument rather than importing it, so `stats.mjs` stays pure and there is never a second copy
+  of the price list to drift. Only shortfalls are flagged — a premium flavour can only push a
+  price up, so flagging "above list" would report every Rasmalai as an error.
 - **Say when a number is too small to act on.** `cancellationStats` returns `confident`, false
   until both compared groups have ten orders behind them, and the panel prints a caveat instead of
   a recommendation. Any future panel that invites a decision — a policy, a price, dropping a
