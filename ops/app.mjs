@@ -11,6 +11,7 @@ import {
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, uploadPhoto, photoUrl, photoUrls,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
+  ordersDueBetween, searchOrdersRemote,
   writeStamp,
   listPrintJobs, listPrintFlags, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
@@ -18,7 +19,7 @@ import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, summarise, weeklyStats,
   busiestHours, bakerSections, paidOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
-  dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
+  dayLabel, soldWithin, salesByWeek, logSections, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
@@ -338,6 +339,7 @@ let staleSince = null;
  * screen a moment ago. Expiring keeps them available as the fallback.
  */
 function expireCaches() {
+  lookupCache = null;
   // A flag, not `at = 0`: `at` is also how old the copy is, and zeroing it made
   // the "showing a held copy" banner think there was nothing held.
   for (const hit of logCache.values()) hit.expired = true;
@@ -362,11 +364,20 @@ function logFresh(forStore) {
   return Boolean(hit) && !hit.expired && hit.stamp === writeStamp.v && Date.now() - hit.at < LOG_TTL;
 }
 
+// The worklist only ever shows open orders plus the last week of collected
+// ones, but it was fetching the store's entire history to do it — every column
+// of every order ever taken. PostgREST stops at 1000 rows, so at their volume
+// the log would have started silently dropping orders inside two months.
+// `includeOpen` is what makes the window safe: nothing unfinished ages out of
+// it, however old.
+const LOG_WINDOW_DAYS = 30;
+
 async function logData(forStore) {
   if (logFresh(forStore)) return logCache.get(forStore).rows;
   return orFallback(async () => {
+    const since = new Date(Date.now() - LOG_WINDOW_DAYS * 86400000).toISOString();
     const [rows] = await Promise.all([
-      listOrders({ store: forStore, withCosts: me.role === 'admin' }),
+      listOrders({ store: forStore, since, includeOpen: true, withCosts: me.role === 'admin' }),
       loadPrintFlags(),
     ]);
     logCache.set(forStore, { at: Date.now(), stamp: writeStamp.v, rows });
@@ -374,21 +385,48 @@ async function logData(forStore) {
   }, logCache.get(forStore));
 }
 
+/**
+ * Searching or picking dates is a lookup over the whole book, which is no
+ * longer the same thing as what the worklist holds. Both go to the server.
+ */
+let lookupCache = null;
+
+async function lookupData(forStore, query, range) {
+  const key = `${forStore}|${query}|${range ? `${range.from}>${range.to}` : ''}`;
+  if (lookupCache && lookupCache.key === key
+      && lookupCache.stamp === writeStamp.v
+      && Date.now() - lookupCache.at < LOG_TTL) return lookupCache.rows;
+
+  const withCosts = me.role === 'admin';
+  const rows = query
+    ? await searchOrdersRemote({ term: query, store: forStore, withCosts })
+    : await ordersDueBetween({
+        store: forStore,
+        fromISO: sydneyDateTimeToISO(range.from, 0, 0),
+        toISO: sydneyDateTimeToISO(range.to, 23, 59),
+        withCosts,
+      });
+  lookupCache = { key, at: Date.now(), stamp: writeStamp.v, rows };
+  return rows;
+}
+
 async function renderLog() {
   const root = $('view-log');
   // Only flash "Loading…" when something is actually being fetched; on a
   // filter keystroke it would strobe the list on every letter.
-  if (!logFresh(store)) root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
-  orders = await logData(store);
+  const lookup = Boolean(logQuery || logRange);
+  if (!lookup && !logFresh(store)) {
+    root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+  }
+  orders = lookup ? await lookupData(store, logQuery, logRange) : await logData(store);
 
   const now = new Date();
   // A date range is a lookup, not the daily worklist, so it keeps every
   // collected order in the window instead of ageing them out after a week.
   // Searching or picking dates is a lookup, not the daily worklist, so both
   // keep every collected order instead of ageing them out after a week.
-  const lookup = Boolean(logQuery || logRange);
-  let rows = logRange ? inDateRange(orders, logRange.from, logRange.to) : orders;
-  rows = searchOrders(rows, logQuery);
+  // A lookup arrives already filtered by the server; the worklist does not.
+  const rows = lookup ? orders : searchOrders(orders, logQuery);
   const sections = logSections(rows, now, { collectedDays: lookup ? Infinity : 7 });
   paintRangeLabel();
 

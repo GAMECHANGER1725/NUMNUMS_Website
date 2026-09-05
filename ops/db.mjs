@@ -87,6 +87,24 @@ export async function listProfiles() {
 export const writeStamp = { v: 0 };
 const wrote = () => { writeStamp.v += 1; };
 
+/**
+ * PostgREST stops at 1000 rows and says so in Content-Range, but a client that
+ * ignores the header just gets a short array and no error. That is how a list
+ * quietly starts losing rows: nothing throws, the page renders, and the orders
+ * past the thousandth are simply not there.
+ *
+ * Every unbounded read in this file goes through here, so if one ever reaches
+ * the ceiling it is loud instead of silent.
+ */
+export const PAGE_CAP = 1000;
+
+function capped(rows, what) {
+  if (rows.length >= PAGE_CAP) {
+    console.warn(`${what}: hit the ${PAGE_CAP}-row limit — this result is incomplete. Narrow the query.`);
+  }
+  return rows;
+}
+
 // ── Orders ──────────────────────────────────────────────────────────────────
 
 /**
@@ -124,7 +142,49 @@ export async function listOrders({ store, since, until, withCosts = false, inclu
   if (until) q = q.lte('due_at', until);
   const { data, error } = await q;
   if (error) throw error;
+  capped(data, 'listOrders');
   return withCosts ? attachCosts(data) : data;
+}
+
+/** Orders picked up between two instants — the date-range lookup, done server
+ *  side so it reaches the whole book rather than whatever happens to be loaded. */
+export async function ordersDueBetween({ store, fromISO, toISO, withCosts = false }) {
+  let q = sb.from('orders').select('*')
+    .gte('due_at', fromISO).lte('due_at', toISO)
+    .order('due_at', { ascending: true });
+  if (store) q = q.eq('store', store);
+  const { data, error } = await q;
+  if (error) throw error;
+  capped(data, 'ordersDueBetween');
+  return withCosts ? attachCosts(data) : data;
+}
+
+/**
+ * Search the whole order book, not just the rows on screen.
+ *
+ * Matches the same fields as searchOrders() in stats.mjs — customer, docket
+ * number, flavour, size, wording, and a normalised phone — so moving the work
+ * to the server does not change what counts as a hit.
+ */
+export async function searchOrdersRemote({ term, store, withCosts = false, limit = 200 }) {
+  const raw = String(term ?? '').trim();
+  if (raw.length < 2) return [];
+  // , ( ) * % are PostgREST filter syntax and would corrupt the or() list.
+  const clean = raw.replace(/[,()*%\\]/g, ' ').trim();
+  const digits = raw.replace(/\D/g, '');
+
+  const clauses = ['customer_name', 'order_no', 'flavour', 'size', 'wording']
+    .map((col) => `${col}.ilike.%${clean}%`);
+  if (digits.length >= 4) {
+    clauses.push(`phone_key.like.%${digits.length >= 9 ? digits.slice(-9) : digits}%`);
+  }
+
+  let q = sb.from('orders').select('*').or(clauses.join(','))
+    .order('due_at', { ascending: false }).limit(limit);
+  if (store) q = q.eq('store', store);
+  const { data, error } = await q;
+  if (error) throw error;
+  return withCosts ? attachCosts(data) : (data || []);
 }
 
 /** Everything the baker still has to make. Walk-ins never appear: they are
@@ -435,13 +495,20 @@ export async function ordersBetween(fromISO, toISO) {
 
 /** Every customer on record, for the leaderboards. The view aggregates over all
  *  orders, not the analytics window, which is the whole point for "gone quiet". */
-export async function allCustomers(limit = 2000) {
-  const { data, error } = await sb.from('customers')
-    .select('phone_key,name,phone,order_count,spend,first_order,last_order')
-    .order('spend', { ascending: false })
-    .limit(limit);
-  if (error) throw error;
-  return data || [];
+export async function allCustomers(max = 4000) {
+  // Asking for 2000 from a server that returns 1000 is how the leaderboard
+  // would have started missing customers without anyone noticing. Page instead.
+  const out = [];
+  for (let from = 0; from < max; from += PAGE_CAP) {
+    const { data, error } = await sb.from('customers')
+      .select('phone_key,name,phone,order_count,spend,first_order,last_order')
+      .order('spend', { ascending: false })
+      .range(from, from + PAGE_CAP - 1);
+    if (error) throw error;
+    out.push(...(data || []));
+    if (!data || data.length < PAGE_CAP) break;
+  }
+  return out;
 }
 
 /**
@@ -457,5 +524,5 @@ export async function ordersWithPhotos() {
     .not('photo_path', 'is', null)
     .order('created_at', { ascending: true });
   if (error) throw error;
-  return data || [];
+  return capped(data || [], 'ordersWithPhotos');
 }

@@ -128,6 +128,12 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **PostgREST stops at 1000 rows and does not raise.** A query past the cap returns a short array
+  with the truth only in `Content-Range`, so a list silently loses rows. Unbounded reads in
+  `db.mjs` go through `capped()`, which warns. Never write a query whose result grows with the age
+  of the business: the order log is bounded to 30 days plus every still-open order
+  (`includeOpen`), and search and date ranges are server-side (`searchOrdersRemote`,
+  `ordersDueBetween`) so a lookup still reaches the whole book.
 - **Overlays own the back button.** Opening a sheet or the drawer pushes a history entry so
   Android's back gesture closes it instead of walking out of the app mid-order; closing any other
   way pops that entry so history never fills with dead steps. `popstate` is a no-op when nothing is
