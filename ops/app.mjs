@@ -20,7 +20,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
-  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix,
+  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
@@ -2422,6 +2422,21 @@ async function downloadOrders(range) {
   }
 }
 
+/**
+ * A warning row you can act on.
+ *
+ * These panels used to name the problem and stop there — an order number, and
+ * a trip to the log to search for it. The whole point of flagging a gap is
+ * closing it, so each row opens its order.
+ */
+const fixRow = (o, note) => `
+  <button class="fix-row" data-order="${o.id}">
+    <span class="num fix-no">${esc(o.order_no)}</span>
+    <span class="grow fix-who">${esc(o.customer_name)}</span>
+    <span class="fix-note">${esc(note)}</span>
+    <svg class="fix-go" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+  </button>`;
+
 // ── What sells ──────────────────────────────────────────────────────────────
 
 const MIX_SORTS = [
@@ -2737,6 +2752,7 @@ async function renderAnalytics({ force = false } = {}) {
   const weeks = weeklyByStore(all, STORES.map((st) => st.code), 8, now);
   const board = customerLeaderboard(customerRows, now);
   const ahead = forwardBook(all, 7, now);
+  const stale = staleOpen(all, now);
   const norm = weekdayNorm(all, 6, now);
 
   const hours = busiestHours(all.filter((o) => {
@@ -2797,6 +2813,18 @@ async function renderAnalytics({ force = false } = {}) {
         <div class="stat-delta flat">${sToday.count} order${sToday.count === 1 ? '' : 's'}</div>
       </div>
     </div>
+
+    ${stale.length ? `
+      <div class="panel panel-warn">
+        <div class="panel-title">${stale.length} order${stale.length === 1 ? '' : 's'} past pickup and still open</div>
+        <div class="panel-note">
+          Either these went out and nobody moved the status — in which case the
+          takings below are short and the customer still reads as owing — or they
+          were missed. Tap one to close it off.
+        </div>
+        ${stale.slice(0, 8).map((o) => fixRow(o, `${o.daysLate} day${o.daysLate === 1 ? '' : 's'} late`)).join('')}
+        ${stale.length > 8 ? `<p class="fix-more">and ${stale.length - 8} more</p>` : ''}
+      </div>` : ''}
 
     <div class="panel">
       <div class="panel-title">The week ahead</div>
@@ -2890,13 +2918,9 @@ async function renderAnalytics({ force = false } = {}) {
     ${noPrice.length ? `
       <div class="panel panel-warn">
         <div class="panel-title">${noPrice.length} order${noPrice.length === 1 ? '' : 's'} with no price</div>
-        <div class="panel-note">Every figure on this page is understated by whatever these were worth. Open each one and add the price.</div>
-        ${noPrice.slice(0, 6).map((o) => `
-          <div class="list-row">
-            <span class="num">${esc(o.order_no)}</span>
-            <span class="grow">${esc(o.customer_name)}</span>
-            <span class="list-meta">${esc(dateFmt.format(new Date(o.created_at)))}</span>
-          </div>`).join('')}
+        <div class="panel-note">From the last 30 days of sales; every figure covering that period is understated by whatever these were worth. Tap one to add its price.</div>
+        ${noPrice.slice(0, 8).map((o) => fixRow(o, dateFmt.format(new Date(o.created_at)))).join('')}
+        ${noPrice.length > 8 ? `<p class="fix-more">and ${noPrice.length - 8} more</p>` : ''}
       </div>` : ''}
     `,
     customers: `
@@ -2952,7 +2976,9 @@ async function renderAnalytics({ force = false } = {}) {
     ${noPhone.length ? `
       <div class="panel panel-warn">
         <div class="panel-title">${noPhone.length} order${noPhone.length === 1 ? '' : 's'} with no phone number</div>
-        <div class="panel-note">These customers can never be matched to another order, so the repeat rate above reads lower than it really is.</div>
+        <div class="panel-note">From the last 30 days. These customers can never be matched to another order, so the repeat rate above reads lower than it really is. Tap one to add a number.</div>
+        ${noPhone.slice(0, 8).map((o) => fixRow(o, dateFmt.format(new Date(o.created_at)))).join('')}
+        ${noPhone.length > 8 ? `<p class="fix-more">and ${noPhone.length - 8} more</p>` : ''}
       </div>` : ''}
     `,
     data: `
@@ -3102,6 +3128,9 @@ async function renderAnalytics({ force = false } = {}) {
     $('fresh-when').textContent = 'Refreshing…';
     await renderAnalytics({ force: true });
   });
+
+  // The rows are buttons carrying an order id, so the log's own handler works.
+  wireDockets(root);
 
   if (analyticsPage === 'data' && flavourMix.length) {
     const paintMix = () => {

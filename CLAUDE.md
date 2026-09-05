@@ -138,6 +138,9 @@ main site.
   candidates through a colour-blindness check; the obvious rose/sage pairing failed at ΔE 5.7
   under deuteranopia. Re-run that check before changing them. Every chart ships a `chartTable`
   under it — the numbers are the accessible record.
+- **A warning panel must be actionable.** Every data-gap row (`fixRow`) is a button carrying an
+  order id, wired by the same `wireDockets` the log uses, so tapping it opens the order to fix.
+  Naming a problem and leaving the reader to search the log for it is not a warning, it is a note.
 - **Margin figures always carry their coverage.** `storeBreakdown` and `productMix` compute margin
   from only the orders with a cost recorded and return `costedCount` / `marginTrusted` beside it;
   the UI mutes the number and says so when under half the orders are costed. Never surface a

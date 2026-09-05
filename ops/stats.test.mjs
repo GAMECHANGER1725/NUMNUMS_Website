@@ -13,7 +13,7 @@ import {
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
-  productMix, sortMix,
+  productMix, sortMix, staleOpen,
 } from './stats.mjs';
 
 let passed = 0;
@@ -771,6 +771,33 @@ test('a mix row with no costs sorts last on margin rather than first', () => {
   ], 'flavour');
   assert.deepEqual(sortMix(rows, 'margin').map((r) => r.k), ['Priced', 'Unknown']);
   assert.equal(sortMix(rows, 'revenue')[0].k, 'Unknown');   // it still out-sold
+});
+
+test('stale orders are the ones nobody closed off, oldest first', () => {
+  const now = new Date('2026-09-10T02:00:00Z');            // Thu 12pm Sydney
+  const o = (id, dueKey, status) => ({ id, due_at: `${dueKey}T05:00:00Z`, status });
+
+  const rows = staleOpen([
+    o('a', '2026-09-01', 'placed'),      // 9 days late
+    o('b', '2026-09-08', 'baked'),       // 2 days late
+    o('c', '2026-09-09', 'arrived'),     // 1 day late
+    o('d', '2026-09-10', 'placed'),      // due today — not late
+    o('e', '2026-09-12', 'placed'),      // still to come
+    o('f', '2026-09-01', 'picked_up'),   // closed off properly
+    o('g', '2026-09-01', 'cancelled'),
+  ], now);
+
+  assert.deepEqual(rows.map((r) => r.id), ['a', 'b', 'c']);
+  assert.equal(rows[0].daysLate, 9);
+  assert.equal(rows[2].daysLate, 1);
+});
+
+test('a cake due later today is not late yet', () => {
+  const now = new Date('2026-09-10T02:00:00Z');            // noon Sydney
+  const later = [{ id: 'x', due_at: '2026-09-10T09:00:00Z', status: 'placed' }];  // 7pm Sydney
+  assert.equal(staleOpen(later, now).length, 0);
+  // …and with no grace at all it still is not, because the day has not passed
+  assert.equal(staleOpen(later, now, 0).length, 1);        // grace 0 means "today counts"
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

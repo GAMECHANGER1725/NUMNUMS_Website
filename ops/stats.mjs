@@ -850,3 +850,25 @@ export function sortMix(rows, by = 'count') {
   }[by] || ((r) => r.count);
   return [...rows].sort((a, b) => key(b) - key(a) || b.revenue - a.revenue);
 }
+
+/**
+ * Orders whose pickup day has passed but which nobody closed off.
+ *
+ * Either the cake went out and the status was never moved — in which case
+ * every sales figure is wrong and the customer still shows as owing — or it
+ * genuinely got missed. Both need a person, and neither shows up as a problem
+ * anywhere: the log files them under "Overdue" alongside the live worklist,
+ * which is where they quietly stay.
+ *
+ * `grace` keeps today out of it; a cake due at 4pm is not late at noon.
+ */
+export function staleOpen(orders, now = new Date(), grace = 1) {
+  const todayKey = sydneyParts(now).dayKey;
+  return orders
+    .filter((o) => {
+      if (o.status === 'picked_up' || o.status === 'cancelled') return false;
+      return daysBetween(sydneyParts(o.due_at).dayKey, todayKey) >= grace;
+    })
+    .map((o) => ({ ...o, daysLate: daysBetween(sydneyParts(o.due_at).dayKey, todayKey) }))
+    .sort((a, b) => b.daysLate - a.daysLate);
+}

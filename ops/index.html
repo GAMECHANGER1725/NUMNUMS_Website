@@ -1191,6 +1191,23 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 .mix-sub { display: block; font-size: 11.5px; color: var(--taupe); font-variant-numeric: tabular-nums; }
 .mix-sub.is-thin { color: var(--crust); }
 
+/* ── Actionable warning rows ────────────────────────────────────────────── */
+.fix-row {
+  display: flex; align-items: center; gap: 9px;
+  width: 100%; min-height: 44px; padding: 9px 0; text-align: left;
+  border-bottom: 1px solid rgba(200,84,120,.18);
+  font-size: 14px;
+  transition: background-color .14s ease;
+}
+.fix-row:last-of-type { border-bottom: 0; }
+.fix-row:hover { background: rgba(200,84,120,.05); }
+.fix-row:active { background: rgba(200,84,120,.1); }
+.fix-no { flex: none; font-size: 12px; font-weight: 600; letter-spacing: .08em; color: var(--ink-soft); }
+.fix-who { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fix-note { flex: none; font-size: 12px; color: var(--taupe); font-variant-numeric: tabular-nums; }
+.fix-go { width: 13px; height: 13px; flex: none; stroke: var(--rose); fill: none; stroke-width: 2; }
+.fix-more { margin-top: 9px; font-size: 12.5px; color: var(--taupe); }
+
 </style>
 </head>
 <body>
