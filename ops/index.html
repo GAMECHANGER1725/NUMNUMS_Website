@@ -615,14 +615,19 @@ body:has(#menu-btn:not(.hidden)) .main { padding-bottom: calc(140px + var(--safe
 }
 
 /* ── Paid / unpaid ──────────────────────────────────────────────────────── */
-.pay-toggle { display: flex; gap: 7px; }
+/* Four options do not fit across a phone without truncating "Paid in full",
+   so they sit two-up and go one row when there is room. */
+.pay-toggle { display: flex; flex-wrap: wrap; gap: 7px; }
 .pay-opt {
-  flex: 1; min-height: var(--tap); border-radius: 10px;
+  flex: 1 1 calc(50% - 4px); min-height: var(--tap); border-radius: 10px;
+  padding: 0 8px; white-space: nowrap;
   border: 1.5px solid var(--dough-line); background: var(--cream);
   font-weight: 500; color: var(--ink-soft);
   transition: border-color .16s ease, background-color .16s ease, color .16s ease;
 }
 .pay-opt[aria-pressed="true"] { border-color: var(--rose); background: rgba(200,84,120,.07); color: var(--rose-deep); }
+/* Two-up is a phone compromise; give the row back once there is room for it. */
+@media (min-width: 620px) { .pay-opt { flex: 1 1 0; } }
 .tag-unpaid { background: rgba(200,84,120,.13); color: var(--rose-deep); }
 .tag-paid   { background: rgba(107,122,85,.15); color: var(--sage); }
 .tag-part   { background: rgba(179,123,44,.15); color: var(--crust); }

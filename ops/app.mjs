@@ -1742,7 +1742,8 @@ function openNewOrder() {
         <span class="field-label">Payment</span>
         <div class="pay-toggle" id="pay-toggle">
           <button type="button" class="pay-opt" data-pay="unpaid" aria-pressed="true">Unpaid</button>
-          <button type="button" class="pay-opt" data-pay="deposit" aria-pressed="false">Deposit</button>
+          <button type="button" class="pay-opt" data-pay="half" aria-pressed="false">50% deposit</button>
+          <button type="button" class="pay-opt" data-pay="deposit" aria-pressed="false">Other amount</button>
           <button type="button" class="pay-opt" data-pay="paid" aria-pressed="false">Paid in full</button>
         </div>
       </div>
@@ -1895,6 +1896,12 @@ function openNewOrder() {
     const dep = $('f-deposit');
     if (payMode === 'unpaid') { dep.value = '0'; dep.disabled = true; }
     else if (payMode === 'paid') { dep.value = price ? price.toFixed(2) : ''; dep.disabled = true; }
+    else if (payMode === 'half') {
+      // Worked in cents so an odd price lands on a real amount: half of $89.99
+      // is $45.00, not $44.995, and the balance is then exactly the rest.
+      dep.value = price ? (Math.round(price * 50) / 100).toFixed(2) : '';
+      dep.disabled = true;
+    }
     else { dep.disabled = false; }
   }
   $('pay-toggle').querySelectorAll('[data-pay]').forEach((b) => b.addEventListener('click', () => {
