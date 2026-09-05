@@ -128,6 +128,11 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **Say when a number is too small to act on.** `cancellationStats` returns `confident`, false
+  until both compared groups have ten orders behind them, and the panel prints a caveat instead of
+  a recommendation. Any future panel that invites a decision — a policy, a price, dropping a
+  flavour — owes the reader the same guard; a two-cake difference on a handful of orders looks
+  exactly like a pattern.
 - **The photo purge has no other watchdog.** `photosToPurge` in `stats.mjs` mirrors
   `photos_to_purge()` in Postgres exactly, and the Data page shows anything overdue. The cron
   reports success as soon as `pg_net` dispatches the call, so a job that fires nightly and deletes

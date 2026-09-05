@@ -13,7 +13,7 @@ import {
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
-  productMix, sortMix, staleOpen, photosToPurge, photoHealth,
+  productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats,
 } from './stats.mjs';
 
 let passed = 0;
@@ -839,6 +839,51 @@ test('photo health reports what is held and what is overdue', () => {
   assert.equal(h.overdue, 1);
   assert.equal(h.oldestDays, 60);
   assert.equal(h.rows[0].id, 'a');
+});
+
+test('cancellation stats split by deposit, and know when not to claim a pattern', () => {
+  const now = new Date('2026-09-30T02:00:00Z');
+  const o = (dayKey, status, deposit, price, store = 'harris-park') =>
+    ({ created_at: `${dayKey}T02:00:00Z`, status, deposit, price, store, walk_in: false });
+
+  const rows = [
+    ...Array.from({ length: 20 }, () => o('2026-09-01', 'picked_up', 40, 100)),
+    ...Array.from({ length: 2 },  () => o('2026-09-01', 'cancelled', 40, 100)),   // 2/22 with deposit
+    ...Array.from({ length: 10 }, () => o('2026-09-02', 'picked_up', 0, 100, 'riverstone')),
+    ...Array.from({ length: 6 },  () => o('2026-09-02', 'cancelled', 0, 150, 'riverstone')),  // 6/16 without
+    o('2026-01-01', 'cancelled', 0, 999),                                          // outside the window
+    { created_at: '2026-09-02T02:00:00Z', status: 'cancelled', deposit: 0, price: 999, store: 'harris-park', walk_in: true },
+  ];
+
+  const c = cancellationStats(rows, 90, now);
+  assert.equal(c.total, 38);                     // walk-in and the old order both excluded
+  assert.equal(c.cancelled, 8);
+  assert.equal(c.value, 2 * 100 + 6 * 150);      // only cancelled orders count toward the loss
+  assert.equal(c.withDeposit.total, 22);
+  assert.equal(Math.round(c.withDeposit.rate), 9);
+  assert.equal(c.noDeposit.total, 16);
+  assert.equal(Math.round(c.noDeposit.rate), 38);
+  assert.equal(c.confident, true);
+  assert.ok(c.gap > 28);
+  assert.equal(c.byStore[0].store, 'riverstone');   // worst rate first
+});
+
+test('a handful of orders is not a pattern', () => {
+  const now = new Date('2026-09-30T02:00:00Z');
+  const o = (status, deposit) =>
+    ({ created_at: '2026-09-20T02:00:00Z', status, deposit, price: 100, store: 'harris-park', walk_in: false });
+  // 1 of 3 without a deposit cancelled: a 33% rate that means nothing
+  const c = cancellationStats([o('picked_up', 40), o('cancelled', 0), o('picked_up', 0), o('picked_up', 0)], 90, now);
+  assert.equal(c.noDeposit.total, 3);
+  assert.equal(c.confident, false);
+});
+
+test('no orders at all does not divide by zero', () => {
+  const c = cancellationStats([], 90, new Date('2026-09-30T02:00:00Z'));
+  assert.equal(c.total, 0);
+  assert.equal(c.rate, 0);
+  assert.equal(c.confident, false);
+  assert.deepEqual(c.byStore, []);
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

@@ -917,3 +917,55 @@ export function photoHealth(orders, now = new Date()) {
     rows: overdue.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)),
   };
 }
+
+// ── Cancellations ───────────────────────────────────────────────────────────
+
+/**
+ * Cancellations, and whether a deposit prevents them.
+ *
+ * Every other calculation in this file *excludes* cancelled orders, so the one
+ * thing nobody could see was the cancelling itself. Each one is a cake that was
+ * promised, possibly shopped for, and earned nothing.
+ *
+ * The split that matters is deposit versus none, because that is the only lever
+ * the shop actually controls. It is also the one most easily over-read: with a
+ * handful of orders a two-cake difference looks like a policy. `confident` is
+ * false until both groups have enough behind them to mean anything, and the
+ * panel says so rather than inviting a decision the numbers cannot support.
+ *
+ * Walk-ins are excluded throughout — a cake bought off the counter is created
+ * already collected and was never at risk.
+ */
+export function cancellationStats(orders, days = 90, now = new Date()) {
+  const todayKey = sydneyParts(now).dayKey;
+  const inWindow = orders.filter((o) => {
+    if (o.walk_in) return false;
+    const age = daysBetween(sydneyParts(o.created_at).dayKey, todayKey);
+    return age >= 0 && age < days;
+  });
+
+  const rateOf = (rows) => {
+    const cancelled = rows.filter((o) => o.status === 'cancelled');
+    return {
+      total: rows.length,
+      cancelled: cancelled.length,
+      rate: rows.length ? (cancelled.length / rows.length) * 100 : 0,
+      value: cancelled.reduce((t, o) => t + num(o.price), 0),
+    };
+  };
+
+  const withDeposit = rateOf(inWindow.filter((o) => num(o.deposit) > 0));
+  const noDeposit = rateOf(inWindow.filter((o) => num(o.deposit) <= 0));
+  const MIN_GROUP = 10;
+
+  return {
+    ...rateOf(inWindow),
+    withDeposit,
+    noDeposit,
+    confident: withDeposit.total >= MIN_GROUP && noDeposit.total >= MIN_GROUP,
+    gap: noDeposit.rate - withDeposit.rate,
+    byStore: [...new Set(inWindow.map((o) => o.store))]
+      .map((store) => ({ store, ...rateOf(inWindow.filter((o) => o.store === store)) }))
+      .sort((a, b) => b.rate - a.rate),
+  };
+}

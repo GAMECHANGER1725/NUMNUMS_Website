@@ -20,7 +20,7 @@ import {
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
-  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth,
+  printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
@@ -2894,6 +2894,7 @@ async function renderAnalytics({ force = false } = {}) {
   const ahead = forwardBook(all, 7, now);
   const stale = staleOpen(all, now);
   const photos = photoHealth(photoRows || [], now);
+  const cancels = cancellationStats(all, 63, now);
   const norm = weekdayNorm(all, 6, now);
 
   const hours = busiestHours(all.filter((o) => {
@@ -3043,6 +3044,45 @@ async function renderAnalytics({ force = false } = {}) {
           <span class="list-meta">${esc(dateFmt.format(new Date(r.o.due_at)))}</span>
           <span class="num owing">${money.format(r.owing)}</span>
         </div>`).join('')}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Cancellations, last 63 days</div>
+      <div class="panel-note">${cancels.total
+        ? `${cancels.cancelled} of ${cancels.total} ordered-ahead cakes came off the book — ${money.format(cancels.value)} that was promised and earned nothing. Walk-ins are excluded; they were never at risk.`
+        : 'No ordered-ahead cakes on the book yet.'}</div>
+      ${cancels.total ? `
+        <div class="rcr">
+          <div class="rcr-num">${cancels.rate.toFixed(0)}<span class="rcr-pct">%</span></div>
+          <div class="rcr-side">
+            <div class="rcr-label">Cancellation rate</div>
+            <div class="meter meter-wide"><span class="meter-fill" style="width:${Math.min(100, cancels.rate).toFixed(1)}%"></span></div>
+            <div class="list-meta">${money.format(cancels.value)} lost across ${cancels.cancelled} cake${cancels.cancelled === 1 ? '' : 's'}</div>
+          </div>
+        </div>
+
+        <div class="mix-head">Does a deposit hold them?</div>
+        ${[['Deposit taken', cancels.withDeposit], ['No deposit', cancels.noDeposit]].map(([label, g]) => `
+          <div class="list-row">
+            <span class="grow">${label}</span>
+            <span class="meter"><span class="meter-fill" style="width:${Math.min(100, g.rate).toFixed(0)}%"></span></span>
+            <span class="list-meta">${g.cancelled} of ${g.total}</span>
+            <span class="num">${g.total ? `${g.rate.toFixed(0)}%` : '—'}</span>
+          </div>`).join('')}
+        <p class="ahead-warn" style="${cancels.confident ? '' : 'color:var(--taupe)'}">${cancels.confident
+          ? (cancels.gap > 5
+              ? `Cakes without a deposit come off the book ${Math.round(cancels.gap)} points more often. On these numbers, asking for one is worth it.`
+              : 'A deposit is making little difference to whether a cake is cancelled.')
+          : 'Not enough orders in either group yet to read anything into the split — it needs ten of each.'}</p>
+
+        ${cancels.byStore.length > 1 ? `
+          <div class="mix-head">By store</div>
+          ${cancels.byStore.map((r) => `
+            <div class="list-row">
+              <span class="grow">${esc(storeLabel(r.store))}</span>
+              <span class="list-meta">${r.cancelled} of ${r.total}</span>
+              <span class="num">${r.rate.toFixed(0)}%</span>
+            </div>`).join('')}` : ''}` : ''}
     </div>
 
     <div class="panel">
