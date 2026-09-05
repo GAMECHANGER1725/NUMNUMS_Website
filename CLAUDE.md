@@ -117,9 +117,11 @@ main site.
   people) — the form just creates both in one pass. Marking an order **baked** or **picked up**
   interrupts with a reminder listing its prints; that interrupt is the whole point of the feature,
   so do not "streamline" it away.
-- **Navigation**: the tab bar holds only what is touched mid-shift (Orders, New, To bake, Prints).
-  Everything read at the end of a day lives behind the floating menu button (bottom-right) as
-  drawer groups — Analytics (Finance / Customers / Data, all from one 63-day fetch), Customers
+- **Navigation**: the tab bar holds Orders, New, To bake, Prints and **More**, which opens the
+  drawer. More is a tab like the rest — same `.tab` class, so it inherits the bar's font, colours
+  and active pill — and it hides itself when a role has no groups (the baker sees four). It reads
+  as current whenever a drawer view is on screen. Everything read at the end of a day lives behind
+  it as drawer groups — Analytics (Finance / Customers / Data, all from one 63-day fetch), Customers
   (Directory), Staff, Export. Each group declares its own `roles`, and the button hides itself when
   a role has no groups. Add new reporting as another leaf, not a fifth tab.
 - **Export** writes CSV in the browser via `toCsv`/`csvCell` in `stats.mjs`. Both hazards it closes

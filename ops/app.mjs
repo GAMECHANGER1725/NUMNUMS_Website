@@ -117,11 +117,26 @@ const TABS = {
   prints:    { label: 'Prints',    roles: ['admin', 'baker'], icon: '<path d="M7 8V3h10v5M7 18H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z"/>' },
 };
 
+// A 2x2 grid, not another set of stacked lines: the Orders icon is already
+// three horizontal rules and a hamburger beside it reads as the same thing.
+const MORE_ICON = '<rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/>'
+  + '<rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/>'
+  + '<rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/>'
+  + '<rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>';
+
 function buildTabs() {
-  $('tabbar').innerHTML = Object.entries(TABS)
+  const items = Object.entries(TABS)
     .filter(([, t]) => t.roles.includes(me.role))
-    .map(([key, t]) => `
-      <button class="tab" data-tab="${key}" aria-current="${key === view ? 'page' : 'false'}">
+    .map(([key, t]) => ({ key, label: t.label, icon: t.icon, current: key === view }));
+
+  // Everything the drawer holds is a view in its own right, so the tab shows as
+  // current whenever one of them is on screen — the same as the other four.
+  if (menuGroups().length) {
+    items.push({ key: 'more', label: 'More', icon: MORE_ICON, current: DRAWER_VIEWS.includes(view) });
+  }
+
+  $('tabbar').innerHTML = items.map((t) => `
+      <button class="tab" data-tab="${t.key}" aria-current="${t.current ? 'page' : 'false'}">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg>
         <span>${t.label}</span>
       </button>`).join('');
@@ -131,6 +146,7 @@ function buildTabs() {
 
 function go(next) {
   if (next === 'new') { openNewOrder(); return; }
+  if (next === 'more') { openDrawer(); return; }
   view = next;
   buildTabs();
   render();
@@ -141,8 +157,7 @@ async function render() {
   $('view-title').textContent = view === 'analytics'
     ? (ANALYTICS_TITLE[analyticsPage] || 'Analytics')
     : (VIEW_TITLE[view] || 'Orders');
-  // Nothing but analytics lives in the drawer yet, so nobody else gets a button.
-  $('menu-btn').classList.toggle('hidden', !menuGroups().length);
+
   $('store-switch').classList.toggle('hidden',
     view !== 'log' || STORES.filter((s) => me.stores.includes(s.code)).length < 2);
   $('logbar').classList.toggle('hidden', view !== 'log');
@@ -2293,7 +2308,7 @@ let navOpen = new Set(['Analytics']);
 function closeDrawer({ fromHistory = false } = {}) {
   if (!$('drawer-root').innerHTML) return;
   $('drawer-root').innerHTML = '';
-  $('menu-btn').setAttribute('aria-expanded', 'false');
+  markMoreTab(false);
   document.body.style.overflow = '';
   const pushed = drawerPushed;
   drawerPushed = false;
@@ -2306,7 +2321,7 @@ const isCurrent = (c) =>
 function openDrawer() {
   pushOverlay('drawer');
   document.body.style.overflow = 'hidden';
-  $('menu-btn').setAttribute('aria-expanded', 'true');
+  markMoreTab(true);
   $('drawer-root').innerHTML = `
     <div class="drawer-scrim" data-drawer-close></div>
     <nav class="drawer" aria-label="More">
@@ -2348,19 +2363,11 @@ function openDrawer() {
   }));
 }
 
-$('menu-btn').addEventListener('click', () =>
-  ($('drawer-root').innerHTML ? closeDrawer() : openDrawer()));
-
-// Tuck the button away while reading down a page and bring it back on the way
-// up. Without this it parks itself over the right-hand column of every list,
-// which on these pages is the amounts.
-let lastScrollY = 0;
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  if (Math.abs(y - lastScrollY) < 6) return;
-  $('menu-btn').classList.toggle('is-tucked', y > lastScrollY && y > 90);
-  lastScrollY = y;
-}, { passive: true });
+/** The More tab reads as pressed while its drawer is open. */
+function markMoreTab(open) {
+  const tab = $('tabbar').querySelector('[data-tab="more"]');
+  if (tab) tab.setAttribute('aria-expanded', String(open));
+}
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && $('drawer-root').innerHTML) closeDrawer();

@@ -181,7 +181,6 @@ button { background: none; border: 0; cursor: pointer; }
 .segmented-btn[aria-selected="true"] { background: var(--cream); color: var(--ink); box-shadow: var(--shadow-card); }
 
 .main { flex: 1; padding: 16px 16px calc(96px + var(--safe-b)); max-width: 940px; margin: 0 auto; width: 100%; }
-body:has(#menu-btn:not(.hidden)) .main { padding-bottom: calc(140px + var(--safe-b)); }
 
 /* ── Day sections ───────────────────────────────────────────────────────── */
 .section-head {
@@ -306,13 +305,17 @@ body:has(#menu-btn:not(.hidden)) .main { padding-bottom: calc(140px + var(--safe
   border-top: 1px solid var(--dough-line);
 }
 .tab {
-  flex: 1; max-width: 130px; min-height: 48px;
+  flex: 1 1 0; min-width: 0; max-width: 130px; min-height: 48px;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   padding: 6px 4px; border-radius: 10px;
   font-size: 11px; font-weight: 500; letter-spacing: .03em;
   color: var(--taupe);
   transition: color .16s ease, background-color .16s ease;
 }
+.tab span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Held open: the same treatment as the current tab, so the bar never shows two
+   different kinds of "active". */
+.tab[aria-expanded="true"] { color: var(--rose); background: rgba(200,84,120,.09); }
 .tab svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.6; }
 .tab[aria-current="page"] { color: var(--rose); background: rgba(200,84,120,.09); }
 
@@ -903,26 +906,9 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 .print-flag.is-done { background: rgba(139,127,118,.16); color: var(--slate); }
 
 /* ── More menu ──────────────────────────────────────────────────────────── */
-/* The tab bar is for the four things done during a shift. Analytics is read
-   at the end of the day, sometimes across several pages, so it lives behind a
-   drawer instead of taking a fifth of the bar it would rarely be tapped on. */
-.menu-btn {
-  position: fixed; z-index: 31;
-  right: 14px; bottom: calc(74px + var(--safe-b));
-  width: 52px; height: 52px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--ink); color: var(--cream);
-  box-shadow: 0 3px 10px rgba(44,26,14,.22), 0 12px 28px -10px rgba(44,26,14,.5);
-  transition: transform .22s cubic-bezier(.2,.9,.3,1), opacity .18s ease, background-color .16s ease;
-}
-.menu-btn:hover  { background: var(--ink-soft); }
-.menu-btn.is-tucked {
-  transform: translateY(84px);
-  opacity: 0; pointer-events: none;
-}
-.menu-btn:active { transform: scale(.92); }
-.menu-btn svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.9; }
-
+/* Opened from the tab bar, which is where every other section already lives.
+   It used to be a floating button, which meant one control on the page obeyed
+   different rules from the rest and sat on top of the figures while reading. */
 .drawer-scrim {
   position: fixed; inset: 0; z-index: 44;
   background: rgba(44,26,14,.42); backdrop-filter: blur(2px);
@@ -1337,12 +1323,6 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
   </main>
 
   <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
-
-  <button class="menu-btn hidden" id="menu-btn" aria-expanded="false" aria-label="More">
-    <svg viewBox="0 0 24 24" stroke-linecap="round" aria-hidden="true">
-      <path d="M4 7h16M4 12h16M4 17h16"/>
-    </svg>
-  </button>
 </div>
 
 <div id="drawer-root"></div>
