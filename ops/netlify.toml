@@ -7,11 +7,16 @@
 # Netlify site settings to match:
 #   Base directory:    ops
 #   Publish directory: .        (relative to base)
-#   Build command:     (none — static files)
+#   Build command:     node verify.mjs   (set in this file, below)
 #   Auto-publish:      off, same as the main site
 
 [build]
   publish = "."
+  # The gate. verify.mjs runs the unit tests and the checks CLAUDE.md describes
+  # but nothing enforced — inline <script> against the CSP, ids the code reaches
+  # for that do not exist, and the catalogue drifting from verify-blog.mjs's
+  # FACTS. A non-zero exit fails the build, so a broken ops app cannot deploy.
+  command = "node verify.mjs"
 
 # Never cache the app shell: staff must pick up a fix on their next refresh
 # rather than sitting on a stale copy mid-shift.

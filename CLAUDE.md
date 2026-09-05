@@ -28,8 +28,12 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
   `src/input.css`; most pages use the Tailwind CDN script instead): `npx tailwindcss -i src/input.css -o style.css`.
   No `package.json` script wraps this — run the CLI directly.
 - `reviews-app/`: `cd reviews-app && npm run dev|build|lint` (own `package.json`, own Next.js toolchain).
-- Ops app checks: `node ops/stats.test.mjs` (aggregation + Sydney date logic). Local URL is
-  `http://localhost:4000/ops/` — **the trailing slash matters**, see **Ops app** below.
+- Ops app checks: **`node ops/verify.mjs`** — the ops site's Netlify build command, so a failure
+  blocks that deploy the way `verify-blog.mjs` blocks the public one. Runs `ops/stats.test.mjs`
+  (aggregation + Sydney date logic) plus static checks: every module parses, no inline `<script>`
+  (the ops CSP forbids it), every id `$()` reaches for exists, and `catalog.mjs` still matches
+  `verify-blog.mjs`'s `FACTS`. Local URL is `http://localhost:4000/ops/` — **the trailing slash
+  matters**, see **Ops app** below.
 - There is no test suite or lint config for the main static site. `verify-blog.mjs` is the closest
   thing to a test for blog content; there is nothing equivalent for the other static pages.
 
