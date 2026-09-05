@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-05
+
+```yaml
+id: post-rs-2026-09-05
+status: published
+published_at: 2026-09-05
+location: riverstone
+post_type: "Call to action"
+title: "Order early. Pick up early. Custom eggless cakes for Riverstone and Box Hill."
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0719.jpg"
+keywords_baited:
+  - early morning cake pickup Riverstone
+  - custom eggless cake Box Hill Vineyard
+  - birthday cake before school run Western Sydney
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
