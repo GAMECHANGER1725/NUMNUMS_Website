@@ -363,3 +363,14 @@ export async function ordersBetween(fromISO, toISO) {
   for (const o of rows) o.cost = byId.has(o.id) ? Number(byId.get(o.id)) : null;
   return rows;
 }
+
+/** Every customer on record, for the leaderboards. The view aggregates over all
+ *  orders, not the analytics window, which is the whole point for "gone quiet". */
+export async function allCustomers(limit = 2000) {
+  const { data, error } = await sb.from('customers')
+    .select('phone_key,name,phone,order_count,spend,first_order,last_order')
+    .order('spend', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}

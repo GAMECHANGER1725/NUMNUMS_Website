@@ -123,6 +123,14 @@ main site.
   starting `= + - @` is executed as a formula by Excel and Sheets. Do not "simplify" that escaping.
 - **The staff page is read-only.** Roles and store scoping are what RLS enforces; they get changed
   in Supabase so the change is deliberate, not by an admin mis-tapping their own row.
+- **Charts** are hand-rolled inline SVG in `app.mjs` (`takingsChart`, `weeklyStoreChart`) — no
+  charting library: the CSP allows one CDN and a bundle would be the heaviest thing on a page
+  staff open over shop wifi. The two series colours (`#A03D5E`, `#C08A2E`) were picked by running
+  candidates through a colour-blindness check; the obvious rose/sage pairing failed at ΔE 5.7
+  under deuteranopia. Re-run that check before changing them. Every chart ships a `chartTable`
+  under it — the numbers are the accessible record.
+- **Leaderboards and repeat-customer rate read the `customers` view, not the 63-day analytics
+  fetch.** A "gone quiet" board computed off that window is permanently empty by definition.
 - **Money is never rounded.** One `money` formatter, cents always shown. A whole-dollar variant
   turned a $130.50 cake into "$131" and quietly skewed every total; do not reintroduce one.
 - **Local testing**: `node serve.mjs`, then `http://localhost:4000/ops/` **with the trailing slash**.

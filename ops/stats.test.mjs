@@ -12,6 +12,7 @@ import {
   missingPrice, searchOrders, phoneKey,
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
+  dailyTakings, weeklyByStore, customerLeaderboard,
 } from './stats.mjs';
 
 let passed = 0;
@@ -610,5 +611,79 @@ test('toCsv joins with CRLF and keeps the header first', () => {
   const out = toCsv(['a', 'b'], [['1', 'x,y'], ['2', null]]);
   assert.equal(out, 'a,b\r\n1,"x,y"\r\n2,');
 });
+
+test('daily takings keeps empty days so the weekly rhythm stays true', () => {
+  const now = new Date('2026-09-04T02:00:00Z');            // Fri 12pm Sydney
+  const rows = dailyTakings([
+    { status: 'picked_up', created_at: '2026-09-04T01:00:00Z', price: 100 },
+    { status: 'picked_up', created_at: '2026-09-02T01:00:00Z', price: 50 },
+    { status: 'cancelled', created_at: '2026-09-02T01:00:00Z', price: 999 },
+    { status: 'picked_up', created_at: '2026-07-01T01:00:00Z', price: 999 },  // outside
+  ], 5, now);
+  assert.equal(rows.length, 5);
+  assert.deepEqual(rows.map((r) => r.dayKey),
+    ['2026-08-31', '2026-09-01', '2026-09-02', '2026-09-03', '2026-09-04']);
+  assert.deepEqual(rows.map((r) => r.revenue), [0, 0, 50, 0, 100]);
+  assert.equal(rows[4].count, 1);
+});
+
+test('weekly store split totals match the sum of its stores', () => {
+  const now = new Date('2026-09-04T02:00:00Z');
+  const rows = weeklyByStore([
+    { status: 'picked_up', created_at: '2026-09-02T01:00:00Z', store: 'harris-park', price: 100 },
+    { status: 'picked_up', created_at: '2026-09-03T01:00:00Z', store: 'riverstone',  price: 40 },
+    { status: 'cancelled', created_at: '2026-09-03T01:00:00Z', store: 'riverstone',  price: 500 },
+  ], ['harris-park', 'riverstone'], 4, now);
+
+  assert.equal(rows.length, 4);
+  const last = rows[rows.length - 1];
+  assert.equal(last.total, 140);
+  assert.equal(last.byStore['harris-park'], 100);
+  assert.equal(last.byStore['riverstone'], 40);
+  for (const r of rows) {
+    assert.equal(r.total, Object.values(r.byStore).reduce((t, v) => t + v, 0));
+  }
+});
+
+test('leaderboards rank customers-view rows on their own metric', () => {
+  const now = new Date('2026-09-04T02:00:00Z');
+  const c = (phone_key, name, order_count, spend, firstDay, lastDay) =>
+    ({ phone_key, name, phone: '0' + phone_key, order_count, spend,
+       first_order: `${firstDay}T01:00:00Z`, last_order: `${lastDay}T01:00:00Z` });
+
+  const b = customerLeaderboard([
+    c('400000001', 'Big Spender',  2, 800, '2026-08-01', '2026-09-01'),
+    c('400000002', 'Frequent',     3, 150, '2026-09-01', '2026-09-03'),
+    c('400000003', 'One Big Cake', 1, 500, '2026-09-01', '2026-09-01'),
+    c('400000004', 'Gone Quiet',   2, 200, '2026-01-01', '2026-01-02'),
+  ], now);
+
+  assert.equal(b.total, 4);
+  assert.equal(b.spend[0].name, 'Big Spender');
+  assert.equal(b.spend[1].name, 'One Big Cake');
+  assert.equal(b.orders[0].name, 'Frequent');
+  // A single 500 cake must not top the average board over a real regular.
+  assert.equal(b.avg[0].name, 'Big Spender');
+  assert.ok(!b.avg.some((x) => x.name === 'One Big Cake'));
+  assert.equal(b.avg[0].avg, 400);
+});
+
+test('"gone quiet" needs a window wider than the charts, or it is always empty', () => {
+  const now = new Date('2026-09-04T02:00:00Z');
+  const c = (name, order_count, lastDay) =>
+    ({ phone_key: name, name, phone: '04', order_count, spend: 300,
+       first_order: '2026-01-01T01:00:00Z', last_order: `${lastDay}T01:00:00Z` });
+
+  // 96 days ago — outside the 63-day analytics fetch these boards used to read.
+  const b = customerLeaderboard([
+    c('Lapsed regular', 3, '2026-05-31'),
+    c('Still coming',   4, '2026-09-03'),
+    c('One-off long ago', 1, '2026-02-01'),   // never a regular, so not a nudge
+  ], now);
+
+  assert.deepEqual(b.lapsed.map((x) => x.name), ['Lapsed regular']);
+  assert.equal(b.lapsed[0].daysSince, 96);
+});
+
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

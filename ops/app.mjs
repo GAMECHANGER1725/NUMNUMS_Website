@@ -10,16 +10,17 @@ import {
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, uploadPhoto, photoUrl,
-  listCustomers, ordersForCustomer, authTrail, ordersBetween,
+  listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween,
   listPrintJobs, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
 import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, summarise, weeklyStats,
-  busiestHours, repeatCustomers, bakerSections, paidOn,
+  busiestHours, bakerSections, paidOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inDateRange, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS,
   printSections, storeBreakdown, exportRanges, toCsv,
+  dailyTakings, weeklyByStore, customerLeaderboard,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
 
@@ -2074,23 +2075,60 @@ async function renderDirectory() {
 
   if (first) {
     root.innerHTML = `
-      <div class="logbar" style="max-width:none;">
+      <div class="field type-wrap" style="margin-bottom:12px;">
         <span class="logbar-search">
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
           </svg>
           <input class="input" id="cust-search" type="search" autocomplete="off"
+                 role="combobox" aria-expanded="false" aria-autocomplete="list"
                  placeholder="Search a name or number" aria-label="Search customers">
         </span>
+        <div class="dd-menu hidden" id="cust-suggest" role="listbox"></div>
       </div>
       <div class="sortbar" id="cust-sort" role="group" aria-label="Sort customers"></div>
       <div id="cust-list"></div>`;
 
+    const suggest = $('cust-suggest');
+    const closeSuggest = () => {
+      suggest.classList.add('hidden');
+      $('cust-search').setAttribute('aria-expanded', 'false');
+    };
+
     $('cust-search').addEventListener('input', (e) => {
       custQuery = e.target.value;
       clearTimeout(custTimer);
-      custTimer = setTimeout(() => { if (view === 'directory') paintDirectory(); }, 200);
+      custTimer = setTimeout(async () => {
+        if (view !== 'directory') return;
+        paintDirectory();               // the list narrows as you type
+
+        // …and the dropdown offers the exact person, so a known name is one tap
+        // rather than a scroll through everyone who half-matches.
+        const term = custQuery.trim();
+        if (term.length < 2) { closeSuggest(); return; }
+        let hits = [];
+        try { hits = await listCustomers({ term, sort: 'orders', limit: 6 }); } catch { return; }
+        if (!hits.length || $('cust-search').value.trim() !== term) { closeSuggest(); return; }
+
+        suggest.innerHTML = hits.map((c, i) => `
+          <button type="button" class="dd-opt" role="option" data-i="${i}" aria-selected="false">
+            <span class="sug-name">${esc(c.name)}</span>
+            <span class="sug-phone">${esc(c.phone || '')}</span>
+            <span class="dd-note">${c.order_count}×</span>
+          </button>`).join('');
+        suggest.querySelectorAll('[data-i]').forEach((b) =>
+          b.addEventListener('mousedown', (ev) => {
+            ev.preventDefault();
+            closeSuggest();
+            openCustomer(hits[+b.dataset.i].phone_key, hits[+b.dataset.i]);
+          }));
+        suggest.classList.remove('hidden');
+        $('cust-search').setAttribute('aria-expanded', 'true');
+      }, 200);
     });
+
+    $('cust-search').addEventListener('blur', () => setTimeout(closeSuggest, 140));
+    $('cust-search').addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSuggest(); });
   }
 
   $('cust-sort').innerHTML = CUST_SORTS.map((s) => `
@@ -2352,6 +2390,189 @@ async function downloadOrders(range) {
   }
 }
 
+// ── Customer leaderboard ────────────────────────────────────────────────────
+
+const BOARDS = [
+  { key: 'spend',  label: 'Most spent',   note: 'Total across every cake they have bought.' },
+  { key: 'orders', label: 'Most cakes',   note: 'How many times they have come back.' },
+  { key: 'avg',    label: 'Biggest average', note: 'Average spend per cake, for anyone with more than one order — one big cake does not make a regular.' },
+  { key: 'lapsed', label: 'Gone quiet',   note: 'Regulars who have not ordered in 45 days or more. The only board that is a to-do list.' },
+];
+
+let boardKey = 'spend';
+
+function paintBoard(board) {
+  const meta = BOARDS.find((b) => b.key === boardKey);
+  $('board-note').textContent = meta.note;
+  $('board-tabs').querySelectorAll('[data-board]')
+    .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.board === boardKey)));
+
+  const rows = board[boardKey];
+  if (!rows.length) {
+    $('board-rows').innerHTML = `<div class="list-row"><span class="grow list-meta">${
+      boardKey === 'lapsed'
+        ? 'Nobody has gone quiet — every regular has ordered inside the last 45 days.'
+        : 'Not enough orders yet.'}</span></div>`;
+    return;
+  }
+
+  const best = Math.max(...rows.map((c) => metricOf(c)));
+  $('board-rows').innerHTML = rows.map((c, i) => `
+    <div class="lb-row">
+      <span class="lb-rank${i < 3 ? ' is-top' : ''}">${i + 1}</span>
+      <span class="lb-lines">
+        <span class="lb-name">${esc(c.name)}</span>
+        <span class="lb-sub">${esc(subOf(c))}</span>
+      </span>
+      <span class="lb-right">
+        <span class="lb-val">${esc(valueOf(c))}</span>
+        <span class="meter"><span class="meter-fill" style="width:${((metricOf(c) / best) * 100).toFixed(1)}%"></span></span>
+      </span>
+    </div>`).join('');
+}
+
+const metricOf = (c) => ({ spend: c.spend, orders: c.orders, avg: c.avg, lapsed: c.daysSince }[boardKey]);
+const valueOf = (c) => ({
+  spend: money.format(c.spend),
+  orders: `${c.orders}×`,
+  avg: money.format(c.avg),
+  lapsed: `${c.daysSince} days`,
+}[boardKey]);
+const subOf = (c) => ({
+  spend: `${c.orders} cake${c.orders === 1 ? '' : 's'} · ${money.format(c.avg)} average`,
+  orders: `${money.format(c.spend)} all up · last ${dayKeyLabel(c.lastKey)}`,
+  avg: `${c.orders} cakes · ${money.format(c.spend)} all up`,
+  lapsed: `${c.orders} cakes · ${money.format(c.spend)} · last ${dayKeyLabel(c.lastKey)}`,
+}[boardKey]);
+
+// ── Charts ──────────────────────────────────────────────────────────────────
+//
+// Hand-rolled inline SVG rather than a library: the ops CSP allows one CDN and
+// a charting bundle would be the heaviest thing on a page staff open on a phone
+// over shop wifi, for two charts.
+//
+// Series colours are the brand's own rose-deep and a lighter crust gold. That
+// pair was picked by running the palette through a CVD check — the obvious
+// rose/sage pairing came out at ΔE 5.7 under deuteranopia, which is two bars
+// nobody with red-green colour blindness could tell apart.
+const SERIES = ['#A03D5E', '#C08A2E'];
+const AXIS_INK = 'rgba(139,106,90,.85)';
+const GRID = '#E4D3C4';
+
+const niceCeil = (v) => {
+  if (v <= 0) return 1;
+  const mag = 10 ** Math.floor(Math.log10(v));
+  return Math.ceil(v / mag) * mag;
+};
+
+/** A column whose top corners are rounded and whose baseline stays square. */
+function roundedTop(x, y, w, h, r, fill) {
+  const rr = Math.min(r, w / 2, h);
+  return `<path d="M${x.toFixed(1)},${(y + h).toFixed(1)}V${(y + rr).toFixed(1)}`
+    + `a${rr},${rr} 0 0 1 ${rr},${-rr}h${(w - rr * 2).toFixed(1)}`
+    + `a${rr},${rr} 0 0 1 ${rr},${rr}V${(y + h).toFixed(1)}Z" fill="${fill}"/>`;
+}
+
+const shortMoney = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : `$${Math.round(v)}`);
+
+/**
+ * Takings per day as an area + line, with a marker on the best day and on today.
+ * Points are evenly spaced because every day is present — see dailyTakings.
+ */
+function takingsChart(rows) {
+  const W = 320, H = 132, padL = 34, padR = 8, padT = 10, padB = 18;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const max = niceCeil(Math.max(1, ...rows.map((r) => r.revenue)));
+  const x = (i) => padL + (rows.length === 1 ? plotW / 2 : (i / (rows.length - 1)) * plotW);
+  const y = (v) => padT + plotH - (v / max) * plotH;
+
+  const line = rows.map((r, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(r.revenue).toFixed(1)}`).join('');
+  const area = `${line}L${x(rows.length - 1).toFixed(1)},${padT + plotH}L${padL},${padT + plotH}Z`;
+
+  const bestIdx = rows.reduce((b, r, i) => (r.revenue > rows[b].revenue ? i : b), 0);
+  const marks = [...new Set([bestIdx, rows.length - 1])].filter((i) => rows[i].revenue > 0);
+
+  const ticks = [0, max / 2, max];
+  const label = (k) => dayKeyLabel(k, { day: 'numeric', month: 'short' });
+
+  return `
+    <div class="chart" role="img"
+         aria-label="Takings per day for the last ${rows.length} days. Highest ${money.format(rows[bestIdx].revenue)} on ${esc(label(rows[bestIdx].dayKey))}.">
+      <svg viewBox="0 0 ${W} ${H}" class="chart-svg">
+        ${ticks.map((t) => `
+          <line x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>
+          <text x="${padL - 6}" y="${(y(t) + 3.5).toFixed(1)}" class="ax" text-anchor="end">${esc(shortMoney(t))}</text>`).join('')}
+        <path d="${area}" fill="${SERIES[0]}" fill-opacity=".1"/>
+        <path d="${line}" fill="none" stroke="${SERIES[0]}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        ${marks.map((i) => `
+          <circle cx="${x(i).toFixed(1)}" cy="${y(rows[i].revenue).toFixed(1)}" r="4"
+                  fill="${SERIES[0]}" stroke="var(--cream)" stroke-width="2"/>`).join('')}
+        <text x="${padL}" y="${H - 5}" class="ax" text-anchor="start">${esc(label(rows[0].dayKey))}</text>
+        <text x="${W - padR}" y="${H - 5}" class="ax" text-anchor="end">${esc(label(rows[rows.length - 1].dayKey))}</text>
+      </svg>
+      <div class="chart-peak">Best day ${money.format(rows[bestIdx].revenue)} · ${esc(label(rows[bestIdx].dayKey))}</div>
+    </div>`;
+}
+
+/** Weekly takings as columns stacked by store, newest at the right. */
+function weeklyStoreChart(rows, stores) {
+  const W = 320, H = 138, padL = 34, padR = 6, padT = 10, padB = 20;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const max = niceCeil(Math.max(1, ...rows.map((r) => r.total)));
+  const band = plotW / rows.length;
+  const bw = Math.min(24, band - 7);            // capped, and the leftover is air
+  const y = (v) => padT + plotH - (v / max) * plotH;
+  const ticks = [0, max / 2, max];
+
+  return `
+    <div class="chart" role="img"
+         aria-label="Weekly takings for the last ${rows.length} weeks, split by store.">
+      <svg viewBox="0 0 ${W} ${H}" class="chart-svg">
+        ${ticks.map((t) => `
+          <line x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>
+          <text x="${padL - 6}" y="${(y(t) + 3.5).toFixed(1)}" class="ax" text-anchor="end">${esc(shortMoney(t))}</text>`).join('')}
+        ${rows.map((r, i) => {
+          const cx = padL + band * i + (band - bw) / 2;
+          const present = stores.map((st, si) => ({ si, v: r.byStore[st.code] || 0 })).filter((x) => x.v > 0);
+          let cursor = padT + plotH;
+          // Bottom-up, so the 2px surface gap falls between segments. Only the
+          // last one drawn is the column's data-end and gets the rounded cap.
+          return present.map(({ si, v }, n) => {
+            const h = Math.max(1.5, (v / max) * plotH);
+            const top = cursor - h;
+            const cap = n === present.length - 1;
+            cursor = top - 2;
+            return cap ? roundedTop(cx, top, bw, h, 4, SERIES[si])
+              : `<rect x="${cx.toFixed(1)}" y="${top.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${SERIES[si]}"/>`;
+          }).join('');
+        }).join('')}
+        ${rows.map((r, i) => `
+          <text x="${(padL + band * i + band / 2).toFixed(1)}" y="${H - 6}" class="ax" text-anchor="middle"
+            >${i % 2 === 0 || rows.length <= 5 ? esc(r.key.slice(8)) + '/' + esc(r.key.slice(5, 7)) : ''}</text>`).join('')}
+      </svg>
+      <div class="legend">
+        ${stores.map((st, i) => `
+          <span class="legend-key"><span class="legend-dot" style="background:${SERIES[i]}"></span>${esc(st.label)}</span>`).join('')}
+      </div>
+    </div>`;
+}
+
+/** The numbers behind a chart, because a picture is not an accessible record. */
+const chartTable = (title, head, rows) => `
+  <details class="sub chart-table">
+    <summary class="collapse-head">
+      <span class="grow list-meta">${esc(title)}</span>
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+    <div>
+      ${rows.map((r) => `
+        <div class="list-row">
+          <span class="grow">${esc(r[0])}</span>
+          ${r.slice(1).map((c) => `<span class="num">${esc(c)}</span>`).join('')}
+        </div>`).join('')}
+    </div>
+  </details>`;
+
 // ── Analytics ───────────────────────────────────────────────────────────────
 const delta = (now, before) => {
   if (!before) return { cls: 'flat', text: before === 0 && now > 0 ? 'first week' : '—' };
@@ -2367,12 +2588,14 @@ async function renderAnalytics() {
   root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
 
   const since = new Date(Date.now() - 63 * 86400000).toISOString();
-  const [all, profiles, events] = await Promise.all([
+  const [all, profiles, events, customerRows] = await Promise.all([
     // includeOpen keeps money still owed on old orders visible no matter how
     // long ago it was ordered — that debt is the whole point of tracking it.
     listOrders({ since, withCosts: true, includeOpen: true }),
     listProfiles(),
     recentAuthEvents(40),
+    // Over every order ever, not the 63-day window the charts use.
+    allCustomers().catch(() => []),
   ]);
   peopleById = new Map(profiles.map((p) => [p.id, p]));
   orders = all;
@@ -2412,13 +2635,9 @@ async function renderAnalytics() {
     return d >= 0 && d < 56;          // pickups that have already happened
   }));
 
-  // Eight trailing weeks of sales.
-  const weeks = [];
-  for (let i = 7; i >= 0; i--) {
-    const key = weekStartKey(new Date(Date.now() - i * 7 * 86400000));
-    weeks.push({ key, revenue: summarise(all.filter((o) => weekStartKey(o.created_at) === key)).revenue });
-  }
-  const peak = Math.max(1, ...weeks.map((x) => x.revenue));
+  const daily = dailyTakings(all, 30, now);
+  const weeks = weeklyByStore(all, STORES.map((st) => st.code), 8, now);
+  const board = customerLeaderboard(customerRows, now);
 
   const hours = busiestHours(all.filter((o) => {
     const d = daysBetween(sydneyParts(o.due_at).dayKey, todayKey);
@@ -2427,7 +2646,6 @@ async function renderAnalytics() {
   const peakHour = hours.indexOf(Math.max(...hours));
   const hourLabel = (h) => `${((h + 11) % 12) + 1}${h < 12 ? 'am' : 'pm'}`;
 
-  const repeat = repeatCustomers(all);
   // 30 days, not 7: a week of one shop's trading is noise, and this panel is
   // the one that has to answer whether a store is worth keeping open.
   const stores = storeBreakdown(sold30, STORES.map((st) => st.code));
@@ -2493,17 +2711,23 @@ async function renderAnalytics() {
     </div>
 
     <div class="panel">
-      <div class="panel-title">Sales, last 8 weeks</div>
-      <div class="panel-note">By the date the order was taken, Monday weeks.</div>
-      <div class="bars">
-        ${weeks.map((x, i) => `
-          <div class="bar-col">
-            <div class="bar ${i === weeks.length - 1 ? '' : 'is-quiet'}"
-                 style="height:${bar(x.revenue, peak)}px"
-                 title="${esc(x.key)} · ${money.format(x.revenue)}"></div>
-            <div class="bar-label">${esc(x.key.slice(8))}/${esc(x.key.slice(5, 7))}</div>
-          </div>`).join('')}
-      </div>
+      <div class="panel-title">Takings, last 30 days</div>
+      <div class="panel-note">Every day the shop took money, by the date the order was written.</div>
+      ${takingsChart(daily)}
+      ${chartTable('Show the daily numbers', null,
+        daily.filter((d) => d.count).reverse().map((d) => [
+          dayKeyLabel(d.dayKey), `${d.count} order${d.count === 1 ? '' : 's'}`, money.format(d.revenue)]))}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Weekly takings by store</div>
+      <div class="panel-note">Monday weeks, by the date the order was taken. Stacked, so the column height is the whole week.</div>
+      ${weeklyStoreChart(weeks, STORES)}
+      ${chartTable('Show the weekly numbers', null,
+        [...weeks].reverse().map((wk) => [
+          `Week of ${dayKeyLabel(wk.key)}`,
+          ...STORES.map((st) => money.format(wk.byStore[st.code] || 0)),
+          money.format(wk.total)]))}
     </div>
 
     <div class="panel">
@@ -2559,6 +2783,19 @@ async function renderAnalytics() {
     `,
     customers: `
     <div class="panel">
+      <div class="panel-title">Leaderboard</div>
+      <div class="panel-note">
+        Everyone with a phone number on their docket, over every order on record.
+      </div>
+      <div class="sortbar" id="board-tabs" role="group" aria-label="Leaderboard metric">
+        ${BOARDS.map((t) => `
+          <button data-board="${t.key}" aria-pressed="${t.key === boardKey}">${esc(t.label)}</button>`).join('')}
+      </div>
+      <p class="panel-note" id="board-note" style="margin-bottom:10px;"></p>
+      <div id="board-rows"></div>
+    </div>
+
+    <div class="panel">
       <div class="panel-title">Customers</div>
       <div class="panel-note">
         Matched on phone number, over every order on record. Repeat customer rate is
@@ -2566,22 +2803,16 @@ async function renderAnalytics() {
         cakes bring people back, and it needs no extra data entry.
       </div>
       <div class="rcr">
-        <div class="rcr-num">${repeat.rate.toFixed(0)}<span class="rcr-pct">%</span></div>
+        <div class="rcr-num">${board.rate.toFixed(0)}<span class="rcr-pct">%</span></div>
         <div class="rcr-side">
           <div class="rcr-label">Repeat customer rate</div>
-          <div class="meter meter-wide"><span class="meter-fill" style="width:${Math.min(100, repeat.rate).toFixed(1)}%"></span></div>
-          <div class="list-meta">${repeat.returningCount} of ${repeat.total} customers have come back</div>
+          <div class="meter meter-wide"><span class="meter-fill" style="width:${Math.min(100, board.rate).toFixed(1)}%"></span></div>
+          <div class="list-meta">${board.returningCount} of ${board.total} customers have come back</div>
         </div>
       </div>
-      <div class="list-row"><span class="grow">Ordered once</span><span class="num">${repeat.newCount}</span></div>
-      <div class="list-row"><span class="grow">Came back</span><span class="num">${repeat.returningCount}</span></div>
-      ${repeat.top.length ? '<div class="mix-head">Who comes back most</div>' : ''}
-      ${repeat.top.slice(0, 6).map((c) => `
-        <div class="list-row">
-          <span class="grow">${esc(c.name)}</span>
-          <span class="repeat-chip">${c.orders}×</span>
-          <span class="num">${money.format(c.spend)}</span>
-        </div>`).join('')}
+      <div class="list-row"><span class="grow">Ordered once</span><span class="num">${board.newCount}</span></div>
+      <div class="list-row"><span class="grow">Came back</span><span class="num">${board.returningCount}</span></div>
+
     </div>
 
     ${lead.count ? `
@@ -2739,6 +2970,12 @@ async function renderAnalytics() {
   };
 
   root.innerHTML = PAGES[analyticsPage] || PAGES.finance;
+
+  if (analyticsPage === 'customers') {
+    $('board-tabs').querySelectorAll('[data-board]').forEach((b) =>
+      b.addEventListener('click', () => { boardKey = b.dataset.board; paintBoard(board); }));
+    paintBoard(board);
+  }
 }
 
 // ── Keep a waking phone current ─────────────────────────────────────────────

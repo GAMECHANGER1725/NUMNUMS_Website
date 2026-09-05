@@ -629,3 +629,103 @@ export function csvCell(value) {
 export function toCsv(headers, rows) {
   return [headers, ...rows].map((r) => r.map(csvCell).join(',')).join('\r\n');
 }
+
+// ── Series for the finance charts ───────────────────────────────────────────
+
+/**
+ * Takings per Sydney day, oldest first, with empty days kept.
+ *
+ * The gaps matter: dropping a zero-revenue Monday would slide Tuesday left and
+ * quietly redraw the weekly rhythm the chart exists to show.
+ */
+export function dailyTakings(orders, days = 30, now = new Date()) {
+  const todayKey = sydneyParts(now).dayKey;
+  const buckets = new Map();
+  for (let i = days - 1; i >= 0; i--) buckets.set(addDayKey(todayKey, -i), { revenue: 0, count: 0 });
+
+  for (const o of orders) {
+    if (o.status === 'cancelled') continue;
+    const b = buckets.get(sydneyParts(o.created_at).dayKey);
+    if (!b) continue;
+    b.revenue += num(o.price);
+    b.count += 1;
+  }
+  return [...buckets.entries()].map(([dayKey, b]) => ({ dayKey, ...b }));
+}
+
+/** Revenue per Monday-week per store, oldest first, for the stacked columns. */
+export function weeklyByStore(orders, storeCodes, weeks = 8, now = new Date()) {
+  const keys = [];
+  for (let i = weeks - 1; i >= 0; i--) {
+    keys.push(weekStartKey(new Date(now.getTime() - i * 7 * 86400000)));
+  }
+  const rows = keys.map((key) => ({
+    key,
+    total: 0,
+    byStore: Object.fromEntries(storeCodes.map((c) => [c, 0])),
+  }));
+  const index = new Map(rows.map((r) => [r.key, r]));
+
+  for (const o of orders) {
+    if (o.status === 'cancelled') continue;
+    const r = index.get(weekStartKey(o.created_at));
+    if (!r || !(o.store in r.byStore)) continue;
+    r.byStore[o.store] += num(o.price);
+    r.total += num(o.price);
+  }
+  return rows;
+}
+
+/**
+ * Customer leaderboards, over rows of the `customers` view.
+ *
+ * The view, not the analytics fetch: that window is 63 days, and a customer who
+ * has "gone quiet" has by definition not ordered inside it — computing this off
+ * the same rows as the charts made that board permanently empty, and quietly
+ * understated the other three.
+ *
+ * Four boards off one pass, because the useful question changes by the day:
+ * who spends most, who comes most often, who is worth the most per visit, and
+ * — the one nobody thinks to ask — which regular has stopped coming.
+ */
+export function customerLeaderboard(customers, now = new Date(), limit = 8) {
+  const todayKey = sydneyParts(now).dayKey;
+
+  const all = customers.map((c) => {
+    const orders = Number(c.order_count) || 0;
+    const spend = Number(c.spend) || 0;
+    return {
+      key: c.phone_key,
+      name: c.name,
+      phone: c.phone,
+      orders,
+      spend,
+      avg: orders ? spend / orders : 0,
+      firstKey: sydneyParts(c.first_order).dayKey,
+      lastKey: sydneyParts(c.last_order).dayKey,
+      daysSince: daysBetween(sydneyParts(c.last_order).dayKey, todayKey),
+    };
+  });
+
+  const top = (rows, cmp) => [...rows].sort(cmp).slice(0, limit);
+
+  const returning = all.filter((c) => c.orders > 1);
+
+  return {
+    total: all.length,
+    newCount: all.length - returning.length,
+    returningCount: returning.length,
+    // Repeat customer rate: the share of known customers who came back at least
+    // once. Computed here rather than off the analytics fetch, so it means what
+    // the panel says it means — every order on record, not the last 63 days.
+    rate: all.length ? (returning.length / all.length) * 100 : 0,
+    spend:  top(all, (a, b) => b.spend - a.spend || b.orders - a.orders),
+    orders: top(all, (a, b) => b.orders - a.orders || b.spend - a.spend),
+    // One big cake does not make a high-value customer, so this board needs a
+    // repeat history behind the average before it means anything.
+    avg:    top(all.filter((c) => c.orders >= 2), (a, b) => b.avg - a.avg),
+    // Regulars who have gone quiet — the only board that is a to-do list.
+    lapsed: top(all.filter((c) => c.orders >= 2 && c.daysSince >= 45),
+                (a, b) => b.daysSince - a.daysSince || b.spend - a.spend),
+  };
+}
