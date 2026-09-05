@@ -257,13 +257,40 @@ function hydrateThumbs(root) {
   });
 }
 
-async function renderLog() {
-  const root = $('view-log');
-  root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
-  [orders] = await Promise.all([
-    listOrders({ store, withCosts: me.role === 'admin' }),
+/**
+ * The rows behind the order log, held per store.
+ *
+ * Searching and picking dates filter what is already in memory, but every
+ * keystroke was re-running the fetch first: typing a four-letter name cost
+ * sixteen round trips to redraw a list the page was already holding. Only a
+ * store switch, a write, or a stale copy genuinely needs the network.
+ */
+// Keyed by store, because staff flip between the two tabs constantly and a
+// single slot would make every flip a fresh fetch of a list just seen.
+let logCache = new Map();
+const LOG_TTL = 120000;
+
+function logFresh(forStore) {
+  const hit = logCache.get(forStore);
+  return Boolean(hit) && hit.stamp === writeStamp.v && Date.now() - hit.at < LOG_TTL;
+}
+
+async function logData(forStore) {
+  if (logFresh(forStore)) return logCache.get(forStore).rows;
+  const [rows] = await Promise.all([
+    listOrders({ store: forStore, withCosts: me.role === 'admin' }),
     loadPrintFlags(),
   ]);
+  logCache.set(forStore, { at: Date.now(), stamp: writeStamp.v, rows });
+  return rows;
+}
+
+async function renderLog() {
+  const root = $('view-log');
+  // Only flash "Loading…" when something is actually being fetched; on a
+  // filter keystroke it would strobe the list on every letter.
+  if (!logFresh(store)) root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+  orders = await logData(store);
 
   const now = new Date();
   // A date range is a lookup, not the daily worklist, so it keeps every
@@ -313,19 +340,33 @@ async function renderLog() {
   hydrateThumbs(root);
 }
 
-async function renderBake() {
-  const root = $('view-bake');
-  root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+let bakeCache = null;
 
-  // The queue is what to make next; the tally is what already walked out the
-  // door. Both matter to the baker: without the tally he restocks the counter
-  // from memory and guesses which flavours moved.
+const bakeFresh = () =>
+  bakeCache && bakeCache.stamp === writeStamp.v && Date.now() - bakeCache.at < LOG_TTL;
+
+/** The queue and the in-store tally. Flipping the store tabs filters these in
+ *  memory — every cake is already here — so only a write reloads them. */
+async function bakeData() {
+  if (bakeFresh()) return bakeCache.rows;
   const twoDays = new Date(Date.now() - 3 * 86400000).toISOString();
-  const [queue, recent] = await Promise.all([
+  const rows = await Promise.all([
     listToBake(),
     listOrders({ since: twoDays }),
     loadPrintFlags(),
   ]);
+  bakeCache = { at: Date.now(), stamp: writeStamp.v, rows };
+  return rows;
+}
+
+async function renderBake() {
+  const root = $('view-bake');
+  if (!bakeFresh()) root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+
+  // The queue is what to make next; the tally is what already walked out the
+  // door. Both matter to the baker: without the tally he restocks the counter
+  // from memory and guesses which flavours moved.
+  const [queue, recent] = await bakeData();
   orders = queue;
 
   const now = new Date();
@@ -3154,7 +3195,8 @@ async function renderAnalytics({ force = false } = {}) {
 // ── Keep a waking phone current ─────────────────────────────────────────────
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible' || !me || $('sheet-root').innerHTML) return;
-  analyticsCache = null;   // a phone picked back up wants the truth, not a cached copy
+  // A phone picked back up wants the truth, not a cached copy.
+  analyticsCache = null; logCache = new Map(); bakeCache = null;
   render();
 });
 
