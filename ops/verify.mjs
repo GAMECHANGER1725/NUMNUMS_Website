@@ -72,7 +72,21 @@ const missing = [...new Set([...app.matchAll(/\$\('([^']+)'\)/g)].map((m) => m[1
 if (missing.length) fail(`$() reaches for ids that do not exist: ${missing.join(', ')}`);
 else pass('every $() id exists in the markup');
 
-// ── 5. the catalogue has not drifted from the build gate ────────────────────
+// ── 5. the gallery picker must never carry `capture` ────────────────────────
+// With capture on it, Android skips the chooser and opens the camera, so a
+// photo the customer already sent cannot be attached. That shipped once. The
+// camera button is a separate input and is the only one allowed to have it.
+const inputs = [...app.matchAll(/<input[^>]*\bid="(f-photo(?:-cam)?)"[^>]*>/g)]
+  .map(([tag, id]) => ({ id, capture: /\bcapture=/.test(tag) }));
+const gallery = inputs.find((i) => i.id === 'f-photo');
+const camera = inputs.find((i) => i.id === 'f-photo-cam');
+
+if (!gallery || !camera) fail(`expected both photo inputs, found: ${inputs.map((i) => i.id).join(', ') || 'none'}`);
+else if (gallery.capture) fail('#f-photo has capture — Android will skip the picker and force the camera');
+else if (!camera.capture) fail('#f-photo-cam has lost capture — the camera button will open the file picker instead');
+else pass('photo inputs: picker without capture, camera with it');
+
+// ── 6. the catalogue has not drifted from the build gate ────────────────────
 // catalog.mjs mirrors FACTS in verify-blog.mjs. Nothing enforced that, so the
 // ops app could quote a price the public site had already moved on from.
 const facts = readFileSync(join(here, '..', 'verify-blog.mjs'), 'utf8');

@@ -601,6 +601,14 @@ body:has(#menu-btn:not(.hidden)) .main { padding-bottom: calc(140px + var(--safe
 .photo-pick:active { transform: scale(.975); }
 .photo-input:focus-visible + .photo-pick { outline: 2px solid var(--rose); outline-offset: 2px; }
 .photo-pick svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+/* Two ways in: the camera for a cake being described at the counter, the
+   picker for the photo the customer already sent. Side by side so neither is
+   the hidden one. */
+.photo-pickers { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Equal halves that never wrap their label: one button two lines tall beside a
+   one-line button reads as a mistake. Below ~330px they stack instead. */
+.photo-pickers .photo-pick { flex: 1 1 128px; white-space: nowrap; padding: 0 12px; }
+
 .photo-name {
   font-size: 13px; color: var(--ink-soft); margin-top: 6px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;

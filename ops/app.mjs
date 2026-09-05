@@ -1697,18 +1697,31 @@ function openNewOrder() {
             <button type="button" class="photo-remove" id="photo-remove" aria-label="Remove this photo">✕</button>
           </span>
           <div style="flex:1;min-width:0">
-            <!-- No capture attribute: on Android it makes Chrome skip the picker
-                 and open the camera, so staff could not attach a photo the
-                 customer had already sent. Without it both options appear. -->
-            <input class="photo-input" type="file" id="f-photo" accept="image/*">
-            <label class="photo-pick" for="f-photo">
-              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.6-2.4h4.8L16 6"/>
-              </svg>
-              <span id="photo-pick-label">Add a photo</span>
-            </label>
+            <div class="photo-pickers">
+              <!-- capture opens the camera straight away. It belongs on this
+                   input and only this one. -->
+              <input class="photo-input" type="file" id="f-photo-cam" accept="image/*" capture="environment">
+              <label class="photo-pick" for="f-photo-cam">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.6-2.4h4.8L16 6"/>
+                </svg>
+                <span>Take photo</span>
+              </label>
+
+              <!-- and NOT on this one. With capture here, Android skips the
+                   picker and opens the camera, so the photo the customer
+                   already sent over WhatsApp cannot be attached at all. That
+                   was the bug; verify.mjs now fails the build if it comes back. -->
+              <input class="photo-input" type="file" id="f-photo" accept="image/*">
+              <label class="photo-pick" for="f-photo">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9.5" r="1.4"/>
+                </svg>
+                <span>Choose photo</span>
+              </label>
+            </div>
             <p class="photo-name hidden" id="photo-name"></p>
-            <p class="photo-hint">Camera or gallery. Shrunk before upload, and deleted 14 days after the order.</p>
+            <p class="photo-hint">Shrunk before upload, and deleted 14 days after the order.</p>
           </div>
         </div>
       </div>
@@ -1904,24 +1917,30 @@ function openNewOrder() {
       $('photo-shot').classList.remove('hidden');
       $('photo-name').textContent = file.name;
       $('photo-name').classList.remove('hidden');
-      $('photo-pick-label').textContent = 'Change photo';
     } else {
       prev.removeAttribute('src');
       delete prev.dataset.url;
       $('photo-shot').classList.add('hidden');
+      $('photo-name').textContent = '';
       $('photo-name').classList.add('hidden');
-      $('photo-pick-label').textContent = 'Add a photo';
     }
   };
 
-  $('f-photo').addEventListener('change', (e) => {
-    photoFile = e.target.files[0] || null;
+  const PHOTO_INPUTS = ['f-photo', 'f-photo-cam'];
+
+  PHOTO_INPUTS.forEach((id) => $(id).addEventListener('change', (e) => {
+    const picked = e.target.files[0] || null;
+    if (!picked) return;   // a cancelled camera or picker must not clear the photo already attached
+    photoFile = picked;
+    // Only one photo per cake, so the other input is cleared: leaving a stale
+    // selection there makes re-picking the same file fire no change event.
+    PHOTO_INPUTS.filter((other) => other !== id).forEach((other) => { $(other).value = ''; });
     showPhoto(photoFile);
-  });
+  }));
 
   $('photo-remove').addEventListener('click', () => {
     photoFile = null;
-    $('f-photo').value = '';
+    PHOTO_INPUTS.forEach((id) => { $(id).value = ''; });
     showPhoto(null);
   });
 
