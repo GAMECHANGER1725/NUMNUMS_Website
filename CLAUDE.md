@@ -128,6 +128,11 @@ main site.
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
+- **Overlays own the back button.** Opening a sheet or the drawer pushes a history entry so
+  Android's back gesture closes it instead of walking out of the app mid-order; closing any other
+  way pops that entry so history never fills with dead steps. `popstate` is a no-op when nothing is
+  open — that is what makes our own `history.back()` safe. Any new overlay must go through
+  `pushOverlay` and take a `{ fromHistory }` argument, or back will leave the app again.
 - **Say when a number is too small to act on.** `cancellationStats` returns `confident`, false
   until both compared groups have ten orders behind them, and the panel prints a caveat instead of
   a recommendation. Any future panel that invites a decision — a policy, a price, dropping a

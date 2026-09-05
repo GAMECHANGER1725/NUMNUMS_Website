@@ -1172,9 +1172,45 @@ function payState(o) {
 }
 
 // ── Order detail sheet ──────────────────────────────────────────────────────
-function closeSheet() { $('sheet-root').innerHTML = ''; document.body.style.overflow = ''; }
+/**
+ * Overlays and the phone's back button.
+ *
+ * Opening a sheet pushes a history entry so that Android's back gesture closes
+ * it. Without this, back walks out of the app entirely — mid-order, with the
+ * form filled in — which is what it did until now.
+ *
+ * Closing by any other route pops that entry back off, so the history does not
+ * silently fill with dead steps a customer-facing back press has to chew
+ * through. popstate does nothing when nothing is open, which is what makes the
+ * two paths safe to mix: our own history.back() lands there and finds the work
+ * already done.
+ */
+let sheetPushed = false;
+let drawerPushed = false;
+
+function pushOverlay(which) {
+  if (which === 'sheet' ? sheetPushed : drawerPushed) return;
+  if (which === 'sheet') sheetPushed = true; else drawerPushed = true;
+  history.pushState({ opsOverlay: which }, '');
+}
+
+function closeSheet({ fromHistory = false } = {}) {
+  if (!$('sheet-root').innerHTML) return;
+  $('sheet-root').innerHTML = '';
+  document.body.style.overflow = '';
+  const pushed = sheetPushed;
+  sheetPushed = false;
+  if (pushed && !fromHistory) history.back();
+}
+
+window.addEventListener('popstate', () => {
+  // Back was pressed. Close the drawer first — it sits above the sheet.
+  if ($('drawer-root').innerHTML) { closeDrawer({ fromHistory: true }); return; }
+  if ($('sheet-root').innerHTML) closeSheet({ fromHistory: true });
+});
 
 function openSheet(title, bodyHtml, { center = false } = {}) {
+  pushOverlay('sheet');
   document.body.style.overflow = 'hidden';
   $('sheet-root').innerHTML = `
     <div class="sheet-scrim" data-close></div>
@@ -1185,7 +1221,7 @@ function openSheet(title, bodyHtml, { center = false } = {}) {
       </div>
       <div class="sheet-body">${bodyHtml}</div>
     </div>`;
-  $('sheet-root').querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeSheet));
+  $('sheet-root').querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => closeSheet()));
   return $('sheet-root').querySelector('.sheet-body');
 }
 
@@ -2148,16 +2184,21 @@ const menuGroups = () => MENU.filter((g) => g.roles.includes(me.role));
 // the last one under the fold on a phone.
 let navOpen = new Set(['Analytics']);
 
-function closeDrawer() {
+function closeDrawer({ fromHistory = false } = {}) {
+  if (!$('drawer-root').innerHTML) return;
   $('drawer-root').innerHTML = '';
   $('menu-btn').setAttribute('aria-expanded', 'false');
   document.body.style.overflow = '';
+  const pushed = drawerPushed;
+  drawerPushed = false;
+  if (pushed && !fromHistory) history.back();
 }
 
 const isCurrent = (c) =>
   view === c.view && (!c.page || analyticsPage === c.page);
 
 function openDrawer() {
+  pushOverlay('drawer');
   document.body.style.overflow = 'hidden';
   $('menu-btn').setAttribute('aria-expanded', 'true');
   $('drawer-root').innerHTML = `
@@ -2184,12 +2225,12 @@ function openDrawer() {
     </nav>`;
 
   $('drawer-root').querySelectorAll('[data-drawer-close]')
-    .forEach((b) => b.addEventListener('click', closeDrawer));
+    .forEach((b) => b.addEventListener('click', () => closeDrawer()));
 
   $('drawer-root').querySelectorAll('[data-group]').forEach((b) => b.addEventListener('click', () => {
     const g = b.dataset.group;
     if (navOpen.has(g)) navOpen.delete(g); else navOpen.add(g);
-    openDrawer();
+    openDrawer();   // pushOverlay is a no-op while one is already pushed
   }));
 
   $('drawer-root').querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
