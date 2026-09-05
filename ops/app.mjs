@@ -370,7 +370,7 @@ function logFresh(forStore) {
 // the log would have started silently dropping orders inside two months.
 // `includeOpen` is what makes the window safe: nothing unfinished ages out of
 // it, however old.
-const LOG_WINDOW_DAYS = 30;
+const LOG_WINDOW_DAYS = 14;
 
 async function logData(forStore) {
   if (logFresh(forStore)) return logCache.get(forStore).rows;
@@ -2904,7 +2904,7 @@ async function analyticsData({ force = false } = {}) {
     const [all, profiles, events, customerRows, photoRows] = await Promise.all([
       // includeOpen keeps money still owed on old orders visible no matter how
       // long ago it was ordered — that debt is the whole point of tracking it.
-      listOrders({ since, withCosts: true, includeOpen: true }),
+      listOrders({ since, withCosts: true, includeOpen: true, complete: true }),
       listProfiles(),
       recentAuthEvents(40),
       // Over every order ever, not the 63-day window the charts use.

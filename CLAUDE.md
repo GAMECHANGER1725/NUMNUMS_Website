@@ -129,11 +129,16 @@ main site.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
   working view; the per-store tabs are for loading a van or checking one shop's book.
 - **PostgREST stops at 1000 rows and does not raise.** A query past the cap returns a short array
-  with the truth only in `Content-Range`, so a list silently loses rows. Unbounded reads in
-  `db.mjs` go through `capped()`, which warns. Never write a query whose result grows with the age
-  of the business: the order log is bounded to 30 days plus every still-open order
-  (`includeOpen`), and search and date ranges are server-side (`searchOrdersRemote`,
-  `ordersDueBetween`) so a lookup still reaches the whole book.
+  with the truth only in `Content-Range`, so a list silently loses rows. Two ways out, and the
+  choice matters: bound the query, or page it with `pageAll()`. Results that must be complete —
+  the bookkeeper export, the analytics figures (`listOrders({ complete: true })`), print jobs —
+  are paged. Results that only need to be current are bounded: the order log is 14 days plus every
+  still-open order (`includeOpen`), with search and date ranges server-side
+  (`searchOrdersRemote`, `ordersDueBetween`) so a lookup still reaches the whole book. Anything
+  left unbounded goes through `capped()`, which warns.
+- **An `.in()` filter puts every id in the URL.** A thousand uuids is a ~37KB query string; the
+  request fails and every cost comes back missing, which the page renders as "no costs recorded"
+  rather than as an error. `attachCosts` chunks at 200. Chunk any new `.in()` over a growing list.
 - **Overlays own the back button.** Opening a sheet or the drawer pushes a history entry so
   Android's back gesture closes it instead of walking out of the app mid-order; closing any other
   way pops that entry so history never fills with dead steps. `popstate` is a no-op when nothing is

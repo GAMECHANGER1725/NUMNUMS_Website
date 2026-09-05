@@ -98,6 +98,25 @@ const wrote = () => { writeStamp.v += 1; };
  */
 export const PAGE_CAP = 1000;
 
+/**
+ * Read every row, a page at a time.
+ *
+ * For results that must be complete — the bookkeeper's export, the figures on
+ * the analytics pages. `build` has to return a fresh query each call, because a
+ * PostgREST builder cannot be reused once awaited.
+ */
+async function pageAll(build, what, ceiling = 20000) {
+  const out = [];
+  for (let from = 0; from < ceiling; from += PAGE_CAP) {
+    const { data, error } = await build().range(from, from + PAGE_CAP - 1);
+    if (error) throw error;
+    out.push(...(data || []));
+    if (!data || data.length < PAGE_CAP) return out;
+  }
+  console.warn(`${what}: stopped at ${ceiling} rows`);
+  return out;
+}
+
 function capped(rows, what) {
   if (rows.length >= PAGE_CAP) {
     console.warn(`${what}: hit the ${PAGE_CAP}-row limit — this result is incomplete. Narrow the query.`);
@@ -113,9 +132,20 @@ function capped(rows, what) {
  */
 async function attachCosts(orders) {
   if (!orders.length) return orders;
-  const { data } = await sb.from('order_costs')
-    .select('order_id,cost').in('order_id', orders.map((o) => o.id));
-  const byId = new Map((data || []).map((c) => [c.order_id, c.cost]));
+
+  // Every id goes in the query string, so a thousand of them is a ~37KB URL —
+  // long enough that the request fails and every cost comes back missing,
+  // which reads on the page as "no costs recorded" rather than as an error.
+  const ids = orders.map((o) => o.id);
+  const rows = [];
+  for (let i = 0; i < ids.length; i += 200) {
+    const { data, error } = await sb.from('order_costs')
+      .select('order_id,cost').in('order_id', ids.slice(i, i + 200));
+    if (error) throw error;
+    rows.push(...(data || []));
+  }
+
+  const byId = new Map(rows.map((c) => [c.order_id, c.cost]));
   for (const o of orders) {
     o.cost = byId.has(o.id) ? Number(byId.get(o.id)) : null;
   }
@@ -131,18 +161,27 @@ async function attachCosts(orders) {
  * has been owed money on since long before the window, which is exactly what
  * "still to collect" exists to surface. Neither was visible anywhere.
  */
-export async function listOrders({ store, since, until, withCosts = false, includeOpen = false } = {}) {
-  let q = sb.from('orders').select('*').order('due_at', { ascending: true });
-  if (store) q = q.eq('store', store);
-  if (since) {
-    const clauses = [`due_at.gte.${since}`, `created_at.gte.${since}`];
-    if (includeOpen) clauses.push('status.in.(placed,baked,arrived)');
-    q = q.or(clauses.join(','));
+export async function listOrders({ store, since, until, withCosts = false, includeOpen = false, complete = false } = {}) {
+  const build = () => {
+    let q = sb.from('orders').select('*').order('due_at', { ascending: true });
+    if (store) q = q.eq('store', store);
+    if (since) {
+      const clauses = [`due_at.gte.${since}`, `created_at.gte.${since}`];
+      if (includeOpen) clauses.push('status.in.(placed,baked,arrived)');
+      q = q.or(clauses.join(','));
+    }
+    if (until) q = q.lte('due_at', until);
+    return q;
+  };
+
+  let data;
+  if (complete) {
+    data = await pageAll(build, 'listOrders');
+  } else {
+    const res = await build();
+    if (res.error) throw res.error;
+    data = capped(res.data, 'listOrders');
   }
-  if (until) q = q.lte('due_at', until);
-  const { data, error } = await q;
-  if (error) throw error;
-  capped(data, 'listOrders');
   return withCosts ? attachCosts(data) : data;
 }
 
@@ -377,11 +416,10 @@ export const PRINT_KIND_LABEL = { '3d': '3D prints', photo: 'Photo prints' };
 /** Every print job with its order embedded. The table stays small — a handful
  *  a week — so one fetch beats a per-order lookup on every card. */
 export async function listPrintJobs() {
-  const { data, error } = await sb.from('print_jobs')
+  const data = await pageAll(() => sb.from('print_jobs')
     .select('*, order:orders(*)')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data || []).filter((j) => j.order);
+    .order('created_at', { ascending: false }), 'listPrintJobs');
+  return data.filter((j) => j.order);
 }
 
 /**
@@ -390,9 +428,7 @@ export async function listPrintJobs() {
  * entire orders table pulled twice on every trip to the log.
  */
 export async function listPrintFlags() {
-  const { data, error } = await sb.from('print_jobs').select('order_id,kind,status');
-  if (error) throw error;
-  return data || [];
+  return pageAll(() => sb.from('print_jobs').select('order_id,kind,status'), 'listPrintFlags');
 }
 
 /** Orders still in play, for the "which cake is this for" picker. */
@@ -480,17 +516,13 @@ export async function authTrail(limit = 200) {
 
 /** Every order in a window, for the bookkeeper export. */
 export async function ordersBetween(fromISO, toISO) {
-  const { data, error } = await sb.from('orders').select('*')
+  // Paged, not capped: a financial year runs well past a thousand cakes, and a
+  // bookkeeper cannot see that a third of the rows never arrived.
+  const rows = await pageAll(() => sb.from('orders').select('*')
     .gte('created_at', fromISO).lte('created_at', toISO)
-    .order('created_at', { ascending: true });
-  if (error) throw error;
-  const rows = data || [];
+    .order('created_at', { ascending: true }), 'ordersBetween');
   if (!rows.length) return rows;
-  const { data: costs } = await sb.from('order_costs')
-    .select('order_id,cost').in('order_id', rows.map((o) => o.id));
-  const byId = new Map((costs || []).map((c) => [c.order_id, c.cost]));
-  for (const o of rows) o.cost = byId.has(o.id) ? Number(byId.get(o.id)) : null;
-  return rows;
+  return attachCosts(rows);
 }
 
 /** Every customer on record, for the leaderboards. The view aggregates over all
