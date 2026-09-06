@@ -35,11 +35,11 @@
 // credit they are not entitled to, so the discount is applied before the tax is
 // worked out and both lines are shown.
 //
-// The two shops are two companies with two ABNs — see STORES in db.mjs. The
-// entity and ABN come from the order's store, never from the brand. If a store
-// is ever not GST-registered, the document must NOT say "tax invoice" and must
-// NOT show GST; `gstRegistered: false` handles that and the heading falls back
-// to "Invoice".
+// Both shops trade as the one company, so the seller's identity and ABN come
+// from BUSINESS in db.mjs; only the address comes from the store. If the
+// business is ever not GST-registered the document must NOT say "tax invoice"
+// and must NOT show GST — `gstRegistered: false` handles that and the heading
+// falls back to "Invoice".
 //
 // Two things ruled out the obvious routes. The ops CSP has no 'unsafe-inline'
 // in script-src, so a popup document can never call print() on itself; and a
@@ -96,6 +96,16 @@ const latin1 = (s) => [...String(s)].map((ch) => {
 
 const pdfStr = (s) => latin1(s).replace(/([\\()])/g, '\\$1');
 
+/** Raw bytes as one-char-per-byte text, matching how the file is written out. */
+function bytesToLatin1(bytes) {
+  let out = '';
+  // Chunked: spreading 300KB into String.fromCharCode blows the argument limit.
+  for (let i = 0; i < bytes.length; i += 8192) {
+    out += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+  }
+  return out;
+}
+
 /** Draw commands, in PDF user space (origin bottom-left). */
 class Page {
   constructor() { this.ops = []; this.y = A4.h - M; }
@@ -119,6 +129,12 @@ class Page {
     this.ops.push(`${this.rgb(colour)} RG ${w} w ${from.toFixed(2)} ${y.toFixed(2)} m ${to.toFixed(2)} ${y.toFixed(2)} l S`);
     return this;
   }
+  /** Places image N with its TOP-LEFT at (x, y). PDF space is bottom-up, so the
+   *  matrix positions the bottom edge and the height scales it. */
+  image(n, { x, y, w, h }) {
+    this.ops.push(`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${(y - h).toFixed(2)} cm /Im${n} Do Q`);
+    return this;
+  }
   box({ x, y, w, h, colour = '#B37B2C' }) {
     this.ops.push(`${this.rgb(colour)} RG 1 w ${x.toFixed(2)} ${y.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re S`);
     return this;
@@ -135,17 +151,31 @@ class Page {
  * three bytes out for every em dash on the page — a file that still opens in
  * some readers and is rejected by others.
  */
-function toPdfSource(content, title) {
+function toPdfSource(content, title, images = []) {
+  // Image objects go after the eight fixed ones, so Im0 is object 9.
+  const IMG0 = 9;
+  const xobj = images.length
+    ? `/XObject<<${images.map((_, i) => `/Im${i} ${IMG0 + i} 0 R`).join('')}>>`
+    : '';
+
   const objs = [
     '<</Type/Catalog/Pages 2 0 R>>',
     '<</Type/Pages/Kids[3 0 R]/Count 1>>',
     `<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${A4.w} ${A4.h}]`
-      + '/Resources<</Font<</F1 5 0 R/F2 6 0 R/F3 7 0 R>>>>/Contents 4 0 R>>',
+      + `/Resources<</Font<</F1 5 0 R/F2 6 0 R/F3 7 0 R>>${xobj}>>/Contents 4 0 R>>`,
     `<</Length ${content.length}>>\nstream\n${content}\nendstream`,
     '<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>',
     '<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>',
     '<</Type/Font/Subtype/Type1/BaseFont/Times-Roman/Encoding/WinAnsiEncoding>>',
     `<</Title (${pdfStr(title)})/Producer (Num Num's Bakery ops)>>`,
+    // The photos, embedded as-is. A JPEG needs no re-compression — /DCTDecode
+    // means "this stream is already a JPEG" — and the bytes are re-encoded from
+    // an RGB canvas before they get here, which is what makes /DeviceRGB safe:
+    // a greyscale original would otherwise need /DeviceGray and come out wrong.
+    ...images.map((im) => '<</Type/XObject/Subtype/Image'
+      + `/Width ${im.width}/Height ${im.height}/ColorSpace/DeviceRGB`
+      + `/BitsPerComponent 8/Filter/DCTDecode/Length ${im.bytes.length}>>`
+      + `\nstream\n${bytesToLatin1(im.bytes)}\nendstream`),
   ];
 
   let out = '%PDF-1.4\n';
@@ -181,7 +211,7 @@ export function receiptSource(o, ctx) {
   const listC = cents(o.price);
   const offC = Math.min(cents(o.discount), listC);
   const totalC = listC - offC;                      // the consideration, GST-inclusive
-  const taxable = store?.gstRegistered !== false;   // every cake is taxable food
+  const taxable = business?.gstRegistered !== false;   // every cake is taxable food
   const gstC = taxable ? Math.round(totalC / 11) : 0;
   const netC = totalC - gstC;
   const paidC = cents(paidOn(o));
@@ -208,8 +238,8 @@ export function receiptSource(o, ctx) {
   p.down(13).rule({ colour: '#C85478', w: 1.5 });
 
   // Seller identity and ABN: both mandatory, both from the store's own company.
-  p.down(15).text(store?.entity || business.name, { size: 9.5, font: 'F2' });
-  if (store?.abn) p.rightAt(RIGHT, `ABN ${store.abn}`, { size: 9.5, font: 'F2' });
+  p.down(15).text(business.entity || business.name, { size: 9.5, font: 'F2' });
+  if (business.abn) p.rightAt(RIGHT, `ABN ${business.abn}`, { size: 9.5, font: 'F2' });
   p.down(12).text(`trading as ${business.name} — ${store?.label ?? ''}`, { size: 8.5, colour: TAUPE });
   p.down(11).text(store?.address || '', { size: 8.5, colour: TAUPE });
   p.down(11).text(`${business.phone} · ${business.email} · ${business.site}`,
@@ -280,10 +310,57 @@ export function receiptSource(o, ctx) {
   p.down(7).rule({ from: LABX, colour: '#E8DDD2' });
   total(paidC > 0 && owingC > 0 ? 'Deposit paid' : 'Paid', $(paidC));
   p.down(8).rule({ from: LABX, colour: INK, w: 1.2 });
-  total(owingC > 0 ? 'Balance due at pickup' : 'Balance', $(owingC), true);
+  // A cancelled order has no pickup to pay at, so it must not tell the customer
+  // there is one; the figure still shows, because a deposit may be in dispute.
+  total(o.status === 'cancelled' ? 'Balance'
+    : owingC > 0 ? 'Balance due at pickup' : 'Balance', $(owingC), true);
 
   if (taxable) {
     p.down(18).text('Total price includes GST.', { x: LABX, size: 8.5, colour: TAUPE });
+  }
+
+  // ── Design reference ──────────────────────────────────────────────────────
+  // The pictures the customer sent, on their copy of the invoice. It settles
+  // "this is not what I asked for" at the counter, which is the one argument a
+  // written description never wins. They sit below the totals in the space the
+  // page already has, and stop before the footer rather than running onto a
+  // second page — a receipt is one page.
+  const photos = ctx.photos || [];
+  if (photos.length) {
+    const GAP = 8;
+    const PER_ROW = 3;
+    const cellW = (RIGHT - M - GAP * (PER_ROW - 1)) / PER_ROW;
+    const floor = M + 74;                       // the footer's air
+
+    p.y = Math.min(p.y - 26, p.y);
+    p.text(photos.length === 1 ? 'DESIGN REFERENCE' : `DESIGN REFERENCE · ${photos.length} PHOTOS`,
+      { size: 8, font: 'F2', colour: TAUPE });
+    p.down(7).rule();
+    p.down(10);
+
+    let drawn = 0;
+    for (let i = 0; i < photos.length; i += PER_ROW) {
+      const row = photos.slice(i, i + PER_ROW);
+      const sized = row.map((im) => {
+        const w = cellW;
+        const h = Math.min(cellW * (im.height / im.width), 132);
+        return { im, w: h === 132 ? 132 * (im.width / im.height) : w, h };
+      });
+      const rowH = Math.max(...sized.map((x) => x.h));
+      if (p.y - rowH < floor) break;            // no room; the rest are named below
+
+      let x = M;
+      for (const { im, w, h } of sized) {
+        p.image(photos.indexOf(im), { x, y: p.y, w, h });
+        x += cellW + GAP;
+        drawn++;
+      }
+      p.y -= rowH + GAP;
+    }
+    if (drawn < photos.length) {
+      p.text(`and ${photos.length - drawn} more photo${photos.length - drawn === 1 ? '' : 's'} on the order`,
+        { size: 8, colour: TAUPE });
+    }
   }
 
   // ── Footer, pinned to the bottom ──────────────────────────────────────────
@@ -294,11 +371,11 @@ export function receiptSource(o, ctx) {
   p.down(12).text(`Questions about this order? Quote ${o.order_no} when you call ${business.phone}.`,
     { size: 8.5, colour: TAUPE });
   p.down(12).text(
-    `${store?.entity || business.name}${store?.abn ? ` · ABN ${store.abn}` : ''}`
+    `${business.entity || business.name}${business.abn ? ` · ABN ${business.abn}` : ''}`
       + `${taxable ? ' · Registered for GST' : ''}`,
     { size: 8, colour: TAUPE });
 
-  return toPdfSource(p.build(), `${heading} ${o.order_no}`);
+  return toPdfSource(p.build(), `${heading} ${o.order_no}`, photos);
 }
 
 export function receiptPdf(o, ctx) {
@@ -307,11 +384,27 @@ export function receiptPdf(o, ctx) {
     { type: 'application/pdf' });
 }
 
-/** Hands the file to the browser's downloader — no print dialog. */
-export function downloadReceipt(o, ctx) {
+/**
+ * Hands the file to the browser's downloader — no print dialog.
+ *
+ * Photos are gathered first, one at a time and each allowed to fail on its own.
+ * Six is the cap: past that it stops being a receipt, and the ones left over
+ * are named on the page rather than silently dropped.
+ */
+export async function downloadReceipt(o, ctx) {
+  const paths = (ctx.photoPaths || []).slice(0, 6);
+  const photos = [];
+  for (const path of paths) {
+    const img = await ctx.loadPhoto?.(path);
+    if (img) photos.push(img);
+  }
+  return saveReceipt(o, { ...ctx, photos });
+}
+
+function saveReceipt(o, ctx) {
   const blob = receiptPdf(o, ctx);
   const url = URL.createObjectURL(blob);
-  const kind = ctx.store?.gstRegistered === false ? 'Invoice' : 'Tax invoice';
+  const kind = ctx.business?.gstRegistered === false ? 'Invoice' : 'Tax invoice';
   const a = document.createElement('a');
   a.href = url;
   a.download = `${kind} ${o.order_no} ${o.customer_name || ''}`.trim().replace(/[/\\:*?"<>|]/g, '-') + '.pdf';

@@ -153,14 +153,30 @@ main site.
   at $75 and up, additionally wants the *date of supply* — the pickup, not the day it was
   typed — so both dates are printed. Cakes and confectionery are taxable food, prices are
   entered GST-inclusive, so GST is 1/11 of the total worked in whole cents.
-- **The two shops are two companies.** Harris Park trades as Jai Balaji Ventures Pty Ltd
-  (ABN 66 637 495 642) and Riverstone as GNT Ventures Pty Ltd (ABN 39 634 402 412); both
-  are GST-registered. The entity and ABN on an invoice come from **the order's store**,
-  never from the brand — a wrong ABN makes the document useless for the customer's own GST
-  claim. They live on `STORES` in `db.mjs` with the ABN-register links beside them. If a
-  store ever stops being registered, set `gstRegistered: false`: the heading drops to
-  *Invoice* and every GST line disappears, because a document headed *tax invoice* showing
-  GST that was never collected is a different kind of problem from a typo.
+- **One company, two shops.** Both trade as **GNT Ventures Pty Ltd, ABN 39 634 402 412**,
+  registered for GST. The seller's identity and ABN live on `BUSINESS` in `db.mjs`; only the
+  address comes from the store. An earlier version put a second entity on Harris Park,
+  matched off the ABN register by trading name and postcode — it looked convincing and it
+  was wrong, and a wrong ABN makes the document useless for the customer's own GST claim.
+  **Never infer these two fields; confirm them with Vaidik.** If the business ever stops
+  being GST-registered, `gstRegistered: false` drops the heading to *Invoice* and removes
+  every GST line, because a document headed *tax invoice* showing GST that was never
+  collected is a different kind of problem from a typo.
+- **The design photos ride on the invoice.** They settle "this is not what I asked for" at
+  the counter, which a written description never wins. They are re-encoded through an RGB
+  canvas at 720px before embedding (`photoForPdf`) for two reasons: the stored file is a few
+  hundred KB and three of those make an invoice nobody wants to receive, and a canvas
+  guarantees three channels, which is what lets the PDF declare `/DeviceRGB` — a greyscale
+  original embedded raw comes out wrong. A photo that fails to load is skipped, never
+  fatal: a purged photo must not cost the customer their invoice. Six is the cap and the
+  rest are counted on the page; the layout stops before the footer because a receipt is one
+  page.
+- **Binary in a PDF whose xref is counted in characters is the quiet failure.** Every offset
+  in `toPdfSource` counts characters, and the file is written Latin-1, one byte per
+  character — so a JPEG must go in via `bytesToLatin1`, never through `TextEncoder`. Get it
+  wrong and the file opens in one reader and is rejected by the next. The test walks **every**
+  xref entry and asserts it lands on its `N 0 obj`; the first entry alone does not catch it,
+  because the offsets that drift are the ones after the binary.
 - **The PDF is written by hand** (`receipt.mjs`) — no print dialog and no library. A popup could not print itself (the CSP has no inline script) and a PDF
   library off the CDN is ~350KB on a page staff open over shop wifi, the same reason the
   charts are hand-rolled SVG. Two things in there will break silently if touched: every

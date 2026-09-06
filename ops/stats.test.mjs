@@ -991,27 +991,58 @@ test('the customer boards read discount off the view', () => {
   assert.equal(b.spend[0].spend, 700);
 });
 
+// ── Design photos on the invoice ────────────────────────────────────────────
+
+// A real 6x3 JPEG, so the check is against something a PDF reader would accept
+// rather than a plausible-looking byte array.
+const TINY_JPEG_B64 = '/9j/4AAQSkZJRgABAQAASABIAAD/4QBARXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAABqAD'
+  + 'AAQAAAABAAAAAwAAAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+'
+  + '/+IB2ElDQ19QUk9GSUxFAAEBAAAByAAAAAAEMAAAbW50clJHQiBYWVogB+AAAQABAAAAAAAAYWNzcAAAAAAAAAAAAAAAAAAA'
+  + 'AAAAAAAAAAAAAAAAAAAAAPbWAAEAAAAA0y0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+  + 'AAAAAAAJZGVzYwAAAPAAAAAkclhZWgAAARQAAAAUZ1hZWgAAASgAAAAUYlhZWgAAATwAAAAUd3RwdAAAAVAAAAAUclRSQwAA'
+  + 'AWQAAAAoZ1RSQwAAAWQAAAAoYlRSQwAAAWQAAAAoY3BydAAAAYwAAAA8bWx1YwAAAAAAAAABAAAADGVuVVMAAAAIAAAAHABz'
+  + 'AFIARwBCWFlaIAAAAAAAAG+iAAA49QAAA5BYWVogAAAAAAAAYpkAALeFAAAY2lhZWiAAAAAAAAAkoAAAD4QAALbPWFlaIAAA'
+  + 'AAAAAPbWAAEAAAAA0y1wYXJhAAAAAAAEAAAAAmZmAADypwAADVkAABPQAAAKWwAAAAAAAAAAbWx1YwAAAAAAAAABAAAADGVu'
+  + 'VVMAAAAgAAAAHABHAG8AbwBnAGwAZQAgAEkAbgBjAC4AIAAyADAAMQA2/8AAEQgAAwAGAwEiAAIRAQMRAf/EAB8AAAEFAQEB'
+  + 'AQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEV'
+  + 'UtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SV'
+  + 'lpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEB'
+  + 'AQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkj'
+  + 'M1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKT'
+  + 'lJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMAAgICAgIC'
+  + 'AwICAwUDAwMFBgUFBQUGCAYGBgYGCAoICAgICAgKCgoKCgoKCgwMDAwMDA4ODg4ODw8PDw8PDw8PD//bAEMBAgICBAQEBwQE'
+  + 'BxALCQsQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEP/dAAQAAf/aAAwDAQACEQMR'
+  + 'AD8A9F/4JK28bX/xMA3IEXSwAjMg+7L1CkAn3PNftF9lj/vyf9/X/wDiq/GT/gkn/wAhD4n/AE0v/wBBlr9pK5MOvcR6OY6V'
+  + '5Jdz/9k=';
+const tinyJpeg = () => {
+  const bin = Buffer.from(TINY_JPEG_B64, 'base64');
+  return { bytes: new Uint8Array(bin), width: 6, height: 3 };
+};
+
 // ── Tax invoice ─────────────────────────────────────────────────────────────
 
 const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' });
 const dfmt = (o) => new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', ...o });
-const HP = {
-  code: 'harris-park', label: 'Harris Park',
-  address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150',
-  entity: 'Jai Balaji Ventures Pty Ltd', abn: '66 637 495 642', gstRegistered: true,
-};
+// The address is the only thing that differs between the shops; the seller is
+// one company. Getting that backwards put a second entity and a second ABN on
+// Harris Park invoices, which is why these two fixtures are separate.
+const HP = { code: 'harris-park', label: 'Harris Park',
+             address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150' };
+const RV = { code: 'riverstone', label: 'Riverstone',
+             address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765' };
 const BIZ = { name: "Num Num's Bakery", tagline: '100% eggless cakes & Indian sweets',
+              entity: 'GNT Ventures Pty Ltd', abn: '39 634 402 412', gstRegistered: true,
               phone: '+61 425 697 725', email: 'a@b.com', site: 'numnumsbakery.com.au' };
-const ctxFor = (store) => ({
-  store, business: BIZ, money,
+const ctxFor = (store, business = BIZ) => ({
+  store, business, money,
   dateFmt: dfmt({ day: 'numeric', month: 'short', year: 'numeric' }),
   dateTimeFmt: dfmt({ day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }),
   orderedAt: (o) => new Date(o.ordered_at || o.created_at),
   paidOn,
 });
 /** Every run of text the PDF actually draws. */
-const drawnOn = (order, store = HP) =>
-  [...receiptSource(order, ctxFor(store)).matchAll(/\((.*?)\) Tj/g)].map((m) => m[1]);
+const drawnOn = (order, store = HP, business = BIZ) =>
+  [...receiptSource(order, ctxFor(store, business)).matchAll(/\((.*?)\) Tj/g)].map((m) => m[1]);
 
 const ORDER = {
   order_no: 'HP-1725', store: 'harris-park', kind: 'custom', status: 'placed',
@@ -1027,8 +1058,8 @@ test('the invoice carries everything the ATO requires of one', () => {
   const drawn = drawnOn(ORDER);
   const has = (t) => assert.ok(drawn.includes(t), `missing "${t}" — got ${drawn.join(' | ')}`);
   has('TAX INVOICE');                       // the words, prominently
-  has('Jai Balaji Ventures Pty Ltd');       // seller identity — the store's own company
-  has('ABN 66 637 495 642');                // seller ABN
+  has('GNT Ventures Pty Ltd');              // seller identity
+  has('ABN 39 634 402 412');                // seller ABN
   has('HP-1725');                           // invoice number
   has('5 Sept 2026');                       // date of issue
   has('12 Sept 2026');                      // date of supply — the ACL wants this too
@@ -1048,6 +1079,24 @@ test('GST is a real eleventh, and nothing is rounded to dollars', () => {
   }
   assert.ok(!drawn.includes('$50.00'), 'the price was rounded to $50.00');
   assert.equal(4545 + 454, 4999);           // the arithmetic the page claims
+});
+
+// One company, two shops. The address changes and nothing else does; an entity
+// or ABN that follows the store is the bug this test exists to catch.
+test('both shops invoice as the same company', () => {
+  for (const [store, suburb] of [[HP, 'Harris Park'], [RV, 'Riverstone']]) {
+    const drawn = drawnOn({ ...ORDER, store: store.code }, store);
+    assert.ok(drawn.includes('GNT Ventures Pty Ltd'), `${suburb} names the wrong seller`);
+    assert.ok(drawn.includes('ABN 39 634 402 412'), `${suburb} carries the wrong ABN`);
+    assert.ok(!drawn.some((t) => /Jai Balaji/i.test(t)), `${suburb} still names the old entity`);
+    assert.ok(!drawn.some((t) => /66 637 495 642/.test(t)), `${suburb} still carries the old ABN`);
+    // Compared with the non-ASCII stripped: the en dash in "96–98" is drawn as
+    // its WinAnsi byte, so the literal string will never match.
+    const plain = (t) => t.replace(/[^\x20-\x7E]/g, '');
+    assert.ok(drawn.some((t) => plain(t) === plain(store.address)),
+      `${suburb} shows the wrong address`);
+    assert.ok(drawn.some((t) => t.includes(suburb)), `${suburb} is not named on the invoice`);
+  }
 });
 
 test('a $1,000+ sale still names the buyer', () => {
@@ -1091,14 +1140,71 @@ test('a collected order reads as paid in full', () => {
 
 // Issuing a document headed "tax invoice" showing GST when the seller is not
 // registered for it is not a formatting slip, so the switch is explicit.
-test('a store not registered for GST issues an invoice, not a tax invoice', () => {
-  const drawn = drawnOn(ORDER, { ...HP, gstRegistered: false });
+test('a seller not registered for GST issues an invoice, not a tax invoice', () => {
+  const drawn = drawnOn(ORDER, HP, { ...BIZ, gstRegistered: false });
   assert.ok(drawn.includes('INVOICE'), 'still needs a heading');
   assert.ok(!drawn.includes('TAX INVOICE'), 'must not claim to be a tax invoice');
   assert.ok(!drawn.some((t) => t.startsWith('GST (')), 'must not show a GST line');
   assert.ok(!drawn.includes('Total price includes GST.'));
   assert.ok(drawn.includes('No GST charged'));
   assert.ok(drawn.includes('$49.99'), 'the price is still the price');
+});
+
+// The design photos the customer sent, on their copy. Embedding binary into a
+// file whose cross-reference table is counted in characters is the part that
+// breaks quietly — a PDF that opens in one reader and is rejected by the next.
+test('design photos are embedded, and the file still parses', () => {
+  const photos = [tinyJpeg(), tinyJpeg(), tinyJpeg()];
+  const pdf = receiptSource(ORDER, { ...ctxFor(HP), photos });
+
+  assert.match(pdf, /\/XObject<<\/Im0 9 0 R\/Im1 10 0 R\/Im2 11 0 R>>/,
+    'the page does not reference the images');
+  assert.equal((pdf.match(/\/Subtype\/Image/g) || []).length, 3, 'wrong number of image objects');
+  assert.match(pdf, /\/Filter\/DCTDecode/, 'a JPEG must be embedded as DCTDecode');
+  assert.match(pdf, /\/ColorSpace\/DeviceRGB/, 'canvas output is three-channel');
+  assert.match(pdf, new RegExp(`/Width 6/Height 3`), 'image dimensions missing');
+  assert.equal((pdf.match(/\/Im\d Do/g) || []).length, 3, 'images declared but never drawn');
+  assert.ok(pdf.includes('DESIGN REFERENCE'), 'no heading over the photos');
+
+  // Every byte of the JPEG has to survive into the file intact.
+  const bytes = tinyJpeg().bytes;
+  assert.match(pdf, new RegExp(`/Length ${bytes.length}>>`), 'stream length is wrong');
+  const start = pdf.indexOf('/DCTDecode') && pdf.indexOf('stream\n', pdf.indexOf('/DCTDecode')) + 7;
+  assert.equal(pdf.charCodeAt(start), bytes[0], 'the JPEG stream does not start where it says');
+  assert.equal(pdf.charCodeAt(start + 1), bytes[1], 'the JPEG stream is corrupted');
+
+  // Offsets are character counts; binary shifts every one of them.
+  const startxref = Number(pdf.slice(pdf.lastIndexOf('startxref') + 9).trim().split('\n')[0]);
+  assert.equal(pdf.slice(startxref, startxref + 4), 'xref', 'binary broke the xref offset');
+  assert.match(pdf.slice(startxref), /^xref\n0 12\n/, 'wrong object count');
+
+  // Every entry, not just the first: the offsets that drift are the ones AFTER
+  // the binary, and a reader that trusts the table lands mid-JPEG.
+  const entries = [...pdf.slice(startxref).matchAll(/^(\d{10}) 00000 n $/gm)].map((m) => Number(m[1]));
+  assert.equal(entries.length, 11, 'wrong number of xref entries');
+  entries.forEach((at, i) => {
+    assert.equal(pdf.slice(at, at + `${i + 1} 0 obj`.length), `${i + 1} 0 obj`,
+      `xref entry ${i + 1} points at the wrong byte`);
+  });
+});
+
+test('an order with no photos embeds none', () => {
+  const pdf = receiptSource(ORDER, ctxFor(HP));
+  assert.ok(!pdf.includes('/XObject'), 'an empty XObject dictionary was written anyway');
+  assert.ok(!pdf.includes('/Subtype/Image'));
+  assert.ok(!pdf.includes('DESIGN REFERENCE'));
+  const at = Number(pdf.slice(pdf.lastIndexOf('startxref') + 9).trim().split('\n')[0]);
+  assert.match(pdf.slice(at), /^xref\n0 9\n/, 'object count changed with no images');
+});
+
+// A photo purged on its fourteenth day, or shop wifi dropping mid-download,
+// must cost the invoice a picture and nothing else.
+test('a photo that will not load is simply absent', () => {
+  const photos = [tinyJpeg(), null, tinyJpeg()].filter(Boolean);   // what downloadReceipt hands over
+  const pdf = receiptSource(ORDER, { ...ctxFor(HP), photos });
+  assert.equal((pdf.match(/\/Subtype\/Image/g) || []).length, 2);
+  assert.ok(pdf.includes('$49.99'), 'the money is still on it');
+  assert.ok(pdf.trimEnd().endsWith('%%EOF'));
 });
 
 test('the PDF is structurally valid', () => {

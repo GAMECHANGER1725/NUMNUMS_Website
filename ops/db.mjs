@@ -27,29 +27,34 @@ export const PEOPLE = [
   { name: 'Parita',         email: 'parita@ops.numnumsbakery.com.au' },
 ];
 
-// The two shops are two different companies with two different ABNs, so the
-// legal details on a tax invoice belong to the STORE, not to the brand. Getting
-// this wrong makes the document invalid for the customer's own GST claim, so
-// these five fields are the ones to check against the ABN register before
-// anything is sent to a customer:
-//   https://abr.business.gov.au/ABN/View?abn=66637495642  (Harris Park)
-//   https://abr.business.gov.au/ABN/View?abn=39634402412  (Riverstone)
+// Only the address differs between the shops. Both trade as the one company,
+// so the legal identity on a tax invoice belongs to the BUSINESS below, not to
+// the store — an earlier version put a second entity on Harris Park, guessed
+// from a name match on the ABN register, and it was wrong. Never infer these.
 export const STORES = [
   { code: 'harris-park', label: 'Harris Park', short: 'HP',
-    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150',
-    entity: 'Jai Balaji Ventures Pty Ltd',
-    abn: '66 637 495 642',
-    gstRegistered: true },                 // registered 1 Jan 2020
+    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150' },
   { code: 'riverstone',  label: 'Riverstone',  short: 'RV',
-    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765',
-    entity: 'GNT Ventures Pty Ltd',
-    abn: '39 634 402 412',
-    gstRegistered: true },                 // registered 26 Jan 2020
+    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765' },
 ];
 
+/**
+ * The seller, as it must appear on a tax invoice.
+ *
+ * `entity` and `abn` are the two fields a customer's accountant will check, and
+ * a wrong ABN makes the document useless for their GST claim. They are the same
+ * for both shops. Confirm against the register before changing either:
+ *   https://abr.business.gov.au/ABN/View?abn=39634402412
+ *
+ * `gstRegistered: false` would drop the heading to "Invoice" and remove every
+ * GST line — the document must not claim to be a tax invoice if it is not one.
+ */
 export const BUSINESS = {
   name: "Num Num's Bakery",
   tagline: '100% eggless cakes & Indian sweets',
+  entity: 'GNT Ventures Pty Ltd',
+  abn: '39 634 402 412',
+  gstRegistered: true,                     // registered for GST since 26 Jan 2020
   phone: '+61 425 697 725',
   email: 'info.numnumsbakery@gmail.com',
   site: 'numnumsbakery.com.au',
@@ -433,6 +438,46 @@ export async function uploadPhotos(order, files, { append = false } = {}) {
   const all = kept.concat(paths);
   await updateOrder(order.id, { photo_path: all[0], photo_paths: all });
   return all;
+}
+
+/**
+ * A design photo, ready to embed in an invoice.
+ *
+ * Re-encoded rather than embedded as stored, for two reasons. The stored file
+ * is up to 1400px and a few hundred KB, and three of those make an invoice
+ * nobody wants to receive; and going through an RGB canvas guarantees a
+ * three-channel JPEG, which is what lets the PDF declare /DeviceRGB — a
+ * greyscale original embedded raw would come out inverted or worse.
+ *
+ * Returns null rather than throwing on anything: a photo that has been purged,
+ * or shop wifi dropping mid-download, must not cost the customer their invoice.
+ */
+export async function photoForPdf(path, maxEdge = 720, quality = 0.72) {
+  try {
+    const url = await photoUrl(path);
+    if (!url) return null;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+
+    const bitmap = await createImageBitmap(await res.blob());
+    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    // Flattened onto white: a transparent PNG would otherwise embed as black.
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close?.();
+
+    const blob = await new Promise((ok) => canvas.toBlob(ok, 'image/jpeg', quality));
+    if (!blob) return null;
+    return { bytes: new Uint8Array(await blob.arrayBuffer()), width, height };
+  } catch { return null; }
 }
 
 /** Every design photo on an order, oldest schema included. */

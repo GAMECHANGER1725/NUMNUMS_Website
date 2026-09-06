@@ -9,7 +9,7 @@ import {
   signIn, signOut, currentProfile, listProfiles, isAuthError, refreshSession,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
-  recentAuthEvents, orderEvents, uploadPhotos, orderPhotos, photoUrls,
+  recentAuthEvents, orderEvents, uploadPhotos, orderPhotos, photoUrls, photoForPdf,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote,
   writeStamp,
@@ -1633,13 +1633,27 @@ async function openOrder(id) {
       <p class="detail-hint">A PDF you can send straight to the customer — ABN, GST and the balance owing, all on it.</p>` : ''}
   `);
 
-  if (me.role === 'admin') $('receipt-btn').addEventListener('click', () => {
-    // Every amount is handed over already formatted by the one `money` we use
-    // everywhere, so the PDF cannot round differently from the screen.
-    downloadReceipt(o, {
-      store: STORES.find((st) => st.code === o.store),
-      business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
-    });
+  if (me.role === 'admin') $('receipt-btn').addEventListener('click', async (e) => {
+    // Fetching and shrinking the design photos takes a moment on shop wifi, and
+    // a button that looks dead is a button that gets pressed four times.
+    const btn = e.currentTarget;
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = photos.length ? 'Building the invoice…' : 'Building…';
+    try {
+      // Every amount is handed over already formatted by the one `money` we use
+      // everywhere, so the PDF cannot round differently from the screen.
+      await downloadReceipt(o, {
+        store: STORES.find((st) => st.code === o.store),
+        business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
+        photoPaths: photos, loadPhoto: photoForPdf,
+      });
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = label;
+    }
   });
 
   // The timeline above says what state the order reached. This says what was
