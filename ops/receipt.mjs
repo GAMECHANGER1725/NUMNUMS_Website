@@ -391,18 +391,56 @@ export function receiptPdf(o, ctx) {
 }
 
 /**
- * Hands the finished invoice to the browser's downloader — no print dialog and
- * no share sheet. Staff save the PDF, then send it themselves.
+ * Whether this device hands files over through the OS share sheet instead of a
+ * downloads folder.
  *
- * `ctx.photos` are already loaded and shrunk by the time this is called, so the
- * file is built and saved in one go.
+ * There is no feature test for "does `<a download>` actually save a file", and
+ * on iOS it does not: Safari and Chrome both ignore a programmatic click on a
+ * blob, silently, which is a button that does nothing. The share sheet is the
+ * only route a web page has on that platform, and "Save to Files" is the first
+ * thing in it. A coarse pointer is the closest honest proxy for "phone", and it
+ * keeps laptops — which share files perfectly well and should not — on the
+ * downloader.
+ */
+const SHEET_SAVE = (() => {
+  try {
+    return matchMedia('(pointer: coarse)').matches
+      && !!navigator.canShare?.({ files: [new File([], 'x.pdf', { type: 'application/pdf' })] });
+  } catch { return false; }
+})();
+
+/**
+ * Puts the finished invoice on the device, by whichever route that device has.
+ *
+ * Must be called while the tap that asked for it is still fresh — both routes
+ * are gated on user activation — so `ctx.photos` are already loaded and the
+ * file is built here, synchronously, rather than awaited into existence.
+ *
+ * Whatever is handed to `share` is a File and nothing else: adding `text` or
+ * `url` puts a `blob:https://…` link in the customer's message beside the
+ * attachment, and that link 404s on every device but this one.
  */
 export function downloadReceipt(o, ctx) {
   const kind = ctx.business?.gstRegistered === false ? 'Invoice' : 'Tax invoice';
   const name = `${kind} ${o.order_no} ${o.customer_name || ''}`.trim()
     .replace(/[/\\:*?"<>|]/g, '-') + '.pdf';
+  const blob = receiptPdf(o, ctx);
 
-  const url = URL.createObjectURL(receiptPdf(o, ctx));
+  if (SHEET_SAVE) {
+    const file = new File([blob], name, { type: 'application/pdf' });
+    return navigator.share({ files: [file] }).catch((err) => {
+      // Dismissing the sheet is not a failure. Anything else falls through to
+      // the downloader, which is no worse than the nothing we would do instead.
+      if (err.name !== 'AbortError') save(blob, name);
+    });
+  }
+
+  save(blob, name);
+  return Promise.resolve();
+}
+
+function save(blob, name) {
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = name;

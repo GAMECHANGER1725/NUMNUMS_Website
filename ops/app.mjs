@@ -1467,6 +1467,16 @@ async function openOrder(id) {
   // lot. The first is the cover the dockets already show; the rest sit beside it.
   const photos = orderPhotos(o);
 
+  // Shrunk for the PDF while the sheet is being read rather than when the button
+  // is pressed. Saving a file — a share sheet on a phone, the downloader on a
+  // laptop — is only allowed while the tap that asked for it is still fresh, and
+  // waiting on two photo fetches in the middle is exactly what spends it. These
+  // are the signed URLs the gallery above is already loading, so it costs the
+  // network nothing.
+  let invoiceReady = me.role === 'admin' && photos.length ? null : [];
+  const invoicePhotos = invoiceReady || Promise.all(photos.slice(0, 6).map((path) => photoForPdf(path)))
+    .then((list) => { invoiceReady = list.filter(Boolean); return invoiceReady; });
+
   const body = openSheet(o.order_no, `
     ${photos.length ? `<div class="detail-gallery">${photos.map((path, i) =>
         `<a class="detail-shot" data-full target="_blank" rel="noopener">
@@ -1642,32 +1652,32 @@ async function openOrder(id) {
       </button>` : ''}
   `);
 
-  if (me.role === 'admin') $('receipt-btn').addEventListener('click', async (e) => {
-    // Fetching and shrinking the design photos takes a moment on shop wifi, and
-    // a button that looks dead is a button that gets pressed four times.
+  if (me.role === 'admin') $('receipt-btn').addEventListener('click', (e) => {
+    // Every amount is handed over already formatted by the one `money` we use
+    // everywhere, so the PDF cannot round differently from the screen.
+    const ctx = {
+      store: STORES.find((st) => st.code === o.store),
+      business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
+    };
+    const give = (pics) => downloadReceipt(o, { ...ctx, photos: pics });
+
+    // The ordinary case: the photos landed while the sheet was being read, so
+    // the file is built and handed over in this same tick and the tap counts.
+    if (invoiceReady) {
+      try { give(invoiceReady); } catch (err) { toast(err.message, 'error'); }
+      return;
+    }
+
+    // Pressed the moment the sheet opened. Nothing to do but wait for them, and
+    // say so: a button that looks dead is a button that gets pressed four times.
     const btn = e.currentTarget;
     const label = btn.innerHTML;
     btn.disabled = true;
-    btn.textContent = photos.length ? 'Building the invoice…' : 'Building…';
-    try {
-      // Six is the cap: past that it stops being a receipt. Each is fetched and
-      // shrunk on its own and each is allowed to fail on its own, so a purged
-      // or unreadable photo drops out and the invoice still saves.
-      const pics = (await Promise.all(photos.slice(0, 6).map((path) => photoForPdf(path))))
-        .filter(Boolean);
-      // Every amount is handed over already formatted by the one `money` we use
-      // everywhere, so the PDF cannot round differently from the screen.
-      downloadReceipt(o, {
-        store: STORES.find((st) => st.code === o.store),
-        business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
-        photos: pics,
-      });
-    } catch (err) {
-      toast(err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = label;
-    }
+    btn.textContent = 'Building the invoice…';
+    invoicePhotos
+      .then((pics) => give(pics))
+      .catch((err) => toast(err.message, 'error'))
+      .finally(() => { btn.disabled = false; btn.innerHTML = label; });
   });
 
   // The timeline above says what state the order reached. This says what was

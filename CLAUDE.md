@@ -171,12 +171,22 @@ main site.
   fatal: a purged photo must not cost the customer their invoice. Six is the cap and the
   rest are counted on the page; the layout stops before the footer because a receipt is one
   page.
-- **The invoice downloads; staff send it themselves.** No share sheet and no print
-  dialog — the button saves a PDF and that is the whole job. If a shared invoice ever
-  turns up in a chat with a `blob:https://…` link beside it, that link is the phone's
-  own viewer sharing its page URL, not something this code sends: the fix is to save
-  the file first and send it from Files, or to hand `navigator.share` a `File` and
-  **nothing else** — no `text`, no `url`, or the link comes straight back.
+- **iOS has no downloads folder, so the invoice leaves by the share sheet.** A
+  programmatic click on a blob is a **silent no-op** on iPhone in both Safari and
+  Chrome — the button highlights and nothing happens, which is what shipped and what
+  Vaidik hit. There is no feature test for it, so `SHEET_SAVE` in `receipt.mjs` uses a
+  coarse pointer plus `canShare({files})`: phones get `navigator.share`, whose first
+  entry is *Save to Files*, and laptops keep the downloader. The button says **Download
+  tax invoice** on both, because that is the job it does. Whatever goes to `share` is a
+  File and **nothing else** — add `text` or `url` and a `blob:https://…` link rides
+  along into the customer's chat, where it 404s forever.
+- **Both routes out are gated on the tap.** Share sheet and downloader alike need user
+  activation, so the design photos are fetched and shrunk **when the sheet opens** and
+  the button hands over the finished file in the same tick it was pressed. Await a photo
+  in the click handler and the gesture is spent by the time the file exists — the same
+  nothing-happens failure, on a different platform each time. `invoiceReady` is the
+  already-landed copy; the promise is only for someone who presses the moment the sheet
+  appears.
 - **Storage read is granted by the order, and the order has more than one photo.**
   `cake_photos_read` matched `orders.photo_path` — the cover — so every *other* photo
   was readable only by `owner = auth.uid()`, the person who uploaded it. It therefore
