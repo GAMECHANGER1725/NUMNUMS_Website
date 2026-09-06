@@ -216,6 +216,19 @@ main site.
 - **Sign photo URLs in a batch** (`photoUrls`), never one per thumbnail. A docket list is the
   common case and a call per cake made eighteen round trips before the first picture appeared.
   Storage answers per path, so a deleted photo returns its own error and the rest still resolve.
+- **A lapsed sign-in is not a dead connection.** Both arrive as a rejected promise and
+  they need opposite advice: "the shop internet may be down" sends staff to reboot a router
+  that is fine, and Try-again reruns the same dead token forever. `isAuthError` in `db.mjs`
+  tells them apart (401/403, `PGRST301`, or a gotrue refresh failure); `orFallback` spends
+  one silent `refreshSession()` on it — the phone-slept-through-the-expiry case — and only
+  if that fails paints **Signed out** with a sign-in button. It deliberately does *not*
+  fall back to the held copy for an auth failure: that would leave someone reading
+  yesterday's queue behind a banner blaming the wifi, with every write silently failing.
+- **The error screen prints the reason.** It used to go only to `console.warn`, which
+  nobody on a phone will ever open, so every report arrived as "it says nothing loaded" and
+  could not be told from any other cause. `errorDetail` puts the code, HTTP status and
+  message under the retry button. Keep it: it is the only diagnostic that reaches the
+  person who saw the failure.
 - **Shop wifi drops; the app must not.** `render()` catches every view failure and paints a retry
   state — without it a rejected fetch left the view on "Loading…" for the rest of the shift. A
   failed refresh falls back to the held copy (`orFallback`) with a banner saying so, because the

@@ -76,6 +76,36 @@ export async function signIn(email, password) {
   return data;
 }
 
+/**
+ * Is this failure a lapsed sign-in rather than a dead connection?
+ *
+ * They look identical to a caller — both are just a rejected promise — but they
+ * need opposite advice. "The shop internet may be down" sends staff to reboot a
+ * router that is working fine, and the Try-again button reruns the same dead
+ * token forever. PostgREST answers 401 with PGRST301 for an expired JWT;
+ * gotrue's own refresh failure comes back 400 with a message instead.
+ */
+export const isAuthError = (err) => {
+  const status = Number(err?.status ?? err?.originalError?.status ?? 0);
+  const code = String(err?.code || '');
+  const msg = String(err?.message || '');
+  return status === 401 || status === 403
+    || code === 'PGRST301' || code === 'PGRST302'
+    || /jwt|refresh[_ ]token|invalid token|not authenticated|session (from session id )?not found/i.test(msg);
+};
+
+/**
+ * Force a token refresh. A laptop that slept through the expiry wakes with a
+ * stale access token and no scheduled refresh left to run; one of these puts it
+ * right without making anyone type a password.
+ */
+export async function refreshSession() {
+  try {
+    const { data, error } = await sb.auth.refreshSession();
+    return Boolean(data?.session) && !error;
+  } catch { return false; }
+}
+
 export async function signOut() {
   const { data: { user } } = await sb.auth.getUser();
   if (user) {

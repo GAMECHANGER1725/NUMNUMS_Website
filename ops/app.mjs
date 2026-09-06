@@ -6,7 +6,7 @@
 
 import {
   sb, PEOPLE, STORES, BUSINESS, storeLabel, STATUS_LABEL,
-  signIn, signOut, currentProfile, listProfiles,
+  signIn, signOut, currentProfile, listProfiles, isAuthError, refreshSession,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, orderEvents, uploadPhotos, orderPhotos, photoUrls,
@@ -188,7 +188,7 @@ async function render() {
     // Without this the promise rejects into nothing and the view sits on
     // "Loading…" for the rest of the shift, with no error and no way back.
     console.warn('view failed:', err);   // the detail belongs in the console
-    renderViewError(view);
+    renderViewError(view, err);
   } finally {
     clearTimeout(slow);
   }
@@ -200,16 +200,60 @@ const offlineReason = () => (navigator.onLine === false
   ? 'This phone has no connection.'
   : 'Could not reach the order book — the shop internet may be down.');
 
-function renderViewError(v) {
+/**
+ * The reason, small and grey, under the retry button.
+ *
+ * It used to go only to console.warn, which nobody on a phone is ever going to
+ * open — so every report of this screen arrived as "it says nothing loaded" and
+ * could not be told apart from any other. One line of detail turns the next one
+ * into evidence.
+ */
+function errorDetail(err) {
+  const status = err?.status ?? err?.originalError?.status;
+  const bits = [err?.code, status ? `HTTP ${status}` : null, err?.message]
+    .filter(Boolean).map(String);
+  const text = [...new Set(bits)].join(' · ');
+  return text.length > 160 ? `${text.slice(0, 157)}…` : text;
+}
+
+/**
+ * Set when a fetch failed because the sign-in has run out rather than because
+ * the connection has. The two need opposite advice and opposite buttons: one
+ * is worth retrying, the other never will be.
+ */
+let sessionLost = false;
+
+function renderViewError(v, err) {
   const root = $(`view-${v}`);
   if (!root) return;
-  root.innerHTML = `
-    <div class="empty">
-      <div class="empty-mark">Nothing loaded</div>
-      <p class="empty-note">${esc(offlineReason())}<br>Nothing has been lost — the orders are on the server.</p>
-      <button class="btn btn-primary" data-retry>Try again</button>
-    </div>`;
-  root.querySelector('[data-retry]').addEventListener('click', () => render());
+  const expired = sessionLost || isAuthError(err);
+
+  root.innerHTML = expired
+    ? `<div class="empty">
+        <div class="empty-mark">Signed out</div>
+        <p class="empty-note">This sign-in has run out — it happens after a phone
+          has been left alone for a while.<br>Nothing has been lost; the orders are on
+          the server.</p>
+        <button class="btn btn-primary" data-signin>Sign in again</button>
+      </div>`
+    : `<div class="empty">
+        <div class="empty-mark">Nothing loaded</div>
+        <p class="empty-note">${esc(offlineReason())}<br>Nothing has been lost — the orders are on the server.</p>
+        <button class="btn btn-primary" data-retry>Try again</button>
+        ${err ? `<p class="empty-detail">${esc(errorDetail(err))}</p>` : ''}
+      </div>`;
+
+  root.querySelector('[data-retry]')?.addEventListener('click', () => render());
+  // Signing out clears the dead token; without that the login form would hand
+  // it straight back and land on this screen again.
+  root.querySelector('[data-signin]')?.addEventListener('click', () => backToLogin());
+}
+
+/** Drop a dead session and show the login form, without a page reload. */
+async function backToLogin() {
+  sessionLost = false;
+  try { await signOut(); } catch { /* the token is already dead; the UI still has to move */ }
+  window.location.reload();
 }
 
 /** Says the list on screen is a held copy, and offers the way out. */
@@ -374,12 +418,37 @@ function expireCaches() {
   if (analyticsCache) analyticsCache.expired = true;
 }
 
+/**
+ * Run a fetch; on failure fall back to the copy already on screen.
+ *
+ * A lapsed sign-in is handled first and separately. It is not a network
+ * problem: falling back to a held copy would leave someone reading yesterday's
+ * queue behind a banner blaming the wifi, and every write they then tried would
+ * fail. One silent refresh covers the ordinary case — a phone that slept
+ * through the token expiry — and anything it cannot fix is surfaced as what it
+ * is, a sign-in that has run out.
+ */
 async function orFallback(fetchFn, held) {
   try {
     const v = await fetchFn();
     staleSince = null;
+    sessionLost = false;
     return v;
   } catch (err) {
+    if (isAuthError(err)) {
+      if (await refreshSession()) {
+        try {
+          const v = await fetchFn();
+          staleSince = null;
+          sessionLost = false;
+          return v;
+        } catch (again) {
+          if (!isAuthError(again)) { if (held) { staleSince = held.at; return held.rows; } throw again; }
+        }
+      }
+      sessionLost = true;
+      throw err;
+    }
     if (!held) throw err;
     staleSince = held.at;
     return held.rows;
