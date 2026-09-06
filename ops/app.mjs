@@ -25,7 +25,7 @@ import {
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
-import { downloadReceipt } from './receipt.mjs';
+import { sendReceipt } from './receipt.mjs';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -366,6 +366,19 @@ function docketHtml(o, now, { showStore = false } = {}) {
     </button>`;
 }
 
+/**
+ * Whether this browser can hand a *file* to the OS share sheet.
+ *
+ * Probed once with an empty PDF, because `canShare` answers per file type and
+ * a browser that shares links may still refuse files. It decides what the
+ * invoice button says, so it must not be guessed from the user agent.
+ */
+const SHARE_FILES = (() => {
+  try {
+    return !!navigator.canShare?.({ files: [new File([], 'x.pdf', { type: 'application/pdf' })] });
+  } catch { return false; }
+})();
+
 /** Signed after paint, and all in one request — see photoUrls. */
 async function hydrateThumbs(root) {
   const imgs = [...root.querySelectorAll('img[data-photo]')];
@@ -373,8 +386,13 @@ async function hydrateThumbs(root) {
   const urls = await photoUrls(imgs.map((i) => i.dataset.photo));
   for (const img of imgs) {
     const url = urls.get(img.dataset.photo);
-    if (url) img.src = url;
-    else img.replaceWith(Object.assign(document.createElement('div'),
+    if (url) {
+      img.src = url;
+      // The detail sheet wraps each photo in a link so it can be opened full
+      // size; everywhere else there is no link and this does nothing.
+      const full = img.closest('a[data-full]');
+      if (full) full.href = url;
+    } else img.replaceWith(Object.assign(document.createElement('div'),
       { className: 'thumb thumb-empty', textContent: '◍' }));
   }
 }
@@ -773,8 +791,11 @@ async function openPrintJob(id) {
 
   const body = openSheet(`${o.order_no} · ${j.kind === '3d' ? '3D print' : 'Photo print'}`, `
     ${orderPhotos(o).length ? `<div class="detail-gallery">${orderPhotos(o).map((path, i) =>
-        `<img class="detail-photo" data-photo="${esc(path)}" alt="Cake design ${i + 1}">`).join('')}</div>
-      ${orderPhotos(o).length > 1 ? `<p class="gallery-note">Swipe — ${orderPhotos(o).length} photos on this order</p>` : ''}` : ''}
+        `<a class="detail-shot" data-full target="_blank" rel="noopener">
+           <img class="detail-photo" data-photo="${esc(path)}" alt="Cake design ${i + 1}">
+         </a>`).join('')}</div>
+      <p class="gallery-note">${orderPhotos(o).length === 1 ? 'Tap the photo to see it full size'
+        : `${orderPhotos(o).length} photos on this order — tap one to see it full size`}</p>` : ''}
 
     <div class="block-label">What to print</div>
     <p class="detail-v">${esc(j.what)}</p>
@@ -1459,11 +1480,22 @@ async function openOrder(id) {
   // lot. The first is the cover the dockets already show; the rest sit beside it.
   const photos = orderPhotos(o);
 
+  // Shrunk for the PDF now rather than when the button is pressed. Sharing a
+  // file only works while the tap is still fresh, and fetching two photos in
+  // between is exactly what spends it. The same signed URLs the gallery above
+  // is already loading, so this costs the network nothing.
+  const invoicePhotos = me.role === 'admin' && photos.length
+    ? Promise.all(photos.slice(0, 6).map((path) => photoForPdf(path)))
+      .then((list) => list.filter(Boolean))
+    : Promise.resolve([]);
+
   const body = openSheet(o.order_no, `
     ${photos.length ? `<div class="detail-gallery">${photos.map((path, i) =>
-        `<img class="detail-photo" data-photo="${esc(path)}"
-              alt="Cake design ${i + 1}">`).join('')}</div>
-      ${photos.length > 1 ? `<p class="gallery-note">Swipe — ${photos.length} photos on this order</p>` : ''}` : ''}
+        `<a class="detail-shot" data-full target="_blank" rel="noopener">
+           <img class="detail-photo" data-photo="${esc(path)}" alt="Cake design ${i + 1}">
+         </a>`).join('')}</div>
+      <p class="gallery-note">${photos.length === 1 ? 'Tap the photo to see it full size'
+        : `${photos.length} photos on this order — tap one to see it full size`}</p>` : ''}
     ${canEdit ? `
       <div class="addphoto">
         <input class="photo-input" type="file" id="add-photo" accept="image/*" multiple>
@@ -1627,10 +1659,13 @@ async function openOrder(id) {
       <button type="button" class="btn btn-outline" id="receipt-btn" style="width:100%;">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
              style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;vertical-align:-3px;margin-right:7px;">
-          <path d="M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/>
-        </svg>Download tax invoice
+          <path d="${SHARE_FILES ? 'M12 20V4m0 0L8 8m4-4l4 4M5 15v4a1 1 0 001 1h12a1 1 0 001-1v-4'
+            : 'M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3'}"/>
+        </svg>${SHARE_FILES ? 'Send tax invoice' : 'Download tax invoice'}
       </button>
-      <p class="detail-hint">A PDF you can send straight to the customer — ABN, GST and the balance owing, all on it.</p>` : ''}
+      <p class="detail-hint">${SHARE_FILES
+        ? 'Opens your share sheet with just the PDF attached — send it to the customer on WhatsApp.'
+        : 'A PDF you can send straight to the customer — ABN, GST and the balance owing, all on it.'}</p>` : ''}
   `);
 
   if (me.role === 'admin') $('receipt-btn').addEventListener('click', async (e) => {
@@ -1641,12 +1676,15 @@ async function openOrder(id) {
     btn.disabled = true;
     btn.textContent = photos.length ? 'Building the invoice…' : 'Building…';
     try {
+      // Awaited before the call, not inside it: whatever is left of the tap
+      // belongs to the share sheet.
+      const pics = await invoicePhotos;
       // Every amount is handed over already formatted by the one `money` we use
       // everywhere, so the PDF cannot round differently from the screen.
-      await downloadReceipt(o, {
+      await sendReceipt(o, {
         store: STORES.find((st) => st.code === o.store),
         business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
-        photoPaths: photos, loadPhoto: photoForPdf,
+        photos: pics,
       });
     } catch (err) {
       toast(err.message, 'error');

@@ -328,23 +328,29 @@ export function receiptSource(o, ctx) {
   const photos = ctx.photos || [];
   if (photos.length) {
     const GAP = 8;
-    const PER_ROW = 3;
+    const PER_ROW = Math.min(3, photos.length);
     const cellW = (RIGHT - M - GAP * (PER_ROW - 1)) / PER_ROW;
     const floor = M + 74;                       // the footer's air
 
-    p.y = Math.min(p.y - 26, p.y);
+    p.y -= 26;
     p.text(photos.length === 1 ? 'DESIGN REFERENCE' : `DESIGN REFERENCE · ${photos.length} PHOTOS`,
       { size: 8, font: 'F2', colour: TAUPE });
     p.down(7).rule();
     p.down(10);
 
+    // A single row gets all the height the page has left, which on a one- or
+    // two-photo order is most of the lower third; it was drawing 35mm thumbnails
+    // into 90mm of white space, and a cake you cannot see is not a reference.
+    // More than one row and they go back to sharing it.
+    const cap = photos.length <= PER_ROW ? Math.max(132, p.y - floor - GAP) : 132;
+
     let drawn = 0;
     for (let i = 0; i < photos.length; i += PER_ROW) {
       const row = photos.slice(i, i + PER_ROW);
       const sized = row.map((im) => {
-        const w = cellW;
-        const h = Math.min(cellW * (im.height / im.width), 132);
-        return { im, w: h === 132 ? 132 * (im.width / im.height) : w, h };
+        const ratio = im.height / im.width;
+        const h = Math.min(cellW * ratio, cap);
+        return { im, w: h / ratio, h };          // capped by height, so width follows
       });
       const rowH = Math.max(...sized.map((x) => x.h));
       if (p.y - rowH < floor) break;            // no room; the rest are named below
@@ -385,32 +391,45 @@ export function receiptPdf(o, ctx) {
 }
 
 /**
- * Hands the file to the browser's downloader — no print dialog.
+ * Hands the finished invoice to the phone's own share sheet — the file, and
+ * nothing else.
  *
- * Photos are gathered first, one at a time and each allowed to fail on its own.
- * Six is the cap: past that it stops being a receipt, and the ones left over
- * are named on the page rather than silently dropped.
+ * Downloading it and sharing from the viewer sends the customer a
+ * `blob:https://…` link beside the attachment, which 404s on every device
+ * except the one that made it. `navigator.share({ files })` carries no URL at
+ * all, and lands the PDF in WhatsApp with its real name. Desktop browsers have
+ * no file share, so they still save it.
+ *
+ * `ctx.photos` must already be loaded when this is called: the share sheet only
+ * opens while the tap that asked for it is still fresh, and a two-second photo
+ * fetch in the middle is what makes iOS refuse.
  */
-export async function downloadReceipt(o, ctx) {
-  const paths = (ctx.photoPaths || []).slice(0, 6);
-  const photos = [];
-  for (const path of paths) {
-    const img = await ctx.loadPhoto?.(path);
-    if (img) photos.push(img);
-  }
-  return saveReceipt(o, { ...ctx, photos });
-}
-
-function saveReceipt(o, ctx) {
-  const blob = receiptPdf(o, ctx);
-  const url = URL.createObjectURL(blob);
+export async function sendReceipt(o, ctx) {
   const kind = ctx.business?.gstRegistered === false ? 'Invoice' : 'Tax invoice';
+  const name = `${kind} ${o.order_no} ${o.customer_name || ''}`.trim()
+    .replace(/[/\\:*?"<>|]/g, '-') + '.pdf';
+  const file = new File([receiptPdf(o, ctx)], name, { type: 'application/pdf' });
+
+  if (navigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file] });
+      return 'shared';
+    } catch (err) {
+      // Dismissing the sheet is not a failure and must not raise. Anything else
+      // — a stale gesture, a browser that claimed a share it cannot do — falls
+      // through and saves the file instead, which always works.
+      if (err.name === 'AbortError') return 'cancelled';
+    }
+  }
+
+  const url = URL.createObjectURL(file);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${kind} ${o.order_no} ${o.customer_name || ''}`.trim().replace(/[/\\:*?"<>|]/g, '-') + '.pdf';
+  a.download = name;
   document.body.appendChild(a);
   a.click();
   a.remove();
   // Revoked late: Safari reads the blob after the click returns.
   setTimeout(() => URL.revokeObjectURL(url), 30000);
+  return 'saved';
 }

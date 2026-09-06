@@ -1200,7 +1200,7 @@ test('an order with no photos embeds none', () => {
 // A photo purged on its fourteenth day, or shop wifi dropping mid-download,
 // must cost the invoice a picture and nothing else.
 test('a photo that will not load is simply absent', () => {
-  const photos = [tinyJpeg(), null, tinyJpeg()].filter(Boolean);   // what downloadReceipt hands over
+  const photos = [tinyJpeg(), null, tinyJpeg()].filter(Boolean);   // what the sheet hands over
   const pdf = receiptSource(ORDER, { ...ctxFor(HP), photos });
   assert.equal((pdf.match(/\/Subtype\/Image/g) || []).length, 2);
   assert.ok(pdf.includes('$49.99'), 'the money is still on it');

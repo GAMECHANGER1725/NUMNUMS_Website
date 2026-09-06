@@ -171,6 +171,24 @@ main site.
   fatal: a purged photo must not cost the customer their invoice. Six is the cap and the
   rest are counted on the page; the layout stops before the footer because a receipt is one
   page.
+- **The invoice is shared as a file, never downloaded and then shared.** Sharing it out of
+  a phone's PDF viewer puts a `blob:https://…` URL in the message beside the attachment —
+  a link that 404s on every device except the one that made it, and it was going to
+  customers. `sendReceipt` hands `navigator.share({ files })` the File and nothing else:
+  no `text`, no `url`, or the link comes straight back. Desktop has no file share and
+  still saves it, which is why the button reads its label off `SHARE_FILES` rather than
+  guessing from the user agent. The share sheet only opens while the tap is still fresh,
+  so the design photos are fetched and shrunk **when the sheet opens**, not when the
+  button is pressed — an `await` of a two-second fetch in between spends the gesture and
+  iOS refuses. Keep that prefetch wherever the button lives.
+- **Every reference photo shows at once; none of them swipe.** The detail and print sheets
+  were a full-width scroll-snap carousel, which on a phone shows one picture and hides the
+  rest behind a horizontal gesture inside a vertically scrolling sheet — a four-photo order
+  read as a one-photo order, on the screen the baker works from. It is a grid, and each
+  photo opens full size in a tab (`hydrateThumbs` fills the wrapping `a[data-full]` with the
+  same signed URL). On the invoice a single row of photos takes all the height the page has
+  left rather than a fixed 132pt: it was printing 35mm thumbnails into 90mm of white space.
+
 - **Binary in a PDF whose xref is counted in characters is the quiet failure.** Every offset
   in `toPdfSource` counts characters, and the file is written Latin-1, one byte per
   character — so a JPEG must go in via `bytesToLatin1`, never through `TextEncoder`. Get it

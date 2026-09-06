@@ -375,13 +375,16 @@ button { background: none; border: 0; cursor: pointer; }
 /* Several references per cake is normal, so this is a swipe strip rather than
    a stack — eight full-width photos would bury the order details under them.
    With one photo it looks exactly like the single image it replaced. */
+/* Every reference photo at once. It was a full-width swipe carousel, which on
+   a phone shows one picture and hides the rest behind a horizontal gesture
+   inside a vertically scrolling sheet — nobody found them, and an order with
+   four photos read as an order with one. Tapping opens the full size. */
 .detail-gallery {
-  display: flex; gap: 8px; margin-bottom: 14px;
-  overflow-x: auto; scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
+  display: grid; gap: 8px; margin-bottom: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
 }
+.detail-shot { display: block; border-radius: 11px; overflow: hidden; }
 .detail-photo {
-  flex: 0 0 100%; scroll-snap-align: center;
   width: 100%; border-radius: 11px; border: 1px solid var(--dough-line); display: block;
 }
 .gallery-note {
