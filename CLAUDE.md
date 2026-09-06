@@ -177,6 +177,19 @@ main site.
   own viewer sharing its page URL, not something this code sends: the fix is to save
   the file first and send it from Files, or to hand `navigator.share` a `File` and
   **nothing else** — no `text`, no `url`, or the link comes straight back.
+- **Storage read is granted by the order, and the order has more than one photo.**
+  `cake_photos_read` matched `orders.photo_path` — the cover — so every *other* photo
+  was readable only by `owner = auth.uid()`, the person who uploaded it. It therefore
+  worked perfectly for whoever added the photo and was broken for everyone else: Vaidik
+  saw two pictures, Tarun saw one and a placeholder, and the invoice Tarun generated had
+  one picture on it. The policy now also matches `= any(o.photo_paths)`. Any new rule
+  over that bucket must read the **list**, and any check of it has to be run as a second
+  user — as the uploader, a broken policy looks fine.
+- **A photo is raced, never awaited.** `photoForPdf` gives each one ten seconds and then
+  gives up on it. Safari under memory pressure does not fail `toBlob`, it simply never
+  calls the callback, and the invoice button sat disabled on "Building the invoice…"
+  forever with no error to report. An invoice with no pictures beats a button that does
+  nothing.
 - **Every reference photo shows at once; none of them swipe.** The detail and print sheets
   were a full-width scroll-snap carousel, which on a phone shows one picture and hides the
   rest behind a horizontal gesture inside a vertically scrolling sheet — a four-photo order

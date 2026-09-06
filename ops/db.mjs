@@ -452,7 +452,19 @@ export async function uploadPhotos(order, files, { append = false } = {}) {
  * Returns null rather than throwing on anything: a photo that has been purged,
  * or shop wifi dropping mid-download, must not cost the customer their invoice.
  */
-export async function photoForPdf(path, maxEdge = 720, quality = 0.72) {
+export function photoForPdf(path, maxEdge = 720, quality = 0.72) {
+  // Raced, because every step below can hang rather than fail: a signed URL
+  // fetched over a connection that is dropping, and Safari's canvas, which
+  // under memory pressure never calls the toBlob callback at all. A photo that
+  // has not arrived in ten seconds must not cost the customer their invoice —
+  // an invoice that never downloads is a worse bug than one without pictures.
+  return Promise.race([
+    shrinkForPdf(path, maxEdge, quality),
+    new Promise((ok) => { setTimeout(() => ok(null), 10000); }),
+  ]);
+}
+
+async function shrinkForPdf(path, maxEdge, quality) {
   try {
     const url = await photoUrl(path);
     if (!url) return null;

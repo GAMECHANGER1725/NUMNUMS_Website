@@ -384,6 +384,11 @@ button { background: none; border: 0; cursor: pointer; }
   grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
 }
 .detail-shot { display: block; border-radius: 11px; overflow: hidden; }
+/* A photo that will not load still owns its cell, rather than collapsing to a
+   chip beside a full-size neighbour and reading as a layout fault. */
+.detail-gallery .thumb-empty {
+  width: 100%; height: auto; aspect-ratio: 3 / 4; display: grid; place-items: center;
+}
 .detail-photo {
   width: 100%; border-radius: 11px; border: 1px solid var(--dough-line); display: block;
 }

@@ -1467,14 +1467,6 @@ async function openOrder(id) {
   // lot. The first is the cover the dockets already show; the rest sit beside it.
   const photos = orderPhotos(o);
 
-  // Shrunk for the PDF now rather than when the button is pressed, so the
-  // invoice saves the moment it is asked for. The same signed URLs the gallery
-  // above is already loading, so this costs the network nothing.
-  const invoicePhotos = me.role === 'admin' && photos.length
-    ? Promise.all(photos.slice(0, 6).map((path) => photoForPdf(path)))
-      .then((list) => list.filter(Boolean))
-    : Promise.resolve([]);
-
   const body = openSheet(o.order_no, `
     ${photos.length ? `<div class="detail-gallery">${photos.map((path, i) =>
         `<a class="detail-shot" data-full target="_blank" rel="noopener">
@@ -1658,7 +1650,11 @@ async function openOrder(id) {
     btn.disabled = true;
     btn.textContent = photos.length ? 'Building the invoice…' : 'Building…';
     try {
-      const pics = await invoicePhotos;
+      // Six is the cap: past that it stops being a receipt. Each is fetched and
+      // shrunk on its own and each is allowed to fail on its own, so a purged
+      // or unreadable photo drops out and the invoice still saves.
+      const pics = (await Promise.all(photos.slice(0, 6).map((path) => photoForPdf(path))))
+        .filter(Boolean);
       // Every amount is handed over already formatted by the one `money` we use
       // everywhere, so the PDF cannot round differently from the screen.
       downloadReceipt(o, {
