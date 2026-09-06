@@ -309,7 +309,9 @@ function docketHtml(o, now, { showStore = false } = {}) {
           <div class="docket-what">${esc(what || '—')}</div>
           <div class="docket-foot">
             <span class="status-dot st-${o.status}">${esc(STATUS_LABEL[o.status])}</span>
-            ${showMoney && o.price ? `<span>${money.format(o.price)}</span>` : ''}
+            ${showMoney && o.price ? (discountOn(o) > 0
+              ? `<span><s class="was">${money.format(o.price)}</s> ${money.format(netPrice(o))}</span>`
+              : `<span>${money.format(o.price)}</span>`) : ''}
             ${pay ? `<span class="tag ${pay.cls}">${esc(pay.label)}</span>` : ''}
             ${printFlagHtml(o.id)}
           </div>
@@ -1228,7 +1230,7 @@ function mountDropdown(host, { options, value = null, placeholder = 'Choose…',
  * which is the number they say out loud at the counter.
  */
 function payState(o) {
-  const price = Number(o.price || 0);
+  const price = netPrice(o);        // what is actually owed, discount taken off
   const paid = paidOn(o);
   if (!price) return null;
   if (paid <= 0) return { label: 'Unpaid', cls: 'tag-unpaid' };
@@ -1299,7 +1301,9 @@ async function openOrder(id) {
   const o = orders.find((x) => x.id === id);
   if (!o) return;
 
-  const owing = Math.max(0, Number(o.price || 0) - paidOn(o));
+  const net = netPrice(o);
+  const off = discountOn(o);
+  const owing = Math.max(0, net - paidOn(o));
   const author = peopleById.get(o.created_by);
 
   const timeline = [
@@ -1349,8 +1353,10 @@ async function openOrder(id) {
       ${o.design_notes ? field('Design notes', o.design_notes, 'span-2') : ''}
       ${o.notes ? field('Notes', o.notes, 'span-2') : ''}
       ${showMoney ? field('Price', o.price ? money.format(o.price) : '') : ''}
+      ${showMoney && off > 0 ? field('Discount',
+        `− ${money.format(off)} · customer pays ${money.format(net)}`) : ''}
       ${showMoney ? field('Paid', owing > 0
-        ? `${money.format(paidOn(o))} of ${money.format(o.price || 0)} — ${money.format(owing)} still to collect`
+        ? `${money.format(paidOn(o))} of ${money.format(net)} — ${money.format(owing)} still to collect`
         : money.format(paidOn(o))) : ''}
       ${me.role === 'admin' ? field('Cost', o.cost != null ? money.format(o.cost) : '') : ''}
       ${field('Kind', o.kind === 'custom' ? 'Custom cake' : (o.walk_in ? 'Normal · bought in store' : 'Normal · ordered ahead'), 'span-2')}
@@ -1455,8 +1461,14 @@ async function openOrder(id) {
       <div class="row-2">
         <div><div class="detail-k">Price</div>
           <div class="money"><input class="input nums" id="price-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.price ?? ''}"></div></div>
+        <div><div class="detail-k">Discount</div>
+          <div class="money"><input class="input nums" id="discount-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.discount ?? 0}"></div></div>
+      </div>
+      <div class="row-2" style="margin-top:9px;">
         <div><div class="detail-k">Deposit</div>
           <div class="money"><input class="input nums" id="deposit-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.deposit ?? 0}"></div></div>
+        <div><div class="detail-k">Customer pays</div>
+          <div class="detail-v" id="pay-net">${esc(money.format(net))}</div></div>
       </div>
       <button class="btn btn-outline" id="pay-save" style="width:100%;margin-top:9px;">Save payment</button>
       <p class="msg" id="pay-msg" role="status" aria-live="polite"></p>` : ''}
@@ -1527,6 +1539,8 @@ async function openOrder(id) {
         <div class="detail-v">
           <span class="repeat-chip">Regular</span>
           ${c.order_count} orders · ${money.format(Number(c.spend || 0))} all up
+          ${Number(c.discount_given) > 0
+            ? `<span class="list-meta">· ${money.format(Number(c.discount_given))} discounted</span>` : ''}
           <span class="list-meta">· since ${esc(dateFmt.format(new Date(c.first_order)))}</span>
         </div>`;
       host.classList.remove('hidden');
@@ -1644,11 +1658,23 @@ async function openOrder(id) {
   }
 
   if (canEdit) {
+    // The two inputs and the number they produce, kept in step. Without it the
+    // "customer pays" line goes stale the moment a discount is typed, which is
+    // worse than not showing it.
+    const syncNet = () => {
+      const full = Number($('price-input').value || 0);
+      const off = Math.min(Number($('discount-input').value || 0), full);
+      $('pay-net').textContent = money.format(full - off);
+    };
+    $('price-input').addEventListener('input', syncNet);
+    $('discount-input').addEventListener('input', syncNet);
+
     $('pay-save').addEventListener('click', async () => {
       const msg = $('pay-msg');
       try {
         const updated = await updateOrder(o.id, {
           price: $('price-input').value === '' ? null : Number($('price-input').value),
+          discount: Number($('discount-input').value || 0),
           deposit: Number($('deposit-input').value || 0),
         });
         Object.assign(o, updated);
@@ -1866,9 +1892,20 @@ function openNewOrder() {
           <p class="money-hint hidden" id="price-hint"></p>
         </div>
         <div class="field">
-          <label class="field-label" for="f-deposit">Deposit taken</label>
-          <div class="money"><input class="input nums" id="f-deposit" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></div>
+          <label class="field-label" for="f-discount">Discount</label>
+          <div class="money"><input class="input nums" id="f-discount" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></div>
         </div>
+      </div>
+
+      <!-- Price stays the full price and the discount comes off it, so what the
+           customer is actually being asked for is a third number. Showing it
+           live is the difference between logging a discount and second-guessing
+           whether you were meant to type the discounted price in the box above. -->
+      <p class="net-line hidden" id="net-line"></p>
+
+      <div class="field">
+        <label class="field-label" for="f-deposit">Deposit taken</label>
+        <div class="money"><input class="input nums" id="f-deposit" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></div>
       </div>
 
       <div class="field">
@@ -1940,6 +1977,7 @@ function openNewOrder() {
   }
 
   $('f-price').addEventListener('input', () => { priceTouched = true; syncPayment(); });
+  $('f-discount').addEventListener('input', syncPayment);
 
   // ── Customer lookup ───────────────────────────────────────────────────────
   // Typing a name searches people the shop has already served. Picking one
@@ -2025,8 +2063,19 @@ function openNewOrder() {
   // ── Payment ───────────────────────────────────────────────────────────────
   let payMode = 'unpaid';
   function syncPayment() {
-    const price = Number($('f-price').value || 0);
+    // Deposits are a share of what is actually owed, not of the list price:
+    // half of a $90 cake with $20 off is $35, not $45.
+    const full = Number($('f-price').value || 0);
+    const off = Math.min(Number($('f-discount').value || 0), full);
+    const price = full - off;
     const dep = $('f-deposit');
+
+    const line = $('net-line');
+    line.classList.toggle('hidden', !(off > 0));
+    if (off > 0) {
+      line.innerHTML = `<s>${esc(money.format(full))}</s> less ${esc(money.format(off))} off`
+        + ` — customer pays <strong>${esc(money.format(price))}</strong>`;
+    }
     if (payMode === 'unpaid') { dep.value = '0'; dep.disabled = true; }
     else if (payMode === 'paid') { dep.value = price ? price.toFixed(2) : ''; dep.disabled = true; }
     else if (payMode === 'half') {
@@ -2137,6 +2186,7 @@ function openNewOrder() {
         design_notes: $('f-design').value.trim() || null,
         notes: $('f-notes').value.trim() || null,
         price: $('f-price').value === '' ? null : Number($('f-price').value),
+        discount: Number($('f-discount').value || 0),
         deposit: Number($('f-deposit').value || 0),
       });
 
@@ -2336,7 +2386,7 @@ const FIELD_LABEL = {
   customer_name: 'Customer', customer_phone: 'Phone', due_at: 'Pick up',
   ordered_at: 'Order time', flavour: 'Flavour', size: 'Size',
   wording: 'Wording', design_notes: 'Design notes', notes: 'Notes',
-  price: 'Price', deposit: 'Deposit', photo_path: 'Photos', photo_paths: 'Photos',
+  price: 'Price', discount: 'Discount', deposit: 'Deposit', photo_path: 'Photos', photo_paths: 'Photos',
   store: 'Store', kind: 'Cake type', walk_in: 'Walk-in',
 };
 const fieldLabel = (k) => FIELD_LABEL[k] || k.replace(/_/g, ' ');
@@ -2755,8 +2805,12 @@ const CSV_COLUMNS = [
   ['Wording',      (o) => o.wording],
   ['Notes',        (o) => o.notes],
   ['Price',        (o) => (o.price == null ? '' : Number(o.price).toFixed(2))],
+  ['Discount',     (o) => Number(o.discount || 0).toFixed(2)],
+  // What the shop actually earned. The bookkeeper wants this column, not Price:
+  // Price is the list price and says nothing about what came through the till.
+  ['Net',          (o) => (o.price == null ? '' : netPrice(o).toFixed(2))],
   ['Deposit',      (o) => Number(o.deposit || 0).toFixed(2)],
-  ['Balance',      (o) => (o.price == null ? '' : (Number(o.price) - paidOn(o)).toFixed(2))],
+  ['Balance',      (o) => (o.price == null ? '' : (netPrice(o) - paidOn(o)).toFixed(2))],
   ['Cost',         (o) => (o.cost == null ? '' : Number(o.cost).toFixed(2))],
   ['Logged by',    (o) => peopleById.get(o.created_by)?.name || ''],
 ];
@@ -2866,6 +2920,7 @@ const BOARDS = [
   { key: 'spend',  label: 'Most spent',   note: 'Total across every cake they have bought.' },
   { key: 'orders', label: 'Most cakes',   note: 'How many times they have come back.' },
   { key: 'avg',    label: 'Biggest average', note: 'Average spend per cake, for anyone with more than one order — one big cake does not make a regular.' },
+  { key: 'discount', label: 'Most discounted', note: 'Who we have given the most off. Not a complaint — a regular worth keeping sweet looks exactly like this — but it was invisible before.' },
   { key: 'lapsed', label: 'Gone quiet',   note: 'Regulars who have not ordered in 45 days or more. The only board that is a to-do list.' },
 ];
 
@@ -2882,7 +2937,9 @@ function paintBoard(board) {
     $('board-rows').innerHTML = `<div class="list-row"><span class="grow list-meta">${
       boardKey === 'lapsed'
         ? 'Nobody has gone quiet — every regular has ordered inside the last 45 days.'
-        : 'Not enough orders yet.'}</span></div>`;
+        : boardKey === 'discount'
+          ? 'No discounts recorded against a customer yet.'
+          : 'Not enough orders yet.'}</span></div>`;
     return;
   }
 
@@ -2901,17 +2958,19 @@ function paintBoard(board) {
     </div>`).join('');
 }
 
-const metricOf = (c) => ({ spend: c.spend, orders: c.orders, avg: c.avg, lapsed: c.daysSince }[boardKey]);
+const metricOf = (c) => ({ spend: c.spend, orders: c.orders, avg: c.avg, discount: c.discount, lapsed: c.daysSince }[boardKey]);
 const valueOf = (c) => ({
   spend: money.format(c.spend),
   orders: `${c.orders}×`,
   avg: money.format(c.avg),
+  discount: money.format(c.discount),
   lapsed: `${c.daysSince} days`,
 }[boardKey]);
 const subOf = (c) => ({
   spend: `${c.orders} cake${c.orders === 1 ? '' : 's'} · ${money.format(c.avg)} average`,
   orders: `${money.format(c.spend)} all up · last ${dayKeyLabel(c.lastKey)}`,
   avg: `${c.orders} cakes · ${money.format(c.spend)} all up`,
+  discount: `${c.discountPct.toFixed(0)}% off · ${money.format(c.spend)} paid over ${c.orders} cake${c.orders === 1 ? '' : 's'}`,
   lapsed: `${c.orders} cakes · ${money.format(c.spend)} · last ${dayKeyLabel(c.lastKey)}`,
 }[boardKey]);
 
@@ -3118,6 +3177,7 @@ async function renderAnalytics({ force = false } = {}) {
   const w = salesByWeek(all, now);
 
   const s7 = summarise(sold7);
+  const s30 = summarise(sold30);
   const sToday = summarise(soldToday);
   const dRev = delta(w.thisWeek.revenue, w.lastWeek.revenue);
   const dCount = delta(w.thisWeek.count, w.lastWeek.count);
@@ -3128,7 +3188,7 @@ async function renderAnalytics({ force = false } = {}) {
 
   const open = all.filter((o) => !['picked_up', 'cancelled'].includes(o.status));
   const owingRows = open
-    .map((o) => ({ o, owing: Number(o.price || 0) - paidOn(o) }))
+    .map((o) => ({ o, owing: netPrice(o) - paidOn(o) }))
     .filter((r) => r.owing > 0)
     .sort((a, b) => new Date(a.o.due_at) - new Date(b.o.due_at));
   const owingTotal = owingRows.reduce((t, r) => t + r.owing, 0);
@@ -3287,6 +3347,27 @@ async function renderAnalytics({ force = false } = {}) {
     </div>
 
     <div class="panel">
+      <div class="panel-title">Discounts given, last 30 days</div>
+      <div class="panel-note">${s30.discount > 0
+        ? `${money.format(s30.discount)} came off ${s30.discounted} of ${s30.count} order${s30.count === 1 ? '' : 's'}. `
+          + `The same cakes at list would have been ${money.format(s30.listRevenue)}.`
+        : 'Nothing discounted in the last 30 days.'}</div>
+      <div class="list-row"><span class="grow">Sold at list</span>
+        <span class="num">${money.format(s30.listRevenue)}</span></div>
+      <div class="list-row"><span class="grow"><strong>Total discounts</strong></span>
+        <span class="num"><strong>&minus; ${money.format(s30.discount)}</strong>${
+          s30.discount > 0 ? ` · ${s30.discountRate.toFixed(1)}%` : ''}</span></div>
+      <div class="list-row"><span class="grow">Actually taken</span>
+        <span class="num">${money.format(s30.revenue)}</span></div>
+      ${s30.discount > 0 ? `
+        <div class="list-row"><span class="grow">This week</span>
+          <span class="num">${money.format(s7.discount)}</span></div>` : ''}
+      ${s30.discount > 0 && s7.margin != null ? `
+        <p class="panel-foot">Margin above is worked out after discounts, so this is
+        money already out of it — not a further deduction.</p>` : ''}
+    </div>
+
+    <div class="panel">
       <div class="panel-title">Still to collect</div>
       <div class="panel-note">${owingRows.length
         ? `${money.format(owingTotal)} across ${owingRows.length} order${owingRows.length === 1 ? '' : 's'} not yet handed over.`
@@ -3405,6 +3486,17 @@ async function renderAnalytics({ force = false } = {}) {
       <div class="list-row"><span class="grow">Ordered once</span><span class="num">${board.newCount}</span></div>
       <div class="list-row"><span class="grow">Came back</span><span class="num">${board.returningCount}</span></div>
 
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Discounts given</div>
+      <div class="panel-note">${board.discountTotal > 0
+        ? `Across every order on record, not the last 63 days — a discount given in March still cost what it cost.`
+        : 'No discounts recorded against a customer yet.'}</div>
+      <div class="list-row"><span class="grow"><strong>Total given away</strong></span>
+        <span class="num"><strong>${money.format(board.discountTotal)}</strong></span></div>
+      <div class="list-row"><span class="grow">Customers who got one</span>
+        <span class="num">${board.discountedCount} of ${board.total}</span></div>
     </div>
 
     ${lead.count ? `

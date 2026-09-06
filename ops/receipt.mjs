@@ -29,6 +29,12 @@
 // this shop sells). Prices are entered GST-inclusive, so GST is 1/11 of the
 // total, worked in whole cents.
 //
+// A discount reduces the consideration, so GST is 1/11 of what the customer is
+// actually charged — never of the list price. Charging GST on money that was
+// never taken would overstate the shop's liability and hand the customer a
+// credit they are not entitled to, so the discount is applied before the tax is
+// worked out and both lines are shown.
+//
 // The two shops are two companies with two ABNs — see STORES in db.mjs. The
 // entity and ABN come from the order's store, never from the brand. If a store
 // is ever not GST-registered, the document must NOT say "tax invoice" and must
@@ -75,8 +81,11 @@ const widthOf = (s, size, font = 'F1') => {
 // PDF strings are Latin-1 bytes. The few non-ASCII characters this receipt can
 // contain are mapped to their WinAnsi codes; anything else a customer's name
 // might carry is dropped rather than emitted as a broken glyph.
+// WinAnsi has no true minus sign, so U+2212 folds to a hyphen rather than being
+// dropped — a discount line reading "$15.00" where it should read "- $15.00" is
+// a wrong number, not a missing glyph.
 const WINANSI = { '—': 0x97, '–': 0x96, '·': 0xB7, '“': 0x93, '”': 0x94,
-                  '‘': 0x91, '’': 0x92, '…': 0x85, '•': 0x95 };
+                  '‘': 0x91, '’': 0x92, '…': 0x85, '•': 0x95, '−': 0x2D };
 const latin1 = (s) => [...String(s)].map((ch) => {
   const c = ch.codePointAt(0);
   if (c >= 32 && c <= 126) return ch;
@@ -169,7 +178,9 @@ export function receiptSource(o, ctx) {
   // a cent of float drift is the difference between a valid tax invoice and a
   // total that does not equal its own lines.
   const cents = (v) => Math.round(Number(v || 0) * 100);
-  const totalC = cents(o.price);
+  const listC = cents(o.price);
+  const offC = Math.min(cents(o.discount), listC);
+  const totalC = listC - offC;                      // the consideration, GST-inclusive
   const taxable = store?.gstRegistered !== false;   // every cake is taxable food
   const gstC = taxable ? Math.round(totalC / 11) : 0;
   const netC = totalC - gstC;
@@ -240,7 +251,7 @@ export function receiptSource(o, ctx) {
   p.down(19).text(item, { size: 11, font: 'F2' });
   p.text('1', { x: GSTX - 108, size: 10 });
   p.rightAt(GSTX, gstC ? $(gstC) : '—', { size: 10 });
-  p.rightAt(RIGHT, totalC ? $(totalC) : '—', { size: 11 });
+  p.rightAt(RIGHT, listC ? $(listC) : '—', { size: 11 });
   for (const line of [
     o.wording ? `Wording: “${o.wording}”` : '',
     o.design_notes || '',
@@ -257,11 +268,15 @@ export function receiptSource(o, ctx) {
       colour: big ? INK : BROWN });
     p.rightAt(RIGHT, v, { size: big ? 12 : 10, font: big ? 'F2' : 'F1' });
   };
+  if (offC > 0) {
+    total('Price', $(listC));
+    total('Discount', `− ${$(offC)}`);
+  }
   if (taxable) {
     total('Subtotal (ex GST)', $(netC));
     total('GST (10%)', $(gstC));
   }
-  total('Total' + (taxable ? ' (inc GST)' : ''), totalC ? $(totalC) : '—', true);
+  total('Total' + (taxable ? ' (inc GST)' : ''), listC ? $(totalC) : '—', true);
   p.down(7).rule({ from: LABX, colour: '#E8DDD2' });
   total(paidC > 0 && owingC > 0 ? 'Deposit paid' : 'Paid', $(paidC));
   p.down(8).rule({ from: LABX, colour: INK, w: 1.2 });

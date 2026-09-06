@@ -73,12 +73,28 @@ export function weekStartKey(input) {
 }
 
 /**
+ * What the shop actually earns on an order: the full price less whatever was
+ * discounted off it.
+ *
+ * `price` deliberately stays the undiscounted price. Folding the discount into
+ * it would make the discount unmeasurable the moment it was entered, and "how
+ * much are we giving away" is the whole reason the column exists. Every revenue
+ * figure in this file goes through here, so there is one place the two can
+ * disagree rather than a dozen.
+ */
+export const netPrice = (o) => num(o.price) - num(o.discount);
+
+/** What was taken off the list price. */
+export const discountOn = (o) => num(o.discount);
+
+/**
  * What has actually been paid on an order. A collected cake is assumed paid in
  * full — the deposit field only tracks money taken up front, so without this
- * every completed order would look like it still owed the balance.
+ * every completed order would look like it still owed the balance. "In full"
+ * means the discounted amount: nobody hands over money they were let off.
  */
 export function paidOn(order) {
-  if (order.status === 'picked_up') return num(order.price);
+  if (order.status === 'picked_up') return netPrice(order);
   return num(order.deposit);
 }
 
@@ -87,20 +103,26 @@ export function paidOn(order) {
  * entirely. Orders with no cost recorded still count toward revenue but are
  * left out of margin, so a half-costed week reports an honest margin over the
  * part it can actually see rather than a flattering one over all of it.
+ *
+ * `revenue` is net of discounts. `discount` is what was given away and
+ * `listRevenue` what the same cakes would have earned at list, because the
+ * useful question is not "what did we take" alone but "what did we let go".
  */
 export function summarise(orders) {
-  let count = 0, revenue = 0, collected = 0;
+  let count = 0, revenue = 0, collected = 0, discount = 0, discounted = 0;
   let costedRevenue = 0, cost = 0, costedCount = 0;
 
   for (const o of orders) {
     if (o.status === 'cancelled') continue;
     count++;
-    revenue += num(o.price);
+    revenue += netPrice(o);
+    const off = discountOn(o);
+    if (off > 0) { discount += off; discounted++; }
     collected += paidOn(o);
     if (o.cost != null) {
       costedCount++;
       cost += num(o.cost);
-      costedRevenue += num(o.price);
+      costedRevenue += netPrice(o);
     }
   }
 
@@ -110,6 +132,10 @@ export function summarise(orders) {
     collected,
     owing: revenue - collected,
     avgOrder: count ? revenue / count : 0,
+    discount,
+    discounted,                                          // how many orders carried one
+    listRevenue: revenue + discount,
+    discountRate: revenue + discount ? (discount / (revenue + discount)) * 100 : 0,
     cost,
     costedCount,
     margin: costedCount ? costedRevenue - cost : null,
@@ -166,7 +192,7 @@ export function repeatCustomers(orders) {
     if (!key) continue;
     const seen = byPhone.get(key) || { phone: key, name: o.customer_name, orders: 0, spend: 0 };
     seen.orders++;
-    seen.spend += num(o.price);
+    seen.spend += netPrice(o);
     byPhone.set(key, seen);
   }
   const all = [...byPhone.values()];
@@ -385,11 +411,11 @@ export function inStoreTally(orders, dayKey, { store = null } = {}) {
     const key = `${size}|${flavour}`;
     const row = rows.get(key) || { size, flavour, count: 0, revenue: 0 };
     row.count += 1;
-    row.revenue += num(o.price);
+    row.revenue += netPrice(o);
     rows.set(key, row);
 
     count += 1;
-    revenue += num(o.price);
+    revenue += netPrice(o);
   }
 
   return {
@@ -454,7 +480,7 @@ export function byWeekday(orders, field = 'due_at') {
     if (o.status === 'cancelled') continue;
     const d = days[weekdayIndex(o[field])];
     d.count += 1;
-    d.revenue += num(o.price);
+    d.revenue += netPrice(o);
   }
   return days;
 }
@@ -647,7 +673,7 @@ export function dailyTakings(orders, days = 30, now = new Date()) {
     if (o.status === 'cancelled') continue;
     const b = buckets.get(sydneyParts(o.created_at).dayKey);
     if (!b) continue;
-    b.revenue += num(o.price);
+    b.revenue += netPrice(o);
     b.count += 1;
   }
   return [...buckets.entries()].map(([dayKey, b]) => ({ dayKey, ...b }));
@@ -670,8 +696,8 @@ export function weeklyByStore(orders, storeCodes, weeks = 8, now = new Date()) {
     if (o.status === 'cancelled') continue;
     const r = index.get(weekStartKey(o.created_at));
     if (!r || !(o.store in r.byStore)) continue;
-    r.byStore[o.store] += num(o.price);
-    r.total += num(o.price);
+    r.byStore[o.store] += netPrice(o);
+    r.total += netPrice(o);
   }
   return rows;
 }
@@ -694,12 +720,17 @@ export function customerLeaderboard(customers, now = new Date(), limit = 8) {
   const all = customers.map((c) => {
     const orders = Number(c.order_count) || 0;
     const spend = Number(c.spend) || 0;
+    const discount = Number(c.discount_given) || 0;
     return {
       key: c.phone_key,
       name: c.name,
       phone: c.phone,
       orders,
       spend,
+      discount,
+      // Share of what they would have paid at list. A customer given 30% off
+      // every time is a different kind of regular from one given $5 once.
+      discountPct: spend + discount ? (discount / (spend + discount)) * 100 : 0,
       avg: orders ? spend / orders : 0,
       firstKey: sydneyParts(c.first_order).dayKey,
       lastKey: sydneyParts(c.last_order).dayKey,
@@ -715,6 +746,10 @@ export function customerLeaderboard(customers, now = new Date(), limit = 8) {
     total: all.length,
     newCount: all.length - returning.length,
     returningCount: returning.length,
+    // What the whole book has been given away, across every order on record —
+    // not the 63-day window, same reason as the repeat rate below.
+    discountTotal: all.reduce((t, c) => t + c.discount, 0),
+    discountedCount: all.filter((c) => c.discount > 0).length,
     // Repeat customer rate: the share of known customers who came back at least
     // once. Computed here rather than off the analytics fetch, so it means what
     // the panel says it means — every order on record, not the last 63 days.
@@ -724,6 +759,9 @@ export function customerLeaderboard(customers, now = new Date(), limit = 8) {
     // One big cake does not make a high-value customer, so this board needs a
     // repeat history behind the average before it means anything.
     avg:    top(all.filter((c) => c.orders >= 2), (a, b) => b.avg - a.avg),
+    // Who we give the most away to. Not a complaint — a regular worth keeping
+    // sweet looks exactly like this — but nobody could see it before.
+    discount: top(all.filter((c) => c.discount > 0), (a, b) => b.discount - a.discount),
     // Regulars who have gone quiet — the only board that is a to-do list.
     lapsed: top(all.filter((c) => c.orders >= 2 && c.daysSince >= 45),
                 (a, b) => b.daysSince - a.daysSince || b.spend - a.spend),
@@ -758,7 +796,7 @@ export function forwardBook(orders, days = 7, now = new Date()) {
     if (!r) continue;
     r.count += 1;
     if (o.kind === 'custom') r.custom += 1;
-    r.value += num(o.price);
+    r.value += netPrice(o);
     r.collected += paidOn(o);
     if (o.price == null) r.unpriced += 1;
   }
@@ -816,11 +854,11 @@ export function productMix(orders, field) {
     const k = o[field] || '—';
     const row = m.get(k) || { k, count: 0, revenue: 0, cost: 0, costedCount: 0, costedRevenue: 0 };
     row.count += 1;
-    row.revenue += num(o.price);
+    row.revenue += netPrice(o);
     if (o.cost != null) {
       row.costedCount += 1;
       row.cost += num(o.cost);
-      row.costedRevenue += num(o.price);
+      row.costedRevenue += netPrice(o);
     }
     m.set(k, row);
   }
@@ -950,7 +988,7 @@ export function cancellationStats(orders, days = 90, now = new Date()) {
       total: rows.length,
       cancelled: cancelled.length,
       rate: rows.length ? (cancelled.length / rows.length) * 100 : 0,
-      value: cancelled.reduce((t, o) => t + num(o.price), 0),
+      value: cancelled.reduce((t, o) => t + netPrice(o), 0),
     };
   };
 
@@ -1000,6 +1038,8 @@ export function pricingGaps(orders, baseFor, { days = 30, now = new Date() } = {
     if (base == null || o.price == null) continue;
     checked += 1;
 
+    // Against the list price, not the net: a discount that was actually logged
+    // is a decision, and flagging it here would bury the ones nobody logged.
     const gap = base - num(o.price);
     if (gap > 0.005) under.push({ ...o, base, gap });
   }

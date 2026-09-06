@@ -14,6 +14,7 @@ import {
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
   productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats, pricingGaps,
+  netPrice, discountOn,
 } from './stats.mjs';
 import { receiptSource } from './receipt.mjs';
 
@@ -920,6 +921,76 @@ test('a penny of floating point noise is not a discount', () => {
   assert.equal(pricingGaps(rows, baseFor, { days: 30, now }).under.length, 0);
 });
 
+// ── Discounts ───────────────────────────────────────────────────────────────
+
+// `price` is the list price and `discount` is what came off it. Every revenue
+// figure has to read the difference, or a discount is money the books think
+// arrived. The whole point of a separate column is that it stays measurable.
+test('revenue is net of the discount, everywhere it is counted', () => {
+  const o = (id, price, discount, extra = {}) => ({
+    id, price, discount, status: 'picked_up', deposit: 0,
+    created_at: '2026-09-20T02:00:00Z', due_at: '2026-09-20T05:00:00Z',
+    store: 'harris-park', customer_phone: '0425 000 00' + id, customer_name: 'C' + id,
+    ...extra,
+  });
+  assert.equal(netPrice(o(1, 89.99, 15)), 74.99);
+  assert.equal(discountOn(o(1, 89.99, 15)), 15);
+  assert.equal(netPrice({ price: 50 }), 50);              // no discount column at all
+  assert.equal(netPrice({ price: 50, discount: null }), 50);
+
+  const s = summarise([o(1, 100, 10), o(2, 50, 0), o(3, 40, 40)]);
+  assert.equal(s.revenue, 140);          // 90 + 50 + 0
+  assert.equal(s.discount, 50);
+  assert.equal(s.listRevenue, 190);
+  assert.equal(s.discounted, 2);         // the $0-off order does not count
+  assert.equal(s.count, 3);
+  assert.equal(Math.round(s.discountRate * 10) / 10, 26.3);   // 50/190
+  assert.equal(s.avgOrder, 140 / 3);
+});
+
+// A collected cake is "paid in full" — of the discounted amount. Treating the
+// list price as paid would show every discount as an overpayment.
+test('paid in full means the discounted amount', () => {
+  const done = { status: 'picked_up', price: 89.99, discount: 15, deposit: 0 };
+  assert.equal(paidOn(done), 74.99);
+  const open = { status: 'placed', price: 89.99, discount: 15, deposit: 25 };
+  assert.equal(paidOn(open), 25);
+  // Rounded to cents deliberately: the raw subtraction is 49.989999999999995,
+  // which `money` absorbs and a naive assertion would not.
+  assert.equal(Math.round((netPrice(open) - paidOn(open)) * 100), 4999);
+});
+
+// A logged discount is a decision, not a mistake. Flagging it as underpricing
+// would bury the shortfalls nobody logged, which is what that panel is for.
+test('a logged discount is not an underpriced cake', () => {
+  const now = new Date('2026-09-30T02:00:00Z');
+  const rows = [{ id: 'a', size: '8 inch', price: 49.99, discount: 20,
+                  status: 'picked_up', created_at: '2026-09-20T02:00:00Z' }];
+  const g = pricingGaps(rows, () => 49.99, { days: 30, now });
+  assert.equal(g.under.length, 0, 'the cake was sold at list and then discounted');
+});
+
+test('the customer boards read discount off the view', () => {
+  const now = new Date('2026-09-30T02:00:00Z');
+  const c = (key, name, orders, spend, discount, last) => ({
+    phone_key: key, name, phone: '04' + key, order_count: orders, spend,
+    discount_given: discount, first_order: '2026-01-01T00:00:00Z', last_order: last,
+  });
+  const b = customerLeaderboard([
+    c('1', 'Generous',  6, 700, 300, '2026-09-28T00:00:00Z'),
+    c('2', 'Full price', 4, 600,   0, '2026-09-27T00:00:00Z'),
+    c('3', 'Small',      2,  90,  10, '2026-09-26T00:00:00Z'),
+  ], now);
+
+  assert.equal(b.discountTotal, 310);
+  assert.equal(b.discountedCount, 2);
+  assert.deepEqual(b.discount.map((r) => r.name), ['Generous', 'Small']);
+  assert.equal(Math.round(b.discount[0].discountPct), 30);   // 300 of 1000 at list
+  // Spend is already net in the view, so the boards need no second subtraction.
+  assert.equal(b.spend[0].name, 'Generous');
+  assert.equal(b.spend[0].spend, 700);
+});
+
 // ── Tax invoice ─────────────────────────────────────────────────────────────
 
 const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' });
@@ -985,6 +1056,22 @@ test('a $1,000+ sale still names the buyer', () => {
   assert.ok(drawn.includes('$1,250.00'), 'total missing');
   assert.ok(drawn.includes('$113.64'), 'GST on $1,250 is $113.64');
   assert.ok(drawn.includes('$1,136.36'), 'ex-GST subtotal missing');
+});
+
+// GST is a tenth of what the customer was actually charged. Charging it on the
+// list price would overstate the shop's liability and hand the customer a
+// credit for money nobody paid.
+test('GST is worked out after the discount, not before', () => {
+  const drawn = drawnOn({ ...ORDER, price: '89.99', discount: '15.00', deposit: '25.00' });
+  const has = (t) => assert.ok(drawn.includes(t), `missing "${t}" — got ${drawn.join(' | ')}`);
+  has('$89.99');          // the price line
+  has('- $15.00');        // what came off — a real minus, not a dropped glyph
+  has('$68.17');          // 74.99 ex GST
+  has('$6.82');           // 74.99 / 11
+  has('$74.99');          // total inc GST
+  has('$49.99');          // balance after the $25 deposit
+  assert.ok(!drawn.includes('$8.18'), 'GST was taken on the undiscounted price');
+  assert.equal(6817 + 682, 7499);
 });
 
 test('a collected order reads as paid in full', () => {

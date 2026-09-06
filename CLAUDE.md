@@ -251,6 +251,17 @@ main site.
   means nobody recorded it, which is true of rows from before the column existed. **Analytics
   still buckets sales on `created_at`**; switching them to the order time is a separate decision
   because it moves every historical figure.
+- **`price` is the list price; `discount` is what came off it.** What the shop earned is
+  the difference, and every revenue figure in `stats.mjs` goes through **`netPrice(o)`** to
+  get it — one definition, so the two can only disagree in one place. Folding the discount
+  into the price instead would make it unmeasurable the moment it was entered, which is the
+  entire point of the column. Three things follow and each is tested: `paidOn` treats a
+  collected cake as having paid the *discounted* amount; GST on the invoice is 1/11 of what
+  was actually charged, never of the list price (charging tax on money nobody paid
+  overstates the liability and hands the customer a credit they are not owed); and
+  `pricingGaps` deliberately keeps reading the **list** price, because a logged discount is
+  a decision and flagging it would bury the shortfalls nobody logged. The `customers` view
+  sums net into `spend` and gives `discount_given` alongside.
 - **Money is never rounded.** One `money` formatter, cents always shown. A whole-dollar variant
   turned a $130.50 cake into "$131" and quietly skewed every total; do not reintroduce one.
 - **Local testing**: `node serve.mjs`, then `http://localhost:4000/ops/` **with the trailing slash**.

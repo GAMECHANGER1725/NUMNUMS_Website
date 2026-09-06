@@ -438,6 +438,19 @@ button { background: none; border: 0; cursor: pointer; }
 .photo-preview { display: block; width: 58px; height: 58px; border-radius: 9px; object-fit: cover; border: 1px solid var(--dough-line); }
 .photo-hint { font-size: 13px; color: var(--taupe); line-height: 1.4; }
 
+/* The third number: price less discount, which is what the customer is asked
+   for. Only appears once a discount is actually entered. */
+.net-line {
+  margin: -4px 0 14px; padding: 9px 12px;
+  background: rgba(107,122,85,.10); border-radius: 10px;
+  font-size: 13px; color: var(--ink-soft); line-height: 1.5;
+}
+.net-line s { color: var(--taupe); }
+/* A struck list price beside the real one, on a docket. Muted and a size down:
+   the number that matters is the one after it. */
+.was { color: var(--taupe); font-size: 11px; margin-right: 2px; }
+.net-line strong { color: var(--ink); font-weight: 600; }
+
 .req { color: var(--rose); }
 
 /* ── Date + time picker ─────────────────────────────────────────────────── */
@@ -716,6 +729,10 @@ button { background: none; border: 0; cursor: pointer; }
 }
 .panel-title { font-size: 13px; font-weight: 600; letter-spacing: .05em; margin-bottom: 3px; }
 .panel-note { font-size: 12px; color: var(--taupe); margin-bottom: 12px; line-height: 1.45; }
+.panel-foot {
+  margin: 10px 0 0; padding-top: 9px; border-top: 1px dashed var(--dough-line);
+  font-size: 12px; color: var(--taupe); line-height: 1.5;
+}
 
 .list-row {
   display: flex; align-items: baseline; gap: 10px;

@@ -285,7 +285,7 @@ export async function searchCustomers(term, limit = 6) {
   const q = String(term ?? '').trim().replace(/[,()*%\\]/g, ' ').trim();
   if (q.length < 2) return [];
   const { data, error } = await sb.from('customers')
-    .select('name,phone,order_count,spend,last_order')
+    .select('name,phone,order_count,spend,discount_given,last_order')
     .ilike('name', `%${q}%`)
     .order('order_count', { ascending: false })
     .limit(limit);
@@ -298,7 +298,7 @@ export async function getCustomer(phone) {
   const digits = String(phone ?? '').replace(/\D/g, '');
   if (digits.length < 6) return null;
   const { data } = await sb.from('customers')
-    .select('name,phone,order_count,spend,first_order')
+    .select('name,phone,order_count,spend,discount_given,first_order')
     .eq('phone_key', digits.slice(-9))
     .limit(1);
   return data?.[0] ?? null;
@@ -535,7 +535,7 @@ const SORTS = {
 export async function listCustomers({ term = '', sort = 'recent', limit = 60 } = {}) {
   const s = SORTS[sort] || SORTS.recent;
   let q = sb.from('customers')
-    .select('phone_key,name,phone,order_count,spend,first_order,last_order')
+    .select('phone_key,name,phone,order_count,spend,discount_given,first_order,last_order')
     .order(s.col, { ascending: s.asc })
     .limit(limit);
 
@@ -590,7 +590,7 @@ export async function allCustomers(max = 4000) {
   const out = [];
   for (let from = 0; from < max; from += PAGE_CAP) {
     const { data, error } = await sb.from('customers')
-      .select('phone_key,name,phone,order_count,spend,first_order,last_order')
+      .select('phone_key,name,phone,order_count,spend,discount_given,first_order,last_order')
       .order('spend', { ascending: false })
       .range(from, from + PAGE_CAP - 1);
     if (error) throw error;
