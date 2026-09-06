@@ -42,6 +42,60 @@ for (const f of ['app.mjs', 'db.mjs', 'stats.mjs', 'catalog.mjs', 'receipt.mjs']
 const html = read('index.html');
 const app = read('app.mjs');
 
+// ── 2b. app.mjs imports every helper it uses ────────────────────────────────
+//
+// A missed import is not a parse error and not a missing id — it is a
+// ReferenceError thrown the first time the line runs, which for a rendering
+// helper means the first card that happens to need it. `netPrice` shipped this
+// way: the order log was fine on an empty store and blew up the moment a real
+// order appeared, so the failure looked like bad data rather than bad code.
+{
+  const EXPORTERS = ['stats.mjs', 'db.mjs', 'catalog.mjs', 'receipt.mjs'];
+  const exported = new Map();                       // name -> module that exports it
+  for (const f of EXPORTERS) {
+    const src = read(f);
+    for (const m of src.matchAll(/^export\s+(?:async\s+)?(?:function|const|let|class)\s+([A-Za-z_$][\w$]*)/gm)) {
+      exported.set(m[1], f);
+    }
+  }
+
+  const imported = new Set();
+  for (const m of app.matchAll(/import\s*\{([^}]*)\}\s*from/g)) {
+    for (const part of m[1].split(',')) {
+      const name = part.trim().split(/\s+as\s+/).pop().trim();
+      if (name) imported.add(name);
+    }
+  }
+
+  // Anything app.mjs declares for itself shadows the export and is not a miss.
+  const local = new Set();
+  for (const m of app.matchAll(/(?:^|\s)(?:async\s+)?(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)/g)) {
+    local.add(m[1]);
+  }
+
+  // Only comments are stripped. Strings and template literals are left alone on
+  // purpose: nearly every view in this file is a template literal, and the
+  // helpers called from inside `${...}` are exactly the ones that go missing.
+  // Trying to strip quotes instead swallowed whole functions, because an
+  // apostrophe in "Num Num's" opens a string that never closes — which silently
+  // turned this check green while the bug was still there.
+  const code = app
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
+
+  const missing = [];
+  for (const [name, from] of exported) {
+    if (imported.has(name) || local.has(name)) continue;
+    if (new RegExp(`\\b${name}\\s*\\(`).test(code)) missing.push(`${name}() from ${from}`);
+  }
+
+  if (missing.length) {
+    fail(`app.mjs calls these without importing them:\n      ${missing.join('\n      ')}`);
+  } else {
+    pass('app.mjs imports everything it calls');
+  }
+}
+
 // ── 3. no inline script ─────────────────────────────────────────────────────
 // The ops CSP has no 'unsafe-inline' in script-src, so an inline block works on
 // localhost and fails only in production. That has bitten this app once already.

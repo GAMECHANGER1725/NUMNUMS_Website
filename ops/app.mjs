@@ -17,7 +17,7 @@ import {
 } from './db.mjs';
 import {
   sydneyParts, daysBetween, dayBucket, weekStartKey, summarise, weeklyStats,
-  busiestHours, bakerSections, paidOn,
+  busiestHours, bakerSections, paidOn, netPrice, discountOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,

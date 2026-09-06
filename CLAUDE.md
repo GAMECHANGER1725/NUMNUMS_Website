@@ -31,8 +31,8 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
 - Ops app checks: **`node ops/verify.mjs`** — the ops site's Netlify build command, so a failure
   blocks that deploy the way `verify-blog.mjs` blocks the public one. Runs `ops/stats.test.mjs`
   (aggregation + Sydney date logic) plus static checks: every module parses, no inline `<script>`
-  (the ops CSP forbids it), every id `$()` reaches for exists, and `catalog.mjs` still matches
-  `verify-blog.mjs`'s `FACTS`. Local URL is `http://localhost:4000/ops/` — **the trailing slash
+  (the ops CSP forbids it), every id `$()` reaches for exists, **every helper `app.mjs`
+  calls is actually imported**, and `catalog.mjs` still matches `verify-blog.mjs`'s `FACTS`. Local URL is `http://localhost:4000/ops/` — **the trailing slash
   matters**, see **Ops app** below.
 - There is no test suite or lint config for the main static site. `verify-blog.mjs` is the closest
   thing to a test for blog content; there is nothing equivalent for the other static pages.
@@ -216,6 +216,15 @@ main site.
 - **Sign photo URLs in a batch** (`photoUrls`), never one per thumbnail. A docket list is the
   common case and a call per cake made eighteen round trips before the first picture appeared.
   Storage answers per path, so a deleted photo returns its own error and the rest still resolve.
+- **A missed import is invisible until the right card renders.** It is not a parse error
+  and not a missing id — it is a ReferenceError thrown the first time the line runs.
+  `netPrice` shipped that way: the order log was fine on a store with no orders and blew up
+  the moment a real one appeared, so it read as bad data rather than bad code. `verify.mjs`
+  now cross-checks every name the helper modules export against what `app.mjs` imports and
+  calls. When editing that check, do **not** try to strip quoted strings out of `app.mjs`
+  first — an apostrophe in `Num Num's` inside a template literal opens a string that never
+  closes, swallows whole functions, and turns the check green while the bug is still there.
+  Strip comments only.
 - **A lapsed sign-in is not a dead connection.** Both arrive as a rejected promise and
   they need opposite advice: "the shop internet may be down" sends staff to reboot a router
   that is fine, and Try-again reruns the same dead token forever. `isAuthError` in `db.mjs`
