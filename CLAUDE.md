@@ -273,6 +273,19 @@ main site.
   means nobody recorded it, which is true of rows from before the column existed. **Analytics
   still buckets sales on `created_at`**; switching them to the order time is a separate decision
   because it moves every historical figure.
+- **The discount can be typed in dollars or percent; only dollars are stored.**
+  `linkDiscount` in `app.mjs` ties the two boxes together and is used by both the logging
+  form and the edit panel. A percentage of a price that later changes is not a fact about
+  the sale, so the receipt states money and nothing else — a customer cannot check "16.7%
+  off" against what they handed over. Which box was last touched decides what happens when
+  the **price** changes: someone who typed "10%" means ten percent, so the dollars move;
+  someone who typed "$10" means ten dollars, so the percentage moves. Two rules that look
+  redundant and are not — guessing one way is wrong half the time. The box being typed in
+  is never rewritten (rounding $8.999 to $9.00 and feeding it back rewrites "10" as
+  "10.001" under the cursor), and out-of-range values are clamped on blur rather than
+  mid-keystroke. `linkDiscount` also paints **quietly** on construction: firing its
+  `onChange` there reached `payMode` before its `let` ran and took the whole form down
+  with a ReferenceError.
 - **`price` is the list price; `discount` is what came off it.** What the shop earned is
   the difference, and every revenue figure in `stats.mjs` goes through **`netPrice(o)`** to
   get it — one definition, so the two can only disagree in one place. Folding the discount

@@ -1307,6 +1307,73 @@ function payState(o) {
   return { label: `Paid ${money.format(paid)}`, cls: 'tag-part' };
 }
 
+
+/**
+ * Ties a dollar discount and a percentage discount together.
+ *
+ * Only the dollar amount is ever stored — a receipt has to show money, and a
+ * percentage of a price that later changes is not a fact about the sale. The
+ * percent box is a way of typing, not a second source of truth.
+ *
+ * Which box was last touched decides what happens when the PRICE changes.
+ * Someone who typed "10%" means ten percent, so a corrected price keeps the
+ * percentage and moves the dollars; someone who typed "$10" means ten dollars,
+ * so it keeps the dollars and moves the percentage. Guessing the same way in
+ * both cases is wrong half the time.
+ *
+ * The field being typed in is never rewritten. Rounding $8.999 to $9.00 and
+ * feeding it back would turn "10" into "10.001" under the cursor.
+ */
+function linkDiscount({ price, amount, pct, onChange = () => {} }) {
+  const $p = $(price), $a = $(amount), $c = $(pct);
+  let mode = 'amount';                       // which box the person is driving
+
+  const priceOf = () => Math.max(0, Number($p.value || 0));
+  const clean = (n) => (Math.round(n * 100) / 100).toFixed(2).replace(/\.00$/, '');
+
+  function paint(skip, quiet) {
+    const full = priceOf();
+    // Percent of nothing is nothing: with no price there is no percentage to
+    // show, and letting someone type one would silently do nothing.
+    $c.disabled = full <= 0;
+    if (full <= 0) {
+      if (skip !== 'pct') $c.value = '';
+    } else if (mode === 'pct') {
+      const p = Math.min(100, Math.max(0, Number($c.value || 0)));
+      const off = Math.round(full * p) / 100;
+      if (skip !== 'amount') $a.value = off ? off.toFixed(2) : '';
+    } else {
+      const off = Math.min(full, Math.max(0, Number($a.value || 0)));
+      if (skip !== 'pct') $c.value = off ? clean((off / full) * 100) : '';
+    }
+    if (!quiet) onChange();
+  }
+
+  $a.addEventListener('input', () => { mode = 'amount'; paint('amount'); });
+  $c.addEventListener('input', () => { mode = 'pct';    paint('pct'); });
+
+  // Out-of-range values are clamped when the box is left, not while it is being
+  // typed in — pinning it mid-keystroke fights the person. What is saved is
+  // clamped either way; this is so nobody looks at "500" in the box and
+  // believes they gave $500 off a $200 cake.
+  const settle = () => {
+    const full = priceOf();
+    if (full > 0 && Number($a.value || 0) > full) $a.value = full.toFixed(2);
+    if (Number($c.value || 0) > 100) $c.value = '100';
+    paint();
+  };
+  $a.addEventListener('change', settle);
+  $c.addEventListener('change', settle);
+  // A changed price re-derives whichever half the person is not driving.
+  $p.addEventListener('input', () => paint(mode === 'pct' ? 'pct' : 'amount'));
+
+  // Quiet on the way in. Setting the boxes up is not a change, and calling back
+  // during construction reaches the caller's own state before it is
+  // initialised — which is a ReferenceError, not a stale number.
+  paint(undefined, true);
+  return { refresh: () => paint() };
+}
+
 // ── Order detail sheet ──────────────────────────────────────────────────────
 /**
  * Overlays and the phone's back button.
@@ -1531,7 +1598,10 @@ async function openOrder(id) {
         <div><div class="detail-k">Price</div>
           <div class="money"><input class="input nums" id="price-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.price ?? ''}"></div></div>
         <div><div class="detail-k">Discount</div>
-          <div class="money"><input class="input nums" id="discount-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.discount ?? 0}"></div></div>
+          <div class="disc-pair">
+            <div class="money"><input class="input nums" id="discount-input" type="number" step="0.01" min="0" inputmode="decimal" value="${o.discount ?? 0}" aria-label="Discount in dollars"></div>
+            <div class="pct"><input class="input nums" id="discount-pct" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="0" aria-label="Discount as a percentage"></div>
+          </div></div>
       </div>
       <div class="row-2" style="margin-top:9px;">
         <div><div class="detail-k">Deposit</div>
@@ -1735,15 +1805,17 @@ async function openOrder(id) {
       const off = Math.min(Number($('discount-input').value || 0), full);
       $('pay-net').textContent = money.format(full - off);
     };
-    $('price-input').addEventListener('input', syncNet);
-    $('discount-input').addEventListener('input', syncNet);
+    linkDiscount({
+      price: 'price-input', amount: 'discount-input', pct: 'discount-pct', onChange: syncNet,
+    });
 
     $('pay-save').addEventListener('click', async () => {
       const msg = $('pay-msg');
       try {
         const updated = await updateOrder(o.id, {
           price: $('price-input').value === '' ? null : Number($('price-input').value),
-          discount: Number($('discount-input').value || 0),
+          discount: Math.min(Number($('discount-input').value || 0),
+                             Number($('price-input').value || 0)),
           deposit: Number($('deposit-input').value || 0),
         });
         Object.assign(o, updated);
@@ -1962,7 +2034,10 @@ function openNewOrder() {
         </div>
         <div class="field">
           <label class="field-label" for="f-discount">Discount</label>
-          <div class="money"><input class="input nums" id="f-discount" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00"></div>
+          <div class="disc-pair">
+            <div class="money"><input class="input nums" id="f-discount" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00" aria-label="Discount in dollars"></div>
+            <div class="pct"><input class="input nums" id="f-discount-pct" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="0" aria-label="Discount as a percentage"></div>
+          </div>
         </div>
       </div>
 
@@ -2013,6 +2088,11 @@ function openNewOrder() {
       })
     : { value: () => mine[0].code };
 
+  // Declared up here because the size dropdown's onChange refreshes it, and a
+  // `const` defined further down would be in the temporal dead zone if that
+  // ever fired during mount.
+  let discountLink = null;
+
   const ddFlavour = mountDropdown($('dd-flavour'), {
     placeholder: 'Choose flavour',
     options: FLAVOURS.map((f) => ({
@@ -2030,6 +2110,9 @@ function openNewOrder() {
       const base = basePrice(code);
       if (base != null && !priceTouched) $('f-price').value = base.toFixed(2);
       refreshPriceHint();
+      // Setting .value fires no input event, so the discount pair would keep a
+      // percentage worked out against the old price.
+      discountLink?.refresh();
       syncPayment();
     },
   });
@@ -2046,7 +2129,9 @@ function openNewOrder() {
   }
 
   $('f-price').addEventListener('input', () => { priceTouched = true; syncPayment(); });
-  $('f-discount').addEventListener('input', syncPayment);
+  discountLink = linkDiscount({
+    price: 'f-price', amount: 'f-discount', pct: 'f-discount-pct', onChange: syncPayment,
+  });
 
   // ── Customer lookup ───────────────────────────────────────────────────────
   // Typing a name searches people the shop has already served. Picking one
@@ -2255,7 +2340,10 @@ function openNewOrder() {
         design_notes: $('f-design').value.trim() || null,
         notes: $('f-notes').value.trim() || null,
         price: $('f-price').value === '' ? null : Number($('f-price').value),
-        discount: Number($('f-discount').value || 0),
+        // More off than the cake costs would store a negative sale; the column
+        // check only stops it going below zero.
+        discount: Math.min(Number($('f-discount').value || 0),
+                           Number($('f-price').value || 0)),
         deposit: Number($('f-deposit').value || 0),
       });
 

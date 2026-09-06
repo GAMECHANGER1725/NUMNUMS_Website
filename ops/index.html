@@ -623,6 +623,22 @@ button { background: none; border: 0; cursor: pointer; }
   color: var(--taupe); font-weight: 500; pointer-events: none;
 }
 .money .input { padding-left: 26px; }
+/* The percent twin of .money. The suffix sits on the right because a number
+   reads "15" then "%", and the input keeps room for it. */
+.pct { position: relative; }
+.pct::after {
+  content: '%';
+  position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+  color: var(--taupe); font-weight: 500; pointer-events: none;
+}
+.pct .input { padding-right: 24px; }
+/* Dollars and percent side by side: two ways of typing the same discount, and
+   whichever one is touched fills in the other. */
+.disc-pair { display: flex; gap: 6px; }
+.disc-pair .money { flex: 1 1 60%; min-width: 0; }
+.disc-pair .pct   { flex: 1 1 40%; min-width: 0; }
+.disc-pair .input { padding-inline: 22px 8px; }
+.disc-pair .pct .input { padding-inline: 9px 22px; }
 /* ── Customer typeahead ─────────────────────────────────────────────────── */
 .type-wrap { position: relative; }
 #name-suggest { top: calc(100% + 4px); }

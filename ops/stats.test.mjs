@@ -1072,6 +1072,12 @@ test('GST is worked out after the discount, not before', () => {
   has('$49.99');          // balance after the $25 deposit
   assert.ok(!drawn.includes('$8.18'), 'GST was taken on the undiscounted price');
   assert.equal(6817 + 682, 7499);
+
+  // The form lets staff enter a discount either way round, but a customer's
+  // copy states money. "16.7% off" on a $89.99 cake is not something anyone can
+  // check against what they handed over.
+  const bare = drawn.filter((t) => /^-?\s*\d+(\.\d+)?\s*%$/.test(t));
+  assert.deepEqual(bare, [], `the receipt shows a bare percentage: ${bare.join(', ')}`);
 });
 
 test('a collected order reads as paid in full', () => {
