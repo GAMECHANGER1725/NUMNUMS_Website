@@ -30,7 +30,7 @@ try {
 
 // ── 2. every module parses ──────────────────────────────────────────────────
 // db.mjs imports from a CDN so it cannot be executed here, but it can be parsed.
-for (const f of ['app.mjs', 'db.mjs', 'stats.mjs', 'catalog.mjs']) {
+for (const f of ['app.mjs', 'db.mjs', 'stats.mjs', 'catalog.mjs', 'receipt.mjs']) {
   try {
     execFileSync(process.execPath, ['--input-type=module', '--check'], { input: read(f), stdio: 'pipe' });
     pass(`${f} parses`);

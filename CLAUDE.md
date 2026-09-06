@@ -144,11 +144,19 @@ main site.
   Same `mountDuePicker`, opposite `back` flag. An order can only have been placed
   before now and a cake can only be collected after it, so one direction is wrong on
   each field — greying yesterday on Order time was telling staff the opposite of the truth.
-- **The receipt prints from this page, not a popup.** The ops CSP has no
-  `'unsafe-inline'` in `script-src`, so a `blob:` or `about:blank` document could never
-  call the `window.print()` that turns it into a PDF. `#receipt-root` is rendered here
-  and `@media print` hides everything else. `document.title` is swapped first because
-  it becomes the suggested filename in Save-as-PDF.
+- **The receipt is a PDF this app writes itself** (`receipt.mjs`) — no print dialog and
+  no library. A popup could not print itself (the CSP has no inline script) and a PDF
+  library off the CDN is ~350KB on a page staff open over shop wifi, the same reason the
+  charts are hand-rolled SVG. Two things in there will break silently if touched: every
+  xref offset counts **characters**, because the file is written out as Latin-1 one byte
+  per character — counting UTF-8 bytes puts the table three bytes out for every em dash
+  and produces a file some readers open and others reject; and non-ASCII text goes
+  through the WinAnsi map, so a character with no entry is dropped rather than emitted
+  as a broken glyph. `stats.test.mjs` renders a $49.99 / $25.00 order and asserts
+  **$49.99, $25.00 and $24.99** all reach the page, plus that the xref lands on `1 0 obj`.
+- **Order numbers start at 1725, not 1.** `HP-0003` on a receipt tells a customer how new
+  the software is, not how long the shop has been trading. The two sequences were set
+  forward; nothing else knows or cares what the number is.
 - **Nothing about an order is ever lost.** `order_events` records every insert, status
   change and field edit — old value, new value, who, when — written by an AFTER trigger
   so it cannot be forgotten at a call site, and readable by admins only. `cancelled_at`

@@ -1300,94 +1300,11 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 }
 
 /* ── Receipt ────────────────────────────────────────────────────────────── */
-/* Hidden on screen and printed on its own. Building it here rather than in a
-   new tab is not a shortcut: the ops CSP blocks inline script, so a popup
-   document could never call print() on itself. */
+/* The receipt itself is built as a PDF in receipt.mjs — no print stylesheet,
+   because the button downloads a file rather than opening a print dialog. */
 .detail-hint {
   font-size: 12px; color: var(--taupe); line-height: 1.5;
   margin: 7px 0 0; text-align: center;
-}
-#receipt-root { display: none; }
-
-@media print {
-  /* Everything the app draws lives in these three roots; the receipt replaces
-     the lot rather than being positioned over them, so nothing bleeds onto
-     page two. */
-  #app, #login, #sheet-root, #drawer-root, #toasts { display: none !important; }
-  #receipt-root {
-    display: block;
-    font-family: 'Jost', system-ui, sans-serif;
-    color: #2C1A0E; background: #fff;
-    padding: 0; margin: 0;
-  }
-  @page { margin: 18mm 16mm; }
-}
-
-#receipt-root .rc-head {
-  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
-  padding-bottom: 14px; border-bottom: 2px solid #C85478;
-}
-#receipt-root .rc-brand {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 26pt; font-weight: 600; line-height: 1.1; letter-spacing: -.01em;
-}
-#receipt-root .rc-sub { font-size: 9pt; color: #8B7F76; letter-spacing: .04em; margin-top: 3px; }
-#receipt-root .rc-meta { text-align: right; font-size: 9pt; color: #8B7F76; }
-#receipt-root .rc-no {
-  font-size: 13pt; font-weight: 600; color: #2C1A0E;
-  font-variant-numeric: tabular-nums; letter-spacing: .02em;
-}
-#receipt-root .rc-from { font-size: 8.5pt; color: #8B7F76; line-height: 1.6; margin-top: 10px; }
-
-#receipt-root .rc-title {
-  display: flex; align-items: center; gap: 12px;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 17pt; font-weight: 600; margin: 26px 0 12px;
-}
-#receipt-root .rc-stamp {
-  font-family: 'Jost', system-ui, sans-serif;
-  font-size: 8pt; font-weight: 600; letter-spacing: .1em;
-  padding: 4px 10px; border-radius: 3px;
-  border: 1.5px solid currentColor;
-}
-#receipt-root .rc-paid      { color: #6B7A55; }
-#receipt-root .rc-deposit   { color: #B37B2C; }
-#receipt-root .rc-unpaid    { color: #A03D5E; }
-#receipt-root .rc-cancelled { color: #8B7F76; }
-
-#receipt-root table { width: 100%; border-collapse: collapse; }
-#receipt-root .rc-kv th {
-  text-align: left; font-weight: 400; font-size: 9pt; color: #8B7F76;
-  width: 33%; padding: 4px 0; vertical-align: top;
-}
-#receipt-root .rc-kv td { font-size: 10pt; padding: 4px 0; }
-
-#receipt-root .rc-items { margin-top: 22px; }
-#receipt-root .rc-items thead th {
-  text-align: left; font-size: 8pt; font-weight: 600;
-  letter-spacing: .1em; text-transform: uppercase; color: #8B7F76;
-  border-bottom: 1px solid #E8DDD2; padding-bottom: 6px;
-}
-#receipt-root .rc-items td { padding: 12px 0; vertical-align: top; border-bottom: 1px solid #E8DDD2; }
-#receipt-root .rc-item { font-size: 11pt; font-weight: 500; }
-#receipt-root .rc-note { font-size: 9pt; color: #5C3A22; line-height: 1.5; margin-top: 3px; }
-#receipt-root .rc-amt { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-
-#receipt-root .rc-totals { margin-top: 14px; margin-left: auto; width: 58%; }
-#receipt-root .rc-totals th {
-  text-align: left; font-weight: 400; font-size: 10pt; color: #5C3A22; padding: 5px 0;
-}
-#receipt-root .rc-totals td {
-  text-align: right; font-size: 10pt; padding: 5px 0;
-  font-variant-numeric: tabular-nums;
-}
-#receipt-root .rc-due th, #receipt-root .rc-due td {
-  font-size: 12pt; font-weight: 600; color: #2C1A0E;
-  border-top: 1.5px solid #2C1A0E; padding-top: 9px;
-}
-#receipt-root .rc-foot {
-  margin-top: 34px; padding-top: 14px; border-top: 1px solid #E8DDD2;
-  font-size: 8.5pt; color: #8B7F76; line-height: 1.7;
 }
 
 </style>
@@ -1467,9 +1384,6 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 <div id="drawer-root"></div>
 
 <div id="sheet-root"></div>
-
-<!-- Print-only: the receipt is rendered here and nothing else is printed. -->
-<div id="receipt-root"></div>
 
 <script type="module" src="./app.mjs"></script>
 </body>

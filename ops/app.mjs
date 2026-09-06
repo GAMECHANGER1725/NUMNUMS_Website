@@ -25,6 +25,7 @@ import {
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
+import { downloadReceipt } from './receipt.mjs';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -1478,10 +1479,17 @@ async function openOrder(id) {
           <path d="M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/>
         </svg>Download receipt
       </button>
-      <p class="detail-hint">Opens your printer dialog — choose <strong>Save as PDF</strong> to send it to the customer.</p>` : ''}
+      <p class="detail-hint">Saves a PDF you can send straight to the customer.</p>` : ''}
   `);
 
-  if (me.role === 'admin') $('receipt-btn').addEventListener('click', () => printReceipt(o));
+  if (me.role === 'admin') $('receipt-btn').addEventListener('click', () => {
+    // Every amount is handed over already formatted by the one `money` we use
+    // everywhere, so the PDF cannot round differently from the screen.
+    downloadReceipt(o, {
+      store: STORES.find((st) => st.code === o.store),
+      business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
+    });
+  });
 
   // The timeline above says what state the order reached. This says what was
   // changed on the way — a price corrected after the customer called, a pickup
@@ -2323,15 +2331,7 @@ function mountDuePicker(prefix = 'f-due', initialISO = null, { back = false } = 
 }
 
 
-// ── Receipt ─────────────────────────────────────────────────────────────────
-//
-// Printed from the page itself rather than opened in a new tab: the ops CSP has
-// no 'unsafe-inline' in script-src, so a blob: document could not run the
-// window.print() that makes it a PDF. A print-only <div> in this page can.
-// Browsers offer "Save as PDF" from the print dialog on desktop, iOS and
-// Android alike, which is the download.
-
-/** Column name -> what it is called on the form. */
+/** Column name -> what it is called on the form, for the change trail. */
 const FIELD_LABEL = {
   customer_name: 'Customer', customer_phone: 'Phone', due_at: 'Pick up',
   ordered_at: 'Order time', flavour: 'Flavour', size: 'Size',
@@ -2340,98 +2340,6 @@ const FIELD_LABEL = {
   store: 'Store', kind: 'Cake type', walk_in: 'Walk-in',
 };
 const fieldLabel = (k) => FIELD_LABEL[k] || k.replace(/_/g, ' ');
-
-const receiptLine = (k, v) => (v
-  ? `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>` : '');
-
-function receiptHtml(o) {
-  const store = STORES.find((s) => s.code === o.store);
-  const price = Number(o.price || 0);
-  const paid = paidOn(o);
-  const owing = Math.max(0, price - paid);
-
-  // Three states worth naming on paper, because "Paid $50" alone does not tell
-  // the customer whether anything is still owed at pickup.
-  const stamp = o.status === 'cancelled' ? 'CANCELLED'
-    : price > 0 && owing === 0 ? 'PAID IN FULL'
-      : paid > 0 ? 'DEPOSIT PAID'
-        : 'UNPAID';
-
-  const item = [
-    o.kind === 'custom' ? 'Custom cake' : 'Cake',
-    o.flavour,
-    o.size,
-  ].filter(Boolean).join(' · ');
-
-  return `
-    <div class="rc-head">
-      <div>
-        <div class="rc-brand">${esc(BUSINESS.name)}</div>
-        <div class="rc-sub">${esc(BUSINESS.tagline)}</div>
-      </div>
-      <div class="rc-meta">
-        <div class="rc-no">${esc(o.order_no)}</div>
-        <div>${esc(dateFmt.format(orderedAt(o)))}</div>
-      </div>
-    </div>
-
-    <div class="rc-from">
-      ${esc(store ? `${store.label} — ${store.address}` : storeLabel(o.store))}<br>
-      ${esc(BUSINESS.phone)} · ${esc(BUSINESS.email)} · ${esc(BUSINESS.site)}
-    </div>
-
-    <div class="rc-title">Receipt <span class="rc-stamp rc-${stamp.split(' ')[0].toLowerCase()}">${stamp}</span></div>
-
-    <table class="rc-kv">
-      ${receiptLine('Billed to', o.customer_name)}
-      ${receiptLine('Phone', o.customer_phone)}
-      ${receiptLine('Order placed', dateTimeFmt.format(orderedAt(o)))}
-      ${receiptLine('Pick up', dateTimeFmt.format(new Date(o.due_at)))}
-      ${receiptLine('Collected', o.picked_up_at ? dateTimeFmt.format(new Date(o.picked_up_at)) : '')}
-    </table>
-
-    <table class="rc-items">
-      <thead><tr><th>Description</th><th class="rc-amt">Amount</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>
-            <div class="rc-item">${esc(item)}</div>
-            ${o.wording ? `<div class="rc-note">Wording: “${esc(o.wording)}”</div>` : ''}
-            ${o.design_notes ? `<div class="rc-note">${esc(o.design_notes)}</div>` : ''}
-            ${o.notes ? `<div class="rc-note">${esc(o.notes)}</div>` : ''}
-          </td>
-          <td class="rc-amt">${price ? esc(money.format(price)) : '—'}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <table class="rc-totals">
-      <tr><th>Total</th><td>${price ? esc(money.format(price)) : '—'}</td></tr>
-      <tr><th>${paid > 0 && owing > 0 ? 'Deposit paid' : 'Paid'}</th><td>${esc(money.format(paid))}</td></tr>
-      <tr class="rc-due"><th>${owing > 0 ? 'Balance due at pickup' : 'Balance'}</th><td>${esc(money.format(owing))}</td></tr>
-    </table>
-
-    <p class="rc-foot">
-      Thank you for ordering with ${esc(BUSINESS.name)}. Every cake we make is 100% eggless.<br>
-      Questions about this order? Quote ${esc(o.order_no)} when you call ${esc(BUSINESS.phone)}.
-    </p>`;
-}
-
-/**
- * Renders into the print-only container and opens the print dialog. The page
- * title becomes the suggested filename in Save-as-PDF, so it is swapped for
- * the order number and put back afterwards.
- */
-function printReceipt(o) {
-  $('receipt-root').innerHTML = receiptHtml(o);
-  const title = document.title;
-  document.title = `Receipt ${o.order_no} — ${o.customer_name}`;
-  const restore = () => { document.title = title; };
-  window.addEventListener('afterprint', restore, { once: true });
-  window.print();
-  // Safari fires afterprint unreliably; this is the belt to that braces.
-  setTimeout(restore, 4000);
-}
 
 // ── More menu ───────────────────────────────────────────────────────────────
 //
