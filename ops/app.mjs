@@ -25,7 +25,7 @@ import {
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
-import { sendReceipt } from './receipt.mjs';
+import { downloadReceipt } from './receipt.mjs';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -365,19 +365,6 @@ function docketHtml(o, now, { showStore = false } = {}) {
       </div>
     </button>`;
 }
-
-/**
- * Whether this browser can hand a *file* to the OS share sheet.
- *
- * Probed once with an empty PDF, because `canShare` answers per file type and
- * a browser that shares links may still refuse files. It decides what the
- * invoice button says, so it must not be guessed from the user agent.
- */
-const SHARE_FILES = (() => {
-  try {
-    return !!navigator.canShare?.({ files: [new File([], 'x.pdf', { type: 'application/pdf' })] });
-  } catch { return false; }
-})();
 
 /** Signed after paint, and all in one request — see photoUrls. */
 async function hydrateThumbs(root) {
@@ -1480,10 +1467,9 @@ async function openOrder(id) {
   // lot. The first is the cover the dockets already show; the rest sit beside it.
   const photos = orderPhotos(o);
 
-  // Shrunk for the PDF now rather than when the button is pressed. Sharing a
-  // file only works while the tap is still fresh, and fetching two photos in
-  // between is exactly what spends it. The same signed URLs the gallery above
-  // is already loading, so this costs the network nothing.
+  // Shrunk for the PDF now rather than when the button is pressed, so the
+  // invoice saves the moment it is asked for. The same signed URLs the gallery
+  // above is already loading, so this costs the network nothing.
   const invoicePhotos = me.role === 'admin' && photos.length
     ? Promise.all(photos.slice(0, 6).map((path) => photoForPdf(path)))
       .then((list) => list.filter(Boolean))
@@ -1659,13 +1645,9 @@ async function openOrder(id) {
       <button type="button" class="btn btn-outline" id="receipt-btn" style="width:100%;">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
              style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;vertical-align:-3px;margin-right:7px;">
-          <path d="${SHARE_FILES ? 'M12 20V4m0 0L8 8m4-4l4 4M5 15v4a1 1 0 001 1h12a1 1 0 001-1v-4'
-            : 'M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3'}"/>
-        </svg>${SHARE_FILES ? 'Send tax invoice' : 'Download tax invoice'}
-      </button>
-      <p class="detail-hint">${SHARE_FILES
-        ? 'Opens your share sheet with just the PDF attached — send it to the customer on WhatsApp.'
-        : 'A PDF you can send straight to the customer — ABN, GST and the balance owing, all on it.'}</p>` : ''}
+          <path d="M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/>
+        </svg>Download tax invoice
+      </button>` : ''}
   `);
 
   if (me.role === 'admin') $('receipt-btn').addEventListener('click', async (e) => {
@@ -1676,12 +1658,10 @@ async function openOrder(id) {
     btn.disabled = true;
     btn.textContent = photos.length ? 'Building the invoice…' : 'Building…';
     try {
-      // Awaited before the call, not inside it: whatever is left of the tap
-      // belongs to the share sheet.
       const pics = await invoicePhotos;
       // Every amount is handed over already formatted by the one `money` we use
       // everywhere, so the PDF cannot round differently from the screen.
-      await sendReceipt(o, {
+      downloadReceipt(o, {
         store: STORES.find((st) => st.code === o.store),
         business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
         photos: pics,

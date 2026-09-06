@@ -391,38 +391,18 @@ export function receiptPdf(o, ctx) {
 }
 
 /**
- * Hands the finished invoice to the phone's own share sheet — the file, and
- * nothing else.
+ * Hands the finished invoice to the browser's downloader — no print dialog and
+ * no share sheet. Staff save the PDF, then send it themselves.
  *
- * Downloading it and sharing from the viewer sends the customer a
- * `blob:https://…` link beside the attachment, which 404s on every device
- * except the one that made it. `navigator.share({ files })` carries no URL at
- * all, and lands the PDF in WhatsApp with its real name. Desktop browsers have
- * no file share, so they still save it.
- *
- * `ctx.photos` must already be loaded when this is called: the share sheet only
- * opens while the tap that asked for it is still fresh, and a two-second photo
- * fetch in the middle is what makes iOS refuse.
+ * `ctx.photos` are already loaded and shrunk by the time this is called, so the
+ * file is built and saved in one go.
  */
-export async function sendReceipt(o, ctx) {
+export function downloadReceipt(o, ctx) {
   const kind = ctx.business?.gstRegistered === false ? 'Invoice' : 'Tax invoice';
   const name = `${kind} ${o.order_no} ${o.customer_name || ''}`.trim()
     .replace(/[/\\:*?"<>|]/g, '-') + '.pdf';
-  const file = new File([receiptPdf(o, ctx)], name, { type: 'application/pdf' });
 
-  if (navigator.canShare?.({ files: [file] })) {
-    try {
-      await navigator.share({ files: [file] });
-      return 'shared';
-    } catch (err) {
-      // Dismissing the sheet is not a failure and must not raise. Anything else
-      // — a stale gesture, a browser that claimed a share it cannot do — falls
-      // through and saves the file instead, which always works.
-      if (err.name === 'AbortError') return 'cancelled';
-    }
-  }
-
-  const url = URL.createObjectURL(file);
+  const url = URL.createObjectURL(receiptPdf(o, ctx));
   const a = document.createElement('a');
   a.href = url;
   a.download = name;
@@ -431,5 +411,4 @@ export async function sendReceipt(o, ctx) {
   a.remove();
   // Revoked late: Safari reads the blob after the click returns.
   setTimeout(() => URL.revokeObjectURL(url), 30000);
-  return 'saved';
 }

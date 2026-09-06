@@ -171,16 +171,12 @@ main site.
   fatal: a purged photo must not cost the customer their invoice. Six is the cap and the
   rest are counted on the page; the layout stops before the footer because a receipt is one
   page.
-- **The invoice is shared as a file, never downloaded and then shared.** Sharing it out of
-  a phone's PDF viewer puts a `blob:https://…` URL in the message beside the attachment —
-  a link that 404s on every device except the one that made it, and it was going to
-  customers. `sendReceipt` hands `navigator.share({ files })` the File and nothing else:
-  no `text`, no `url`, or the link comes straight back. Desktop has no file share and
-  still saves it, which is why the button reads its label off `SHARE_FILES` rather than
-  guessing from the user agent. The share sheet only opens while the tap is still fresh,
-  so the design photos are fetched and shrunk **when the sheet opens**, not when the
-  button is pressed — an `await` of a two-second fetch in between spends the gesture and
-  iOS refuses. Keep that prefetch wherever the button lives.
+- **The invoice downloads; staff send it themselves.** No share sheet and no print
+  dialog — the button saves a PDF and that is the whole job. If a shared invoice ever
+  turns up in a chat with a `blob:https://…` link beside it, that link is the phone's
+  own viewer sharing its page URL, not something this code sends: the fix is to save
+  the file first and send it from Files, or to hand `navigator.share` a `File` and
+  **nothing else** — no `text`, no `url`, or the link comes straight back.
 - **Every reference photo shows at once; none of them swipe.** The detail and print sheets
   were a full-width scroll-snap carousel, which on a phone shows one picture and hides the
   rest behind a horizontal gesture inside a vertically scrolling sheet — a four-photo order
