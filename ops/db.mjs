@@ -27,13 +27,24 @@ export const PEOPLE = [
   { name: 'Parita',         email: 'parita@ops.numnumsbakery.com.au' },
 ];
 
-// `address` is only read by the receipt, but it belongs here beside the label
-// rather than in a second list that can disagree with the website's footer.
+// The two shops are two different companies with two different ABNs, so the
+// legal details on a tax invoice belong to the STORE, not to the brand. Getting
+// this wrong makes the document invalid for the customer's own GST claim, so
+// these five fields are the ones to check against the ABN register before
+// anything is sent to a customer:
+//   https://abr.business.gov.au/ABN/View?abn=66637495642  (Harris Park)
+//   https://abr.business.gov.au/ABN/View?abn=39634402412  (Riverstone)
 export const STORES = [
   { code: 'harris-park', label: 'Harris Park', short: 'HP',
-    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150' },
+    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150',
+    entity: 'Jai Balaji Ventures Pty Ltd',
+    abn: '66 637 495 642',
+    gstRegistered: true },                 // registered 1 Jan 2020
   { code: 'riverstone',  label: 'Riverstone',  short: 'RV',
-    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765' },
+    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765',
+    entity: 'GNT Ventures Pty Ltd',
+    abn: '39 634 402 412',
+    gstRegistered: true },                 // registered 26 Jan 2020
 ];
 
 export const BUSINESS = {

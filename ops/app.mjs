@@ -1477,9 +1477,9 @@ async function openOrder(id) {
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
              style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;vertical-align:-3px;margin-right:7px;">
           <path d="M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/>
-        </svg>Download receipt
+        </svg>Download tax invoice
       </button>
-      <p class="detail-hint">Saves a PDF you can send straight to the customer.</p>` : ''}
+      <p class="detail-hint">A PDF you can send straight to the customer — ABN, GST and the balance owing, all on it.</p>` : ''}
   `);
 
   if (me.role === 'admin') $('receipt-btn').addEventListener('click', () => {

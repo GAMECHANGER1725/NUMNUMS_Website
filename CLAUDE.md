@@ -144,8 +144,24 @@ main site.
   Same `mountDuePicker`, opposite `back` flag. An order can only have been placed
   before now and a cake can only be collected after it, so one direction is wrong on
   each field — greying yesterday on Order time was telling staff the opposite of the truth.
-- **The receipt is a PDF this app writes itself** (`receipt.mjs`) — no print dialog and
-  no library. A popup could not print itself (the CSP has no inline script) and a PDF
+- **The receipt is a compliant tax invoice, not a thank-you note.** Two obligations land
+  on that one page and `receipt.mjs` carries both. A **tax invoice** (GST Act s29-70) must
+  show the words *tax invoice*, the seller's identity **and ABN**, the issue date, a
+  description with quantity and price, the GST amount, and the extent to which the sale is
+  taxable — and at **$1,000 and over** the buyer's identity too, which is why the customer's
+  name prints on every one of them. A **proof of transaction** (ACL sch 2 s100), compulsory
+  at $75 and up, additionally wants the *date of supply* — the pickup, not the day it was
+  typed — so both dates are printed. Cakes and confectionery are taxable food, prices are
+  entered GST-inclusive, so GST is 1/11 of the total worked in whole cents.
+- **The two shops are two companies.** Harris Park trades as Jai Balaji Ventures Pty Ltd
+  (ABN 66 637 495 642) and Riverstone as GNT Ventures Pty Ltd (ABN 39 634 402 412); both
+  are GST-registered. The entity and ABN on an invoice come from **the order's store**,
+  never from the brand — a wrong ABN makes the document useless for the customer's own GST
+  claim. They live on `STORES` in `db.mjs` with the ABN-register links beside them. If a
+  store ever stops being registered, set `gstRegistered: false`: the heading drops to
+  *Invoice* and every GST line disappears, because a document headed *tax invoice* showing
+  GST that was never collected is a different kind of problem from a typo.
+- **The PDF is written by hand** (`receipt.mjs`) — no print dialog and no library. A popup could not print itself (the CSP has no inline script) and a PDF
   library off the CDN is ~350KB on a page staff open over shop wifi, the same reason the
   charts are hand-rolled SVG. Two things in there will break silently if touched: every
   xref offset counts **characters**, because the file is written out as Latin-1 one byte

@@ -920,81 +920,105 @@ test('a penny of floating point noise is not a discount', () => {
   assert.equal(pricingGaps(rows, baseFor, { days: 30, now }).under.length, 0);
 });
 
-// ── Receipt ─────────────────────────────────────────────────────────────────
+// ── Tax invoice ─────────────────────────────────────────────────────────────
 
-// A $49.99 cake with a $25 deposit owes $24.99, and every one of those three
-// numbers has to reach the paper with its cents intact. A whole-dollar
-// formatter slipping back in anywhere would show $50.00 and $25.00 and read as
-// a real amount, which is exactly how a rounding bug survives.
-test('a receipt never rounds an amount', () => {
-  const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' });
-  const fmt = (o) => new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', ...o });
-  const order = {
-    order_no: 'HP-1725', store: 'harris-park', kind: 'custom', status: 'placed',
-    customer_name: 'Priya Sharma', customer_phone: '0425 111 222',
-    flavour: 'Red Velvet', size: '8 inch', wording: 'Happy 30th',
-    price: '49.99', deposit: '25.00',
-    ordered_at: '2026-09-05T09:00:00Z', due_at: '2026-09-12T05:00:00Z',
-  };
-  const ctx = {
-    store: { label: 'Harris Park', address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150' },
-    business: { name: "Num Num's Bakery", tagline: '100% eggless cakes & Indian sweets',
-                phone: '+61 425 697 725', email: 'x@y.com', site: 'numnumsbakery.com.au' },
-    money,
-    dateFmt: fmt({ weekday: 'short', day: 'numeric', month: 'short' }),
-    dateTimeFmt: fmt({ weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }),
-    orderedAt: (o) => new Date(o.ordered_at || o.created_at),
-    paidOn,
-  };
+const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' });
+const dfmt = (o) => new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', ...o });
+const HP = {
+  code: 'harris-park', label: 'Harris Park',
+  address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150',
+  entity: 'Jai Balaji Ventures Pty Ltd', abn: '66 637 495 642', gstRegistered: true,
+};
+const BIZ = { name: "Num Num's Bakery", tagline: '100% eggless cakes & Indian sweets',
+              phone: '+61 425 697 725', email: 'a@b.com', site: 'numnumsbakery.com.au' };
+const ctxFor = (store) => ({
+  store, business: BIZ, money,
+  dateFmt: dfmt({ day: 'numeric', month: 'short', year: 'numeric' }),
+  dateTimeFmt: dfmt({ day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }),
+  orderedAt: (o) => new Date(o.ordered_at || o.created_at),
+  paidOn,
+});
+/** Every run of text the PDF actually draws. */
+const drawnOn = (order, store = HP) =>
+  [...receiptSource(order, ctxFor(store)).matchAll(/\((.*?)\) Tj/g)].map((m) => m[1]);
 
-  {
-    const pdf = receiptSource(order, ctx);
-    assert.ok(pdf.startsWith('%PDF-1.4'), 'not a PDF');
-    assert.ok(pdf.trimEnd().endsWith('%%EOF'), 'truncated PDF');
+const ORDER = {
+  order_no: 'HP-1725', store: 'harris-park', kind: 'custom', status: 'placed',
+  customer_name: 'Priya Sharma', customer_phone: '0425 111 222',
+  flavour: 'Red Velvet', size: '8 inch', wording: 'Happy 30th',
+  price: '49.99', deposit: '25.00',
+  ordered_at: '2026-09-05T09:00:00Z', due_at: '2026-09-12T05:00:00Z',
+};
 
-    // Text is drawn as (…) Tj, so the amounts are readable in the raw file.
-    const drawn = [...pdf.matchAll(/\((.*?)\) Tj/g)].map((m) => m[1]);
-    assert.ok(drawn.includes('$49.99'), `no $49.99 on the receipt: ${drawn.join('|')}`);
-    assert.ok(drawn.includes('$25.00'), 'no $25.00 deposit on the receipt');
-    assert.ok(drawn.includes('$24.99'), `balance was not $24.99: ${drawn.join('|')}`);
-    assert.ok(!drawn.includes('$50.00'), 'the price was rounded to $50.00');
-    assert.ok(drawn.includes('DEPOSIT PAID'), 'wrong payment stamp');
-    assert.ok(drawn.includes('HP-1725'), 'order number missing');
-
-    // The xref offsets are counted in bytes; a wrong one makes a file that
-    // opens here and fails in Preview, so check the first object lands.
-    const startxref = Number(pdf.slice(pdf.lastIndexOf('startxref') + 9).trim().split('\n')[0]);
-    assert.equal(pdf.slice(startxref, startxref + 4), 'xref', 'startxref points at the wrong byte');
-    const firstOffset = Number(pdf.slice(pdf.indexOf('0000000000 65535 f \n') + 20, pdf.indexOf('0000000000 65535 f \n') + 30));
-    assert.equal(pdf.slice(firstOffset, firstOffset + 7), '1 0 obj', 'xref entry points at the wrong byte');
-  }
+// A tax invoice missing any one of these is not a tax invoice, and the customer
+// cannot claim the GST back off it. GST Act s29-70(1); ATO "Tax invoices".
+test('the invoice carries everything the ATO requires of one', () => {
+  const drawn = drawnOn(ORDER);
+  const has = (t) => assert.ok(drawn.includes(t), `missing "${t}" — got ${drawn.join(' | ')}`);
+  has('TAX INVOICE');                       // the words, prominently
+  has('Jai Balaji Ventures Pty Ltd');       // seller identity — the store's own company
+  has('ABN 66 637 495 642');                // seller ABN
+  has('HP-1725');                           // invoice number
+  has('5 Sept 2026');                       // date of issue
+  has('12 Sept 2026');                      // date of supply — the ACL wants this too
+  has('Custom cake · Red Velvet · 8 inch'); // description
+  has('1');                                 // quantity
+  has('Taxable supply');                    // extent to which the sale is taxable
+  has('Total price includes GST.');
+  has('Priya Sharma');                      // buyer identity: mandatory at $1,000+
 });
 
-test('a paid-in-full receipt owes nothing', () => {
-  const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' });
-  const fmt = (o) => new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Sydney', ...o });
-  const order = {
-    order_no: 'RV-1725', store: 'riverstone', kind: 'normal', status: 'picked_up',
-    customer_name: 'Amit', price: '130.50', deposit: '0',
-    ordered_at: '2026-09-05T09:00:00Z', due_at: '2026-09-06T05:00:00Z',
-    picked_up_at: '2026-09-06T05:10:00Z',
-  };
-  const ctx = {
-    store: { label: 'Riverstone', address: 'Shop 8' },
-    business: { name: "Num Num's Bakery", tagline: 't', phone: 'p', email: 'e', site: 's' },
-    money,
-    dateFmt: fmt({ day: 'numeric', month: 'short' }),
-    dateTimeFmt: fmt({ day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }),
-    orderedAt: (o) => new Date(o.ordered_at),
-    paidOn,
-  };
-  {
-    const drawn = [...receiptSource(order, ctx).matchAll(/\((.*?)\) Tj/g)].map((m) => m[1]);
-    assert.ok(drawn.includes('PAID IN FULL'), 'a collected order is paid in full');
-    assert.ok(drawn.includes('$130.50'), 'cents dropped from $130.50');
-    assert.ok(drawn.includes('$0.00'), 'balance should read $0.00');
-    assert.ok(!drawn.includes('$131.00'), '$130.50 was rounded to $131.00');
+// $49.99 inc GST is $45.45 + $4.54. All three have to appear and add up: a
+// whole-dollar formatter slipping back in would print $50.00 and read as real.
+test('GST is a real eleventh, and nothing is rounded to dollars', () => {
+  const drawn = drawnOn(ORDER);
+  for (const amt of ['$45.45', '$4.54', '$49.99', '$25.00', '$24.99']) {
+    assert.ok(drawn.includes(amt), `missing ${amt} — got ${drawn.join(' | ')}`);
   }
+  assert.ok(!drawn.includes('$50.00'), 'the price was rounded to $50.00');
+  assert.equal(4545 + 454, 4999);           // the arithmetic the page claims
+});
+
+test('a $1,000+ sale still names the buyer', () => {
+  const drawn = drawnOn({ ...ORDER, price: '1250.00', deposit: '0' });
+  assert.ok(drawn.includes('Priya Sharma'), 'buyer identity is mandatory over $1,000');
+  assert.ok(drawn.includes('$1,250.00'), 'total missing');
+  assert.ok(drawn.includes('$113.64'), 'GST on $1,250 is $113.64');
+  assert.ok(drawn.includes('$1,136.36'), 'ex-GST subtotal missing');
+});
+
+test('a collected order reads as paid in full', () => {
+  const drawn = drawnOn({ ...ORDER, status: 'picked_up', price: '130.50', deposit: '0',
+    picked_up_at: '2026-09-12T05:10:00Z' });
+  assert.ok(drawn.includes('PAID IN FULL'));
+  assert.ok(drawn.includes('$130.50'), 'cents dropped from $130.50');
+  assert.ok(drawn.includes('$0.00'), 'balance should read $0.00');
+  assert.ok(!drawn.includes('$131.00'), '$130.50 was rounded');
+});
+
+// Issuing a document headed "tax invoice" showing GST when the seller is not
+// registered for it is not a formatting slip, so the switch is explicit.
+test('a store not registered for GST issues an invoice, not a tax invoice', () => {
+  const drawn = drawnOn(ORDER, { ...HP, gstRegistered: false });
+  assert.ok(drawn.includes('INVOICE'), 'still needs a heading');
+  assert.ok(!drawn.includes('TAX INVOICE'), 'must not claim to be a tax invoice');
+  assert.ok(!drawn.some((t) => t.startsWith('GST (')), 'must not show a GST line');
+  assert.ok(!drawn.includes('Total price includes GST.'));
+  assert.ok(drawn.includes('No GST charged'));
+  assert.ok(drawn.includes('$49.99'), 'the price is still the price');
+});
+
+test('the PDF is structurally valid', () => {
+  const pdf = receiptSource(ORDER, ctxFor(HP));
+  assert.ok(pdf.startsWith('%PDF-1.4'), 'not a PDF');
+  assert.ok(pdf.trimEnd().endsWith('%%EOF'), 'truncated');
+  // Offsets are character counts because the file is written Latin-1; counting
+  // UTF-8 bytes puts the table out by three for every em dash on the page.
+  const startxref = Number(pdf.slice(pdf.lastIndexOf('startxref') + 9).trim().split('\n')[0]);
+  assert.equal(pdf.slice(startxref, startxref + 4), 'xref', 'startxref points at the wrong byte');
+  const first = pdf.indexOf('0000000000 65535 f \n') + 20;
+  assert.equal(pdf.slice(Number(pdf.slice(first, first + 10)), Number(pdf.slice(first, first + 10)) + 7),
+    '1 0 obj', 'xref entry points at the wrong byte');
 });
 
 console.log(`${passed} passed${process.exitCode ? ', some FAILED' : ''}`);

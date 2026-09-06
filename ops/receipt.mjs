@@ -1,4 +1,39 @@
-// A receipt as a real PDF file, written by hand.
+// A tax invoice as a real PDF file, written by hand.
+//
+// WHAT THE LAW WANTS ON IT
+//
+// Two separate obligations land on this one page.
+//
+// 1. A **tax invoice** (A New Tax System (Goods and Services Tax) Act 1999
+//    s29-70; ATO "Tax invoices"). For a sale under $1,000 it must carry, or it
+//    is not a tax invoice and the customer cannot claim the GST:
+//      - the words "tax invoice", prominently
+//      - the seller's identity AND the seller's ABN
+//      - the date it was issued
+//      - a description of what was sold, with quantity and price
+//      - the GST amount, or the line "Total price includes GST" where GST is
+//        exactly 1/11 of the total
+//      - the extent to which each sale is taxable
+//    At $1,000 and over it must ALSO carry the buyer's identity or ABN — which
+//    is why the customer's name is printed on every one of these, not just the
+//    big ones. A wedding cake clears $1,000 easily.
+//
+// 2. A **proof of transaction** under the Australian Consumer Law (sch 2
+//    s100), which must be given for any sale of $75 or more, and within 7 days
+//    on request below that. It must state the supplier, the supplier's ABN, the
+//    date of the supply, what was supplied, and the price. "Date of the supply"
+//    is the pickup, not the day it was typed in — so both dates are printed.
+//
+// GST: cakes, pastries and confectionery are taxable food (GST Act sch 2; the
+// GST-free carve-out is for bread without a sweet coating, which is not what
+// this shop sells). Prices are entered GST-inclusive, so GST is 1/11 of the
+// total, worked in whole cents.
+//
+// The two shops are two companies with two ABNs — see STORES in db.mjs. The
+// entity and ABN come from the order's store, never from the brand. If a store
+// is ever not GST-registered, the document must NOT say "tax invoice" and must
+// NOT show GST; `gstRegistered: false` handles that and the heading falls back
+// to "Invoice".
 //
 // Two things ruled out the obvious routes. The ops CSP has no 'unsafe-inline'
 // in script-src, so a popup document can never call print() on itself; and a
@@ -12,13 +47,30 @@ const A4 = { w: 595.28, h: 841.89 };
 const M = 56;                       // page margin, ~20mm
 const RIGHT = A4.w - M;
 
-// Base-14 Helvetica advance widths, per 1000 units, for the characters money
-// is made of. Right-aligning an amount needs its exact width and nothing else
-// on the page is right-aligned, so this is the whole table.
-const W = { '0':556,'1':556,'2':556,'3':556,'4':556,'5':556,'6':556,'7':556,
-            '8':556,'9':556,'$':556,'.':278,',':278,' ':278,'-':333,'—':1000 };
-const widthOf = (s, size) =>
-  [...s].reduce((n, ch) => n + (W[ch] ?? 556), 0) / 1000 * size;
+// Base-14 advance widths, per 1000 units, from the Adobe AFM metrics. Placing
+// right-aligned text needs the exact width of the string, and a guessed average
+// puts a column of money visibly out of line. Only the two Helvetica faces are
+// here because nothing is ever right-aligned in the serif.
+const table = (spec) => {
+  const t = {};
+  for (const [w, chars] of spec) for (const ch of chars) t[ch] = w;
+  return t;
+};
+const HELV = table([
+  [191, "'"], [222, 'ijl'], [260, '|'], [278, ' !,./:;I ft[\\]'], [333, '()-`r'],
+  [334, '{}'], [355, '"'], [389, '*'], [469, '^'], [500, 'Jcksvxyz'],
+  [556, '#$0123456789?_Labdeghnopqu'], [584, '+<=>~'], [611, 'FTZ'],
+  [667, '&ABEKSVXY'], [722, 'CDHNRUw'], [778, 'GOQ'], [833, 'Mm'],
+  [889, '%'], [944, 'W'], [1015, '@'],
+]);
+const HELV_BOLD = table([
+  [278, ' .,:;Il'], [333, '!'], [556, '$0123456789Jacegos'], [611, 'FLTZ'],
+  [667, 'EPSVXY'], [722, 'ABCDHKMNRU'], [778, 'GOQ'], [833, 'M'], [944, 'W'],
+]);
+const widthOf = (s, size, font = 'F1') => {
+  const t = font === 'F2' ? HELV_BOLD : HELV;
+  return [...String(s)].reduce((n, ch) => n + (t[ch] ?? HELV[ch] ?? 556), 0) / 1000 * size;
+};
 
 // PDF strings are Latin-1 bytes. The few non-ASCII characters this receipt can
 // contain are mapped to their WinAnsi codes; anything else a customer's name
@@ -48,9 +100,11 @@ class Page {
     this.ops.push(`BT ${this.rgb(colour)} rg /${font} ${size} Tf 1 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)} Tm (${pdfStr(s)}) Tj ET`);
     return this;
   }
-  right(s, opts = {}) {
+  /** Right-aligned at `edge`. Only ever used on money and short labels, which
+   *  is why the width table below can be as small as it is. */
+  rightAt(edge, s, opts = {}) {
     const size = opts.size ?? 10;
-    return this.text(s, { ...opts, size, x: RIGHT - widthOf(String(s), size) });
+    return this.text(s, { ...opts, size, x: edge - widthOf(String(s), size, opts.font) });
   }
   rule({ y = this.y, from = M, to = RIGHT, colour = '#E8DDD2', w = 1 } = {}) {
     this.ops.push(`${this.rgb(colour)} RG ${w} w ${from.toFixed(2)} ${y.toFixed(2)} m ${to.toFixed(2)} ${y.toFixed(2)} l S`);
@@ -110,81 +164,126 @@ function toPdfSource(content, title) {
  */
 export function receiptSource(o, ctx) {
   const { store, business, money, dateFmt, dateTimeFmt, orderedAt, paidOn } = ctx;
-  const price = Number(o.price || 0);
-  const paid = paidOn(o);
-  const owing = Math.max(0, price - paid);
 
+  // Worked in whole cents so the three amounts always add back up: a third of
+  // a cent of float drift is the difference between a valid tax invoice and a
+  // total that does not equal its own lines.
+  const cents = (v) => Math.round(Number(v || 0) * 100);
+  const totalC = cents(o.price);
+  const taxable = store?.gstRegistered !== false;   // every cake is taxable food
+  const gstC = taxable ? Math.round(totalC / 11) : 0;
+  const netC = totalC - gstC;
+  const paidC = cents(paidOn(o));
+  const owingC = Math.max(0, totalC - paidC);
+  const $ = (c) => money.format(c / 100);
+
+  const heading = taxable ? 'TAX INVOICE' : 'INVOICE';
   const stamp = o.status === 'cancelled' ? 'CANCELLED'
-    : price > 0 && owing === 0 ? 'PAID IN FULL'
-      : paid > 0 ? 'DEPOSIT PAID'
+    : totalC > 0 && owingC === 0 ? 'PAID IN FULL'
+      : paidC > 0 ? 'DEPOSIT PAID'
         : 'UNPAID';
   const stampColour = { 'PAID IN FULL': '#6B7A55', 'DEPOSIT PAID': '#B37B2C',
                         UNPAID: '#A03D5E', CANCELLED: '#8B7F76' }[stamp];
 
   const p = new Page();
   const TAUPE = '#8B7F76', INK = '#2C1A0E', BROWN = '#5C3A22';
+  const GSTX = RIGHT - 96;            // right edge of the GST column
+  const LABX = RIGHT - 210;           // left edge of the totals and the date block
 
-  // Masthead
+  // ── Masthead ──────────────────────────────────────────────────────────────
   p.text(business.name, { font: 'F3', size: 26 });
-  p.right(o.order_no, { font: 'F2', size: 13 });
+  p.rightAt(GSTX + 96, heading, { font: 'F2', size: 12, colour: INK });
   p.down(15).text(business.tagline, { size: 9, colour: TAUPE });
-  p.right(dateFmt.format(orderedAt(o)), { size: 9, colour: TAUPE });
   p.down(13).rule({ colour: '#C85478', w: 1.5 });
 
-  p.down(16).text(store ? `${store.label} — ${store.address}` : '', { size: 8.5, colour: TAUPE });
-  p.down(12).text(`${business.phone} · ${business.email} · ${business.site}`, { size: 8.5, colour: TAUPE });
+  // Seller identity and ABN: both mandatory, both from the store's own company.
+  p.down(15).text(store?.entity || business.name, { size: 9.5, font: 'F2' });
+  if (store?.abn) p.rightAt(RIGHT, `ABN ${store.abn}`, { size: 9.5, font: 'F2' });
+  p.down(12).text(`trading as ${business.name} — ${store?.label ?? ''}`, { size: 8.5, colour: TAUPE });
+  p.down(11).text(store?.address || '', { size: 8.5, colour: TAUPE });
+  p.down(11).text(`${business.phone} · ${business.email} · ${business.site}`,
+    { size: 8.5, colour: TAUPE });
 
-  // Title + payment stamp
-  p.down(34).text('Receipt', { font: 'F3', size: 17 });
-  const sw = widthOf(stamp, 8) + 20;
-  p.box({ x: M + 62, y: p.y - 5, w: sw, h: 19, colour: stampColour });
-  p.text(stamp, { x: M + 72, size: 8, font: 'F2', colour: stampColour, y: p.y + 1 });
+  // ── Invoice head ──────────────────────────────────────────────────────────
+  p.down(30).text(taxable ? 'Tax invoice' : 'Invoice', { font: 'F3', size: 17 });
+  const sw = widthOf(stamp, 8, 'F2') + 20;
+  p.box({ x: M + 96, y: p.y - 5, w: sw, h: 19, colour: stampColour });
+  p.text(stamp, { x: M + 106, size: 8, font: 'F2', colour: stampColour, y: p.y + 1 });
 
-  // Who and when
-  const row = (k, v) => { if (v) { p.down(17).text(k, { size: 9, colour: TAUPE }).text(v, { x: M + 150, size: 10 }); } };
-  p.down(12);
-  row('Billed to', o.customer_name);
-  row('Phone', o.customer_phone);
-  row('Order placed', dateTimeFmt.format(orderedAt(o)));
-  row('Pick up', dateTimeFmt.format(new Date(o.due_at)));
-  row('Collected', o.picked_up_at ? dateTimeFmt.format(new Date(o.picked_up_at)) : '');
+  // Left column: who. Right column: which document, and when.
+  const startY = p.y;
+  const left = (k, v) => { if (v) { p.down(16).text(k, { size: 9, colour: TAUPE })
+    .text(v, { x: M + 96, size: 9.5 }); } };
+  p.down(10);
+  left('Billed to', o.customer_name);       // mandatory at $1,000+, printed always
+  left('Phone', o.customer_phone);
 
-  // The cake
-  p.down(30).text('DESCRIPTION', { size: 8, font: 'F2', colour: TAUPE });
-  p.right('AMOUNT', { size: 8, font: 'F2', colour: TAUPE });
+  const rightY = { y: startY - 10 };
+  const rightRow = (k, v) => { if (!v) return; rightY.y -= 16;
+    p.text(k, { x: LABX, size: 9, colour: TAUPE, y: rightY.y });
+    p.rightAt(RIGHT, v, { size: 9.5, y: rightY.y }); };
+  rightRow('Invoice no.', o.order_no);
+  rightRow('Issued', dateFmt.format(orderedAt(o)));
+  rightRow('Supply / pick up', dateFmt.format(new Date(o.due_at)));
+  if (o.picked_up_at) rightRow('Collected', dateFmt.format(new Date(o.picked_up_at)));
+  p.y = Math.min(p.y, rightY.y);
+
+  // ── The cake ──────────────────────────────────────────────────────────────
+  p.down(28).text('DESCRIPTION', { size: 8, font: 'F2', colour: TAUPE });
+  p.text('QTY', { x: GSTX - 108, size: 8, font: 'F2', colour: TAUPE });
+  p.rightAt(GSTX, 'GST', { size: 8, font: 'F2', colour: TAUPE });
+  p.rightAt(RIGHT, 'AMOUNT', { size: 8, font: 'F2', colour: TAUPE });
   p.down(7).rule();
 
   const item = [o.kind === 'custom' ? 'Custom cake' : 'Cake', o.flavour, o.size]
     .filter(Boolean).join(' · ');
   p.down(19).text(item, { size: 11, font: 'F2' });
-  p.right(price ? money.format(price) : '—', { size: 11 });
+  p.text('1', { x: GSTX - 108, size: 10 });
+  p.rightAt(GSTX, gstC ? $(gstC) : '—', { size: 10 });
+  p.rightAt(RIGHT, totalC ? $(totalC) : '—', { size: 11 });
   for (const line of [
     o.wording ? `Wording: “${o.wording}”` : '',
     o.design_notes || '',
     o.notes || '',
   ].filter(Boolean)) p.down(13).text(line, { size: 9, colour: BROWN });
-  p.down(13).rule();
+  // "the extent to which each sale is a taxable sale" — stated per line.
+  p.down(13).text(taxable ? 'Taxable supply' : 'No GST charged', { size: 8, colour: TAUPE });
+  p.down(11).rule();
 
-  // Totals
+  // ── Totals ────────────────────────────────────────────────────────────────
   const total = (k, v, big) => {
-    p.down(big ? 22 : 18);
-    p.text(k, { x: A4.w / 2, size: big ? 12 : 10, font: big ? 'F2' : 'F1', colour: big ? INK : BROWN });
-    p.right(v, { size: big ? 12 : 10, font: big ? 'F2' : 'F1' });
+    p.down(big ? 21 : 17);
+    p.text(k, { x: LABX, size: big ? 12 : 10, font: big ? 'F2' : 'F1',
+      colour: big ? INK : BROWN });
+    p.rightAt(RIGHT, v, { size: big ? 12 : 10, font: big ? 'F2' : 'F1' });
   };
-  total('Total', price ? money.format(price) : '—');
-  total(paid > 0 && owing > 0 ? 'Deposit paid' : 'Paid', money.format(paid));
-  p.down(9).rule({ from: A4.w / 2, colour: INK, w: 1.2 });
-  total(owing > 0 ? 'Balance due at pickup' : 'Balance', money.format(owing), true);
+  if (taxable) {
+    total('Subtotal (ex GST)', $(netC));
+    total('GST (10%)', $(gstC));
+  }
+  total('Total' + (taxable ? ' (inc GST)' : ''), totalC ? $(totalC) : '—', true);
+  p.down(7).rule({ from: LABX, colour: '#E8DDD2' });
+  total(paidC > 0 && owingC > 0 ? 'Deposit paid' : 'Paid', $(paidC));
+  p.down(8).rule({ from: LABX, colour: INK, w: 1.2 });
+  total(owingC > 0 ? 'Balance due at pickup' : 'Balance', $(owingC), true);
 
-  // Footer, pinned to the bottom so a short receipt does not look unfinished.
-  p.y = M + 44;
+  if (taxable) {
+    p.down(18).text('Total price includes GST.', { x: LABX, size: 8.5, colour: TAUPE });
+  }
+
+  // ── Footer, pinned to the bottom ──────────────────────────────────────────
+  p.y = M + 56;
   p.rule();
-  p.down(16).text(`Thank you for ordering with ${business.name}. Every cake we make is 100% eggless.`,
+  p.down(15).text(`Thank you for ordering with ${business.name}. Every cake we make is 100% eggless.`,
     { size: 8.5, colour: TAUPE });
-  p.down(13).text(`Questions about this order? Quote ${o.order_no} when you call ${business.phone}.`,
+  p.down(12).text(`Questions about this order? Quote ${o.order_no} when you call ${business.phone}.`,
     { size: 8.5, colour: TAUPE });
+  p.down(12).text(
+    `${store?.entity || business.name}${store?.abn ? ` · ABN ${store.abn}` : ''}`
+      + `${taxable ? ' · Registered for GST' : ''}`,
+    { size: 8, colour: TAUPE });
 
-  return toPdfSource(p.build(), `Receipt ${o.order_no}`);
+  return toPdfSource(p.build(), `${heading} ${o.order_no}`);
 }
 
 export function receiptPdf(o, ctx) {
@@ -197,9 +296,10 @@ export function receiptPdf(o, ctx) {
 export function downloadReceipt(o, ctx) {
   const blob = receiptPdf(o, ctx);
   const url = URL.createObjectURL(blob);
+  const kind = ctx.store?.gstRegistered === false ? 'Invoice' : 'Tax invoice';
   const a = document.createElement('a');
   a.href = url;
-  a.download = `Receipt ${o.order_no} ${o.customer_name || ''}`.trim().replace(/[/\\:*?"<>|]/g, '-') + '.pdf';
+  a.download = `${kind} ${o.order_no} ${o.customer_name || ''}`.trim().replace(/[/\\:*?"<>|]/g, '-') + '.pdf';
   document.body.appendChild(a);
   a.click();
   a.remove();
