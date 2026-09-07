@@ -1,0 +1,765 @@
+RUN_DATE: 07-09-2026
+ROUTINE: NumNums-SEO-Monthly (unattended)
+SITE: https://numnumsbakery.com.au
+BUSINESS: Num Num's Bakery (GNT Ventures Pty Ltd, ABN 39 634 402 412). 100% eggless bakery, Sydney NSW.
+BUSINESS_SCOPE: custom eggless cakes + Indian sweets ONLY. No snacks, no savoury, no egg-based products.
+LOCATIONS: 2 physical shops - Harris Park (Shop 1, 96-98 Wigram St, 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, 2765). Factory: 10-12A Wingate Rd, Mulgrave 2756.
+SITE_SHAPE: static multi-page HTML on Netlify. 242 HTML files = 234 blog posts + blog index + 7 root pages.
+REPO: GAMECHANGER1725/NUMNUMS_Website, branch main.
+
+HEADLINE: First run in this routine's history with BOTH a live crawl AND real GSC+GA4 data. The
+6-run sandbox egress block is GONE (curl returns HTTP 200) and the Google service account works.
+Every number below is real. Nothing in this file is estimated or carried forward.
+
+=== DATA_SOURCES ===
+GSC: Google Search Console API via service account num-nums-bakery-seo@central-splice-311105.iam.gserviceaccount.com
+     property sc-domain:numnumsbakery.com.au. Script: skills/seo-audit/scripts/gsc_query.py. STATUS: WORKING.
+GA4: Google Analytics Data API v1beta, property 531794710. Script: skills/seo-audit/scripts/ga4_report.py. STATUS: WORKING.
+LIVE_CRAWL: numnumsbakery.com.au reachable, HTTP 200. STATUS: WORKING (first time since 26-07-2026).
+PAGESPEED_INSIGHTS: WORKING (lab data obtained).
+CRUX (field Core Web Vitals): FAILED - see FAILURES. No field CWV data this run.
+WINDSOR.AI: not used. Retired for this routine as of 2026-09 (free-plan connected-account limit silently returned zeros).
+
+google_auth.py --check output, verbatim:
+  Credential Tier: 2 -- Full (API key + Service Account + GA4)
+    [OK] PageSpeed Insights v5
+    [OK] Chrome UX Report (CrUX) API
+    [OK] CrUX History API
+    [OK] Google Search Console API
+           Service account: num-nums-bakery-seo@central-splice-311105.iam.gserviceaccount.com
+    [OK] Google Indexing API v3
+           Service account: num-nums-bakery-seo@central-splice-311105.iam.gserviceaccount.com
+    [OK] GA4 Data API v1beta
+           Service account: num-nums-bakery-seo@central-splice-311105.iam.gserviceaccount.com
+  NOTE: --check reported CrUX [OK] but actual CrUX calls returned 403 SERVICE_DISABLED /
+  API_KEY_SERVICE_BLOCKED. The --check probe is not a reliable indicator for CrUX.
+
+=== WINDOW_BOUNDARIES ===
+GSC lags ~3 days. All GSC windows anchored at today-3 = 2026-09-04 (inclusive end).
+GSC windows (explicit ISO, inclusive both ends):
+  last_7d    | 2026-08-29 .. 2026-09-04 |   7 days
+  prev_7d    | 2026-08-22 .. 2026-08-28 |   7 days
+  last_28d   | 2026-08-08 .. 2026-09-04 |  28 days
+  prev_28d   | 2026-07-11 .. 2026-08-07 |  28 days
+  last_3mo   | 2026-06-07 .. 2026-09-04 |  90 days
+  last_6mo   | 2026-03-09 .. 2026-09-04 | 180 days
+  last_12mo  | 2025-09-05 .. 2026-09-04 | 365 days
+GA4 windows: ga4_report.py accepts --days only (no explicit start/end), and GA4 has no reporting
+lag, so GA4 windows end 2026-09-06 and are NOT aligned with the GSC windows. APPROXIMATION NOTED:
+  7d   | 2026-08-31 .. 2026-09-06
+  14d  | 2026-08-24 .. 2026-09-06   (used to derive prev_7d by subtraction)
+  28d  | 2026-08-10 .. 2026-09-06
+  56d  | 2026-07-13 .. 2026-09-06   (used to derive prev_28d by subtraction)
+  90d  | 2026-06-09 .. 2026-09-06
+  180d | 2026-03-11 .. 2026-09-06
+  365d | 2025-09-07 .. 2026-09-06
+GA4 prev-window figures are DERIVED BY SUBTRACTION (prev_7d = 14d - 7d), not queried directly.
+DATA_HISTORY_LIMIT: GSC last_6mo and last_12mo are byte-identical (2211 clicks / 77819 impressions),
+as are GA4 180d and 365d (3323 sessions). The property has no data before ~2026-03. Earliest GSC
+month with data is 2026-05. Treat 6mo and 12mo as the SAME window, not as two trend points.
+
+=== PRIOR_RUN_BACKLOG ===
+OPEN_SEO_PRS: 0
+The 5 SEO PRs named in the routine prompt as a standing backlog (#56, #62, #69, #74, #79) are ALL
+now CLOSED (closed unmerged, by the owner). Last month's PR #80 (01-09-2026 run) was MERGED
+2026-09-01T20:52:52Z. So the SEO backlog went 5 -> 0. SHRINKING. The Step 7 self-merge change is
+working as intended.
+UNRELATED_OPEN_PRS: 44 open draft PRs remain in the repo, none of them from this routine. They are
+GBP queue-post PRs (#84,#83,#82,#81,#78,#77,#76,#75,#73,#72,#71,#70,#68,#67,#66,#65,#64,#63,#61,
+#60,#59,#58,#57,#55,#54,#53,#52,#51,#50,#48,#47,#46,#45,#44,#43,#42,#41,#40,#39,#38,#37,#35,#34,
+#33,#32,#30,#29,#27) plus 2 blog-post PRs (#36 from 2026-07-20, #31 from 2026-07-16), oldest
+2026-07-11. NOT this routine's to merge - flagged for the owner as a separate accumulating backlog
+in the GBP and blog routines.
+
+=== SEO_AUDIT_SCORE ===
+METHOD: seo-audit skill (project-vendored, skills/seo-audit/). Skill's own Scoring Weights table.
+DELEGATION NOTE: the skill's subagent fan-out was hit by a session-wide 429 rate limit on the first
+attempt (all 11 specialists died). The skill's Process step 4 explicitly permits "otherwise run
+inline sequentially"; specialists were re-run and the remainder executed inline. See FAILURES.
+
+SCORE_THIS_RUN (post-fix): 80/100
+SCORE_THIS_RUN (pre-fix baseline): 77/100
+SCORE_LAST_RUN (01-09-2026): 86/100 post-fix
+DELTA: -6
+
+DELTA IS NOT A REGRESSION - READ THIS BEFORE ACTING ON IT. Last month scored in local-file-analysis
+mode with the live crawl blocked; it could not measure Performance at all and excluded it. This run
+measured Performance live and it scored 55/100, which alone pulls ~4.5 points off the weighted
+total. The site did not get worse: GSC clicks are UP 16.0% month-over-month and average position
+improved 0.62. The two scores are not like-for-like. From next run on, 80 is the comparable baseline.
+
+CATEGORY BREAKDOWN (weight | pre-fix | post-fix | basis):
+  Technical SEO          | 22% | 93 | 95 | live crawl + local file
+  Content Quality        | 23% | 70 | 70 | local file + GSC performance data
+  On-Page SEO            | 20% | 93 | 93 | local file
+  Schema / Structured    | 10% | 62 | 85 | local file
+  Performance (CWV)      | 10% | 55 | 55 | LIVE LAB (PageSpeed Insights). FIELD data = N/A, CrUX blocked
+  AI Search Readiness    | 10% | 66 | 68 | local file + live crawl
+  Images                 |  5% | 72 | 78 | local file
+No category was excluded from the denominator. Performance is scored on LAB data only; the field
+(CrUX) component of that category is N/A and the lab score is stated in its place, labelled.
+
+=== FIXES_APPLIED ===
+All fixes trace to a Step 1 finding. Committed as b5878b5. 245 files changed.
+Verification legend: 200=serves HTTP 200 locally; JSON=all JSON-LD blocks parse; WD=Wikidata sameAs intact.
+
+netlify.toml | added 301 /blog/eggless-cake-troubleshooting (+ .html form) -> /blog/eggless-cakes-soft-moist-myths-vs-facts | HIGH | PASS - valid TOML, 531 rules, rule present. Was a live 404 holding 234 impressions + 2 clicks/28d
+blog/index.html | canonical /blog -> /blog/ (the URL that actually 200s; /blog 301s) | MEDIUM | PASS - 200, served canonical confirmed = https://numnumsbakery.com.au/blog/
+sitemap.xml | <loc> /blog -> /blog/ to match | MEDIUM | PASS - well-formed XML, 241 <loc>, 0 dupes, count matches disk exactly
+242 HTML files | @type BakeryOrCafe -> Bakery on both store nodes (355 nodes). schema.org/BakeryOrCafe returns 404; schema.org/Bakery returns 200. Also ends the split where the same @id was LocalBusiness on blog posts and BakeryOrCafe on index/locations | CRITICAL | PASS - 200, JSON, WD. 0 BakeryOrCafe remain; types now Bakery 188 (HP) / 167 (RS)
+216 HTML files | geo coordinates normalised on 325 store nodes. Harris Park had drifted to 24 distinct lat/long pairs for ONE address, Riverstone to 5. All now use the pair locations.html and the Maps embed already use: HP -33.8206078,151.0089521 / RS -33.6785397,150.8610698 | HIGH | PASS - distinct geo pairs now 1 per store (was 24 and 5)
+43 HTML files | publisher referenced @id .../#organization that no document defined; Organization node now inlined | CRITICAL | PASS - 0 dangling refs remain
+234 blog posts | added mainEntityOfPage to every Article node (224 were missing it) | MEDIUM | PASS - 234/234 now carry it, JSON
+4 blog posts | added Harris Park openingHoursSpecification + geo to store nodes that had neither (custom-cake-sydney, eggless-cake-sydney, eggless-cakes-eid-sydney, indian-sweets-harris-park-riverstone-sydney) | MEDIUM | PASS - per-store hours verified against locations.html; HP daily 11:00-22:00. Riverstone's DIFFERENT hours (Mon-Fri 06:00-20:00, Sat-Sun 07:00-19:00) deliberately not copied
+4 blog posts | Article author Organization -> Person "Tarun Patel", matching the other 230 | LOW | PASS - 0 Organization authors remain
+blog/afternoon-tea-cakes-sydney.html, blog/luxury-cake-sydney.html | restored the /order nav link; both had only a WhatsApp CTA and no internal link to the order page | MEDIUM | PASS - 234/234 posts now link to /order
+7 HTML files | internal href="/blog" -> "/blog/" to skip a 301 hop (PSI measured 776ms lab saving on that redirect) | LOW | PASS - 0 remaining
+242 HTML files | alt="" on the Meta pixel <img>, the ONLY images site-wide missing alt | LOW | PASS - img tags missing alt now 0 of 1495 (was 242). All 242 were 1x1 display:none tracking pixels; no content image ever lacked alt
+3 blog posts | lang="en" -> lang="en-AU" (eggless-cake-for-pooja-sydney, luxury-cake-sydney, naked-cake-sydney) | LOW | PASS - 242/242 now en-AU
+locations.html | added tel: link to the Riverstone footer entry; Harris Park's already had one | LOW | PASS - 200, 8 tel: links present
+robots.txt | added "License: https://rsl.ai/1.0/allow-search-only", previously declared only in llms.txt | LOW | PASS - served directive confirmed
+95 suburb blog posts | added 190 internal links to the two starved geo pillars (/blog/eggless-cake-sydney and /blog/cake-delivery-areas-sydney), appended to each post's existing "Related Posts" block in its own markup style | HIGH | PASS - inbound links went 6 -> 101 and 2 -> 97; 0 JSON failures, 0 unbalanced tags, all sampled pages serve 200. TRIGGER: seo-cluster found 0 of 73 suburb pages linked to either pillar, verified independently before the edit
+indian-sweet.html | added the two store Bakery nodes (geo, hasMap, per-store openingHoursSpecification, areaServed, telephone, address) to a page whose @graph previously held only Organization + BreadcrumbList + ItemList + FAQPage and had NO local schema at all | CRITICAL | PASS - 200, JSON parses, @graph now Organization+Bakery+Bakery+BreadcrumbList+ItemList+FAQPage, Wikidata sameAs intact. Directly addresses "barfi near me" 535 impressions / 0 clicks. hasMap URLs copied from locations.html, NOT invented (a first draft used a cid=0 placeholder and was corrected before commit)
+
+FIXES_REVERTED_MIDRUN: 1. A first attempt at the geo/type normalisation used a regex with a manual
+splice that concatenated coordinate digits (produced e.g. 151.00895210017) and broke JSON-LD in 5
+files. Detected by the post-change JSON parse check, fully reverted via git checkout, and redone
+with a single non-splicing re.sub. Final state verified clean. No damaged file was committed.
+
+VERIFICATION SUMMARY (programmatic only; no screenshots taken, per routine):
+  node verify-blog.mjs                      PASS - posts 234 | cards 234 | sitemap 234 | llms 234 | redirects 361
+  changed pages serving HTTP 200            PASS - 0 non-200 of 242 changed HTML files (local serve.mjs)
+  JSON-LD parse                             PASS - 246 blocks across changed files, 0 invalid
+  Wikidata sameAs Q140076208                PASS - 0 changed files missing it
+  sitemap.xml well-formed + count           PASS - 241 <loc> = 234 posts + blog index + 6 indexable root pages
+  single-quoted style=/on*= introduced      PASS - 0 across 1347 added diff lines
+  tag balance (div/section/article/nav/script) PASS - 0 unbalanced of 242 files
+  netlify.toml TOML validity                PASS - 531 redirect rules parse
+
+=== NON_CODE_ACTIONS ===
+1. /locations is NOT INDEXED. GSC URL Inspection returns "URL is unknown to Google" for the page
+   listing both shopfronts. Verified there is NO code defect: serves 200, canonical correct, in
+   sitemap.xml, in llms.txt, 242 internal inbound links, no noindex. Owner must hit "Request
+   Indexing" in GSC. This is the single highest-value non-code action this run.
+2. aggregateRating 4.6/50 reviews is duplicated identically on BOTH store nodes on index.html and
+   locations.html. Harris Park has traded since 2019, Riverstone since Dec 2024 - one shared rating
+   across two listings is not credible and risks being ignored. Needs the real per-store rating and
+   count from each GBP listing. Do not invent these.
+3. Enable the Chrome UX Report API on GCP project 96266000644 and check the API-key restriction
+   allowlist. Until then no run can report real field Core Web Vitals.
+4. STILL OPEN FROM LAST MONTH: order.html:900 says the stores "carry a daily range of sweets,
+   pastries and croissants". This contradicts the stated eggless-cakes-and-Indian-sweets-only scope
+   (croissants are a pastry and are conventionally egg-washed). Second month open. Deliberately NOT
+   auto-edited: if the shops genuinely sell these, deleting real product copy would be the worse
+   error. Owner must confirm which it is.
+5. Backlink acquisition and citation building - no Moz/Bing API keys configured, so no DA/PA or
+   spam scoring was obtainable this run (Common Crawl tier only).
+6. GBP posting cadence, Q&A, photo evidence, review velocity - not visible from the repo.
+
+=== GSC_TOTALS ===
+window | start | end | clicks | impressions | ctr_pct | avg_position
+last_7d    | 2026-08-29 | 2026-09-04 |  197 |  6844 | 2.88 |  9.78
+prev_7d    | 2026-08-22 | 2026-08-28 |  242 |  7371 | 3.28 | 10.20
+last_28d   | 2026-08-08 | 2026-09-04 |  834 | 30100 | 2.77 | 10.63
+prev_28d   | 2026-07-11 | 2026-08-07 |  719 | 27120 | 2.65 | 11.25
+last_3mo   | 2026-06-07 | 2026-09-04 | 2099 | 74833 | 2.80 | 11.24
+last_6mo   | 2026-03-09 | 2026-09-04 | 2211 | 77819 | 2.84 | 11.34
+last_12mo  | 2025-09-05 | 2026-09-04 | 2211 | 77819 | 2.84 | 11.34
+avg_position is impression-weighted across the window. last_6mo == last_12mo: no data before 2026-03.
+
+=== GSC_WOW ===
+current 2026-08-29..09-04 vs previous 2026-08-22..08-28
+metric      | prev  | cur   | abs_delta | pct_delta
+clicks      |   242 |   197 |      -45  | -18.6%
+impressions |  7371 |  6844 |     -527  |  -7.1%
+ctr_pct     |  3.28 |  2.88 |    -0.40pp|  -12.2%
+avg_position| 10.20 |  9.78 |    +0.42  | improved (lower is better)
+READ: clicks fell 18.6% while average POSITION improved. Impressions fell only 7.1%, so this is a
+CTR effect, not a ranking loss. One week is noise at this volume - do not act on WoW alone.
+
+=== GSC_MOM ===
+current 2026-08-08..09-04 vs previous 2026-07-11..08-07
+metric      | prev  | cur   | abs_delta | pct_delta
+clicks      |   719 |   834 |     +115  | +16.0%
+impressions | 27120 | 30100 |    +2980  | +11.0%
+ctr_pct     |  2.65 |  2.77 |    +0.12pp|  +4.5%
+avg_position| 11.25 | 10.63 |    +0.62  | improved
+READ: the real trend. Clicks, impressions, CTR and position ALL improved month-over-month.
+
+=== GSC_BY_DEVICE ===
+window | device | clicks | impressions | ctr_pct | avg_position
+last_7d   | desktop |  45 |  2302 | 1.95 | 14.51
+last_7d   | mobile  | 151 |  4504 | 3.35 |  7.39
+last_7d   | tablet  |   1 |    38 | 2.63 |  7.55
+prev_7d   | desktop |  60 |  2280 | 2.63 | 16.10
+prev_7d   | mobile  | 177 |  5043 | 3.51 |  7.54
+prev_7d   | tablet  |   5 |    48 |10.42 |  8.31
+last_28d  | desktop | 198 | 11110 | 1.78 | 16.05
+last_28d  | mobile  | 628 | 18806 | 3.34 |  7.45
+last_28d  | tablet  |   8 |   184 | 4.35 |  7.95
+prev_28d  | desktop | 157 | 10989 | 1.43 | 16.98
+prev_28d  | mobile  | 559 | 15971 | 3.50 |  7.31
+prev_28d  | tablet  |   3 |   160 | 1.88 | 10.08
+last_3mo  | desktop | 477 | 28632 | 1.67 | 17.35
+last_3mo  | mobile  |1608 | 45753 | 3.51 |  7.44
+last_3mo  | tablet  |  14 |   448 | 3.12 |  9.14
+last_12mo | desktop | 496 | 29545 | 1.68 | 17.60
+last_12mo | mobile  |1699 | 47810 | 3.55 |  7.49
+last_12mo | tablet  |  16 |   464 | 3.45 |  9.44
+
+MOBILE_VS_DESKTOP_POSITION_GAP (desktop_pos - mobile_pos; positive = desktop ranks WORSE):
+  last_7d   +7.11   |  prev_7d  +8.56   |  last_28d +8.60
+  prev_28d  +9.68   |  last_3mo +9.90   |  last_12mo +10.10
+THIS IS THE LARGEST SINGLE STRUCTURAL FINDING IN THE GSC DATA. Desktop ranks 8.6 positions worse
+than mobile over the last 28 days and the gap has held above +7 in every window measured. Desktop
+carries 37% of impressions (11,110 of 30,100) but only 24% of clicks (198 of 834), and its CTR is
+half mobile's (1.78% vs 3.34%). The gap is NARROWING (10.10 over 12mo -> 8.60 over 28d -> 7.11 over
+7d), so something is already helping, but desktop remains the weak surface.
+CORROBORATION: GA4 shows the opposite pattern for ENGAGEMENT - desktop bounce 21.1% vs mobile 34.2%.
+Desktop visitors who arrive are BETTER visitors; the site just does not rank for them.
+
+=== GSC_BY_QUERY ===
+Window: last_28d (2026-08-08..2026-09-04). Format: query | clicks | impressions | ctr_pct | position
+CAVEAT: the API returns at most 500 query rows and GSC anonymises rare queries. The 500 rows below
+account for 399 of the window's 834 clicks; the remainder is in the long tail GSC will not name.
+
+BRANDED_VS_NONBRANDED (branded = contains num num / numnum / nums bakery / nam nam / nom nom):
+window   | branded_clicks | branded_impr | branded_queries | nonbranded_clicks | nonbranded_impr | nonbranded_queries
+last_7d  |  54 |  381 | 23 |  40 | 2046 | 477
+prev_7d  |  56 |  364 | 17 |  63 | 2141 | 483
+last_28d | 212 | 1490 | 20 | 187 | 6369 | 480
+prev_28d | 192 | 1309 | 19 | 161 | 5386 | 481
+READ: 20 branded queries produce MORE clicks (212) than 480 non-branded ones (187), off one
+twenty-fifth the impressions. Branded intent converts at 14.2% CTR; non-branded at 2.9%. The site
+owns its own name and is barely monetising discovery demand. That is the whole strategic picture.
+
+TOP_50_QUERIES_BY_CLICKS:
+num num bakery | 79 | 325 | 24.31 | 1.90
+eggless cake near me | 39 | 900 | 4.33 | 9.10
+num nums bakery | 20 | 112 | 17.86 | 1.30
+num num bakery harris park | 18 | 69 | 26.09 | 1.00
+num num bakery riverstone | 18 | 99 | 18.18 | 1.60
+numnum bakery | 18 | 62 | 29.03 | 1.10
+num nums bakery harris park | 10 | 43 | 23.26 | 1.10
+eggless cake sydney | 8 | 273 | 2.93 | 17.00
+eggless cake parramatta | 7 | 67 | 10.45 | 4.60
+numnums bakery | 7 | 31 | 22.58 | 1.60
+eggless cakes near me | 6 | 176 | 3.41 | 15.10
+num num | 6 | 130 | 4.62 | 2.30
+num num riverstone | 6 | 36 | 16.67 | 1.00
+cake shop near me | 5 | 273 | 1.83 | 7.60
+cakes near me | 5 | 80 | 6.25 | 9.00
+harris park cake shop | 5 | 73 | 6.85 | 5.30
+num nums bakery riverstone | 5 | 30 | 16.67 | 1.20
+nums nums bakery | 5 | 16 | 31.25 | 1.90
+photo cake sydney | 5 | 31 | 16.13 | 4.30
+num num cakes | 4 | 21 | 19.05 | 1.50
+num num harris park | 4 | 41 | 9.76 | 1.00
+nam nam bakery | 3 | 23 | 13.04 | 1.80
+num nums | 3 | 300 | 1.00 | 4.80
+num nums bakery riverstone menu | 3 | 17 | 17.65 | 2.50
+bakery in harris park | 2 | 17 | 11.76 | 7.20
+bakery near me | 2 | 109 | 1.83 | 7.30
+cake near me | 2 | 45 | 4.44 | 6.60
+cake shop harris park | 2 | 63 | 3.17 | 6.00
+egg free cake near me | 2 | 12 | 16.67 | 6.10
+eggless cakes | 2 | 310 | 0.65 | 16.50
+eggless cupcakes near me | 2 | 44 | 4.55 | 8.90
+nom nom bakery | 2 | 77 | 2.60 | 6.70
+num nums bakery menu | 2 | 29 | 6.90 | 3.50
+order eggless cake online | 2 | 5 | 40.00 | 6.40
+photo cake | 2 | 162 | 1.23 | 12.20
+rasmalai cake | 2 | 19 | 10.53 | 4.60
+rasmalai cake near me | 2 | 71 | 2.82 | 6.20
+riverstone cake shop | 2 | 12 | 16.67 | 1.50
+bakeries near me | 1 | 11 | 9.09 | 15.70
+bakery cake | 1 | 2 | 50.00 | 6.50
+bakery harris park | 1 | 21 | 4.76 | 5.40
+best cake near me | 1 | 3 | 33.33 | 19.00
+best cakes sydney | 1 | 246 | 0.41 | 12.00
+best eggless cake near me | 1 | 7 | 14.29 | 4.40
+birthday cake | 1 | 5 | 20.00 | 11.40
+birthday cake shop near me | 1 | 4 | 25.00 | 7.80
+birthday cakes near me | 1 | 7 | 14.29 | 8.90
+black forest cake near me | 1 | 3 | 33.33 | 4.30
+buy eggless cake | 1 | 7 | 14.29 | 6.00
+cake bakery near me | 1 | 4 | 25.00 | 8.20
+
+TOP_50_QUERIES_BY_IMPRESSIONS:
+eggless cake near me | 39 | 900 | 4.33 | 9.10
+barfi near me | 0 | 535 | 0.00 | 8.30
+eggless cake shop | 1 | 348 | 0.29 | 26.20
+num num bakery | 79 | 325 | 24.31 | 1.90
+eggless cakes | 2 | 310 | 0.65 | 16.50
+num nums | 3 | 300 | 1.00 | 4.80
+eggless cake sydney | 8 | 273 | 2.93 | 17.00
+cake shop near me | 5 | 273 | 1.83 | 7.60
+best cakes sydney | 1 | 246 | 0.41 | 12.00
+eggless cakes near me | 6 | 176 | 3.41 | 15.10
+eggless cakes sydney | 1 | 164 | 0.61 | 17.60
+photo cake | 2 | 162 | 1.23 | 12.20
+eggless cake | 1 | 135 | 0.74 | 8.90
+num num | 6 | 130 | 4.62 | 2.30
+num nums bakery | 20 | 112 | 17.86 | 1.30
+bakery near me | 2 | 109 | 1.83 | 7.30
+num num bakery riverstone | 18 | 99 | 18.18 | 1.60
+cakes near me | 5 | 80 | 6.25 | 9.00
+nom nom bakery | 2 | 77 | 2.60 | 6.70
+harris park cake shop | 5 | 73 | 6.85 | 5.30
+rasmalai cake near me | 2 | 71 | 2.82 | 6.20
+15 cullum street bossley park nsw 2176 | 0 | 71 | 0.00 | 33.00
+num num bakery harris park | 18 | 69 | 26.09 | 1.00
+eggless cake parramatta | 7 | 67 | 10.45 | 4.60
+numnums | 1 | 65 | 1.54 | 4.20
+cake shop harris park | 2 | 63 | 3.17 | 6.00
+numnum bakery | 18 | 62 | 29.03 | 1.10
+egg free cakes sydney | 1 | 57 | 1.75 | 6.90
+cake with photo on top | 0 | 55 | 0.00 | 9.00
+best birthday cakes sydney | 0 | 54 | 0.00 | 21.10
+bakery riverstone | 0 | 49 | 0.00 | 8.40
+15 cullum street bossley park | 0 | 46 | 0.00 | 30.30
+cake near me | 2 | 45 | 4.44 | 6.60
+best chocolate cake sydney | 0 | 45 | 0.00 | 26.70
+eggless cupcakes near me | 2 | 44 | 4.55 | 8.90
+buy indian bakery online | 0 | 44 | 0.00 | 6.20
+num nums bakery harris park | 10 | 43 | 23.26 | 1.10
+num num harris park | 4 | 41 | 9.76 | 1.00
+best cake | 0 | 41 | 0.00 | 9.00
+cake shop | 1 | 40 | 2.50 | 12.60
+best cake in sydney | 0 | 40 | 0.00 | 14.20
+best cake sydney | 0 | 39 | 0.00 | 16.20
+num num riverstone | 6 | 36 | 16.67 | 1.00
+best cakes in sydney | 0 | 35 | 0.00 | 27.20
+num nums bakery reviews | 1 | 33 | 3.03 | 3.00
+cake shops near me | 1 | 32 | 3.12 | 10.20
+cake shop in harris park | 0 | 32 | 0.00 | 6.30
+numnums bakery | 7 | 31 | 22.58 | 1.60
+photo cake sydney | 5 | 31 | 16.13 | 4.30
+birthday cakes sydney west | 0 | 31 | 0.00 | 8.70
+NOTE: "15 cullum street bossley park" (71+46 impressions, position 30-33) is an address query the
+site should not and does not rank for. Ignore; not actionable.
+
+STRIKING_DISTANCE (non-branded, position 5-20, impressions >= 100, last_28d) - the priority list:
+query | clicks | impressions | ctr_pct | position
+eggless cake near me   | 39 | 900 | 4.33 |  9.10
+barfi near me          |  0 | 535 | 0.00 |  8.30
+eggless cakes          |  2 | 310 | 0.65 | 16.50
+eggless cake sydney    |  8 | 273 | 2.93 | 17.00
+cake shop near me      |  5 | 273 | 1.83 |  7.60
+best cakes sydney      |  1 | 246 | 0.41 | 12.00
+eggless cakes near me  |  6 | 176 | 3.41 | 15.10
+eggless cakes sydney   |  1 | 164 | 0.61 | 17.60
+photo cake             |  2 | 162 | 1.23 | 12.20
+eggless cake           |  1 | 135 | 0.74 |  8.90
+bakery near me         |  2 | 109 | 1.83 |  7.30
+
+HIGH_IMPRESSIONS_NEAR_ZERO_CLICKS (impressions >= 150, clicks <= 1, last_28d):
+barfi near me      | 0 | 535 |  8.30
+eggless cake shop  | 1 | 348 | 26.20
+best cakes sydney  | 1 | 246 | 12.00
+eggless cakes sydney | 1 | 164 | 17.60
+
+=== GSC_QUERY_MOVERS ===
+MoM, queries with >= 80 impressions in BOTH windows (prev_28d -> last_28d). "+" = position improved.
+GAINS:
++4.80 | bakery near me        | 12.10 -> 7.30  | clicks 1 -> 2
++3.50 | eggless cakes near me | 18.60 -> 15.10 | clicks 5 -> 6
++1.70 | eggless cakes         | 18.20 -> 16.50 | clicks 2 -> 2
++1.50 | eggless cake sydney   | 18.50 -> 17.00 | clicks 8 -> 8
++1.00 | num nums              |  5.80 -> 4.80  | clicks 1 -> 3
++0.80 | num nums bakery       |  2.10 -> 1.30  | clicks 16 -> 20
++0.40 | num num               |  2.70 -> 2.30  | clicks 1 -> 6
++0.40 | eggless cakes sydney  | 18.00 -> 17.60 | clicks 2 -> 1
++0.20 | num num bakery        |  2.10 -> 1.90  | clicks 72 -> 79
+LOSSES:
+-2.10 | eggless cake          |  6.80 -> 8.90  | clicks 1 -> 1
+-1.70 | best cakes sydney     | 10.30 -> 12.00 | clicks 2 -> 1
+-1.40 | eggless cake near me  |  7.70 -> 9.10  | clicks 19 -> 39   <- position fell but clicks DOUBLED
+-1.20 | barfi near me         |  7.10 -> 8.30  | clicks 0 -> 0
+-0.90 | photo cake            | 11.30 -> 12.20 | clicks 2 -> 2
+-0.70 | cake shop near me     |  6.90 -> 7.60  | clicks 12 -> 5
+-0.50 | num num bakery riverstone | 1.10 -> 1.60 | clicks 21 -> 18
+WoW movers are omitted deliberately: at 197 clicks/week the per-query counts are too small to
+separate signal from noise, and reporting them would invite acting on a 1-2 click difference.
+
+=== GSC_BY_PAGE ===
+Window last_28d. 349 distinct URLs earned impressions. Format: path | clicks | impressions | ctr_pct | position
+/                                                       | 428 | 7035 | 6.08 | 12.20 | LOST_WoW -28
+/blog/best-eggless-cake-shops-sydney-2026               |  78 | 3231 | 2.41 |  8.80 | LOST_WoW -2
+/blog/photo-cake-sydney                                 |  46 | 2250 | 2.04 |  8.80 | LOST_WoW -3
+/blog/eggless-cake-bakery-harris-park-riverstone-sydney |  37 | 2483 | 1.49 |  6.80
+/cakes                                                  |  18 | 1749 | 1.03 | 14.50 | LOST_WoW -2
+/blog/eggless-cakes-schofields                          |  17 |  489 | 3.48 |  6.00
+/order                                                  |  13 | 1063 | 1.22 |  5.00
+/blog/cake-serving-size-guide-sydney                    |  11 |  970 | 1.13 |  7.20
+/blog/eggless-cakes-dean-park                           |  10 |  929 | 1.08 |  8.40
+/blog/first-birthday-cake-sydney                        |  10 |  340 | 2.94 | 11.00
+/blog/best-dessert-shop-sydney                          |   8 |  750 | 1.07 | 10.40
+/blog/number-cakes-sydney                               |   8 |  104 | 7.69 |  7.20
+/blog/same-day-cake-sydney                              |   8 |  293 | 2.73 |  8.90
+/indian-sweet                                           |   8 | 1153 | 0.69 |  9.90
+/blog/eggless-cake-storage-freshness-guide              |   7 | 1373 | 0.51 |  7.20
+/blog/eggless-cakes-eid-milad-un-nabi-sydney            |   6 |  276 | 2.17 |  6.70 | LOST_WoW -4
+/blog/cake-smash-cakes-sydney                           |   5 |   45 |11.11 |  6.60
+/blog/eggless-cake-vs-regular-cake                      |   5 |  766 | 0.65 |  7.10
+/blog/eggless-cakes-doonside                            |   5 |  219 | 2.28 |  7.10
+/blog/cake-price-guide-sydney                           |   4 |  359 | 1.11 |  6.20
+/blog/eggless-cake-ingredients-sydney                   |   4 |  141 | 2.84 |  9.50
+/blog/birthday-cake-for-men-sydney                      |   3 |   49 | 6.12 |  8.20
+/blog/eggless-cake-for-toddlers-sydney                  |   3 |   34 | 8.82 | 12.60
+/blog/eggless-cakes-gender-reveal-sydney                |   3 |   44 | 6.82 |  6.70
+/blog/farewell-cake-sydney.html                         |   3 |   26 |11.54 |  6.20
+/blog/best-cake-sydney                                  |   2 |  877 | 0.23 | 14.80
+/blog/halal-friendly-cakes-eggless-sydney               |   2 |  340 | 0.59 | 12.50
+/blog/eggless-cake-egg-substitutes                      |   1 |  557 | 0.18 |  9.20
+PAGES_LOSING_CLICKS_WoW (loss >= 2, 7d vs prev 7d):
+/                                            126 -> 98 | pos 9.60 -> 10.90
+/blog/eggless-cakes-eid-milad-un-nabi-sydney   4 ->  0 | pos 6.90 -> 7.20
+/blog/photo-cake-sydney                       14 -> 11 | pos 9.40 -> 9.90
+/cakes                                         4 ->  2 | pos 14.60 -> 14.70
+/blog/kids-birthday-cake-sydney                2 ->  0 | pos 8.90 -> 12.50
+/blog/how-eggless-cakes-are-made               2 ->  0 | pos 6.40 -> 6.70
+/blog/halal-friendly-cakes-eggless-sydney      2 ->  0 | pos 12.60 -> 12.20
+/blog/eggless-cakes-raksha-bandhan-sydney      2 ->  0 | pos 8.50 -> 6.20
+/blog/best-eggless-cake-shops-sydney-2026     23 -> 21 | pos 7.80 -> 7.60
+
+BLOG_CORPUS_PERFORMANCE (last_28d):
+  blog clicks 375 of 834 site total (45.0%); blog impressions 26,109 of 30,100 (86.7%)
+  blog URLs with any impressions: 343 (see URL_INVENTORY below - more URLs than posts)
+  blog URLs with impressions but ZERO clicks: 251
+  READ: the blog generates 87% of impressions and 45% of clicks. 251 URLs are visible and earn
+  nothing. That is the cannibalization tail, quantified.
+
+URL_INVENTORY_ANOMALY (investigated this run, mostly benign):
+  349 distinct URLs earned impressions but only 242 HTML files exist on disk.
+  - 120 of them are posts deleted in the 359 -> 234 corpus cleanup. They still earn 2,650
+    impressions / 30 clicks per 28 days.
+  - Live status checked on ALL 120: 118 return 301 (correct), 2 returned 404.
+  - The 404 with real traffic (/blog/eggless-cake-troubleshooting, 234 impressions, 2 clicks) is
+    FIXED this run. The other (/blog/eggless-%E0%A4%95%E0%A5%87%E0%A4%95-troubleshooting, a
+    mojibake Hindi-transliterated variant, 1 impression) was left alone deliberately.
+  - Only 4 URLs are still indexed in .html form (44 impressions total); no clean/.html duplicate
+    PAIR exists, so there is no duplicate-content problem here.
+
+=== GSC_BY_GEO ===
+last_28d by country: country | clicks | impressions | position
+aus | 781 | 23657 | 10.90
+usa |   3 |  2202 | 12.20
+ind |  16 |  1573 |  8.00
+gbr |  15 |   940 |  6.20
+can |   1 |   196 |  6.00
+nzl |   1 |   141 |  6.40
+sgp |   5 |   116 |  7.10
+are |   1 |   107 |  6.00
+AUS share of impressions by window: last_7d 79.3% | prev_7d 80.0% | last_28d 78.6% | prev_28d 79.3%
+| last_3mo 80.3% | last_6mo 80.9% | last_12mo 80.9%
+AUS share of clicks, last_28d: 93.6% (781 of 834).
+READ: Australia is 79% of impressions but 94% of clicks - correct for a two-shop local business.
+The ~21% non-AU impressions (USA 2,202 impressions and 3 clicks) are near-worthless and drag the
+site-wide CTR and average position figures down. When judging CTR, prefer the AUS-filtered numbers.
+
+=== GSC_LONG_TREND ===
+Monthly clicks / impressions (full months only, from last_12mo pull):
+2026-05 |   57 clicks |  1,160 impressions
+2026-06 |  400 clicks | 13,394 impressions
+2026-07 |  708 clicks | 24,317 impressions
+2026-08 |  929 clicks | 35,018 impressions
+2026-09 |  117 clicks |  3,930 impressions (partial, 1-4 Sep only)
+DIRECTION: clicks up every month since data begins. Aug is the best month on record (929 clicks).
+Growth rate is decelerating in relative terms (+602% -> +77% -> +31%) which is normal as the base
+grows; absolute growth is steady at +200-300 clicks/month.
+3mo / 6mo / 12mo per metric: 6mo and 12mo are the SAME window (no data before 2026-03), so there
+are only two real trend points: 3mo (2,099 clicks, pos 11.24) and 6mo/12mo (2,211 clicks, pos
+11.34). 95% of all-time clicks fall in the last 3 months.
+SEASONALITY: NOT ASSESSABLE. Fewer than 6 months of usable history and the whole series is
+dominated by the site's own growth ramp. Any seasonal claim would be fabricated. Re-assess once
+there are 12+ real months (approximately 2027-03).
+
+=== GA4_TOTALS ===
+Organic Search sessions. window_days | start | end | sessions | users | pageviews | avg_daily | bounce_pct | engagement_pct
+7   | 2026-08-31 | 2026-09-06 |  247 |  222 |  527 | 35.3 | 31.6 | 68.4
+14  | 2026-08-24 | 2026-09-06 |  536 |  466 | 1138 | 38.3 | 33.2 | 66.8
+28  | 2026-08-10 | 2026-09-06 | 1005 |  862 | 2134 | 35.9 | 30.9 | 69.1
+56  | 2026-07-13 | 2026-09-06 | 1839 | 1597 | 3821 | 32.8 | 31.0 | 69.0
+90  | 2026-06-09 | 2026-09-06 | 2512 | 2186 | 5241 | 27.9 | 32.2 | 67.8
+180 | 2026-03-11 | 2026-09-06 | 3323 | 2867 | 7111 | 22.0 | 29.8 | 70.2
+365 | 2025-09-07 | 2026-09-06 | 3323 | 2867 | 7111 | 22.0 | 29.8 | 70.2
+bounce/engagement are means of the daily values in the window. 180d == 365d: no data before 2026-03.
+
+=== GA4_WOW ===
+sessions: prev_7d 289 -> cur_7d 247 | -42 | -14.5%   (prev derived as 14d - 7d)
+Directionally consistent with GSC WoW clicks -18.6%. Both sources agree the last 7 days softened.
+
+=== GA4_MOM ===
+sessions: prev_28d 834 -> cur_28d 1005 | +171 | +20.5%   (prev derived as 56d - 28d)
+Directionally consistent with GSC MoM clicks +16.0%. Both sources agree the month grew.
+
+=== GA4_BY_CHANNEL ===
+Only Organic Search was isolated (ga4_report.py --report organic filters to organic). Full
+channel-group breakdown is NOT exposed by the vendored script and google_report.py does not add it.
+NO DATA for paid/direct/referral/social split this run.
+
+=== GA4_BY_LANDING_PAGE ===
+28d (2026-08-10..2026-09-06). landing_page | sessions | users | pageviews | bounce_pct | engagement_pct
+/                                                       | 463 | 391 | 1211 | 17.7 | 82.3
+/blog/best-eggless-cake-shops-sydney-2026               |  75 |  70 |  170 | 29.3 | 70.7
+/order                                                  |  70 |  51 |  110 | 54.3 | 45.7
+/cakes                                                  |  55 |  42 |   92 | 58.2 | 41.8
+/blog/photo-cake-sydney                                 |  40 |  38 |   66 | 25.0 | 75.0
+(not set)                                               |  36 |  35 |    0 |100.0 |  0.0
+/blog/eggless-cake-bakery-harris-park-riverstone-sydney |  33 |  30 |   80 | 24.2 | 75.8
+/blog/eggless-cakes-schofields                          |  16 |  16 |   41 |  6.2 | 93.8
+/blog/eggless-cake-storage-freshness-guide              |  13 |  10 |   13 | 76.9 | 23.1
+/indian-sweet                                           |  13 |  11 |   22 | 38.5 | 61.5
+/blog/cake-serving-size-guide-sydney                    |  11 |  10 |   13 | 54.5 | 45.5
+/blog/first-birthday-cake-sydney                        |  11 |  10 |   16 | 27.3 | 72.7
+/blog/best-dessert-shop-sydney                          |   9 |   9 |   15 | 33.3 | 66.7
+/blog/eggless-cakes-dean-park                           |   9 |   9 |   15 | 33.3 | 66.7
+/blog/eggless-cakes-eid-milad-un-nabi-sydney            |   7 |   7 |    8 | 85.7 | 14.3
+/blog/number-cakes-sydney                               |   7 |   7 |   12 |  0.0 |100.0
+/blog/cake-price-guide-sydney                           |   5 |   5 |    7 | 40.0 | 60.0
+/blog/eggless-cake-vs-regular-cake                      |   5 |   5 |    5 | 60.0 | 40.0
+/blog/same-day-cake-sydney                              |   5 |   5 |   12 |  0.0 |100.0
+/blog/cake-smash-cakes-sydney                           |   4 |   3 |   10 | 25.0 | 75.0
+NOTABLE: /order bounces at 54.3% and /cakes at 58.2% - roughly 3x the homepage's 17.7%. These are
+the two money pages and they are the worst-engaging entry points on the site.
+NOTABLE: /blog/eggless-cake-storage-freshness-guide bounces at 76.9% and eggless-cakes-eid-milad-
+un-nabi-sydney at 85.7%; both also have very low GSC CTR. Informational dead-ends.
+
+=== GA4_BY_DEVICE ===
+28d. device | sessions | users | bounce_pct | engagement_pct
+mobile  | 764 | 560 | 34.2 | 65.8
+desktop | 232 | 187 | 21.1 | 78.9
+tablet  |   5 |   5 |  0.0 |100.0
+Mobile is 76% of sessions but engages worse. Desktop is the higher-quality traffic (see the device
+gap note in GSC_BY_DEVICE - desktop ranks far worse yet behaves far better once it arrives).
+
+=== GA4_BY_GEO ===
+28d. country | sessions | users
+Australia | 925 | 691
+India | 25 | 20
+United Kingdom | 23 | 20
+United States | 6 | 5
+Indonesia | 4 | 3
+Philippines | 4 | 3
+Singapore | 4 | 2
+Canada | 3 | 3
+New Zealand | 2 | 2
+Pakistan | 2 | 2
+Brazil | 1 | 1
+Fiji | 1 | 1
+Australia = 92.0% of organic sessions. City/region granularity NOT exposed by ga4_report.py: NO DATA.
+
+=== GA4_BY_AUDIENCE ===
+NO DATA. New-vs-returning and audience dimensions are not exposed by ga4_report.py, and
+google_report.py offers no broader report that provides them. Checked both before writing NO DATA.
+
+=== GA4_BY_EVENT ===
+NO DATA. Per-event breakdown is not exposed by ga4_report.py. Conversion/enquiry events therefore
+could NOT be measured this run - so no statement is made anywhere in this file about how many
+sessions became actual orders.
+
+=== CROSS_SOURCE ===
+GSC clicks last_28d (2026-08-08..09-04):        834
+GA4 organic sessions 28d (2026-08-10..09-06):  1005
+Gap: GA4 reports 171 more (+20.5%).
+RECONCILIATION - the gap is expected and the two agree well:
+1. The windows are OFFSET BY 2 DAYS at each end (GSC lags 3 days; GA4 does not). Not like-for-like.
+2. GSC counts a CLICK from Google Search only. GA4 "Organic Search" includes Bing, DuckDuckGo,
+   Ecosia and any other organic engine.
+3. One GSC click can start a session that GA4 later re-attributes, and a returning visitor within
+   the 30-minute window can open a second session.
+4. GA4 shows 36 sessions with landing_page "(not set)" (3.6%), which cannot be matched to any URL.
+A +20% GA4-over-GSC gap on a small site is normal. Nothing here indicates a tracking fault.
+GEO CROSS-CHECK: GSC AUS = 93.6% of clicks; GA4 Australia = 92.0% of sessions. Consistent.
+DEVICE CROSS-CHECK: GSC mobile = 75.3% of clicks; GA4 mobile = 76.0% of sessions. Consistent.
+
+=== COMPARISON_VS_LAST_MONTH ===
+PRIOR_FILE: SEO/GSC-Analysis/01-09-2026-GSC-Analysis.txt (01-09-2026)
+That run had NO GSC and NO GA4 data at all (Windsor MCP tools unavailable) and its crawl was
+blocked. So there is NO metric-to-metric comparison possible for traffic: this run is the first
+real data point since 28-07-2026. Against that 28-07-2026 baseline (7d: 212 clicks, 6209
+impressions, 3.41% CTR, position 10.21), this run's 7d is 197 clicks, 6844 impressions, 2.88% CTR,
+position 9.78 - impressions +10.2% and position improved 0.43 over ~6 weeks, clicks -7.1%, CTR
+-0.53pp. Positions improved while CTR fell, which is the same pattern the WoW figures show.
+AUDIT SCORE: 86 (last month, post-fix) -> 80 (this run, post-fix). Explained in SEO_AUDIT_SCORE:
+last month could not measure Performance at all; this run measured it and it scored 55.
+QUERIES/PAGES ENTERING OR LEAVING TOP 50: not computable - no prior query or page list exists to
+diff against. From next month this section becomes real.
+
+RECOMMENDATION_FOLLOWUP: Internal-linking backfill across 55 orphaned suburb pages | acted: yes, and finished this run | observed effect: orphan count is now ZERO (0 posts with 0 inbound links; 51 with exactly 1). But seo-cluster found the pillars themselves were starved - 0 of 73 suburb pages linked to /blog/eggless-cake-sydney or /blog/cake-delivery-areas-sydney. Fixed this run: 190 pillar links added across 95 suburb posts, taking inbound from 6 -> 101 and 2 -> 97. Last month's #1 structural item is now genuinely closed in both directions.
+RECOMMENDATION_FOLLOWUP: Escalate the sandbox egress block | acted: yes | observed effect: RESOLVED. Live crawl returned HTTP 200 this run for the first time in 7 runs, and the Google service account works. This unblocked the entire routine.
+RECOMMENDATION_FOLLOWUP: Add ABN and baker credentials to about.html for E-E-A-T | acted: partially | observed effect: ABN 39 634 402 412 now appears on 21 pages including about.html. Baker credentials / food-safety certification still absent. Half done.
+RECOMMENDATION_FOLLOWUP: Expand indian-sweet.html from 516 to 800+ words | acted: yes | observed effect: now 1,978 words, well past the target. But the page still earns only 8 clicks from 1,153 impressions (0.69% CTR, position 9.90) and "barfi near me" sits at 535 impressions with ZERO clicks. Word count was not the binding constraint - see RECOMMENDATIONS #2.
+RECOMMENDATION_FOLLOWUP: Re-pull GSC/GA4 once tooling available | acted: yes | observed effect: done this run via Google's own APIs on a service account, replacing Windsor.ai entirely. Both sources working.
+RECOMMENDATION_FOLLOWUP: Resolve the croissant/pastry/Shake Cake scope question | acted: no | observed effect: still open, second month. order.html:900 still advertises "sweets, pastries and croissants". Escalated in NON_CODE_ACTIONS #4.
+
+=== RECOMMENDATIONS ===
+Ranked. Each cites the metric that triggered it.
+
+1. [HIGHEST LEVERAGE - PARTLY DONE THIS RUN] Fix the Indian-sweets funnel. TRIGGER: "barfi near me"
+   = 535 impressions, position 8.30, ZERO clicks over 28 days; "buy indian bakery online" = 44
+   impressions, 0 clicks; /indian-sweet = 8 clicks from 1,153 impressions (0.69% CTR). This is the
+   largest single block of qualified, in-scope, zero-converting demand on the site, and it is
+   local-intent demand a two-shop business should win. The page was expanded to 1,978 words last
+   month and that did NOT move it, so depth was never the constraint. Two independent specialists
+   (seo-local, seo-sxo) and a direct grep all agreed the page carried NO local schema whatsoever.
+   DONE THIS RUN: the two store Bakery nodes are now on the page with geo, hasMap, per-store hours,
+   areaServed, telephone and address.
+   STILL TO DO (needs a human, it is copy and layout, not markup):
+     a. Embed the Google Maps iframe already used on locations.html - the page still has none.
+     b. The only "near me" answer on the page is inside a collapsed <details> FAQ element
+        (indian-sweet.html:1546). Surface it as visible copy; a collapsed answer is weak for both
+        snippets and users.
+     c. Title and H1 are city-wide ("Sydney") rather than naming Harris Park and Riverstone.
+     d. There is no pickup-today CTA anywhere near the barfi content.
+   Measure the effect on "barfi near me" next run - it is a clean single-variable test.
+
+2. [CODE] Rewrite titles and meta descriptions for the four high-impression, near-zero-click
+   queries. TRIGGER: "eggless cake shop" 348 impressions / 1 click / position 26.20; "best cakes
+   sydney" 246 / 1 / 12.00; "eggless cakes sydney" 164 / 1 / 17.60; "eggless cakes" 310 / 2 /
+   16.50. These four alone are 1,068 impressions producing 5 clicks. Note positions 12-26 mean
+   these are also ranking problems, not only CTR problems - but the pages that hold them
+   (/blog/best-cake-sydney at 877 impressions / 2 clicks / position 14.80, and /cakes at 1,749
+   impressions / 18 clicks / position 14.50) are the ones to rewrite first.
+
+3. [INVESTIGATE, THEN CODE] Close the desktop ranking gap. TRIGGER: desktop average position 16.05
+   vs mobile 7.45 over 28 days - a 8.60-position gap, consistently above +7 in every window
+   measured. Desktop is 37% of impressions but 24% of clicks, at half the CTR (1.78% vs 3.34%).
+   And GA4 says desktop visitors bounce LESS (21.1% vs 34.2%) - this is the better audience, being
+   under-served. Start with the desktop-only defect already found this run: homepage desktop CLS is
+   0.314 (Poor) while mobile CLS on the same page is 0.001. That is a real, device-specific layout
+   shift and a plausible contributor.
+
+4. [CODE - PERFORMANCE] Cut the homepage image payload. TRIGGER: homepage total weight 7,224 KB on
+   mobile versus 913-1,826 KB on every other page measured; /locations mobile Performance 46 with
+   LCP 5.6s and TBT 960ms; /indian-sweet mobile LCP 7.1s. The HTML is not the problem (146 KB
+   compresses to 27 KB brotli) - images are. 97% of Unsplash images (452 of 464) request a flat
+   w=1200 regardless of whether they render as a hero or a thumbnail. Add responsive srcset/sizes
+   or lower w= for card contexts. The homepage is 428 of 834 clicks; it is the page that matters.
+
+5. [NON_CODE - DO THIS FIRST, IT IS FREE] Request indexing for /locations in GSC. TRIGGER: GSC URL
+   Inspection returns "URL is unknown to Google" for the page that lists both shopfronts, on a
+   business whose whole non-branded opportunity is local. Verified there is no code defect: 200,
+   correct canonical, in sitemap, in llms.txt, 242 internal inbound links, no noindex. One click in
+   GSC. Related: 3 of 25 sampled blog posts are "Crawled - currently not indexed"
+   (eggless-birthday-cakes-every-age-sydney, eggless-cake-for-egg-allergy, celebration-cake-sydney)
+   - a 12% sampled rate that corroborates the cannibalization finding below.
+
+6. [CONTENT STRATEGY - NEEDS A HUMAN DECISION] Consolidate the zero-click blog tail. TRIGGER: 251
+   blog URLs earned impressions and ZERO clicks in 28 days; the blog is 86.7% of impressions but
+   only 45.0% of clicks.
+   GOOD NEWS FIRST: the OLD cannibalization from the 359-post corpus is RESOLVED. seo-cluster
+   verified all 57 survivor/spoke micro-clusters from the prior report and found zero cases where a
+   survivor and its spoke still coexist. The 359 -> 234 cleanup did its job.
+   A NEW, SMALLER problem has appeared since: 10 suburb pages added after 2026-09-01 have created
+   13 pages sitting in cannibalizing sets. Three clusters, all needing a HUMAN merge decision:
+     a. Parramatta core - 6 pages within ~2km/one train stop: eggless-cakes-harris-park,
+        -rosehill, -clyde, -mays-hill, -parramatta, -north-parramatta. Only mays-hill has traction
+        (120 impressions / 1 click, 90d). A live SERP check surfaced two OTHER Num Nums pages ahead
+        of the dedicated harris-park page - the site is outranking itself.
+     b. Toongabbie/Blacktown corridor - 5 pages within ~5 minutes' drive: -seven-hills,
+        -old-toongabbie, -lalor-park (189 impressions / 0 clicks), -marayong, -blacktown.
+     c. Pennant Hills split across two pages (52 and 19 impressions, 0 clicks each) for what is
+        colloquially one suburb.
+   Plus the clearest single case: /blog/best-cake-sydney (877 impressions, 2 clicks, position
+   14.80) duplicates /blog/best-eggless-cake-shops-sydney-2026 (3,231 impressions, 78 clicks,
+   position 8.80). Redirect the loser into the winner.
+   Other zero-click candidates: /blog/eggless-cake-egg-substitutes (557 impressions, 1 click),
+   /blog/eggless-cake-storage-freshness-guide (1,373 / 7, and 76.9% GA4 bounce),
+   /blog/halal-friendly-cakes-eggless-sydney (340 / 2).
+   This routine will NOT delete or merge published posts - that is the owner's call. Note the
+   cluster count covers only the 3 highest-risk newly-added clusters; beaumont-hills,
+   hassall-grove and rhodes are lower-confidence risks that were NOT counted rather than estimated.
+   ALSO: feed this back into the blog-write routine's topic gate. Ten new suburb pages created a
+   new cannibalization problem within a week of the last cleanup finishing.
+
+7. [CODE + NON_CODE - CONVERSION] Diagnose the money-page bounce. TRIGGER: GA4 28d bounce is 54.3%
+   on /order and 58.2% on /cakes, against 17.7% on the homepage. /order ranks well (position 5.00)
+   and gets 1,063 impressions for 13 clicks; the traffic arrives and leaves. Specific causes found:
+     a. /order's title says "Order Eggless Cakes Online in Sydney" but the page is a WhatsApp
+        handoff form, not a checkout. That expectation gap plausibly explains a 1.2% CTR at
+        position 5.00 AND the bounce. Retitling the site's main conversion page is a positioning
+        decision with revenue consequences - NOT auto-applied this run. Owner's call.
+     b. NON_CODE: order.html fires gtag events before the wa.me redirect. If those are not marked
+        as KEY EVENTS in GA4 admin, every successful WhatsApp handoff is being counted as a bounce
+        and the 54.3% figure is overstated. Check GA4 admin before treating this as a UX problem.
+     c. On /cakes the size/price table sits behind a hover/click info-icon tooltip rather than
+        being visible by default, so the price-comparing visitor needs an extra interaction to see
+        what they came for. Surfacing it inline is a layout change - not auto-applied.
+     d. /cakes hero copy leads with "This gallery is just inspiration", which frames the page as
+        browsing rather than buying. Copy decision - owner's call.
+   CORRECTION TO A SPECIALIST FINDING: seo-sxo reported /cakes has "zero srcset anywhere in the
+   file, grep-confirmed". That is WRONG - cakes.html contains 17 srcset attributes across 30 img
+   tags (27 lazy-loaded). Image sizing on that page is partial, not absent. Verified directly.
+
+8. [CONTENT - NEW PAGES, VALIDATED BY DEMAND] Suburb/intent gaps with real impressions and no
+   matching page. TRIGGER: verified against `ls blog/` this run - NO post exists for any of these:
+   "photo cake" (162 impressions, position 12.20 - a /blog/photo-cake-sydney post exists and does
+   well at 46 clicks, but there is no non-Sydney-qualified photo-cake page), "rasmalai cake" (19+71
+   impressions across two variants, positions 4.60/6.20, only 4 clicks - a strong branded-product
+   opportunity with no dedicated page), "eggless cupcakes near me" (44 impressions, position 8.90,
+   no cupcake page exists at all). Cross-check blog/topic-ledger.md before writing; topic selection
+   belongs to the blog-write routine, not this one. Do NOT propose a suburb that already has a post
+   - all 19 suburb posts were checked and none of the above are suburb queries.
+
+9. [CODE - LOW EFFORT] Finish the small items this run did not close: 336 LocalBusiness nodes still
+   carry no `image` property; 230 of 234 Article nodes have dateModified byte-identical to
+   datePublished (auto-stamped, so it carries no freshness signal); 6 files skip a heading level
+   h2 -> h4 (locations.html, order.html, privacy-policy.html, blog/index.html,
+   blog/naked-cake-sydney.html, blog/eggless-cake-for-pooja-sydney.html); 3 blog posts still load
+   the Tailwind CDN instead of the precompiled /style.css that the other 238 use.
+
+10. [NON_CODE] Get the real per-store review ratings into schema. TRIGGER: both stores currently
+    publish an identical aggregateRating of 4.6/50 despite opening 5 years apart. See
+    NON_CODE_ACTIONS #2. Never invent these numbers.
+
+=== FAILURES ===
+1. SUBAGENT RATE LIMIT (partially recovered). The seo-audit skill's first subagent fan-out returned
+   HTTP 429 "session limit, resets 5am UTC" and ALL 11 specialists died (model claude-sonnet-5).
+   The limit cleared minutes later and 6 specialists were re-run successfully (technical, schema,
+   local, geo, performance, google). Several hit per-agent turn limits and were resumed to
+   completion. Content, on-page and image analysis were executed INLINE in the main thread instead,
+   which the skill's Process step 4 explicitly permits ("if available, otherwise run inline
+   sequentially"). NOT a fabricated substitute: every inline finding is backed by a script run over
+   all 242 files.
+2. seo-cluster and seo-sxo were re-launched after the 429 and BOTH completed; their findings are
+   incorporated (RECOMMENDATIONS #1, #6, #7). seo-cluster could not run exhaustive pairwise
+   live-SERP checks across all 234 posts within its token budget, so its 13-page cannibalization
+   count covers only the 3 highest-risk newly-added clusters plus one SERP spot-check; it flagged
+   that limit explicitly rather than extrapolating. seo-sxo noted that
+   skills/seo-sxo/references/ (page-type-taxonomy, user-story-framework, persona-scoring) do not
+   exist in this repo - only the vendored skills/seo-audit/ is present - and used standard SXO
+   categories instead of fabricating the missing reference files.
+   ONE SPECIALIST FINDING WAS WRONG AND WAS CORRECTED, NOT PASSED THROUGH: seo-sxo reported
+   cakes.html has "zero srcset anywhere in the file, grep-confirmed". Direct verification found 17
+   srcset attributes across its 30 img tags. Two specialists also disagreed on schema type -
+   seo-local said BakeryOrCafe is invalid, seo-schema recommended standardising ON it. Settled by
+   fetching both: schema.org/BakeryOrCafe returns 404, schema.org/Bakery returns 200. seo-local was
+   right. Agent output was treated as a claim to verify, not as fact.
+3. seo-backlinks: FAILED on the initial 429 and was not re-run (Tier 0 only - no Moz key, no Bing
+   Webmaster key, so it could return no DA/PA or spam scoring regardless). BACKLINK DATA: NO DATA
+   this run.
+4. CrUX / field Core Web Vitals: FAILED. Both queryRecord (403 SERVICE_DISABLED) and
+   queryHistoryRecord (403 API_KEY_SERVICE_BLOCKED) on GCP project 96266000644, confirmed by direct
+   curl with the same key that works for PageSpeed Insights. This is an API-enablement or key-
+   restriction problem, NOT "site too small for CrUX". No field LCP/INP/CLS for any page or form
+   factor. Lab data was NOT substituted silently - see SEO_AUDIT_SCORE basis labels.
+5. PageSpeed Insights: incomplete. /cakes (both form factors) and the two top blog posts
+   (/blog/best-eggless-cake-shops-sydney-2026, /blog/photo-cake-sydney) did not finish before the
+   agent's turn limit. Reported as NO DATA rather than estimated. 6 of 8 target pages completed.
+6. PSI LCP-element and render-blocking-resource identification: NO DATA. Lighthouse 13.x no longer
+   returns item details for those audits via the PSI API.
+7. GA4 dimensions not exposed by the vendored scripts: channel-group split, new-vs-returning
+   audience, per-event breakdown, city/region geo. google_report.py was checked for a broader
+   report before writing NO DATA, per the routine. All four are NO DATA.
+8. `frontend-design` skill did not resolve by name in this sandbox (not in the skill registry;
+   only ui-ux-pro-max, blog-write and seo-audit are registered). CLAUDE.md mandates invoking it
+   before writing frontend code. Mitigated by reading /mnt/skills/public/frontend-design/SKILL.md
+   directly and following it - the same fallback the routine prescribes for seo-audit. Its guidance
+   is about visual direction; this run's edits are non-visual SEO corrections that deliberately
+   match existing conventions, so no palette, typography or layout choice was made.
+9. A first attempt at the geo/@type normalisation corrupted coordinate values and broke JSON-LD in
+   5 files. Caught by the post-change JSON parse check, fully reverted, redone correctly, and
+   re-verified. Nothing damaged reached the commit. Recorded here because the detection step is the
+   reason it was harmless - keep that check in future runs.
