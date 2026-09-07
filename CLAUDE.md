@@ -56,6 +56,9 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
   for auto-discovery — see "Skill Resolution" below before editing any skill.
 - Content workflows (blog, GBP, SEO audit) are largely cloud-routine-driven — the rest of this file
   is their non-negotiable rule set.
+- **`plans/`**: business/strategy plans (quarterly plans, roadmaps, decision docs — not code plans
+  or PR descriptions). See **Business plans** under Deployment Workflow below for where these live
+  and how they're kept in sync.
 
 ## Always Do First
 - **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
@@ -428,6 +431,17 @@ Repetition is the #1 recurring failure on this project. Before writing anything:
   they're part of the same change.
 - Still confirm before anything destructive or history-rewriting (force-push, `reset --hard`,
   amending a pushed commit) — auto-push covers ordinary forward commits only.
+
+### Business plans
+Every strategy/roadmap/decision-plan markdown file (e.g. quarterly plans like
+`Next Big Project — 2026 Q4.md`) gets saved to **both**:
+1. `My AI Brain/projects/` (the source of truth — where it's read and updated from), and
+2. `plans/` in this repo (so it travels with the codebase and cloud routines can read it).
+
+When a plan is exported to PDF, save the PDF alongside the `.md` in **both** locations
+too. When a plan is revised, update both copies in the same pass — don't let one drift
+stale. This falls under the "docs-only" exception above: don't auto-push a plans/ change
+by itself, but do still `git add`/commit it locally so it's captured.
 
 ## Hard Rules
 - Do not add sections, features, or content not in the reference
