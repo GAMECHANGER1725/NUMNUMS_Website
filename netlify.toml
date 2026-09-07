@@ -393,6 +393,18 @@
   force = true
 
 [[redirects]]
+  from = "/blog/eggless-cake-troubleshooting.html"
+  to = "/blog/eggless-cakes-soft-moist-myths-vs-facts"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-troubleshooting"
+  to = "/blog/eggless-cakes-soft-moist-myths-vs-facts"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/blog/eggless-cake-vs-regular-cake.html"
   to = "/blog/eggless-cake-vs-regular-cake"
   status = 301

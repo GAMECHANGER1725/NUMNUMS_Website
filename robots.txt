@@ -22,4 +22,6 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
+License: https://rsl.ai/1.0/allow-search-only
+
 Sitemap: https://numnumsbakery.com.au/sitemap.xml
