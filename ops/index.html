@@ -383,6 +383,8 @@ button { background: none; border: 0; cursor: pointer; }
   display: grid; gap: 8px; margin-bottom: 14px;
   grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
 }
+.detail-cell { position: relative; }
+.detail-cell .photo-remove { position: absolute; top: 6px; right: 6px; }
 .detail-shot { display: block; border-radius: 11px; overflow: hidden; }
 /* A photo that will not load still owns its cell, rather than collapsing to a
    chip beside a full-size neighbour and reading as a layout fault. */
@@ -398,6 +400,27 @@ button { background: none; border: 0; cursor: pointer; }
 }
 .addphoto { margin-bottom: 14px; }
 .addphoto .photo-pick { width: 100%; }
+
+/* Tier boxes: one row per tier, bottom first, width then height. */
+.tier-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.tier-name {
+  flex: 0 0 62px; font-size: 12px; font-weight: 600; color: var(--taupe);
+  letter-spacing: .02em;
+}
+.tier-row .inch { position: relative; flex: 1 1 0; min-width: 0; }
+.tier-row .inch::after {
+  content: '"'; position: absolute; right: 11px; top: 50%; transform: translateY(-55%);
+  font-size: 13px; color: var(--taupe); pointer-events: none;
+}
+.tier-row .inch:first-of-type::after { content: 'w'; font-size: 11px; }
+.tier-row .inch:last-of-type::after { content: 'h'; font-size: 11px; }
+.tier-row .input { padding-right: 26px; }
+.tier-drop {
+  flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; border: 0;
+  background: var(--dough); color: var(--brown); font-size: 13px; cursor: pointer;
+}
+.tier-drop:hover { background: var(--dough-line); }
+.tier-add { width: 100%; margin-top: 2px; }
 
 .rule { height: 1px; background: var(--dough-line); margin: 16px 0; border: 0; }
 .block-label {
@@ -574,6 +597,7 @@ button { background: none; border: 0; cursor: pointer; }
   transition: background-color .16s ease, transform .12s cubic-bezier(.34,1.56,.64,1);
 }
 .photo-remove:hover { background: var(--rose-deep); }
+.photo-remove.is-armed { background: var(--rose-deep); transform: scale(1.12); }
 .photo-remove:active { transform: scale(.88); }
 
 /* ── Custom dropdown ────────────────────────────────────────────────────── */

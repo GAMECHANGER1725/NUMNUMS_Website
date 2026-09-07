@@ -276,13 +276,17 @@ export function receiptSource(o, ctx) {
   p.rightAt(RIGHT, 'AMOUNT', { size: 8, font: 'F2', colour: TAUPE });
   p.down(7).rule();
 
-  const item = [o.kind === 'custom' ? 'Custom cake' : 'Cake', o.flavour, o.size]
+  // A tier list is a sentence, not a size, and on the description line it runs
+  // under the QTY column. Anything that long drops to its own line below.
+  const longSize = (o.size || '').length > 14 ? o.size : '';
+  const item = [o.kind === 'custom' ? 'Custom cake' : 'Cake', o.flavour, longSize ? '' : o.size]
     .filter(Boolean).join(' · ');
   p.down(19).text(item, { size: 11, font: 'F2' });
   p.text('1', { x: GSTX - 108, size: 10 });
   p.rightAt(GSTX, gstC ? $(gstC) : '—', { size: 10 });
   p.rightAt(RIGHT, listC ? $(listC) : '—', { size: 11 });
   for (const line of [
+    longSize ? `Size: ${longSize}` : '',
     o.wording ? `Wording: “${o.wording}”` : '',
     o.design_notes || '',
     o.notes || '',
@@ -390,63 +394,9 @@ export function receiptPdf(o, ctx) {
     { type: 'application/pdf' });
 }
 
-/**
- * Whether this device hands files over through the OS share sheet instead of a
- * downloads folder.
- *
- * There is no feature test for "does `<a download>` actually save a file", and
- * on iOS it does not: Safari and Chrome both ignore a programmatic click on a
- * blob, silently, which is a button that does nothing. The share sheet is the
- * only route a web page has on that platform, and "Save to Files" is the first
- * thing in it. A coarse pointer is the closest honest proxy for "phone", and it
- * keeps laptops — which share files perfectly well and should not — on the
- * downloader.
- */
-const SHEET_SAVE = (() => {
-  try {
-    return matchMedia('(pointer: coarse)').matches
-      && !!navigator.canShare?.({ files: [new File([], 'x.pdf', { type: 'application/pdf' })] });
-  } catch { return false; }
-})();
-
-/**
- * Puts the finished invoice on the device, by whichever route that device has.
- *
- * Must be called while the tap that asked for it is still fresh — both routes
- * are gated on user activation — so `ctx.photos` are already loaded and the
- * file is built here, synchronously, rather than awaited into existence.
- *
- * Whatever is handed to `share` is a File and nothing else: adding `text` or
- * `url` puts a `blob:https://…` link in the customer's message beside the
- * attachment, and that link 404s on every device but this one.
- */
-export function downloadReceipt(o, ctx) {
+/** What the saved file is called. */
+export function receiptName(o, ctx) {
   const kind = ctx.business?.gstRegistered === false ? 'Invoice' : 'Tax invoice';
-  const name = `${kind} ${o.order_no} ${o.customer_name || ''}`.trim()
+  return `${kind} ${o.order_no} ${o.customer_name || ''}`.trim()
     .replace(/[/\\:*?"<>|]/g, '-') + '.pdf';
-  const blob = receiptPdf(o, ctx);
-
-  if (SHEET_SAVE) {
-    const file = new File([blob], name, { type: 'application/pdf' });
-    return navigator.share({ files: [file] }).catch((err) => {
-      // Dismissing the sheet is not a failure. Anything else falls through to
-      // the downloader, which is no worse than the nothing we would do instead.
-      if (err.name !== 'AbortError') save(blob, name);
-    });
-  }
-
-  save(blob, name);
-  return Promise.resolve();
-}
-
-function save(blob, name) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  // Revoked late: Safari reads the blob after the click returns.
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
 }

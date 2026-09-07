@@ -9,7 +9,8 @@ import {
   signIn, signOut, currentProfile, listProfiles, isAuthError, refreshSession,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
-  recentAuthEvents, orderEvents, uploadPhotos, orderPhotos, photoUrls, photoForPdf,
+  recentAuthEvents, orderEvents, uploadPhotos, removePhoto, orderPhotos, photoUrls, photoForPdf,
+  invoiceUrl,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote,
   writeStamp,
@@ -24,8 +25,9 @@ import {
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
-import { SIZES, FLAVOURS, basePrice, isPremium } from './catalog.mjs';
-import { downloadReceipt } from './receipt.mjs';
+import { SIZES, FLAVOURS, basePrice, isPremium, TIERED, tierLabel, tierText, parseTiers, isTiered }
+  from './catalog.mjs';
+import { receiptPdf, receiptName } from './receipt.mjs';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -115,7 +117,7 @@ const TABS = {
   log:       { label: 'Orders',    roles: ['admin', 'staff'], icon: '<path d="M4 5h16M4 12h16M4 19h10"/>' },
   new:       { label: 'New',       roles: ['admin', 'staff'], icon: '<path d="M12 5v14M5 12h14"/>' },
   bake:      { label: 'To bake',   roles: ['admin', 'baker'], icon: '<path d="M5 20h14M6 20v-6a6 6 0 0112 0v6M12 5V3"/>' },
-  prints:    { label: 'Prints',    roles: ['admin', 'baker'], icon: '<path d="M7 8V3h10v5M7 18H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z"/>' },
+  prints:    { label: 'Prints',    roles: ['admin', 'baker', 'staff'], icon: '<path d="M7 8V3h10v5M7 18H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z"/>' },
 };
 
 // A 2x2 grid, not another set of stacked lines: the Orders icon is already
@@ -686,7 +688,11 @@ const PRINT_TABS = [
 ];
 
 /** The baker may tick off a photo print; 3D toppers are Vaidik's to mark. */
-const canPrintStatus = (job) => me.role === 'admin' || job.kind === 'photo';
+// The counter can see the print board — the cake it is handing over is on it —
+// but only the two people who own the machines change a job. The database says
+// the same thing, so offering staff a button would only produce an error.
+const canPrintStatus = (job) => me.role === 'admin'
+  || (me.role === 'baker' && job.kind === 'photo');
 
 function printCardHtml(j, now) {
   const o = j.order;
@@ -810,7 +816,9 @@ async function openPrintJob(id) {
            <button class="btn ${done ? 'btn-quiet' : 'btn-primary'}" id="print-toggle">
              ${done ? 'Move back to to-print' : 'Mark printed'}</button>
          </div>`
-      : '<p class="panel-note" style="margin:0;">Only an admin marks a 3D topper printed — tell Vaidik when it is done.</p>'}
+      : `<p class="panel-note" style="margin:0;">${me.role === 'staff'
+          ? 'The kitchen marks prints done — this page is here so you can see what is still coming.'
+          : 'Only an admin marks a 3D topper printed — tell Vaidik when it is done.'}</p>`}
     <p class="msg" id="print-msg" role="status" aria-live="polite"></p>
 
     ${isAdmin ? `
@@ -1244,6 +1252,60 @@ function toast(message, kind = 'ok') {
  *
  * `options`: [{ value, label, tag?, note? }]. Returns { value, set, el }.
  */
+/**
+ * The tier boxes behind the "Tiered / tall" size.
+ *
+ * A stacked cake is a list of widths and heights, bottom first, and the labels
+ * come from the count — two tiers are Bottom and Top, three gain a Middle. The
+ * boxes write straight into the model without a redraw, so a cursor never jumps
+ * mid-number; only adding or removing a tier redraws.
+ */
+function mountTiers(prefix, initial) {
+  const host = $(`${prefix}-tiers`);
+  const panel = $(`${prefix}-tier-field`);
+  let tiers = parseTiers(initial);
+  if (!tiers.length) tiers = [{ w: '', h: '' }, { w: '', h: '' }];
+
+  function draw() {
+    host.innerHTML = tiers.map((t, i) => {
+      const name = tierLabel(i, tiers.length);
+      return `<div class="tier-row">
+          <span class="tier-name">${esc(name)}</span>
+          <div class="inch"><input class="input nums" type="number" step="0.5" min="1"
+            inputmode="decimal" placeholder="8" value="${esc(t.w)}"
+            data-t="${i}" data-k="w" aria-label="${esc(name)} tier width in inches"></div>
+          <div class="inch"><input class="input nums" type="number" step="0.5" min="1"
+            inputmode="decimal" placeholder="6" value="${esc(t.h)}"
+            data-t="${i}" data-k="h" aria-label="${esc(name)} tier height in inches"></div>
+          ${tiers.length > 1 ? `<button type="button" class="tier-drop" data-drop="${i}"
+            aria-label="Remove the ${esc(name.toLowerCase())} tier">✕</button>` : ''}
+        </div>`;
+    }).join('');
+
+    host.querySelectorAll('input[data-t]').forEach((el) => el.addEventListener('input', () => {
+      tiers[Number(el.dataset.t)][el.dataset.k] = el.value.trim();
+    }));
+    host.querySelectorAll('[data-drop]').forEach((b) => b.addEventListener('click', () => {
+      tiers.splice(Number(b.dataset.drop), 1);
+      draw();
+    }));
+  }
+  draw();
+
+  $(`${prefix}-tier-add`).addEventListener('click', () => {
+    if (tiers.length >= 5) { toast('Five tiers is the limit.', 'error'); return; }
+    tiers.push({ w: '', h: '' });
+    draw();
+  });
+
+  return {
+    show: (on) => panel.classList.toggle('hidden', !on),
+    value: () => tierText(tiers),
+    /** Half a tier is worse than none: it prints a cake nobody can build. */
+    complete: () => tiers.length > 0 && tiers.every((t) => t.w && t.h),
+  };
+}
+
 function mountDropdown(host, { options, value = null, placeholder = 'Choose…', onChange } = {}) {
   let current = value;
   host.classList.add('dd');
@@ -1468,20 +1530,22 @@ async function openOrder(id) {
   const photos = orderPhotos(o);
 
   // Shrunk for the PDF while the sheet is being read rather than when the button
-  // is pressed. Saving a file — a share sheet on a phone, the downloader on a
-  // laptop — is only allowed while the tap that asked for it is still fresh, and
-  // waiting on two photo fetches in the middle is exactly what spends it. These
-  // are the signed URLs the gallery above is already loading, so it costs the
-  // network nothing.
+  // is pressed, so the invoice is ready the moment it is asked for. These are the
+  // signed URLs the gallery above is already loading, so it costs the network
+  // nothing.
   let invoiceReady = me.role === 'admin' && photos.length ? null : [];
   const invoicePhotos = invoiceReady || Promise.all(photos.slice(0, 6).map((path) => photoForPdf(path)))
     .then((list) => { invoiceReady = list.filter(Boolean); return invoiceReady; });
 
   const body = openSheet(o.order_no, `
-    ${photos.length ? `<div class="detail-gallery">${photos.map((path, i) =>
-        `<a class="detail-shot" data-full target="_blank" rel="noopener">
-           <img class="detail-photo" data-photo="${esc(path)}" alt="Cake design ${i + 1}">
-         </a>`).join('')}</div>
+    ${photos.length ? `<div class="detail-gallery">${photos.map((path, i) => `
+        <div class="detail-cell">
+          <a class="detail-shot" data-full target="_blank" rel="noopener">
+            <img class="detail-photo" data-photo="${esc(path)}" alt="Cake design ${i + 1}">
+          </a>
+          ${canEdit ? `<button type="button" class="photo-remove" data-drop-photo="${esc(path)}"
+            aria-label="Remove photo ${i + 1} from this order">✕</button>` : ''}
+        </div>`).join('')}</div>
       <p class="gallery-note">${photos.length === 1 ? 'Tap the photo to see it full size'
         : `${photos.length} photos on this order — tap one to see it full size`}</p>` : ''}
     ${canEdit ? `
@@ -1573,6 +1637,13 @@ async function openOrder(id) {
         <div class="field"><span class="field-label">Size</span><div id="edit-dd-size"></div></div>
       </div>
 
+      <div class="field hidden" id="edit-tier-field">
+        <span class="field-label">Tiers</span>
+        <div id="edit-tiers"></div>
+        <button type="button" class="btn btn-quiet tier-add" id="edit-tier-add">+ Add a tier</button>
+        <p class="photo-hint">Bottom tier first — width across, then height tall.</p>
+      </div>
+
       <div class="field">
         <label class="field-label" for="edit-wording">Wording on cake</label>
         <input class="input" id="edit-wording" value="${esc(o.wording || '')}">
@@ -1652,32 +1723,30 @@ async function openOrder(id) {
       </button>` : ''}
   `);
 
-  if (me.role === 'admin') $('receipt-btn').addEventListener('click', (e) => {
-    // Every amount is handed over already formatted by the one `money` we use
-    // everywhere, so the PDF cannot round differently from the screen.
-    const ctx = {
-      store: STORES.find((st) => st.code === o.store),
-      business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
-    };
-    const give = (pics) => downloadReceipt(o, { ...ctx, photos: pics });
-
-    // The ordinary case: the photos landed while the sheet was being read, so
-    // the file is built and handed over in this same tick and the tap counts.
-    if (invoiceReady) {
-      try { give(invoiceReady); } catch (err) { toast(err.message, 'error'); }
-      return;
-    }
-
-    // Pressed the moment the sheet opened. Nothing to do but wait for them, and
-    // say so: a button that looks dead is a button that gets pressed four times.
+  if (me.role === 'admin') $('receipt-btn').addEventListener('click', async (e) => {
+    // Fetching and shrinking the design photos takes a moment on shop wifi, and
+    // a button that looks dead is a button that gets pressed four times.
     const btn = e.currentTarget;
     const label = btn.innerHTML;
     btn.disabled = true;
     btn.textContent = 'Building the invoice…';
-    invoicePhotos
-      .then((pics) => give(pics))
-      .catch((err) => toast(err.message, 'error'))
-      .finally(() => { btn.disabled = false; btn.innerHTML = label; });
+    try {
+      // Every amount is handed over already formatted by the one `money` we use
+      // everywhere, so the PDF cannot round differently from the screen.
+      const ctx = {
+        store: STORES.find((st) => st.code === o.store),
+        business: BUSINESS, money, dateFmt, dateTimeFmt, orderedAt, paidOn,
+        photos: invoiceReady || await invoicePhotos,
+      };
+      // Straight to the file's own URL. The browser sees an attachment and
+      // saves it — the one route that works on a phone as well as a laptop.
+      location.href = await invoiceUrl(o, receiptPdf(o, ctx), receiptName(o, ctx));
+    } catch (err) {
+      toast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = label;
+    }
   });
 
   // The timeline above says what state the order reached. This says what was
@@ -1723,6 +1792,42 @@ async function openOrder(id) {
       host.classList.remove('hidden');
     }).catch(() => {});
   }
+
+  // Wrong photo attached, or a design the customer changed their mind about.
+  // Adding without removing meant the baker had to guess which picture was live.
+  if (canEdit) body.querySelectorAll('[data-drop-photo]').forEach((b) => {
+    b.addEventListener('click', async () => {
+      const path = b.dataset.dropPhoto;
+      const note = $('add-photo-msg');
+      // Two taps, like deleting a print job: the picture does not come back, and
+      // these buttons sit on top of a photo someone is trying to look at.
+      if (!b.classList.contains('is-armed')) {
+        body.querySelectorAll('.photo-remove.is-armed').forEach((o2) => o2.classList.remove('is-armed'));
+        b.classList.add('is-armed');
+        note.className = 'msg';
+        note.textContent = 'Tap ✕ again to delete that photo.';
+        setTimeout(() => {
+          if (!b.classList.contains('is-armed')) return;
+          b.classList.remove('is-armed');
+          if (note.textContent === 'Tap ✕ again to delete that photo.') note.textContent = '';
+        }, 4000);
+        return;
+      }
+      note.className = 'msg';
+      note.textContent = 'Removing…';
+      b.disabled = true;
+      try {
+        await removePhoto(o, path);
+        closeSheet();
+        await render();
+        toast(`Photo removed from ${o.order_no}.`);
+      } catch (err) {
+        b.disabled = false;
+        note.className = 'msg msg-error';
+        note.textContent = err.message;
+      }
+    });
+  });
 
   if (canEdit) $('add-photo').addEventListener('change', async (e) => {
     const picked = [...e.target.files];
@@ -1867,7 +1972,7 @@ async function openOrder(id) {
     // between stores or between custom and normal is a different order, not a
     // correction, and would silently break the per-store docket numbering.
     let editMounted = false;
-    let editDue = null, editOrdered = null, editFlavour = null, editSize = null;
+    let editDue = null, editOrdered = null, editFlavour = null, editSize = null, editTiers = null;
 
     $('edit-toggle').addEventListener('click', () => {
       $('detail-view').classList.add('hidden');
@@ -1882,9 +1987,14 @@ async function openOrder(id) {
           value: o.flavour, placeholder: 'Choose flavour',
           options: FLAVOURS.map((f) => ({ value: f.name, label: f.name, tag: f.premium ? 'Premium' : null })),
         });
+        // A tiered order stores its tier list as the size, so the dropdown is
+        // put back on "Tiered / tall" and the boxes are filled from the string.
+        editTiers = mountTiers('edit', o.size);
+        editTiers.show(isTiered(o.size));
         editSize = mountDropdown($('edit-dd-size'), {
-          value: o.size, placeholder: 'Choose size',
+          value: isTiered(o.size) ? TIERED : o.size, placeholder: 'Choose size',
           options: SIZES.map((sz) => ({ value: sz.code, label: sz.label })),
+          onChange: (code) => editTiers.show(code === TIERED),
         });
       }
     });
@@ -1902,6 +2012,10 @@ async function openOrder(id) {
       const name = $('edit-name').value.trim();
       if (!name) { msg.textContent = 'Customer name cannot be blank.'; msg.className = 'msg msg-error'; return; }
       if (!editDue.value()) { msg.textContent = 'Pick a date and time.'; msg.className = 'msg msg-error'; return; }
+      const tiered = editSize.value() === TIERED;
+      if (tiered && !editTiers.complete()) {
+        msg.textContent = 'Give every tier a width and a height.'; msg.className = 'msg msg-error'; return;
+      }
 
       const btn = $('edit-save');
       btn.disabled = true; btn.textContent = 'Saving…';
@@ -1912,7 +2026,7 @@ async function openOrder(id) {
           due_at: editDue.value(),
           ordered_at: editOrdered.value() || null,
           flavour: editFlavour.value() || null,
-          size: editSize.value() || null,
+          size: (tiered ? editTiers.value() : editSize.value()) || null,
           wording: $('edit-wording').value.trim() || null,
           notes: $('edit-notes').value.trim() || null,
         };
@@ -2015,6 +2129,13 @@ function openNewOrder() {
           <span class="field-label">Size</span>
           <div id="dd-size"></div>
         </div>
+      </div>
+
+      <div class="field hidden" id="f-tier-field">
+        <span class="field-label">Tiers <span class="req">*</span></span>
+        <div id="f-tiers"></div>
+        <button type="button" class="btn btn-quiet tier-add" id="f-tier-add">+ Add a tier</button>
+        <p class="photo-hint">Bottom tier first — width across, then height tall.</p>
       </div>
 
       <div class="field">
@@ -2139,10 +2260,13 @@ function openNewOrder() {
     onChange: refreshPriceHint,
   });
 
+  const tiers = mountTiers('f');
+
   const ddSize = mountDropdown($('dd-size'), {
     placeholder: 'Choose size',
     options: SIZES.map((sz) => ({ value: sz.code, label: sz.label })),
     onChange: (code) => {
+      tiers.show(code === TIERED);
       // Fill the standard price so staff only type when it differs. Never
       // overwrite a price they have already typed.
       const base = basePrice(code);
@@ -2361,6 +2485,12 @@ function openNewOrder() {
       msg.className = 'msg msg-error';
       return;
     }
+    const tiered = ddSize.value() === TIERED;
+    if (tiered && !tiers.complete()) {
+      msg.textContent = 'Give every tier a width and a height.';
+      msg.className = 'msg msg-error';
+      return;
+    }
 
     btn.disabled = true; btn.textContent = 'Saving…'; msg.textContent = ''; msg.className = 'msg';
     try {
@@ -2373,7 +2503,7 @@ function openNewOrder() {
         due_at: due.value(),
         ordered_at: ordered.value() || null,
         flavour: ddFlavour.value() || null,
-        size: ddSize.value() || null,
+        size: (tiered ? tiers.value() : ddSize.value()) || null,
         wording: $('f-wording').value.trim() || null,
         design_notes: $('f-design').value.trim() || null,
         notes: $('f-notes').value.trim() || null,

@@ -174,22 +174,37 @@ main site.
   fatal: a purged photo must not cost the customer their invoice. Six is the cap and the
   rest are counted on the page; the layout stops before the footer because a receipt is one
   page.
-- **iOS has no downloads folder, so the invoice leaves by the share sheet.** A
-  programmatic click on a blob is a **silent no-op** on iPhone in both Safari and
-  Chrome — the button highlights and nothing happens, which is what shipped and what
-  Vaidik hit. There is no feature test for it, so `SHEET_SAVE` in `receipt.mjs` uses a
-  coarse pointer plus `canShare({files})`: phones get `navigator.share`, whose first
-  entry is *Save to Files*, and laptops keep the downloader. The button says **Download
-  tax invoice** on both, because that is the job it does. Whatever goes to `share` is a
-  File and **nothing else** — add `text` or `url` and a `blob:https://…` link rides
-  along into the customer's chat, where it 404s forever.
-- **Both routes out are gated on the tap.** Share sheet and downloader alike need user
-  activation, so the design photos are fetched and shrunk **when the sheet opens** and
-  the button hands over the finished file in the same tick it was pressed. Await a photo
-  in the click handler and the gesture is spent by the time the file exists — the same
-  nothing-happens failure, on a different platform each time. `invoiceReady` is the
-  already-landed copy; the promise is only for someone who presses the moment the sheet
-  appears.
+- **The invoice downloads from its own URL, because a phone will not save a blob.**
+  A programmatic click on a blob the page built is a **silent no-op** on iPhone in
+  Safari and Chrome both — the button highlights and nothing happens, which shipped
+  twice before the cause was found; the share sheet was the second attempt and staff
+  could not find *Save to Files* in it. So `invoiceUrl` uploads the PDF to the private
+  **`invoices`** bucket and hands back a signed URL carrying `download=`, which answers
+  `Content-Disposition: attachment`. Every browser saves that, and the page does not
+  navigate. One object per order, overwritten on reissue; admin-only, because the file
+  has the customer's name and phone on it. Do not "simplify" this back to a local blob
+  — it works on the laptop you test it on and nowhere the shop actually uses.
+- **A tiered cake's size is its tier list.** `Bottom 8"w 6"h · Top 6"w 6"h`, written
+  into the same `size` column as `8 inch`, because every screen, the export and the
+  invoice already print that field and a stacked cake has no single number to put in
+  it. `catalog.mjs` owns the format (`tierText`/`parseTiers`, and `TIERED` as the
+  dropdown code that reveals the boxes); the round trip is what lets the edit panel put
+  a saved order back into the boxes. There is deliberately **no price** on it — a build
+  is quoted, so `basePrice` returns null, nothing autofills, and `pricingGaps` skips it
+  rather than reporting every tiered cake as underpriced. On the invoice a size over 14
+  characters drops to its own line under the description, or it runs under the QTY
+  column.
+- **The counter can see the print board; only the kitchen changes it.** `print_jobs`
+  read now also passes for anyone who can see the order it points at — the `EXISTS`
+  runs under the caller's own policy on `orders`, so a one-store staff member gets one
+  store's jobs with no second scoping rule to keep in step. Writes stay admin/baker,
+  and `canPrintStatus` matches that exactly: offering staff a button the database will
+  refuse is worse than not offering it.
+- **Removing a photo deletes the file first, then the row.** The purge job finds files
+  *through* the row, so a row that has already forgotten a photo leaves it in storage
+  for good. Done in this order a half-failure leaves a listed photo that will not load —
+  visible, and fixed by removing it again. Deleting is two taps like deleting a print
+  job, because the button sits on top of a picture someone is trying to look at.
 - **Storage read is granted by the order, and the order has more than one photo.**
   `cake_photos_read` matched `orders.photo_path` — the cover — so every *other* photo
   was readable only by `owner = auth.uid()`, the person who uploaded it. It therefore

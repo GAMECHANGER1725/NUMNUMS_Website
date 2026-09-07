@@ -550,6 +550,46 @@ export async function photoUrl(path) {
   return data.signedUrl;
 }
 
+/**
+ * The invoice, as a URL the device will actually download.
+ *
+ * A browser will not save a file the page built for itself on iOS: the click on
+ * a blob is a silent no-op in Safari and Chrome both, which is a button that
+ * does nothing. An https URL answering with `Content-Disposition: attachment`
+ * downloads on every device there is, so the PDF is uploaded and the signed URL
+ * does the saving. One object per order, overwritten, so re-issuing an invoice
+ * does not litter the bucket.
+ *
+ * The bucket is private and admin-only — the file has the customer's name and
+ * phone on it — and the link it hands back dies in ten minutes.
+ */
+export async function invoiceUrl(order, blob, filename) {
+  const path = `${order.store}/${order.order_no}.pdf`;
+  const up = await sb.storage.from('invoices')
+    .upload(path, blob, { contentType: 'application/pdf', upsert: true });
+  if (up.error) throw up.error;
+
+  const { data, error } = await sb.storage.from('invoices')
+    .createSignedUrl(path, 600, { download: filename });
+  if (error) throw error;
+  return data.signedUrl;
+}
+
+/**
+ * Takes a design photo off an order — the file first, then the row.
+ *
+ * That order matters: the purge job finds files through the row, so a row that
+ * has already forgotten a photo leaves it in storage forever. Done this way
+ * round, a failure half way leaves a listed photo that no longer loads, which
+ * is visible and can simply be removed again.
+ */
+export async function removePhoto(order, path) {
+  const left = orderPhotos(order).filter((p) => p !== path);
+  const { error } = await sb.storage.from('cake-photos').remove([path]);
+  if (error) throw error;
+  return updateOrder(order.id, { photo_path: left[0] || null, photo_paths: left });
+}
+
 // ── Print jobs ──────────────────────────────────────────────────────────────
 // A cake that also needs 3D toppers or photo prints. The job hangs off the
 // order instead of repeating its details, so nobody re-types a design brief
