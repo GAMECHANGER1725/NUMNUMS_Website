@@ -253,7 +253,11 @@ main site.
   costs, prints and the order's whole event trail with it by cascade. It removes the photos
   **first**, because storage is only reachable through the row. A `before delete` trigger
   keeps the whole row as jsonb in **`deleted_orders`** with who did it — nothing in the app
-  reads that table, and the one time it is wanted it will be the only copy left.
+  reads that table except the **Deleted orders** panel on the Data page, which lists what
+  went, who took it off and when — verified end to end: a $499.99 order deleted through the
+  app dropped the takings tile by exactly $499.99, the order count by one, and vanished from
+  the customer directory, because every figure is computed from the live `orders` table and
+  `deleteOrder` bumps `writeStamp`, which expires all four caches.
 - **The takings panel draws one metric at a time, on purpose.** Takings, orders, average
   order and discounts are three different units, and putting two of them on one chart means
   two y-scales, which is the single worst thing a chart can do. So the four figures sit in

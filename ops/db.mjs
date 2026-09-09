@@ -613,6 +613,22 @@ export async function deleteOrder(order) {
   wrote();
 }
 
+/**
+ * The orders that were deleted outright, newest first — who, when, and what was
+ * on them. Admin only, by RLS.
+ *
+ * Nothing else in the app reads this table: it is deliberately not part of any
+ * figure. It exists so "where did HP-1727 go" has an answer.
+ */
+export async function deletedOrders(limit = 40) {
+  const { data, error } = await sb.from('deleted_orders')
+    .select('id, order_no, store, deleted_at, deleted_by, row')
+    .order('deleted_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
 // ── Print jobs ──────────────────────────────────────────────────────────────
 // A cake that also needs 3D toppers or photo prints. The job hangs off the
 // order instead of repeating its details, so nobody re-types a design brief

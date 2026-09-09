@@ -10,7 +10,7 @@ import {
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, orderEvents, uploadPhotos, removePhoto, orderPhotos, photoUrls, photoForPdf,
-  invoiceUrl, deleteOrder,
+  invoiceUrl, deleteOrder, deletedOrders,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote,
   writeStamp,
@@ -3665,7 +3665,7 @@ async function analyticsData({ force = false } = {}) {
   const held = analyticsCache && { at: analyticsCache.at, rows: analyticsCache.data };
   return orFallback(async () => {
     const since = new Date(Date.now() - 63 * 86400000).toISOString();
-    const [all, profiles, events, customerRows, photoRows] = await Promise.all([
+    const [all, profiles, events, customerRows, photoRows, binned] = await Promise.all([
       // includeOpen keeps money still owed on old orders visible no matter how
       // long ago it was ordered — that debt is the whole point of tracking it.
       listOrders({ since, withCosts: true, includeOpen: true, complete: true }),
@@ -3674,8 +3674,10 @@ async function analyticsData({ force = false } = {}) {
       // Over every order ever, not the 63-day window the charts use.
       allCustomers().catch(() => []),
       ordersWithPhotos().catch(() => []),
+      // Rides along with the rest so the Data page costs one fetch, not two.
+      deletedOrders(40).catch(() => []),
     ]);
-    analyticsCache = { at: Date.now(), stamp: writeStamp.v, data: { all, profiles, events, customerRows, photoRows } };
+    analyticsCache = { at: Date.now(), stamp: writeStamp.v, data: { all, profiles, events, customerRows, photoRows, binned } };
     return analyticsCache.data;
   }, held);
 }
@@ -3692,7 +3694,7 @@ async function renderAnalytics({ force = false } = {}) {
   const root = $('view-analytics');
   if (force || !cacheFresh()) root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
 
-  const { all, profiles, events, customerRows, photoRows } = await analyticsData({ force });
+  const { all, profiles, events, customerRows, photoRows, binned } = await analyticsData({ force });
   peopleById = new Map(profiles.map((p) => [p.id, p]));
   orders = all;
 
@@ -4081,6 +4083,34 @@ async function renderAnalytics({ force = false } = {}) {
       ${photos.overdue ? photos.rows.slice(0, 6).map((o) =>
         fixRow(o, `${Math.floor((now - new Date(o.created_at)) / 86400000)} days old`)).join('') : ''}
       ${photos.overdue > 6 ? `<p class="fix-more">and ${photos.overdue - 6} more</p>` : ''}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Deleted orders</div>
+      <div class="panel-note">
+        Orders taken off the book entirely, newest first. They are in no figure
+        on any page — not takings, not a customer's spend, not the cancellation
+        rate — so this is the only record they were ever here. Only an admin can
+        delete one${binned.length ? '' : ', and none have been'}.
+      </div>
+      ${binned.slice(0, 12).map((d) => {
+        const row = d.row || {};
+        const who = profiles.find((pr) => pr.id === d.deleted_by);
+        const price = row.price == null ? null : Number(row.price) - Number(row.discount || 0);
+        return `
+        <div class="binned">
+          <span class="binned-what">
+            <span class="binned-no">${esc(d.order_no)}</span>
+            <span class="list-meta">${esc(storeLabel(d.store))}${row.customer_name ? ` · ${esc(row.customer_name)}` : ''}${
+              price == null ? '' : ` · ${esc(money.format(price))}`}</span>
+          </span>
+          <span class="binned-who">
+            <span>${esc(who?.name || 'Unknown')}</span>
+            <span class="list-meta">${esc(dateTimeFmt.format(new Date(d.deleted_at)))}</span>
+          </span>
+        </div>`;
+      }).join('')}
+      ${binned.length > 12 ? `<p class="fix-more">and ${binned.length - 12} more</p>` : ''}
     </div>
 
     <div class="panel">

@@ -1225,6 +1225,17 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 }
 .legend-dot { width: 9px; height: 9px; border-radius: 2px; flex: none; }
 .chart-table { margin-top: 10px; }
+/* A deleted order: what it was on the left, who took it off on the right. */
+.binned {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 9px 0; border-top: 1px solid var(--dough-line);
+}
+.binned:first-of-type { border-top: 0; }
+.binned-what, .binned-who { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.binned-who { text-align: right; flex: none; }
+.binned-no { font-weight: 600; font-variant-numeric: tabular-nums; }
+.binned .list-meta { font-size: 12px; }
+
 /* ── Takings: four figures, one line ─────────────────────────────────────── */
 /* Two-up on a phone, four across once there is room. Each tile is a button:
    whichever is pressed is what the chart underneath is drawing. */
