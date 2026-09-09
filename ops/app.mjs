@@ -10,7 +10,7 @@ import {
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
   recentAuthEvents, orderEvents, uploadPhotos, removePhoto, orderPhotos, photoUrls, photoForPdf,
-  invoiceUrl,
+  invoiceUrl, deleteOrder,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote,
   writeStamp,
@@ -23,7 +23,7 @@ import {
   dayLabel, soldWithin, salesByWeek, logSections, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
-  dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
+  dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium, TIERED, tierLabel, tierText, parseTiers, isTiered }
   from './catalog.mjs';
@@ -1720,8 +1720,46 @@ async function openOrder(id) {
              style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;vertical-align:-3px;margin-right:7px;">
           <path d="M12 3v11m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/>
         </svg>Download tax invoice
-      </button>` : ''}
+      </button>
+
+      <hr class="rule">
+      <div class="block-label">Delete this order</div>
+      <p class="danger-note">
+        For an order that should never have existed — a double entry, or one
+        typed against the wrong shop. It goes completely: the cake, its costs,
+        its prints and its photos. <strong>Cancel instead if the customer pulled
+        out</strong>, or the cancellation rate stops meaning anything.
+      </p>
+      <button type="button" class="btn btn-danger" id="order-delete" style="width:100%;">Delete order</button>` : ''}
   `);
+
+  // Two taps, same as deleting a print job: this is not undoable from the app,
+  // and it sits directly under a button people press all day.
+  if (me.role === 'admin') {
+    let armed = false;
+    $('order-delete').addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      if (!armed) {
+        armed = true;
+        btn.textContent = `Tap again to delete ${o.order_no}`;
+        setTimeout(() => { if (armed) { armed = false; btn.textContent = 'Delete order'; } }, 4000);
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Deleting…';
+      try {
+        await deleteOrder(o);
+        closeSheet();
+        await render();
+        toast(`${o.order_no} deleted.`);
+      } catch (err) {
+        armed = false;
+        btn.disabled = false;
+        btn.textContent = 'Delete order';
+        toast(err.message, 'error');
+      }
+    });
+  }
 
   if (me.role === 'admin') $('receipt-btn').addEventListener('click', async (e) => {
     // Fetching and shrinking the design photos takes a moment on shop wifi, and
@@ -3330,42 +3368,210 @@ function roundedTop(x, y, w, h, r, fill) {
 const shortMoney = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : `$${Math.round(v)}`);
 
 /**
- * Takings per day as an area + line, with a marker on the best day and on today.
- * Points are evenly spaced because every day is present — see dailyTakings.
+ * The takings panel: four figures across the top, and whichever one is tapped
+ * drawn underneath.
+ *
+ * One line at a time rather than four at once, because these are four different
+ * units — dollars, cakes, dollars-per-cake — and a chart with two y-scales on it
+ * is the one chart mistake worth never making. Colour therefore encodes nothing
+ * about identity here (the tile says what is drawn), so it is used for kind:
+ * rose for money, gold for a count.
  */
-function takingsChart(rows) {
-  const W = 320, H = 132, padL = 34, padR = 8, padT = 10, padB = 18;
+const METRICS = [
+  { key: 'revenue',  label: 'Takings',       colour: SERIES[0], money: true },
+  { key: 'count',    label: 'Orders',        colour: SERIES[1], money: false },
+  { key: 'average',  label: 'Average order', colour: SERIES[0], money: true },
+  // More discount given is not automatically good news, so the arrow that means
+  // "well done" points the other way on this one.
+  { key: 'discount', label: 'Discounts',     colour: SERIES[1], money: true, lowerIsBetter: true },
+];
+
+const metricSpec = (key) => METRICS.find((m) => m.key === key) || METRICS[0];
+const metricValue = (row, key) => (key === 'average'
+  ? (row.count ? row.revenue / row.count : 0)
+  : row[key] || 0);
+const metricText = (m, v) => (m.money ? money.format(v) : String(Math.round(v)));
+const metricAxis = (m, v) => (m.money ? shortMoney(v) : String(Math.round(v)));
+
+/**
+ * A monotone cubic through the points — the curve Recharts calls `monotone`.
+ *
+ * Control points are held to the shorter of the two neighbouring gaps, which is
+ * what stops a quiet Tuesday between two Saturdays from bowing the curve below
+ * zero and drawing takings the shop never had.
+ */
+function smoothPath(pts) {
+  if (pts.length < 2) return pts.length ? `M${pts[0].x},${pts[0].y}` : '';
+  const slopes = pts.map((_, i) => {
+    if (i === 0 || i === pts.length - 1) return 0;
+    const a = (pts[i].y - pts[i - 1].y) / (pts[i].x - pts[i - 1].x);
+    const b = (pts[i + 1].y - pts[i].y) / (pts[i + 1].x - pts[i].x);
+    return a * b <= 0 ? 0 : (2 * a * b) / (a + b);
+  });
+  let d = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for (let i = 1; i < pts.length; i++) {
+    const p0 = pts[i - 1], p1 = pts[i];
+    const dx = (p1.x - p0.x) / 3;
+    d += `C${(p0.x + dx).toFixed(1)},${(p0.y + slopes[i - 1] * dx).toFixed(1)}`
+      + ` ${(p1.x - dx).toFixed(1)},${(p1.y - slopes[i] * dx).toFixed(1)}`
+      + ` ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+  }
+  return d;
+}
+
+/** The four tiles. The selected one is the chart below. */
+function metricTiles(stats, key) {
+  return METRICS.map((m) => {
+    const now = stats.now[m.key];
+    const was = stats.was[m.key];
+    const change = stats.change[m.key];
+    const good = change == null ? null : (m.lowerIsBetter ? change < 0 : change > 0);
+    return `
+      <button type="button" class="mtile${m.key === key ? ' is-on' : ''}" data-metric="${m.key}"
+              aria-pressed="${m.key === key}">
+        <span class="mtile-top">
+          <span class="mtile-label">${esc(m.label)}</span>
+          ${change == null ? '' : `
+            <span class="mchip ${good ? 'is-up' : 'is-down'}">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="${change >= 0
+                ? 'M12 19V5m0 0l-6 6m6-6l6 6' : 'M12 5v14m0 0l-6-6m6 6l6-6'}"/></svg>
+              ${Math.abs(change).toFixed(1)}%
+            </span>`}
+        </span>
+        <span class="mtile-val">${esc(metricText(m, now))}</span>
+        <span class="mtile-was">${change == null ? 'no earlier period to compare'
+          : `from ${esc(metricText(m, was))}`}</span>
+      </button>`;
+  }).join('');
+}
+
+/** The line for one metric, over the days the panel covers. */
+function takingsChart(rows, key) {
+  const m = metricSpec(key);
+  const W = 320, H = 150, padL = 36, padR = 10, padT = 12, padB = 20;
   const plotW = W - padL - padR, plotH = H - padT - padB;
-  const max = niceCeil(Math.max(1, ...rows.map((r) => r.revenue)));
+  const vals = rows.map((r) => metricValue(r, key));
+  const max = niceCeil(Math.max(1, ...vals));
   const x = (i) => padL + (rows.length === 1 ? plotW / 2 : (i / (rows.length - 1)) * plotW);
   const y = (v) => padT + plotH - (v / max) * plotH;
+  const pts = vals.map((v, i) => ({ x: x(i), y: y(v) }));
 
-  const line = rows.map((r, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(r.revenue).toFixed(1)}`).join('');
-  const area = `${line}L${x(rows.length - 1).toFixed(1)},${padT + plotH}L${padL},${padT + plotH}Z`;
-
-  const bestIdx = rows.reduce((b, r, i) => (r.revenue > rows[b].revenue ? i : b), 0);
-  const marks = [...new Set([bestIdx, rows.length - 1])].filter((i) => rows[i].revenue > 0);
-
-  const ticks = [0, max / 2, max];
+  // Four gaps for money; for a count, no more than there are whole numbers to
+  // land on — a busy-Saturday scale of 3 was printing 0 1 2 2 3 up the side.
+  const steps = m.money ? 4 : Math.max(1, Math.min(4, Math.round(max)));
+  const ticks = Array.from({ length: steps + 1 }, (_, i) => (max * i) / steps);
   const label = (k) => dayKeyLabel(k, { day: 'numeric', month: 'short' });
+  const every = Math.max(1, Math.round(rows.length / 5));
+  const best = vals.reduce((b, v, i) => (v > vals[b] ? i : b), 0);
 
   return `
-    <div class="chart" role="img"
-         aria-label="Takings per day for the last ${rows.length} days. Highest ${money.format(rows[bestIdx].revenue)} on ${esc(label(rows[bestIdx].dayKey))}.">
-      <svg viewBox="0 0 ${W} ${H}" class="chart-svg">
-        ${ticks.map((t) => `
-          <line x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>
-          <text x="${padL - 6}" y="${(y(t) + 3.5).toFixed(1)}" class="ax" text-anchor="end">${esc(shortMoney(t))}</text>`).join('')}
-        <path d="${area}" fill="${SERIES[0]}" fill-opacity=".1"/>
-        <path d="${line}" fill="none" stroke="${SERIES[0]}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-        ${marks.map((i) => `
-          <circle cx="${x(i).toFixed(1)}" cy="${y(rows[i].revenue).toFixed(1)}" r="4"
-                  fill="${SERIES[0]}" stroke="var(--cream)" stroke-width="2"/>`).join('')}
-        <text x="${padL}" y="${H - 5}" class="ax" text-anchor="start">${esc(label(rows[0].dayKey))}</text>
-        <text x="${W - padR}" y="${H - 5}" class="ax" text-anchor="end">${esc(label(rows[rows.length - 1].dayKey))}</text>
-      </svg>
-      <div class="chart-peak">Best day ${money.format(rows[bestIdx].revenue)} · ${esc(label(rows[bestIdx].dayKey))}</div>
+    <svg viewBox="0 0 ${W} ${H}" class="chart-svg" id="takings-svg" data-metric="${key}"
+         role="img" aria-label="${esc(m.label)} per day over the last ${rows.length} days. Highest ${esc(metricText(m, vals[best]))} on ${esc(label(rows[best].dayKey))}.">
+      <defs>
+        <pattern id="dots" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+          <circle cx="7" cy="7" r=".8" fill="${GRID}"/>
+        </pattern>
+        <linearGradient id="under" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="${m.colour}" stop-opacity=".22"/>
+          <stop offset="1" stop-color="${m.colour}" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="url(#dots)"/>
+      ${ticks.map((t) => `
+        <line x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"
+              stroke="${GRID}" stroke-width="${t === 0 ? 1 : 0.6}" stroke-opacity="${t === 0 ? 1 : 0.55}"/>
+        <text x="${padL - 6}" y="${(y(t) + 3.5).toFixed(1)}" class="ax" text-anchor="end">${esc(metricAxis(m, t))}</text>`).join('')}
+      <path d="${smoothPath(pts)}L${x(rows.length - 1).toFixed(1)},${padT + plotH}L${padL},${padT + plotH}Z"
+            fill="url(#under)" stroke="none"/>
+      <!-- The lift under the line is a fill and a fat soft stroke rather than an
+           feDropShadow: a filter re-rasterises the whole path on every redraw,
+           and this one redraws on a tile tap, on a phone. Two flat paints. -->
+      <path d="${smoothPath(pts)}" fill="none" stroke="${m.colour}" stroke-width="6"
+            stroke-opacity=".13" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="${smoothPath(pts)}" fill="none" stroke="${m.colour}" stroke-width="2"
+            stroke-linejoin="round" stroke-linecap="round"/>
+      ${rows.map((r, i) => (i % every === 0 && i < rows.length - 1) || i === rows.length - 1 ? `
+        <text x="${x(i).toFixed(1)}" y="${H - 5}" class="ax"
+              text-anchor="${i === 0 ? 'start' : i === rows.length - 1 ? 'end' : 'middle'}">${esc(label(r.dayKey))}</text>` : '').join('')}
+      <line id="takings-rule" x1="0" x2="0" y1="${padT}" y2="${padT + plotH}" stroke="${m.colour}"
+            stroke-width="1" stroke-dasharray="3 3" stroke-opacity=".5" style="display:none"/>
+      <circle id="takings-dot" r="4.5" fill="${m.colour}" stroke="var(--cream)" stroke-width="2" style="display:none"/>
+    </svg>`;
+}
+
+/**
+ * Tiles and chart in one block, plus the reading under the pointer.
+ *
+ * The whole thing redraws from `rows` on a tile tap rather than re-running the
+ * analytics page, which would refetch nothing but rebuild every panel on it.
+ */
+function takingsPanel(stats, key = 'revenue') {
+  return `
+    <div class="metric-row" id="metric-row">${metricTiles(stats, key)}</div>
+    <div class="chart chart-live" id="takings-chart">
+      ${takingsChart(stats.rows, key)}
+      <div class="chart-tip" id="takings-tip" hidden></div>
     </div>`;
+}
+
+/** Tile taps redraw the line; a finger or a mouse on the line reads it out. */
+function wireTakings(stats) {
+  let key = 'revenue';
+
+  const paint = () => {
+    $('metric-row').innerHTML = metricTiles(stats, key);
+    $('takings-chart').firstElementChild?.remove();
+    $('takings-chart').insertAdjacentHTML('afterbegin', takingsChart(stats.rows, key));
+    wireRow();
+    wireSvg();
+  };
+
+  const wireRow = () => $('metric-row').querySelectorAll('[data-metric]').forEach((b) =>
+    b.addEventListener('click', () => { key = b.dataset.metric; paint(); }));
+
+  const wireSvg = () => {
+    const svg = $('takings-svg');
+    const tip = $('takings-tip');
+    const rule = $('takings-rule');
+    const dot = $('takings-dot');
+    const m = metricSpec(key);
+    const W = 320, padL = 36, padR = 10, padT = 12, plotH = 150 - padT - 20;
+    const plotW = W - padL - padR;
+    const vals = stats.rows.map((r) => metricValue(r, key));
+    const max = niceCeil(Math.max(1, ...vals));
+
+    const hide = () => { tip.hidden = true; rule.style.display = 'none'; dot.style.display = 'none'; };
+
+    const read = (e) => {
+      const box = svg.getBoundingClientRect();
+      const vx = ((e.clientX - box.left) / box.width) * W;
+      const i = Math.max(0, Math.min(stats.rows.length - 1,
+        Math.round(((vx - padL) / plotW) * (stats.rows.length - 1))));
+      const px = padL + (i / (stats.rows.length - 1)) * plotW;
+      const py = padT + plotH - (vals[i] / max) * plotH;
+
+      rule.setAttribute('x1', px); rule.setAttribute('x2', px);
+      rule.style.display = '';
+      dot.setAttribute('cx', px); dot.setAttribute('cy', py);
+      dot.style.display = '';
+
+      tip.innerHTML = `<span class="tip-day">${esc(dayKeyLabel(stats.rows[i].dayKey, { weekday: 'short', day: 'numeric', month: 'short' }))}</span>`
+        + `<span class="tip-val"><span class="tip-dot" style="background:${m.colour}"></span>`
+        + `${esc(m.label)} <strong>${esc(metricText(m, vals[i]))}</strong></span>`;
+      tip.hidden = false;
+      // Kept inside the panel: pinned to the reading until it would run off an
+      // edge, and clamped there instead.
+      tip.style.left = `${Math.min(88, Math.max(12, (px / W) * 100))}%`;
+    };
+
+    svg.addEventListener('pointermove', read);
+    svg.addEventListener('pointerdown', read);
+    svg.addEventListener('pointerleave', hide);
+    svg.addEventListener('pointercancel', hide);
+  };
+
+  wireRow();
+  wireSvg();
 }
 
 /** Weekly takings as columns stacked by store, newest at the right. */
@@ -3526,7 +3732,10 @@ async function renderAnalytics({ force = false } = {}) {
     return d >= 0 && d < 56;          // pickups that have already happened
   }));
 
-  const daily = dailyTakings(all, 30, now);
+  // Sixty days for a thirty-day panel: the older half is what the tiles compare
+  // against and is never drawn.
+  const daily = dailyTakings(all, 60, now);
+  const takings = takingsMetrics(daily, 30);
   const weeks = weeklyByStore(all, STORES.map((st) => st.code), 8, now);
   const board = customerLeaderboard(customerRows, now);
   const ahead = forwardBook(all, 7, now);
@@ -3639,10 +3848,10 @@ async function renderAnalytics({ force = false } = {}) {
 
     <div class="panel">
       <div class="panel-title">Takings, last 30 days</div>
-      <div class="panel-note">Every day the shop took money, by the date the order was written.</div>
-      ${takingsChart(daily)}
+      <div class="panel-note">Against the thirty days before it. Tap a figure to draw it — by the date the order was written.</div>
+      ${takingsPanel(takings)}
       ${chartTable('Show the daily numbers', null,
-        daily.filter((d) => d.count).reverse().map((d) => [
+        takings.rows.filter((d) => d.count).reverse().map((d) => [
           dayKeyLabel(d.dayKey), `${d.count} order${d.count === 1 ? '' : 's'}`, money.format(d.revenue)]))}
     </div>
 
@@ -4015,6 +4224,8 @@ async function renderAnalytics({ force = false } = {}) {
 
   // The rows are buttons carrying an order id, so the log's own handler works.
   wireDockets(root);
+
+  if (analyticsPage === 'finance') wireTakings(takings);
 
   if (analyticsPage === 'data' && flavourMix.length) {
     const paintMix = () => {

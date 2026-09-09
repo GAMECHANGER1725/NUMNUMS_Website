@@ -244,6 +244,27 @@ main site.
 - **Order numbers start at 1725, not 1.** `HP-0003` on a receipt tells a customer how new
   the software is, not how long the shop has been trading. The two sequences were set
   forward; nothing else knows or cares what the number is.
+- **Deleting an order is not cancelling it.** Cancel is a thing that happened to a real
+  order and it belongs in the cancellation rate; an order that should never have existed —
+  a double entry, a test, the wrong shop — is a data-entry mistake, and leaving it as a
+  cancellation quietly tells the shop customers are backing out. `deleteOrder` is admin
+  only (`orders_admin_delete`, which is `is_admin()` in Postgres — verified by deleting as
+  staff and as the baker and watching the row survive), two taps in the UI, and takes the
+  costs, prints and the order's whole event trail with it by cascade. It removes the photos
+  **first**, because storage is only reachable through the row. A `before delete` trigger
+  keeps the whole row as jsonb in **`deleted_orders`** with who did it — nothing in the app
+  reads that table, and the one time it is wanted it will be the only copy left.
+- **The takings panel draws one metric at a time, on purpose.** Takings, orders, average
+  order and discounts are three different units, and putting two of them on one chart means
+  two y-scales, which is the single worst thing a chart can do. So the four figures sit in
+  tiles across the top with their change against the previous thirty days, and the tapped
+  one is the line underneath — which is why the panel fetches **sixty** days for a
+  thirty-day chart. Colour therefore encodes nothing about identity (the tile says what is
+  drawn), so it is used for kind instead: rose for money, gold for a count. `change` is
+  **null**, not zero, when the previous period was empty — "up 100%" from nothing is not a
+  fact. The lift under the line is a gradient fill plus a fat soft stroke rather than an
+  `feDropShadow`, because a filter re-rasterises the whole path on every redraw and this
+  one redraws on a tap, on a phone.
 - **Nothing about an order is ever lost.** `order_events` records every insert, status
   change and field edit — old value, new value, who, when — written by an AFTER trigger
   so it cannot be forgotten at a call site, and readable by admins only. `cancelled_at`

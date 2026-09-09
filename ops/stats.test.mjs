@@ -12,7 +12,7 @@ import {
   missingPrice, searchOrders, phoneKey,
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
-  dailyTakings, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
+  dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
   productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats, pricingGaps,
   netPrice, discountOn,
 } from './stats.mjs';
@@ -613,6 +613,50 @@ test('csv defuses values a spreadsheet would run as a formula', () => {
 test('toCsv joins with CRLF and keeps the header first', () => {
   const out = toCsv(['a', 'b'], [['1', 'x,y'], ['2', null]]);
   assert.equal(out, 'a,b\r\n1,"x,y"\r\n2,');
+});
+
+test('the takings tiles compare a period with the one before it', () => {
+  const now = new Date('2026-09-04T02:00:00Z');            // Fri 12pm Sydney
+  // Two $100 cakes in the last two days, one $50 four days back. With days = 2
+  // the older $50 is the whole comparison period.
+  const daily = dailyTakings([
+    { status: 'picked_up', created_at: '2026-09-04T01:00:00Z', price: 120, discount: 20 },
+    { status: 'picked_up', created_at: '2026-09-03T01:00:00Z', price: 100 },
+    { status: 'picked_up', created_at: '2026-09-01T01:00:00Z', price: 50 },
+  ], 4, now);
+  const m = takingsMetrics(daily, 2);
+
+  assert.deepEqual(m.rows.map((r) => r.dayKey), ['2026-09-03', '2026-09-04']);
+  assert.equal(m.now.revenue, 200);            // net of the $20 off, not $220
+  assert.equal(m.now.discount, 20);
+  assert.equal(m.now.count, 2);
+  assert.equal(m.now.average, 100);
+  assert.equal(m.was.revenue, 50);
+  assert.equal(Math.round(m.change.revenue), 300);
+  assert.equal(Math.round(m.change.count), 100);
+});
+
+test('the average is the period average, not the average of the days', () => {
+  const now = new Date('2026-09-04T02:00:00Z');
+  // One $40 cake on one day, four $100 cakes on the next. The mean of the two
+  // daily averages is $70; what the shop actually averaged is $88.
+  const daily = dailyTakings([
+    { status: 'picked_up', created_at: '2026-09-03T01:00:00Z', price: 40 },
+    ...Array.from({ length: 4 }, () => ({ status: 'picked_up', created_at: '2026-09-04T01:00:00Z', price: 100 })),
+  ], 2, now);
+  const m = takingsMetrics(daily, 2);
+  assert.equal(m.now.average, 88);
+});
+
+test('nothing to compare against reads as no comparison, not as a rise', () => {
+  const now = new Date('2026-09-04T02:00:00Z');
+  const daily = dailyTakings([
+    { status: 'picked_up', created_at: '2026-09-04T01:00:00Z', price: 100 },
+  ], 4, now);
+  const m = takingsMetrics(daily, 2);
+  assert.equal(m.was.revenue, 0);
+  assert.equal(m.change.revenue, null, 'up from nothing is not a percentage');
+  assert.equal(m.change.discount, null);
 });
 
 test('daily takings keeps empty days so the weekly rhythm stays true', () => {

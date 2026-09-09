@@ -667,16 +667,53 @@ export function toCsv(headers, rows) {
 export function dailyTakings(orders, days = 30, now = new Date()) {
   const todayKey = sydneyParts(now).dayKey;
   const buckets = new Map();
-  for (let i = days - 1; i >= 0; i--) buckets.set(addDayKey(todayKey, -i), { revenue: 0, count: 0 });
+  for (let i = days - 1; i >= 0; i--) buckets.set(addDayKey(todayKey, -i), { revenue: 0, count: 0, discount: 0 });
 
   for (const o of orders) {
     if (o.status === 'cancelled') continue;
     const b = buckets.get(sydneyParts(o.created_at).dayKey);
     if (!b) continue;
     b.revenue += netPrice(o);
+    b.discount += discountOn(o);
     b.count += 1;
   }
   return [...buckets.entries()].map(([dayKey, b]) => ({ dayKey, ...b }));
+}
+
+/**
+ * A period against the one before it, for the four figures the takings panel
+ * puts across the top.
+ *
+ * Takes twice the days it reports on — the older half is the comparison and is
+ * never drawn. The average is the period's revenue over the period's orders,
+ * **not** the mean of the daily averages: a Tuesday with one $40 cake would
+ * otherwise weigh the same as a Saturday with eleven.
+ *
+ * `change` is null rather than 0 when the previous period had nothing, because
+ * "up 100%" from zero is a sentence with no meaning in it.
+ */
+export function takingsMetrics(daily, days) {
+  const cur = daily.slice(-days);
+  const prev = daily.slice(0, daily.length - days);
+
+  const sum = (rows, field) => rows.reduce((t, r) => t + num(r[field]), 0);
+  const totals = (rows) => {
+    const revenue = sum(rows, 'revenue');
+    const count = sum(rows, 'count');
+    return { revenue, count, discount: sum(rows, 'discount'), average: count ? revenue / count : 0 };
+  };
+
+  const now = totals(cur);
+  const was = totals(prev);
+  const change = (k) => (prev.length && was[k] > 0 ? ((now[k] - was[k]) / was[k]) * 100 : null);
+
+  return {
+    rows: cur,
+    days,
+    now,
+    was,
+    change: { revenue: change('revenue'), count: change('count'), average: change('average'), discount: change('discount') },
+  };
 }
 
 /** Revenue per Monday-week per store, oldest first, for the stacked columns. */

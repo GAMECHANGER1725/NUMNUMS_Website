@@ -590,6 +590,29 @@ export async function removePhoto(order, path) {
   return updateOrder(order.id, { photo_path: left[0] || null, photo_paths: left });
 }
 
+/**
+ * Deletes an order outright. Admin only — `orders_admin_delete` in Postgres is
+ * what actually enforces that, not the button.
+ *
+ * For an order that should never have existed: a double entry, a test, a
+ * customer who changed their mind before anything was made. Cancelling those
+ * instead leaves them in the cancellation rate, which is a number the shop
+ * reads as "customers backing out" and acts on.
+ *
+ * The photos go first, for the same reason as `removePhoto`: storage is only
+ * reachable *through* the row, so deleting the row first strands every file.
+ * The costs, print jobs and the order's whole event trail cascade away with it;
+ * a `before delete` trigger keeps the row itself in `deleted_orders`.
+ */
+export async function deleteOrder(order) {
+  const paths = orderPhotos(order);
+  if (paths.length) await sb.storage.from('cake-photos').remove(paths);
+
+  const { error } = await sb.from('orders').delete().eq('id', order.id);
+  if (error) throw error;
+  wrote();
+}
+
 // ── Print jobs ──────────────────────────────────────────────────────────────
 // A cake that also needs 3D toppers or photo prints. The job hangs off the
 // order instead of repeating its details, so nobody re-types a design brief
