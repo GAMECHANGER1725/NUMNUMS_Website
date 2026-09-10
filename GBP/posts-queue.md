@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-10
+
+```yaml
+id: post-rs-2026-09-10
+status: published
+published_at: 2026-09-10
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless cakes for Schofields, Marsden Park and Riverstone families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5752.jpeg"
+keywords_baited:
+  - custom eggless cake Schofields
+  - eggless bakery Marsden Park
+  - can't find 100% eggless cake near Schofields
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-2026-06-14-001
 
 ```yaml
