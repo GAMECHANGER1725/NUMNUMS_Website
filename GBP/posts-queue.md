@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-10-2
+
+```yaml
+id: post-hp-2026-09-10-2
+status: published
+published_at: 2026-09-10
+location: harris-park
+post_type: "Call to action"
+title: "48 hours is enough: custom eggless cakes for Merrylands and Westmead"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1569.jpg"
+keywords_baited:
+  - 48-hour custom eggless cake order
+  - Merrylands Westmead Harris Park
+  - thought a birthday cake needed two weeks notice
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-hp-2026-09-10
 
 ```yaml
