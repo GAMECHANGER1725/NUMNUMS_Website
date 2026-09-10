@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-10-2
+
+```yaml
+id: post-hp-2026-09-10-2
+status: published
+published_at: 2026-09-10
+location: harris-park
+post_type: "Call to action"
+title: "Rasmalai and Mango eggless cakes for Parramatta and Westmead families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1879.jpg"
+keywords_baited:
+  - Rasmalai eggless cake
+  - Parramatta Westmead Harris Park bakery
+  - eggless cake that actually tastes like Rasmalai
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-hp-2026-09-10
 
 ```yaml
