@@ -164,6 +164,27 @@ else pass('photo inputs: picker without capture, camera with it');
   else if (gone.length) fail(`tour steps point at ids that no longer exist: ${gone.join(', ')}`);
   else pass(`tour targets all exist (${ids.length} by id)`);
 
+  // A section's Show me button names a tour by string. A typo there is silent:
+  // tourFor returns nothing and the button simply never renders.
+  const tourKeys = new Set([...help.matchAll(/^  '?([\w-]+)'?:\s*\{$/gm)].map((m) => m[1]));
+  const referenced = [...help.matchAll(/tour:\s*'([^']+)'/g)].map((m) => m[1]);
+  const unknown = referenced.filter((k) => !tourKeys.has(k));
+  if (!referenced.length) fail('no help section references a walkthrough — has `tour:` moved?');
+  else if (unknown.length) fail(`help sections name walkthroughs that do not exist: ${unknown.join(', ')}`);
+  else pass(`every Show me button names a real walkthrough (${referenced.length})`);
+
+  // `view` and `open` are handed to prepTour in app.mjs, which only knows a
+  // fixed set of each. An unknown one is a walkthrough that quietly does nothing.
+  const opens = [...help.matchAll(/open:\s*'([^']+)'/g)].map((m) => m[1]);
+  const badOpen = [...new Set(opens)].filter((o) => !app.includes(`t.open === '${o}'`));
+  if (badOpen.length) fail(`help.mjs asks prepTour to open things it cannot: ${badOpen.join(', ')}`);
+  else pass(`prepTour handles every open (${[...new Set(opens)].join(', ')})`);
+
+  const views = [...new Set([...help.matchAll(/^\s*view:\s*'([^']+)',$/gm)].map((m) => m[1]))];
+  const badView = views.filter((v) => !declared.has(`view-${v}`));
+  if (badView.length) fail(`walkthroughs point at views that do not exist: ${badView.join(', ')}`);
+  else pass(`walkthrough views all exist (${views.join(', ')})`);
+
   // Role lists are typed by hand in both files and nothing else compares them.
   const roles = new Set([...help.matchAll(/'(admin|staff|baker|[a-z]+)'/g)]
     .map((m) => m[1]).filter((r) => /^(admin|staff|baker)$/.test(r)));

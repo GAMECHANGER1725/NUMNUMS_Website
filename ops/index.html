@@ -1474,6 +1474,39 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
    characters to the edge of the screen. */
 #view-help { max-width: 620px; margin: 0 auto; }
 .help-top { display: grid; gap: 11px; }
+
+/* The list of walkthroughs. A row, not a button grid: the label has to carry a
+   line of explanation or "Adding a print job" and "Working a print job" are
+   indistinguishable, and the count tells you what you are committing to. */
+.walk {
+  display: flex; align-items: center; gap: 11px;
+  width: 100%; text-align: left; min-height: 52px;
+  padding: 10px 2px; border-bottom: 1px solid var(--dough-line);
+}
+.walk:last-of-type { border-bottom: 0; }
+.walk:hover .walk-name { color: var(--rose-deep); }
+.walk:hover .walk-ico { background: var(--rose); color: var(--cream); }
+.walk-ico {
+  width: 30px; height: 30px; flex: none; border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(200,84,120,.11); color: var(--rose-deep);
+  transition: background-color .16s ease, color .16s ease;
+}
+.walk-ico svg, .help-run-ico svg {
+  width: 14px; height: 14px; fill: currentColor; stroke: currentColor; stroke-width: 1.4;
+}
+.walk-lines { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.walk-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.walk-note { font-size: 12px; color: var(--taupe); line-height: 1.4; }
+/* No step count here on purpose: a step whose target is not on this screen is
+   dropped, so any number printed in advance is wrong on a quiet day. */
+.walk-chev { flex: none; display: grid; place-items: center; }
+.walk-chev svg {
+  width: 15px; height: 15px; stroke: var(--taupe); fill: none; stroke-width: 2;
+  transform: rotate(-90deg);
+}
+.help-run { width: 100%; margin-top: 15px; }
+.help-run-ico { display: inline-grid; place-items: center; }
 .help-hello { font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
 .help-key-note { font-size: 13px; color: var(--taupe); text-align: right; }
 .help-sec .collapse-head { align-items: flex-start; }

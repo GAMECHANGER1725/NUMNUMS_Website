@@ -110,14 +110,58 @@ async function start() {
 const homeView = () => (me.role === 'baker' ? 'bake' : 'log');
 
 /**
- * The tour points at what is on screen, so it runs from the role's home view —
- * replayed from the Help page it would otherwise skip the search box and the
- * store switcher, which are hidden everywhere else.
+ * A walkthrough points at the real screen, so the app has to be standing on it
+ * first. `prepTour` is that half — it switches tab and opens the sheet the tour
+ * is about, and hands back a sentence instead of `true` when it cannot: an
+ * empty order book has nothing to point at, and saying so beats a walkthrough
+ * that silently collapses to one step.
  */
-async function runTour() {
-  if (view !== homeView()) { view = homeView(); buildTabs(); await render(); }
-  startTour({ onDone: () => markTourSeen(me.id) });
+async function runTour(key = 'intro') {
+  closeDrawer();
+  closeSheet();
+  await startTour(key, {
+    role: me.role,
+    prepare: prepTour,
+    onDone: (problem) => {
+      markTourSeen(me.id);
+      if (typeof problem === 'string') toast(problem, 'error');
+    },
+  });
 }
+
+async function prepTour(t) {
+  // No view of its own means the role's home screen: that is where the intro
+  // tour's search box and store switcher live, and where `orders` is loaded.
+  const want = t.view || homeView();
+  if (view !== want) { view = want; buildTabs(); await render(); }
+
+  if (t.open === 'new-order') openNewOrder();
+  else if (t.open === 'new-print') await openNewPrintJob();
+  else if (t.open === 'first-order') {
+    if (!orders.length) return 'There are no orders on the book to open — this walkthrough needs one to point at.';
+    await openOrder(richestOrder().id);
+  } else if (t.open === 'first-print') {
+    const job = teachablePrint();
+    if (!job) return 'Nothing is waiting on the print board — this walkthrough needs a job to point at.';
+    await openPrintJob(job.id);
+  }
+  return true;
+}
+
+/**
+ * Which order to teach on. A step whose target is not on screen is dropped, so
+ * opening a bare normal cake costs the walkthrough its photo step and its print
+ * warning — the two things hardest to explain in words. Prefer a cake that has
+ * both, then one with photos, then whatever is first.
+ */
+const outstanding = (o) => (printsByOrder.get(o.id) || []).some((j) => j.status !== 'printed');
+const richestOrder = () =>
+  orders.find((o) => orderPhotos(o).length && outstanding(o))
+  || orders.find((o) => orderPhotos(o).length)
+  || orders[0];
+
+/** And a print job this role is actually allowed to tick off, if there is one. */
+const teachablePrint = () => printJobs.find((j) => canPrintStatus(j)) || printJobs[0];
 
 function buildStoreSwitch() {
   const el = $('store-switch');
@@ -2938,7 +2982,8 @@ $('help-btn').addEventListener('click', () => {
 function renderHelp() {
   const root = $('view-help');
   root.innerHTML = helpHtml(me);
-  root.querySelector('.help-tour').addEventListener('click', () => runTour());
+  root.querySelectorAll('[data-tour]').forEach((b) =>
+    b.addEventListener('click', () => runTour(b.dataset.tour)));
 }
 
 // ── Customer directory ──────────────────────────────────────────────────────
