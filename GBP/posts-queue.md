@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-11
+
+```yaml
+id: post-hp-2026-09-11
+status: published
+published_at: 2026-09-11
+location: harris-park
+post_type: "Call to action"
+title: "Custom eggless birthday cakes for Granville and Merrylands families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0827.jpg"
+keywords_baited:
+  - custom eggless birthday cake
+  - Granville Merrylands Harris Park
+  - does this cake actually have no eggs
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-hp-2026-09-10
 
 ```yaml
