@@ -1368,13 +1368,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             'Pickup time: '      + hour + ':' + min + ' ' + ampm  + '\n' +
             'Notes: '            + (notes||'None')                + '\n' +
             'If you have a reference image for your desired design, please attach it to this message.\n' +
-            'Note: I understand this is a starting price and the final cost will be confirmed by your team before I pay.';
+            'Custom cake pricing: the price above is the starting price for this size — your final quote depends on the design and will be confirmed here on WhatsApp before payment.';
           try {
             if (typeof gtag === 'function') { gtag('event', 'order_form_submit', { method: 'whatsapp', transport: 'beacon' }); }
             if (window.dataLayer) { window.dataLayer.push({ event: 'order_form_submit', enquiry_method: 'whatsapp' }); }
             if (typeof fbq === 'function') { fbq('track', 'Lead', { content_name: 'order_form' }); }
           } catch (e) {}
-          window.open('https://wa.me/61425697725?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+          var waUrl = 'https://wa.me/61425697725?text=' + encodeURIComponent(msg);
+          var pricingModal = document.getElementById('pricing-confirm-modal');
+          if (pricingModal) {
+            pricingModal.dataset.waUrl = waUrl;
+            pricingModal.style.display = 'flex';
+          } else {
+            window.open(waUrl, '_blank', 'noopener');
+          }
         });
       }
 
@@ -1746,6 +1753,40 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.addEventListener('click', function() { if (open) open(false); });
 
       document.querySelectorAll('select').forEach(dress);
+    })();
+  </script>
+
+  <!-- Pricing confirmation modal — shown right before handing off to WhatsApp,
+       so the pricing note isn't just one line inside a pre-filled message
+       people skim past. -->
+  <div id="pricing-confirm-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(44,26,14,0.55);align-items:center;justify-content:center;padding:1rem;">
+    <div style="background:#FFF8F2;border-radius:1rem;max-width:400px;width:100%;padding:1.75rem 1.5rem;box-shadow:0 20px 50px rgba(44,26,14,0.35);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.85rem;">
+        <span class="material-symbols-outlined" style="font-size:1.4rem;color:#C85478;">cake</span>
+        <h3 style="font-family:'Jost',sans-serif;font-size:1.05rem;font-weight:700;color:#2C1A0E;margin:0;">Custom cake pricing</h3>
+      </div>
+      <p style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:400;color:#5C3A22;margin:0 0 1.25rem;line-height:1.65;">Every cake is made to order, so pricing is set per design. The amount shown on this page is the starting price for your size — we'll confirm your final quote with you on WhatsApp once we've seen your design details, before you pay anything.</p>
+      <div style="display:flex;flex-direction:column;gap:0.6rem;">
+        <button type="button" id="pricing-confirm-continue" class="btn-cta" style="width:100%;justify-content:center;background:#25D366;box-shadow:0 4px 14px rgba(37,211,102,0.28);" onmouseenter="this.style.background='#1DAD56'" onmouseleave="this.style.background='#25D366'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Continue to WhatsApp
+        </button>
+        <button type="button" id="pricing-confirm-back" style="width:100%;text-align:center;background:none;border:none;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:rgba(92,58,34,0.55);padding:6px;cursor:pointer;">Go back</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      var modal = document.getElementById('pricing-confirm-modal');
+      if (!modal) return;
+      function close() { modal.style.display = 'none'; }
+      document.getElementById('pricing-confirm-continue').addEventListener('click', function() {
+        var url = modal.dataset.waUrl;
+        close();
+        if (url) window.open(url, '_blank', 'noopener');
+      });
+      document.getElementById('pricing-confirm-back').addEventListener('click', close);
+      modal.addEventListener('click', function(e) { if (e.target === modal) close(); });
     })();
   </script>
 </body>
