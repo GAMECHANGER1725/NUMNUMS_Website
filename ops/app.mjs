@@ -109,19 +109,13 @@ async function start() {
 /** Where each role starts, and where the tour wants to be run from. */
 const homeView = () => (me.role === 'baker' ? 'bake' : 'log');
 
-/**
- * A walkthrough points at the real screen, so the app has to be standing on it
- * first. `prepTour` is that half — it switches tab and opens the sheet the tour
- * is about, and hands back a sentence instead of `true` when it cannot: an
- * empty order book has nothing to point at, and saying so beats a walkthrough
- * that silently collapses to one step.
- */
+/** Start a walkthrough. `tourAct` below is the app's half of it. */
 async function runTour(key = 'intro') {
   closeDrawer();
   closeSheet();
   await startTour(key, {
     role: me.role,
-    prepare: prepTour,
+    act: tourAct,
     onDone: (problem) => {
       markTourSeen(me.id);
       if (typeof problem === 'string') toast(problem, 'error');
@@ -129,21 +123,35 @@ async function runTour(key = 'intro') {
   });
 }
 
-async function prepTour(t) {
-  // No view of its own means the role's home screen: that is where the intro
-  // tour's search box and store switcher live, and where `orders` is loaded.
-  const want = t.view || homeView();
-  if (view !== want) { view = want; buildTabs(); await render(); }
-
-  if (t.open === 'new-order') openNewOrder();
-  else if (t.open === 'new-print') await openNewPrintJob();
-  else if (t.open === 'first-order') {
+/**
+ * The app's half of a walkthrough: the navigation a step asks for, performed as
+ * the reader advances onto it, so the step before it could spotlight the button
+ * they would have pressed. Being teleported into the order form teaches nothing
+ * about how to get there.
+ *
+ * Returns a sentence instead of true when the thing cannot be opened, and the
+ * walk stops there saying why rather than collapsing to one step.
+ */
+async function tourAct(what) {
+  if (what.startsWith('view:')) {
+    const want = what.slice(5) === 'home' ? homeView() : what.slice(5);
+    closeDrawer();
+    if (view !== want) { view = want; buildTabs(); await render(); }
+    return true;
+  }
+  if (what === 'drawer') { openDrawer(); return true; }
+  if (what === 'new-order') { openNewOrder(); return true; }
+  if (what === 'new-print') { await openNewPrintJob(); return true; }
+  if (what === 'first-order') {
     if (!orders.length) return 'There are no orders on the book to open — this walkthrough needs one to point at.';
     await openOrder(richestOrder().id);
-  } else if (t.open === 'first-print') {
+    return true;
+  }
+  if (what === 'first-print') {
     const job = teachablePrint();
     if (!job) return 'Nothing is waiting on the print board — this walkthrough needs a job to point at.';
     await openPrintJob(job.id);
+    return true;
   }
   return true;
 }

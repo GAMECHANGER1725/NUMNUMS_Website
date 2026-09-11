@@ -124,40 +124,47 @@ main site.
   so do not "streamline" it away.
 - **The app teaches itself, because nobody sits a new hire down with it.** `help.mjs` holds
   both halves: a **Help page** behind the `?` in the top bar, and **twelve walkthroughs** that
-  cover every job a role can do — logging an order field by field, adding a print job, handing
-  a cake over, the baking queue, the analytics caveats, the export. A walkthrough spotlights
+  cover every job a role can do — logging an order box by box, adding a print job, handing a
+  cake over, the baking queue, the analytics caveats, the export. A walkthrough spotlights
   **live elements**, not screenshots, so it cannot go stale the way a picture of the app does.
-  - `prepTour` in `app.mjs` is the app's half: a tour declares `view` (which tab) and `open`
-    (`new-order` / `first-order` / `new-print` / `first-print`), and prepTour puts the app
-    there before the first step. It returns a **sentence instead of `true`** when it cannot —
-    an empty order book has nothing to point at, and saying so beats a walkthrough that
-    silently collapses to one step.
+  - **Navigation is part of the walk, not done behind the reader's back.** A step carries
+    `do:` — `view:<v>` (or `view:home`), `drawer`, `new-order`, `new-print`, `first-order`,
+    `first-print` — performed by `tourAct` in `app.mjs` as the reader advances *onto* it, so
+    the step before it spotlights the button they would have pressed and says "tap Next and it
+    will open it". Logging an order starts on the **New** tab; the directory walks More →
+    Customers → Directory one tap at a time. Being teleported into the order form teaches
+    nothing about how to get there, which is what the first version did.
+  - `tourAct` returns a **sentence instead of `true`** when it cannot — an empty order book has
+    nothing to open — and the walk stops there saying why.
   - **What it opens matters.** `richestOrder()` prefers a cake that has photos *and* an
-    outstanding print, because a step whose target is missing is dropped — open a bare normal
-    cake and the walkthrough loses its photo step and its print warning, the two things
-    hardest to explain in words. `teachablePrint()` picks a job the role may actually tick off.
-  - `reveal` clicks the controls that unhide the rest of a form (the order form is hidden
-    until a kind is picked), and it **skips anything already `aria-pressed`** — these are
-    toggles, and clicking the print kind the board was already showing turned it *off* and hid
-    both briefs.
-  - **Never print a step count.** A step whose target is not on screen is dropped, so any
-    number shown in advance is wrong on a quiet day — the Help page said "11 steps" and gave
-    the baker five. The page says so instead of counting.
+    outstanding print, because a step whose target is missing is skipped — open a bare normal
+    cake and the walk loses its photo step and its print warning, the two things hardest to
+    explain in words. `teachablePrint()` picks a job the role may actually tick off.
+  - `reveal` clicks the controls that unhide the rest of a form (the order form is hidden until
+    a kind is picked; a drawer group must be expanded), and it **skips anything already
+    `aria-pressed` or `aria-expanded`** — these are toggles, and clicking the print kind the
+    board was already showing turned it *off* and hid both briefs.
+  - **Never print a step count.** A step whose target is not on this screen is skipped as the
+    walk reaches it, so any total is wrong on a quiet day — the Help page once said "11 steps"
+    and gave the baker five. The card counts up (`Step 3`) and the last button says Done.
+  - The spotlight is **clamped inside the viewport**. A target taller or wider than the phone —
+    the customer list, a full-width drawer row — otherwise drew a ring with one edge off the
+    display, which reads as a broken box rather than a highlight.
   - Steps carry their own optional `roles`, so one list covers everyone. Target elements must
     be **rendered synchronously**: `#edit-trail` and `#status-actions` fill after a fetch, so a
-    step pointed at an id that is still an empty div is dropped. Point at the block, not the
+    step pointed at an id that is still an empty div is skipped. Point at the block, not the
     thing that arrives later.
   - Seen-state is keyed by **user id**, not by phone: the counter tablet is shared and the
     second person to sign in on it needs the intro as much as the first.
   - Every help section and tour declares `roles`, and those lists have to track `TABS`/`MENU`
     and the RLS behind them — showing a baker the invoice button teaches them a thing the
     database will refuse, which is worse than showing nothing.
-  - `verify.mjs` fails the build if a tour step points at an id that no longer exists, if a
-    section's `tour:` names a walkthrough that is not there, or if a tour's `view`/`open` is
-    one `prepTour` does not handle. All three fail *silently* at runtime: the step is dropped,
-    the button never renders, the walkthrough does nothing.
-  - Help is a **view, not a sheet** — it is read while you try the thing it describes — and
-    the `?` toggles back to where you were.
+  - `verify.mjs` fails the build if a step points at an id that no longer exists, if a section's
+    `tour:` names a walkthrough that is not there, if a `do:` is one `tourAct` cannot perform,
+    or if a walkthrough never navigates at all. Every one of those fails *silently* at runtime:
+    the step is skipped, the button never renders, the walk opens nothing.
+  - Help is a **view, not a sheet** — it is read while you try the thing it describes — and the
+    `?` toggles back to where you were.
 - **Navigation**: the tab bar holds Orders, New, To bake, Prints and **More**, which opens the
   drawer. More is a tab like the rest — same `.tab` class, so it inherits the bar's font, colours
   and active pill — and it hides itself when a role has no groups (the baker sees four). It reads

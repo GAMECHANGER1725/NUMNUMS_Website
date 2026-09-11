@@ -41,6 +41,7 @@ export const TOURS = {
     note: 'The five things in the bar, and where everything lives',
     steps: [
       {
+        do: 'view:home',
         sel: '#me-role',
         title: 'This is your role',
         text: 'What you can see and change comes from this. The app never offers you a button the database would refuse.',
@@ -88,7 +89,7 @@ export const TOURS = {
       {
         sel: '#help-btn',
         title: 'And help lives here',
-        text: 'Every screen, top right. Each section on that page has a Show me button that walks you through that job on the real screen.',
+        text: 'Every screen, top right. Each job on that page has a walkthrough that taps its way in and names every box.',
       },
       {
         sel: null,
@@ -101,22 +102,29 @@ export const TOURS = {
   'new-order': {
     label: 'Logging an order',
     roles: COUNTER,
-    note: 'Opens a real order form and names every box',
-    open: 'new-order',
-    // The form stays hidden until a kind is picked, so pick one for them.
-    reveal: ['[data-kind="custom"]'],
+    note: 'From the New button to Save, box by box',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="new"]',
+        title: 'Start here — tap New',
+        text: 'Bottom of every screen. Tap Next and this walkthrough will open it for you.',
+      },
+      {
+        do: 'new-order',
         sel: '.kind-pick',
         title: 'Custom or normal, first',
         text: 'This choice changes the rest of the form, so it comes first. Custom is made to a design. Normal is off the menu — and then you are asked whether it was ordered for later or bought in store now.',
       },
       {
+        // Picking a kind is what unhides the form the rest of these point into.
+        reveal: ['[data-kind="custom"]'],
         sel: '#dd-store',
         title: 'Which shop it is for',
         text: 'You work at both, so say which one. It decides whose book the cake lands in.',
       },
       {
+        reveal: ['[data-kind="custom"]'],
         sel: '#f-name',
         title: 'The customer',
         text: 'Start typing. If they have ordered before, a suggestion drops down — tap it and the phone fills itself in.',
@@ -189,7 +197,12 @@ export const TOURS = {
       {
         sel: '#save-order',
         title: 'Save it',
-        text: 'The cake appears on the order list and on the baker’s queue straight away. The form is still open — carry on and log it for real, or close it with the ✕.',
+        text: 'The cake appears on the order list and on the baker’s queue straight away.',
+      },
+      {
+        sel: null,
+        title: 'The form is still open',
+        text: 'Nothing has been saved. Carry on and log a real order from here, or close it with the ✕ at the top.',
       },
     ],
   },
@@ -197,10 +210,16 @@ export const TOURS = {
   find: {
     label: 'Finding an order again',
     roles: COUNTER,
-    note: 'Search, dates, and what the groups mean',
-    view: 'log',
+    note: 'From the Orders tab: search, dates, groups',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="log"]',
+        title: 'Start on Orders',
+        text: 'The worklist lives here. Tap Next and this walkthrough will open it.',
+      },
+      {
+        do: 'view:log',
         sel: '#log-search',
         title: 'Search reaches the whole book',
         text: 'A name, part of a phone number, a docket number like HP-1832, or the cake. Not just what is on this screen — an order from March comes back.',
@@ -231,14 +250,19 @@ export const TOURS = {
   order: {
     label: 'Opening an order',
     roles: ALL,
-    note: 'Everything you can do to a cake, on a real one',
-    open: 'first-order',
+    note: 'Tap a card, then everything you can do to the cake',
     steps: [
       {
+        do: 'view:home',
+        sel: '.docket',
+        title: 'Tap any cake',
+        text: 'On the order list, the baking queue or the print board — a card opens the whole order. Tap Next and this walkthrough will open one.',
+      },
+      {
+        do: 'first-order',
         sel: '.detail-gallery',
         title: 'What the customer sent',
         text: 'Every reference photo, all on screen at once. Tap one to open it full size in a new tab.',
-        roles: ALL,
       },
       {
         sel: '.photo-remove',
@@ -256,7 +280,6 @@ export const TOURS = {
         sel: '#detail-view',
         title: 'The order itself',
         text: 'Customer, both dates, shop, flavour, size, wording and design notes. Log time is when it was typed in; Order time is when they actually asked.',
-        roles: ALL,
       },
       {
         sel: '#edit-toggle',
@@ -268,13 +291,11 @@ export const TOURS = {
         sel: '#print-warn',
         title: 'What still has to be printed',
         text: 'A topper or a photo sheet this cake is waiting on. Marking the cake baked or picked up will stop and show you this first — that interruption is the whole reason this app exists.',
-        roles: ALL,
       },
       {
         sel: '#status-actions',
         title: 'Move the cake along',
         text: 'Only the steps your role is allowed to make are here. The counter marks a cake At store and Picked up; the kitchen marks it Baked; cancelling belongs to the counter.',
-        roles: ALL,
       },
       {
         sel: '#cost-input',
@@ -295,12 +316,11 @@ export const TOURS = {
         roles: COUNTER,
       },
       {
-        // #edit-trail is filled after a fetch, so it is an empty div at the moment
-        // the steps are filtered. The timeline above it is always there.
+        // #edit-trail is filled after a fetch, so it is an empty div at the
+        // moment this step is resolved. The timeline above it is always there.
         sel: '.timeline',
         title: 'Everything that has happened to it',
         text: 'When it was ordered, logged, baked and collected. Underneath, for an admin, every field anyone has changed — the old value, the new one and who did it. Nothing about an order is ever lost.',
-        roles: ['admin'],
       },
       {
         sel: '#receipt-btn',
@@ -318,7 +338,6 @@ export const TOURS = {
         sel: null,
         title: 'Close it with the ✕',
         text: 'Or the back gesture on the phone — it closes the sheet instead of walking out of the app.',
-        roles: ALL,
       },
     ],
   },
@@ -326,10 +345,16 @@ export const TOURS = {
   bake: {
     label: 'Working the baking list',
     roles: KITCHEN,
-    note: 'The queue, the store bar and the counter tally',
-    view: 'bake',
+    note: 'From the To bake tab: the queue, the stores, the tally',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="bake"]',
+        title: 'Start on To bake',
+        text: 'Everything still to be made. Tap Next and this walkthrough will open it.',
+      },
+      {
+        do: 'view:bake',
         sel: '#view-bake .segmented',
         title: 'Both shops by default',
         text: 'Baking is central, so the combined queue is the working view. The per-shop tabs are for loading a van or checking one shop’s book. The number beside each is how many cakes are waiting.',
@@ -355,10 +380,16 @@ export const TOURS = {
   prints: {
     label: 'The print board',
     roles: ALL,
-    note: 'Toppers and photo sheets waiting on the machines',
-    view: 'prints',
+    note: 'From the Prints tab: what is waiting on the machines',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="prints"]',
+        title: 'Start on Prints',
+        text: 'Every cake waiting on something printed. Tap Next and this walkthrough will open it.',
+      },
+      {
+        do: 'view:prints',
         sel: '#view-prints .segmented',
         title: '3D and photo are separate lists',
         text: 'Different machines, different people, different finish times. The number beside each is what is still to print.',
@@ -385,15 +416,20 @@ export const TOURS = {
   'new-print': {
     label: 'Adding a print job',
     roles: ['admin'],
-    note: 'Opens the real form and names every box',
-    view: 'prints',
-    open: 'new-print',
-    // Both kinds on, whichever tab the board was left on, so both briefs have
-    // something to point at. The skip-if-already-pressed rule is what makes
-    // naming both safe: the one already on is left alone rather than toggled off.
-    reveal: ['[data-pkind="3d"]', '[data-pkind="photo"]'],
+    note: 'From Add a print job to Save, box by box',
     steps: [
       {
+        do: 'view:prints',
+        sel: '#print-add',
+        title: 'Start here',
+        text: 'On the Prints board. Tap Next and this walkthrough will open the form.',
+      },
+      {
+        do: 'new-print',
+        // Both kinds on, whichever tab the board was left on, so both briefs
+        // have something to point at. The skip-if-already-pressed rule is what
+        // makes naming both safe: the one already on is left alone.
+        reveal: ['[data-pkind="3d"]', '[data-pkind="photo"]'],
         sel: '.kind-pick',
         title: '3D, photo, or both',
         text: 'Tap both if the cake needs both. It becomes two jobs, because the topper and the photo sheet finish at different times and belong to different people — but you log them in one pass.',
@@ -423,17 +459,27 @@ export const TOURS = {
         title: 'Save',
         text: 'The job lands on the board, and the cake it points at starts showing a print flag on every screen it appears on.',
       },
+      {
+        sel: null,
+        title: 'Nothing has been saved',
+        text: 'This form is a demonstration. Close it with the ✕, or fill it in properly and save a real job from here.',
+      },
     ],
   },
 
   'print-job': {
     label: 'Working a print job',
     roles: ALL,
-    note: 'The brief, the photos, and marking it done',
-    view: 'prints',
-    open: 'first-print',
+    note: 'Tap a job: the brief, the photos, marking it done',
     steps: [
       {
+        do: 'view:prints',
+        sel: '#view-prints .docket',
+        title: 'Tap a job',
+        text: 'On the Prints board. Tap Next and this walkthrough will open one.',
+      },
+      {
+        do: 'first-print',
         sel: '.detail-gallery',
         title: 'The reference photos',
         text: 'The same pictures the customer sent, at the size you need them. Tap one to open it full size.',
@@ -466,10 +512,23 @@ export const TOURS = {
   customers: {
     label: 'Looking a customer up',
     roles: COUNTER,
-    note: '“I ordered here last month” now has an answer',
-    view: 'directory',
+    note: 'More › Customers › Directory, tapped out in full',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="more"]',
+        title: 'Tap More',
+        text: 'Everything read away from the counter lives behind this. Tap Next and this walkthrough will open the drawer.',
+      },
+      {
+        do: 'drawer',
+        reveal: ['.nav-head[data-group="Customers"]'],
+        sel: '.nav-item[data-view="directory"]',
+        title: 'Then Directory',
+        text: 'Under Customers. Tap Next and this walkthrough will open it.',
+      },
+      {
+        do: 'view:directory',
         sel: '#cust-search',
         title: 'Name or number',
         text: 'Part of either is enough. You see the customers of your own shop.',
@@ -480,7 +539,9 @@ export const TOURS = {
         text: 'By who ordered most recently, who spends the most, or who has been quiet a while.',
       },
       {
-        sel: '#cust-list',
+        // The first row, not the whole list: a cut-out around an unbounded list
+        // runs off the bottom of the phone and leaves the card nowhere to sit.
+        sel: '#cust-list .cust-row',
         title: 'What each one shows',
         text: 'How many cakes, what they have spent, and when they last ordered. Tap a person to see every order they have had.',
       },
@@ -490,13 +551,26 @@ export const TOURS = {
   analytics: {
     label: 'Reading the numbers',
     roles: ['admin'],
-    note: 'Finance, Customers and Data — and what to trust',
-    view: 'analytics',
+    note: 'More › Analytics — and what to trust',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="more"]',
+        title: 'Tap More',
+        text: 'The three number pages live behind this. Tap Next and this walkthrough will open the drawer.',
+      },
+      {
+        do: 'drawer',
+        reveal: ['.nav-head[data-group="Analytics"]'],
+        sel: '.nav-item[data-page="finance"]',
+        title: 'Then Finance',
+        text: 'Customers and Data sit under it — same fetch, three readings of it. Tap Next for Finance.',
+      },
+      {
+        do: 'view:analytics',
         sel: '#fresh-when',
         title: 'How old this is',
-        text: 'All three pages come off one load of the last 63 days, held so the pages open instantly. Refresh after logging orders if the figures look behind.',
+        text: 'All three pages come off one load of the last 63 days, held so they open instantly. Refresh after logging orders if the figures look behind.',
       },
       {
         sel: '#metric-row',
@@ -524,10 +598,23 @@ export const TOURS = {
   export: {
     label: 'Exporting for the bookkeeper',
     roles: ['admin'],
-    note: 'A month or a financial year, as CSV',
-    view: 'export',
+    note: 'More › Export — a month or a financial year',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="more"]',
+        title: 'Tap More',
+        text: 'Tap Next and this walkthrough will open the drawer.',
+      },
+      {
+        do: 'drawer',
+        reveal: ['.nav-head[data-group="Export"]'],
+        sel: '.nav-item[data-view="export"]',
+        title: 'Then Orders for the bookkeeper',
+        text: 'Under Export. Tap Next and this walkthrough will open it.',
+      },
+      {
+        do: 'view:export',
         sel: '.range-pick',
         title: 'Pick the period',
         text: 'By the date each order was taken, not when the cake was collected. Financial years are there so they line up with what the bookkeeper asks for.',
@@ -535,7 +622,7 @@ export const TOURS = {
       {
         sel: '#export-go',
         title: 'Download',
-        text: 'One row per order, including cost — so treat the file the way you treat the books. It is written on the phone, so it works with no connection to anything but the order list you already have.',
+        text: 'One row per order, including cost — so treat the file the way you treat the books. It is written on the phone, out of the orders already loaded.',
       },
     ],
   },
@@ -543,13 +630,26 @@ export const TOURS = {
   staff: {
     label: 'Staff and sign-ins',
     roles: ['admin'],
-    note: 'Who has an account, and who has been on',
-    view: 'staff',
+    note: 'More › Staff — who has an account',
     steps: [
       {
+        do: 'view:home',
+        sel: '.tab[data-tab="more"]',
+        title: 'Tap More',
+        text: 'Tap Next and this walkthrough will open the drawer.',
+      },
+      {
+        do: 'drawer',
+        reveal: ['.nav-head[data-group="Staff"]'],
+        sel: '.nav-item[data-view="staff"]',
+        title: 'Then People & sign-ins',
+        text: 'Under Staff. Tap Next and this walkthrough will open it.',
+      },
+      {
+        do: 'view:staff',
         sel: '#view-staff .panel',
         title: 'Everyone with an account',
-        text: 'Name, role and which shops they are scoped to.',
+        text: 'Name, role and which shops they are scoped to, and underneath, who has signed in recently.',
       },
       {
         sel: null,
@@ -559,14 +659,12 @@ export const TOURS = {
     ],
   },
 };
-
 const tourFor = (key, role) => {
   const t = TOURS[key];
   return t && t.roles.includes(role) ? t : null;
 };
 
-/** The steps this role will actually be shown, before anything is on screen. */
-export const tourSteps = (key, role) =>
+const roleSteps = (key, role) =>
   (TOURS[key]?.steps || []).filter((s) => !s.roles || s.roles.includes(role));
 
 // ── Help page ───────────────────────────────────────────────────────────────
@@ -1012,34 +1110,31 @@ let running = false;
 /**
  * Runs one walkthrough over the real screen.
  *
- * `prepare` is the app's half: it switches tab and opens the sheet the tour
- * needs, and returns a string instead of true when it cannot — an empty order
- * book has nothing to point at, and saying so beats a tour that silently
- * collapses to one step. `onDone` fires once, finished or skipped.
+ * Navigation is part of the walk, not something done behind the reader's back.
+ * A step carries `do` — a tab to switch to, a drawer to open, a sheet to open —
+ * performed as you advance *onto* it, so the step before it can spotlight the
+ * button you would have pressed and say "tap Next and it will open it". Being
+ * quietly teleported into the order form teaches nothing about how to get there.
+ *
+ * `act` is the app's half. It returns a sentence instead of `true` when it
+ * cannot do the thing — an empty order book has nothing to open — and the walk
+ * stops there saying so, rather than silently collapsing to one step.
+ *
+ * There is no "N of M": a step whose target is not on this screen is skipped as
+ * the walk reaches it, so any total shown up front would be wrong on a quiet
+ * day. It counts up, and the last button says Done.
  */
-export async function startTour(key, { role, prepare = async () => true, onDone = () => {} } = {}) {
-  if (running) return;
+export async function startTour(key, { role, act = async () => true, onDone = () => {} } = {}) {
+  if (running || !TOURS[key]) return;
   const tour = TOURS[key];
-  if (!tour) return;
-
-  const ready = await prepare(tour);
-  if (ready !== true) { onDone(ready); return; }
-
-  // Unhide the parts of a form that only appear once something is chosen, so
-  // the steps that point into them have a target when they are filtered below.
-  // Only when it is not already on: these are toggles, and clicking the print
-  // kind the board was already showing turned it *off* and hid both briefs.
-  for (const sel of tour.reveal || []) {
-    const el = document.querySelector(sel);
-    if (el && el.getAttribute('aria-pressed') !== 'true') el.click();
-  }
-  await frame();
-
-  const steps = tourSteps(key, role).filter((s) => !s.sel || target(s.sel));
-  if (!steps.length) { onDone('There is nothing on this screen to walk through yet.'); return; }
+  const steps = roleSteps(key, role);
+  if (!steps.length) return;
   running = true;
 
-  let i = 0;
+  let i = -1;
+  let trail = [];            // indices we can walk back to without undoing anything
+  const acted = new Set();   // a `do` is performed once, not again on the way back
+
   const root = document.createElement('div');
   root.className = 'tour';
   root.innerHTML = `
@@ -1063,13 +1158,13 @@ export async function startTour(key, { role, prepare = async () => true, onDone 
   const back = root.querySelector('.tour-back');
   const next = root.querySelector('.tour-next');
 
-  const end = () => {
+  const end = (problem) => {
     if (!running) return;
     running = false;
     root.remove();
     window.removeEventListener('resize', place);
     document.removeEventListener('keydown', onKey, true);
-    onDone();
+    onDone(problem);
   };
 
   function place() {
@@ -1087,10 +1182,17 @@ export async function startTour(key, { role, prepare = async () => true, onDone 
       return;
     }
 
+    // Clamped inside the screen: a target taller or wider than the phone (a long
+    // list, a full-width drawer row) would otherwise draw a ring with one of its
+    // edges off the display, which reads as a broken box rather than a spotlight.
     const r = el.getBoundingClientRect();
+    const ringTop = Math.max(2, r.top - pad);
+    const ringBottom = Math.min(vh - 2, r.bottom + pad);
+    const ringLeft = Math.max(2, r.left - pad);
+    const ringRight = Math.min(vw - 2, r.right + pad);
     hole.classList.remove('is-blank');
-    hole.style.cssText = `left:${r.left - pad}px;top:${r.top - pad}px;`
-      + `width:${r.width + pad * 2}px;height:${r.height + pad * 2}px;`;
+    hole.style.cssText = `left:${ringLeft}px;top:${ringTop}px;`
+      + `width:${Math.max(0, ringRight - ringLeft)}px;height:${Math.max(0, ringBottom - ringTop)}px;`;
 
     // Below the target when it sits in the top half, above it when it does not —
     // which is what keeps the card off the tab bar it is pointing at.
@@ -1104,18 +1206,18 @@ export async function startTour(key, { role, prepare = async () => true, onDone 
   }
 
   /**
-   * Most of these tours point into a sheet taller than the phone, so the target
-   * has to be brought into view before it can be measured — otherwise the
-   * cut-out lands on a field that is scrolled off the screen. Only when it is
-   * actually out of view: scrolling a button that is already visible moves the
-   * page under the reader for no reason.
+   * Most of these point into a sheet taller than the phone, so the target has to
+   * be brought into view before it can be measured — otherwise the cut-out lands
+   * on a field that is scrolled off the screen. Only when it is actually out of
+   * view: scrolling a button that is already visible moves the page under the
+   * reader for no reason.
    */
-  async function paint() {
+  async function paint(shown) {
     const step = steps[i];
-    root.querySelector('.tour-step').textContent = `${i + 1} of ${steps.length}`;
+    root.querySelector('.tour-step').textContent = `Step ${shown}`;
     root.querySelector('.tour-title').textContent = step.title;
     root.querySelector('.tour-text').textContent = step.text;
-    back.hidden = i === 0;
+    back.hidden = trail.length === 0;
     next.textContent = i === steps.length - 1 ? 'Done' : 'Next';
 
     const el = target(step.sel);
@@ -1129,28 +1231,69 @@ export async function startTour(key, { role, prepare = async () => true, onDone 
     place();
   }
 
-  const move = (n) => {
-    if (n < 0 || n >= steps.length) { end(); return; }
-    i = n;
-    paint();
-  };
+  /** Unhide the parts of a form that only appear once something is chosen. */
+  async function reveal(step) {
+    if (!step.reveal) return;
+    for (const sel of step.reveal) {
+      const el = document.querySelector(sel);
+      // Only when it is not already on: these are toggles, and clicking the
+      // print kind the board was already showing turned it *off* and hid both
+      // briefs. A drawer group announces itself with aria-expanded instead.
+      if (el && el.getAttribute('aria-pressed') !== 'true'
+             && el.getAttribute('aria-expanded') !== 'true') el.click();
+    }
+    await frame();
+  }
+
+  let shown = 0;
+
+  async function forward() {
+    const from = i;
+    let moved = false;          // the screen changed, so Back can no longer undo it
+    for (let n = i + 1; n < steps.length; n++) {
+      const step = steps[n];
+      if (step.do && !acted.has(n)) {
+        acted.add(n);
+        const ok = await act(step.do);
+        if (ok !== true) { end(ok); return; }
+        moved = true;
+      }
+      await reveal(step);
+      if (!step.sel || target(step.sel)) {
+        if (moved) trail = [];
+        else if (from >= 0) trail.push(from);
+        i = n;
+        shown += 1;
+        await paint(shown);
+        return;
+      }
+    }
+    end();
+  }
+
+  function backward() {
+    if (!trail.length) return;
+    i = trail.pop();
+    shown = Math.max(1, shown - 1);
+    paint(shown);
+  }
 
   function onKey(e) {
     if (e.key === 'Escape') { e.stopPropagation(); end(); }
-    else if (e.key === 'ArrowRight') move(i + 1);
-    else if (e.key === 'ArrowLeft' && i > 0) move(i - 1);
+    else if (e.key === 'ArrowRight') forward();
+    else if (e.key === 'ArrowLeft') backward();
   }
 
-  next.addEventListener('click', () => move(i + 1));
-  back.addEventListener('click', () => move(i - 1));
-  root.querySelector('.tour-x').addEventListener('click', end);
+  next.addEventListener('click', forward);
+  back.addEventListener('click', backward);
+  root.querySelector('.tour-x').addEventListener('click', () => end());
   // Tapping the dimmed area moves on; it is the gesture people try first.
-  root.addEventListener('click', (e) => { if (e.target === root) move(i + 1); });
+  root.addEventListener('click', (e) => { if (e.target === root) forward(); });
   window.addEventListener('resize', place);
   // Capture, so Escape closes the walkthrough without also closing what is under it.
   document.addEventListener('keydown', onKey, true);
 
-  paint();
+  await forward();
   next.focus();
 }
 
