@@ -286,9 +286,20 @@ export async function searchOrdersRemote({ term, store, withCosts = false, limit
 
 /** Everything the baker still has to make. Walk-ins never appear: they are
  *  created already picked up, so they are excluded by the status filter. */
+/**
+ * The baking queue: everything still to make, plus anything baked in the last
+ * day so a mistap can be taken back.
+ *
+ * Without the second half, marking a cake baked was a one-way door — the cake
+ * left the queue on the tap, and the baker has no order log to go and find it
+ * in. A day is long enough to cover a night shift and short enough that the
+ * list is still the work rather than a history.
+ */
 export async function listToBake() {
+  const since = new Date(Date.now() - 86400000).toISOString();
   const { data, error } = await sb.from('orders').select('*')
-    .eq('status', 'placed').order('due_at', { ascending: true });
+    .or(`status.eq.placed,and(status.eq.baked,baked_at.gte.${since})`)
+    .order('due_at', { ascending: true });
   if (error) throw error;
   return data;
 }

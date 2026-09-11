@@ -21,7 +21,7 @@ import {
   busiestHours, bakerSections, paidOn, netPrice, discountOn,
   monthGrid, shiftMonth, sydneyDateTimeToISO,
   dayLabel, soldWithin, salesByWeek, logSections, inStoreTally,
-  missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex,
+  missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex, inDateRange,
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
@@ -50,6 +50,7 @@ let orders = [];        // orders for the active view
 let peopleById = new Map();
 let logQuery = '';
 let logRange = null;     // {from, to} Sydney day keys, or null for the live worklist
+let bakeRange = null;    // the same filter over the baking queue, kept separately
 let printKind = '3d';    // active tab on the print board
 let printJobs = [];      // jobs for the active print view
 let printsByOrder = new Map();   // order id → its print jobs, for card flags
@@ -148,9 +149,8 @@ async function tourAct(what) {
     return true;
   }
   if (what === 'first-print') {
-    const job = teachablePrint();
-    if (!job) return 'Nothing is waiting on the print board — this walkthrough needs a job to point at.';
-    await openPrintJob(job.id);
+    if (!printJobs.length) return 'Nothing is waiting on the print board — this walkthrough needs a job to point at.';
+    await openPrintJob(printJobs[0].id);
     return true;
   }
   return true;
@@ -167,9 +167,6 @@ const richestOrder = () =>
   orders.find((o) => orderPhotos(o).length && outstanding(o))
   || orders.find((o) => orderPhotos(o).length)
   || orders[0];
-
-/** And a print job this role is actually allowed to tick off, if there is one. */
-const teachablePrint = () => printJobs.find((j) => canPrintStatus(j)) || printJobs[0];
 
 function buildStoreSwitch() {
   const el = $('store-switch');
@@ -234,9 +231,11 @@ async function render() {
 
   $('store-switch').classList.toggle('hidden',
     view !== 'log' || STORES.filter((s) => me.stores.includes(s.code)).length < 2);
-  $('logbar').classList.toggle('hidden', view !== 'log');
+  // The date filter serves both worklists; the search box is the order log's.
+  $('logbar').classList.toggle('hidden', !RANGE_VIEWS.includes(view));
   $('logsearch-row').classList.toggle('hidden', view !== 'log');
-  if (view !== 'log') closeRange();
+  if (!RANGE_VIEWS.includes(view)) closeRange();
+  if (RANGE_VIEWS.includes(view)) paintRangeLabel();
 
   for (const v of ['log', 'bake', 'prints', 'help', ...DRAWER_VIEWS]) $(`view-${v}`).classList.toggle('hidden', v !== view);
   $('help-btn').setAttribute('aria-pressed', String(view === 'help'));
@@ -395,8 +394,12 @@ const orderedAt = (o) => new Date(o.ordered_at || o.created_at);
 const loggedLater = (o) =>
   Boolean(o.ordered_at) && Math.abs(new Date(o.created_at) - new Date(o.ordered_at)) > 60000;
 
-const spineFor = (o, now) => {
+// `bakedDone` is the baker's board only. A baked cake there is finished work and
+// should read as quiet; on the order log the same cake is still to be collected,
+// so it keeps the urgency of its pickup day.
+const spineFor = (o, now, bakedDone = false) => {
   if (['picked_up', 'cancelled'].includes(o.status)) return 'spine-done';
+  if (bakedDone && o.status === 'baked') return 'spine-done';
   const d = daysBetween(sydneyParts(now).dayKey, sydneyParts(o.due_at).dayKey);
   if (d < 0) return 'spine-overdue';
   if (d === 0) return 'spine-today';
@@ -404,14 +407,14 @@ const spineFor = (o, now) => {
   return 'spine-later';
 };
 
-function docketHtml(o, now, { showStore = false } = {}) {
+function docketHtml(o, now, { showStore = false, bakedDone = false } = {}) {
   // The baker never sees money. The database already stops him changing it,
   // but that is no reason to put every customer's balance in front of him.
   const showMoney = me.role !== 'baker';
   const what = [o.size, o.flavour].filter(Boolean).join(' · ');
   const pay = showMoney ? payState(o) : null;
   return `
-    <button class="docket ${spineFor(o, now)}" data-order="${o.id}">
+    <button class="docket ${spineFor(o, now, bakedDone)}" data-order="${o.id}">
       <div class="docket-head">
         <span class="docket-no">${esc(o.order_no)}</span>
         ${o.walk_in ? '<span class="tag tag-walkin">In store</span>' : ''}
@@ -728,9 +731,13 @@ async function renderBake() {
       </div>
     </details>`;
 
+  // A date filter narrows the whole board, counts included: tabs reading the
+  // untouched total beside a list showing four cakes is worse than no count.
+  const inRange = (rows) => (bakeRange ? inDateRange(rows, bakeRange.from, bakeRange.to) : rows);
   const BAKE_TABS = [{ code: 'all', label: 'Both stores' },
     ...STORES.map((st) => ({ code: st.code, label: st.label }))];
-  const waiting = (code) => (code === 'all' ? queue.length : queue.filter((o) => o.store === code).length);
+  const waiting = (code) => inRange(queue.filter((o) =>
+    o.status !== 'baked' && (code === 'all' || o.store === code))).length;
   const storeBar = `
     <div class="segmented" role="tablist" aria-label="Store">
       ${BAKE_TABS.map((t) => `
@@ -742,27 +749,36 @@ async function renderBake() {
   const wireBar = () => root.querySelectorAll('[data-bakestore]').forEach((b) =>
     b.addEventListener('click', () => { bakeStore = b.dataset.bakestore; renderBake(); }));
 
-  const mine = bakeStore === 'all' ? queue : queue.filter((o) => o.store === bakeStore);
+  const mine = inRange(bakeStore === 'all' ? queue : queue.filter((o) => o.store === bakeStore));
   const sections = bakerSections(mine, now);
+  paintRangeLabel();
 
   if (!sections.length) {
+    const where = bakeStore === 'all' ? '' : ` for ${BAKE_TABS.find((t) => t.code === bakeStore).label}`;
     root.innerHTML = storeBar + tallyPanel + `<div class="empty">
-      <div class="empty-mark">All caught up</div>
-      <p class="empty-note">${bakeStore === 'all'
-        ? 'Nothing waiting to be baked.'
-        : `Nothing waiting for ${esc(BAKE_TABS.find((t) => t.code === bakeStore).label)}.`}</p>
+      <div class="empty-mark">${bakeRange ? 'Nothing on those days' : 'All caught up'}</div>
+      <p class="empty-note">${bakeRange
+        ? `No cakes to bake${esc(where)} between those days.<br>Tap <strong>Clear</strong> to see the whole queue.`
+        : `Nothing waiting to be baked${esc(where)}.`}</p>
     </div>`;
     wireBar();
     return;
   }
 
+  // 'Just baked' spans whatever was finished in the last day, so a single date
+  // beside it would be a guess — the same reason Overdue carries none.
+  const dated = (label) => label !== 'Overdue' && label !== 'Just baked';
   root.innerHTML = storeBar + tallyPanel + sections.map(([label, rows]) => `
     <div class="section-head ${label === 'Overdue' ? 'is-overdue' : ''}">
       <span class="section-name">${esc(label)}</span>
-      ${label !== 'Overdue' ? `<span class="section-date">${esc(dateFmt.format(new Date(rows[0].due_at)))}</span>` : ''}
+      ${dated(label) ? `<span class="section-date">${esc(dateFmt.format(new Date(rows[0].due_at)))}</span>` : ''}
       <span class="section-count">${rows.length}</span>
     </div>
-    <div class="docket-grid">${rows.map((o) => docketHtml(o, now, { showStore: bakeStore === 'all' })).join('')}</div>`).join('');
+    ${label === 'Just baked'
+      ? '<p class="bake-undo">Tapped by mistake? Open the cake and put it back to <strong>Order placed</strong>.</p>'
+      : ''}
+    <div class="docket-grid">${rows.map((o) =>
+      docketHtml(o, now, { showStore: bakeStore === 'all', bakedDone: true })).join('')}</div>`).join('');
 
   wireBar();
   wireDockets(root);
@@ -781,12 +797,20 @@ const PRINT_TABS = [
   { code: 'photo', label: 'Photo prints' },
 ];
 
-/** The baker may tick off a photo print; 3D toppers are Vaidik's to mark. */
-// The counter can see the print board — the cake it is handing over is on it —
-// but only the two people who own the machines change a job. The database says
-// the same thing, so offering staff a button would only produce an error.
-const canPrintStatus = (job) => me.role === 'admin'
-  || (me.role === 'baker' && job.kind === 'photo');
+/**
+ * The kitchen ticks a print off; the counter reads the board.
+ *
+ * The baker used to be allowed photo prints and not 3D toppers, which only
+ * meant a finished topper sat unticked until someone asked Vaidik to tap it —
+ * the machines are both in the kitchen. Either of them may now mark any job.
+ * What the baker still cannot touch is the brief itself: `guard_print_job_updates()`
+ * refuses a change to what is being printed, its notes, or the order it points
+ * at, because those are the record of what was asked for.
+ *
+ * Staff get no button at all. The database would refuse the write, and offering
+ * one that errors is worse than not offering it.
+ */
+const canPrintStatus = () => me.role === 'admin' || me.role === 'baker';
 
 function printCardHtml(j, now) {
   const o = j.order;
@@ -903,14 +927,12 @@ async function openPrintJob(id) {
     <div class="block-label">Print status
       <span class="status-now"><span class="tag ${done ? 'tag-done' : 'tag-todo'}">${done ? 'Printed' : 'To print'}</span></span>
     </div>
-    ${canPrintStatus(j)
+    ${canPrintStatus()
       ? `<div class="action-row">
            <button class="btn ${done ? 'btn-quiet' : 'btn-primary'}" id="print-toggle">
              ${done ? 'Move back to to-print' : 'Mark printed'}</button>
          </div>`
-      : `<p class="panel-note" style="margin:0;">${me.role === 'staff'
-          ? 'The kitchen marks prints done — this page is here so you can see what is still coming.'
-          : 'Only an admin marks a 3D topper printed — tell Vaidik when it is done.'}</p>`}
+      : '<p class="panel-note" style="margin:0;">The kitchen marks prints done — this page is here so you can see what is still coming.</p>'}
     <p class="msg" id="print-msg" role="status" aria-live="polite"></p>
 
     ${isAdmin ? `
@@ -932,7 +954,7 @@ async function openPrintJob(id) {
 
   hydrateThumbs(body);
 
-  if (canPrintStatus(j)) {
+  if (canPrintStatus()) {
     $('print-toggle').addEventListener('click', async () => {
       const btn = $('print-toggle');
       btn.disabled = true; btn.textContent = 'Saving…';
@@ -1185,17 +1207,33 @@ const addDayKey = (key, n) => {
   return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`;
 };
 
+/**
+ * The two worklists that carry a date filter, and the one panel that drives
+ * both.
+ *
+ * The baker asked for the same thing staff have — "what have we got on for the
+ * long weekend" is the same question in the kitchen — so it is the same
+ * control, in the same place, rather than a second one that behaves not quite
+ * the same. The ranges are kept apart: flipping to the queue to check Saturday
+ * should not silently narrow the order log you left behind.
+ */
+const RANGE_VIEWS = ['log', 'bake'];
+const rangeOf = () => (view === 'bake' ? bakeRange : logRange);
+const setRange = (r) => { if (view === 'bake') bakeRange = r; else logRange = r; };
+const repaintRange = () => (view === 'bake' ? renderBake() : renderLog());
+
 function paintRangeLabel() {
   const label = $('logbar-label');
   const clear = $('range-clear');
-  if (!logRange) {
-    label.textContent = 'All upcoming';
+  const range = rangeOf();
+  if (!range) {
+    label.textContent = view === 'bake' ? 'Everything to bake' : 'All upcoming';
     clear.classList.add('hidden');
     return;
   }
-  label.textContent = logRange.from === logRange.to
-    ? dayKeyLabel(logRange.from)
-    : `${dayKeyLabel(logRange.from)} – ${dayKeyLabel(logRange.to)}`;
+  label.textContent = range.from === range.to
+    ? dayKeyLabel(range.from)
+    : `${dayKeyLabel(range.from)} – ${dayKeyLabel(range.to)}`;
   clear.classList.remove('hidden');
 }
 
@@ -1212,8 +1250,9 @@ function paintRangePanel() {
   const v = rangePick.view || { year: +today.slice(0, 4), month: +today.slice(5, 7) };
   rangePick.view = v;
 
-  const from = logRange?.from ?? rangePick.anchor;
-  const to = logRange?.to ?? rangePick.anchor;
+  const range = rangeOf();
+  const from = range?.from ?? rangePick.anchor;
+  const to = range?.to ?? rangePick.anchor;
 
   panel.innerHTML = `
     <div class="cal-head">
@@ -1242,7 +1281,7 @@ function paintRangePanel() {
       <button type="button" class="btn btn-quiet" data-quick="week">Next 7 days</button>
       <button type="button" class="btn btn-primary" data-done>Done</button>
     </div>
-    <p class="range-hint">${rangePick.anchor && !logRange
+    <p class="range-hint">${rangePick.anchor && !range
       ? 'Now tap the last day, or the same day again for just that one.'
       : 'Tap a day, then tap another for a range.'}</p>`;
 
@@ -1253,25 +1292,25 @@ function paintRangePanel() {
 
   panel.querySelectorAll('[data-day]').forEach((b) => b.addEventListener('click', () => {
     const key = b.dataset.day;
-    if (!rangePick.anchor || logRange) {
+    if (!rangePick.anchor || rangeOf()) {
       rangePick.anchor = key;
-      logRange = null;
+      setRange(null);
     } else {
       const a = rangePick.anchor;
-      logRange = { from: a <= key ? a : key, to: a <= key ? key : a };
+      setRange({ from: a <= key ? a : key, to: a <= key ? key : a });
       rangePick.anchor = null;
     }
     paintRangePanel();
-    renderLog();
+    repaintRange();
   }));
 
   panel.querySelectorAll('[data-quick]').forEach((b) => b.addEventListener('click', () => {
-    logRange = b.dataset.quick === 'today'
+    setRange(b.dataset.quick === 'today'
       ? { from: today, to: today }
-      : { from: today, to: addDayKey(today, 6) };
+      : { from: today, to: addDayKey(today, 6) });
     rangePick.anchor = null;
     paintRangePanel();
-    renderLog();
+    repaintRange();
   }));
 
   panel.querySelector('[data-done]').addEventListener('click', closeRange);
@@ -1292,10 +1331,10 @@ $('log-search').addEventListener('input', (e) => {
 });
 
 $('range-clear').addEventListener('click', () => {
-  logRange = null;
+  setRange(null);
   rangePick = { anchor: null, view: null };
   closeRange();
-  renderLog();
+  repaintRange();
 });
 
 /**
@@ -2017,7 +2056,7 @@ async function openOrder(id) {
           <div class="list-row">
             <span class="tag ${j.kind === '3d' ? 'tag-3d' : 'tag-photo'}">${j.kind === '3d' ? '3D' : 'Photo'}</span>
             <span class="grow">${esc(j.what)}</span>
-            ${canPrintStatus(j)
+            ${canPrintStatus()
               ? `<button class="logbar-clear" data-mark="${orderPrints.indexOf(j)}">Mark printed</button>`
               : '<span class="tag tag-todo">To print</span>'}
           </div>`).join('')}

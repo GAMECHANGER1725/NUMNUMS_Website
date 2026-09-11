@@ -821,6 +821,13 @@ button { background: none; border: 0; cursor: pointer; }
 .bar-label { font-size: 10px; color: var(--taupe); white-space: nowrap; }
 
 /* ── Date range filter ──────────────────────────────────────────────────── */
+/* Under the Just baked heading: the undo is only obvious once you know the card
+   still opens, and the baker has no order log to go looking in. */
+.bake-undo {
+  margin: -4px 2px 9px; font-size: 12px; line-height: 1.45; color: var(--taupe);
+}
+.bake-undo strong { color: var(--ink-soft); font-weight: 500; }
+
 .logbar {
   display: flex; align-items: center; gap: 8px;
   max-width: 940px; margin: 0 auto 10px;

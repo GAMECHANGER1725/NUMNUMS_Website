@@ -157,6 +157,35 @@ test('overdue cakes sort to the top of the baker list', () => {
   assert.equal(labels[0], 'Overdue');
 });
 
+// Marking a cake baked used to take it off the board for good: the baker has no
+// order log to go and find it in, so a mistap needed an admin. Baked cakes now
+// stay in one heading at the bottom, where they can be opened and put back.
+test('baked cakes are filed under one trailing heading, not a day', () => {
+  const orders = [
+    { kind: 'normal', status: 'placed', due_at: '2026-09-03T06:00:00Z' },
+    { kind: 'normal', status: 'baked', due_at: '2026-09-03T06:00:00Z', baked_at: '2026-09-02T01:00:00Z' },
+    { kind: 'normal', status: 'baked', due_at: '2026-08-30T06:00:00Z', baked_at: '2026-09-02T03:00:00Z' },
+  ];
+  const sections = bakerSections(orders, '2026-09-02T04:00:00Z');
+  const labels = sections.map(([l]) => l);
+  assert.deepEqual(labels, ['Tomorrow', 'Just baked']);
+  // Both baked cakes land in the one heading even though their pickup days
+  // differ — an overdue one must not reappear at the top as work to do.
+  assert.equal(sections[1][1].length, 2);
+  // Most recently baked first: a mistap is undone seconds later, not tomorrow.
+  assert.equal(sections[1][1][0].baked_at, '2026-09-02T03:00:00Z');
+});
+
+test('a queue of nothing but baked cakes still ranks without crashing', () => {
+  // rank() reads a number out of the day label, so a non-day label reaching it
+  // would throw on `null[0]` and take the whole view down.
+  const sections = bakerSections(
+    [{ kind: 'normal', status: 'baked', due_at: '2026-09-03T06:00:00Z', baked_at: '2026-09-02T03:00:00Z' }],
+    '2026-09-02T04:00:00Z',
+  );
+  assert.deepEqual(sections.map(([l]) => l), ['Just baked']);
+});
+
 test('pickup hours histogram uses Sydney time', () => {
   const h = busiestHours([{ status: 'placed', due_at: '2026-09-02T06:00:00Z' }]); // 16:00 AEST
   assert.equal(h[16], 1);

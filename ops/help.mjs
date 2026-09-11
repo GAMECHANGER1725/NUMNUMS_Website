@@ -295,7 +295,7 @@ export const TOURS = {
       {
         sel: '#status-actions',
         title: 'Move the cake along',
-        text: 'Only the steps your role is allowed to make are here. The counter marks a cake At store and Picked up; the kitchen marks it Baked; cancelling belongs to the counter.',
+        text: 'Only the steps your role is allowed to make are here. The counter marks a cake At store and Picked up; the kitchen marks it Baked, and can put it back to Order placed if that was a mistap. Cancelling belongs to the counter.',
       },
       {
         sel: '#cost-input',
@@ -360,6 +360,11 @@ export const TOURS = {
         text: 'Baking is central, so the combined queue is the working view. The per-shop tabs are for loading a van or checking one shop’s book. The number beside each is how many cakes are waiting.',
       },
       {
+        sel: '#range-btn',
+        title: 'Or just one day',
+        text: 'Tap a day for that day, or two days for a range — “what have we got on for the long weekend”. Today and Next 7 days are there for the common ones, and the counts on the shop tabs follow the filter. Clear puts the whole queue back.',
+      },
+      {
         sel: '#view-bake .panel.collapse',
         title: 'What walked off the counter',
         text: 'Cakes sold in store today, by size and flavour, with yesterday underneath. Restock from this rather than from memory.',
@@ -373,6 +378,11 @@ export const TOURS = {
         sel: '#view-bake .docket',
         title: 'One cake',
         text: 'Size, flavour and the pickup time. A rose 3D or Photo flag means something still has to be printed for it. Tap it to see the wording and every reference photo, and to mark it baked.',
+      },
+      {
+        sel: null,
+        title: 'Tapped Baked by mistake?',
+        text: 'It is not lost. A cake you have baked drops to a Just baked heading at the bottom of this list for a day — open it there and put it back to Order placed.',
       },
     ],
   },
@@ -408,7 +418,7 @@ export const TOURS = {
       {
         sel: null,
         title: 'Who ticks a job off',
-        text: 'Vaidik marks 3D toppers printed; the baker marks photo prints. The counter can read this board — the cake it is handing over is on it — but the database will refuse a write from it, so no button is offered.',
+        text: 'The kitchen does: the baker and Vaidik can both mark any job printed, toppers and photo sheets alike. The counter can read this board — the cake it is handing over is on it — but the database will refuse a write from it, so no button is offered.',
       },
     ],
   },
@@ -503,8 +513,8 @@ export const TOURS = {
       },
       {
         sel: null,
-        title: 'Who ticks which job off',
-        text: 'Vaidik marks 3D toppers printed; the baker marks photo prints. The counter reads this board — the cake it is handing over is on it — but the database refuses a write from it, so no button is offered rather than one that errors.',
+        title: 'Who may change what',
+        text: 'The baker and Vaidik both mark any job printed. Only Vaidik changes the brief itself — what is being printed, its notes, the cake it points at — because that is the record of what the customer asked for, not of what has been done.',
       },
     ],
   },
@@ -691,7 +701,8 @@ export const HELP = [
         <li><strong>Staff</strong> — the orders for your own shop: log them, find them,
           take payment, mark a cake at the store or picked up, and look a customer up.</li>
         <li><strong>Baker</strong> — the baking queue for both shops and the print board.
-          You mark a cake baked and a photo print done. You do not see prices.</li>
+          You mark a cake baked — and put it back if that was a mistap — and you mark any
+          print job done. You do not see prices.</li>
         <li><strong>Admin</strong> — all of it: both shops, costs, the numbers, the
           invoice, the export and the print machines.</li>
       </ul>
@@ -791,7 +802,9 @@ export const HELP = [
         or two days for a range, or use <em>Today</em> / <em>Next 7 days</em>. Tap
         <strong>Clear</strong> to get the worklist back.</p>
       <p>Neither one reloads anything you already have on screen, so typing a name is
-        instant. The label on the left always says which slice you are looking at.</p>`,
+        instant. The label on the left always says which slice you are looking at.</p>
+      <p>The same calendar button sits on <strong>To bake</strong>. The two remember their own
+        dates, so checking Saturday's baking does not quietly narrow the order list you left.</p>`,
   },
   {
     title: 'Opening an order',
@@ -814,7 +827,10 @@ export const HELP = [
           against it, so fix a mistake rather than working around it.</li>
         <li><strong>Status</strong> — only the steps your role is allowed to make are shown.
           If prints are outstanding, the app stops and lists them before it lets you mark the
-          cake baked or picked up. Read that; do not tap past it.</li>
+          cake baked or picked up. Read that; do not tap past it.
+          <br>Every step can be taken back: the kitchen can put a cake it marked
+          <em>Baked</em> back to <em>Order placed</em>, and the counter can move one back off
+          <em>At store</em> or <em>Picked up</em>.</li>
         <li><strong>Payment</strong> — update the deposit or tick it paid in full and save.</li>
         <li><strong>History</strong> — when it was logged, baked and collected.</li>
       </ul>
@@ -853,10 +869,19 @@ export const HELP = [
         use it when you are loading a van or checking one shop's book. The combined list is
         the working view, so it is what you get by default, and the number beside each tab is
         how many cakes are waiting.</p>
+      <p>The <strong>calendar button</strong> at the top narrows the queue to a day or a run of
+        days — the same control the order list has. Tap one day for that day, two for a range,
+        or use <em>Today</em> / <em>Next 7 days</em>. The counts on the shop tabs follow the
+        filter, so what they say is what you are looking at. Tap <strong>Clear</strong> to get
+        the whole queue back.</p>
       <p>Open a cake to see the flavour, size, wording and every reference photo the customer
         sent. Tap a photo to see it full size.</p>
       <p>When it is out of the oven, open it and tap <strong>Baked</strong>. If it needs a
         topper or a photo print that is not done yet, the app will say so first.</p>
+      <p class="help-note"><strong>Tapped Baked by mistake?</strong> Nothing is lost. A cake you
+        have baked moves to a <strong>Just baked</strong> heading at the bottom of this list and
+        stays there for a day — open it from there and tap <strong>Order placed</strong> to put
+        it back in the queue. You do not need to ask anyone.</p>
       <p><strong>Sold in store today</strong> at the top of the list is what walked off the
         counter, by size and flavour, with yesterday underneath — so you restock from a number
         rather than from memory.</p>`,
@@ -871,10 +896,12 @@ export const HELP = [
         <strong>3D prints</strong> (toppers) and <strong>Photo prints</strong>. Each job points
         at a real order, so there is one record of the cake and the print brief hangs off it.</p>
       <p>Everyone can see this board — the person handing a cake over needs to know its topper
-        is done. Who ticks a job off is fixed, in the database, not just in the buttons:</p>
+        is done. Who may change what is fixed in the database, not just in the buttons:</p>
       <ul class="help-list">
-        <li><strong>Vaidik</strong> marks 3D toppers printed, and adds and edits jobs.</li>
-        <li><strong>The baker</strong> marks photo prints printed.</li>
+        <li><strong>The kitchen</strong> — the baker and Vaidik both — marks any job printed,
+          toppers and photo sheets alike. Both machines are in the same room.</li>
+        <li><strong>Vaidik</strong> alone adds a job, changes the brief or deletes one. The
+          brief is the record of what the customer asked for, not of what has been done.</li>
         <li><strong>Staff</strong> read the board. If a job is not moving, say something
           rather than working around it.</li>
       </ul>
@@ -902,8 +929,9 @@ export const HELP = [
         <li><strong>Save print job.</strong> It lands on the board, and the cake starts
           showing a print flag on every screen it appears on.</li>
       </ol>
-      <p>To change a brief or drop a job, open it from the board. Deleting a job is two taps
-        and leaves the order exactly as it was.</p>`,
+      <p>To change a brief or drop a job, open it from the board — both are admin-only, while
+        marking one printed is the kitchen's. Deleting a job is two taps and leaves the order
+        exactly as it was.</p>`,
   },
   {
     title: 'Price, discount and payment',

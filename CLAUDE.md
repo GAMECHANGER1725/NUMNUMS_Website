@@ -115,9 +115,14 @@ main site.
   `FACTS`), `ops/help.mjs` (help page content + the guided tour),
   `ops/supabase/functions/purge-photos/` (photo retention job).
 - **Print jobs** (`print_jobs` table, "Prints" tab): a cake needing 3D toppers or a photo print
-  gets a job pointing at its **order id** — never a re-typed brief or a second photo upload. Admin
-  and baker only; staff cannot read the table at all. The baker may change the status of a `photo`
-  job and nothing else — enforced by `guard_print_job_updates()`, not by the UI. A cake needing
+  gets a job pointing at its **order id** — never a re-typed brief or a second photo upload.
+  **The kitchen ticks a job off; the counter reads the board.** The baker and an admin may both
+  mark any job printed — the split that gave the baker photo prints and withheld 3D toppers only
+  meant a finished topper sat unticked until someone asked Vaidik to tap it, and both machines
+  are in the same room. What the baker still cannot touch is the **brief**: the what, the notes
+  and the order a job points at stay admin-only, because those are the record of what the
+  customer asked for, not of what has been done. Enforced by `guard_print_job_updates()`, not by
+  the UI; `canPrintStatus()` matches it exactly. A cake needing
   both gets **two rows**, one per kind (they finish at different times and belong to different
   people) — the form just creates both in one pass. Marking an order **baked** or **picked up**
   interrupts with a reminder listing its prints; that interrupt is the whole point of the feature,
@@ -181,7 +186,29 @@ main site.
   the order log, the baker's queue and the print board). A normal cake carrying no tag meant a
   blank had to be read as "normal", which is what an unloaded card also looks like.
 - **The baker's queue defaults to both stores.** Baking is central, so the combined list is the
-  working view; the per-store tabs are for loading a van or checking one shop's book.
+  working view; the per-store tabs are for loading a van or checking one shop's book. It carries
+  the **same date filter as the order log** — "what have we got on for the long weekend" is the
+  same question in the kitchen — driven by the one `#range-cal` panel, which reads `rangeOf()` /
+  `setRange()` for whichever of `RANGE_VIEWS` is on screen. The two ranges are held separately:
+  checking Saturday's baking must not silently narrow the order log you left behind. The counts
+  on the store tabs follow the filter, because tabs reading the untouched total beside a list
+  showing four cakes is worse than no count at all.
+- **Marking a cake baked is not a one-way door.** `listToBake()` returns everything still to make
+  *plus* anything baked in the last day, and `bakerSections` files those under one trailing **Just
+  baked** heading with the most recent first. Before this the cake left the queue on the tap, and
+  the baker has no order log to go and find it in — a mistap needed an admin. Postgres always
+  allowed the baker `placed`; only the query stopped them. Two things follow: the label carries no
+  date (it spans a day of bakes, like Overdue), and `rank()` still reads a number out of a day
+  label, so a non-day label must never reach it — `stats.test.mjs` covers a queue of nothing but
+  baked cakes for exactly that.
+- **A status stamp is cleared when the status moves back past it.** `stamp_order_status()` used to
+  write `baked_at` and never clear it, so a cake put back to *placed* kept a Baked row on its
+  timeline, and a second bake kept the first one's time (the `is null` guard) — which would have
+  dropped it out of the undo window a day after a bake that never happened. It now clears
+  **only going backwards**: `baked_at` when a cake returns to placed, never when it moves on to
+  arrived, because the stamps are a history and a collected cake must keep the time it was baked.
+  `cancelled_at` is the exception — cancelled is not a stage on the way anywhere, so un-cancelling
+  clears it. `log_order_event` skips these columns, so clearing one writes no spurious edit row.
 - **Design photos are a list, not a photo.** `photo_paths` holds every reference
   picture the customer sent; `photo_path` is the cover, and it is what the dockets,
   the print board and the retention rule read — none of them need to know there are
