@@ -98,3 +98,25 @@ export const cakeImage = (name) =>
 export const sizeByCode   = (code) => SIZES.find((s) => s.code === code) || null;
 export const isPremium    = (name) => Boolean(FLAVOURS.find((f) => f.name === name)?.premium);
 export const basePrice    = (code) => sizeByCode(code)?.price ?? null;
+
+/**
+ * A normal cake's price always ends in .99 — psychological pricing, and what
+ * every SIZES entry already reads. This is the safety net, not the source: it
+ * guards the one moment a normal cake's price is set without a human looking
+ * at it (the size autofill), so a future catalogue edit that lands on a round
+ * number ($50 instead of $49.99) still shows the shop's actual pricing rather
+ * than silently breaking it. Rounds *down* — $50.00 becomes $49.99, never
+ * $50.99 — and does nothing to a price that is already .99, or to anything a
+ * person typed by hand (custom-cake quotes are real numbers, not this rule).
+ */
+export const toNinetyNine = (price) => {
+  if (price == null) return price;
+  const cents = Math.round(price * 100);
+  if (cents % 100 === 99) return price;
+  // The whole dollar just below, minus a cent — never up. $50.00 -> $49.99,
+  // and $50.50 also lands on $49.99: "round down" means the .99 at or below
+  // the price, the same rule as tax rounding, not "shift by exactly 1c".
+  const dollars = Math.floor(cents / 100);
+  return dollars > 0 ? (dollars * 100 - 1) / 100 : price;
+};
+

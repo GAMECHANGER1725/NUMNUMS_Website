@@ -17,6 +17,7 @@ import {
   netPrice, discountOn,
 } from './stats.mjs';
 import { receiptSource } from './receipt.mjs';
+import { toNinetyNine } from './catalog.mjs';
 
 let passed = 0;
 const test = (name, fn) => {
@@ -137,6 +138,33 @@ test('repeat customers are found across phone formats', () => {
   assert.equal(r.newCount, 1);                // Patel
   assert.equal(r.top[0].orders, 2);
   assert.equal(r.top[0].spend, 150);
+});
+
+// ── Catalogue pricing ────────────────────────────────────────────────────────
+// A normal cake's price always ends in .99. This is the safety net behind the
+// size autofill, not the source of truth (SIZES already reads .99) — it exists
+// so a future catalogue edit that lands on a round number still shows the
+// shop's real pricing instead of a $50.00 sticking out on a docket.
+test('a round-dollar price rounds down to the .99 below it', () => {
+  assert.equal(toNinetyNine(50), 49.99);
+  assert.equal(toNinetyNine(100), 99.99);
+});
+
+test('a price already ending in .99 is left alone', () => {
+  assert.equal(toNinetyNine(49.99), 49.99);
+  assert.equal(toNinetyNine(39.99), 39.99);
+});
+
+test('rounding down means the .99 at or below, not up', () => {
+  // The bug this guards: floor(cents/100) on an exact whole dollar is that
+  // same dollar, so adding 99 back on lands one dollar too high ($50.00 ->
+  // $50.99) unless the dollar is stepped down first.
+  assert.equal(toNinetyNine(50.5), 49.99);
+});
+
+test('null and undefined prices pass through unchanged', () => {
+  assert.equal(toNinetyNine(null), null);
+  assert.equal(toNinetyNine(undefined), undefined);
 });
 
 // ── Baker view ──────────────────────────────────────────────────────────────

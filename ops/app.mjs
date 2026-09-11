@@ -25,7 +25,7 @@ import {
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
-import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered }
+import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine }
   from './catalog.mjs';
 import { receiptPdf, receiptName } from './receipt.mjs';
 import { helpHtml, startTour, tourSeen, markTourSeen } from './help.mjs';
@@ -2437,7 +2437,12 @@ function openNewOrder() {
       // Fill the standard price so staff only type when it differs. Never
       // overwrite a price they have already typed.
       const base = basePrice(code);
-      if (base != null && !priceTouched) $('f-price').value = base.toFixed(2);
+      // A normal cake sold off the menu keeps this figure as the final price —
+      // staff rarely retype it — so it is forced onto a .99 ending here.
+      // Custom is left alone: it is always a starting point someone edits
+      // before saving, most often straight after picking a premium flavour.
+      const shown = kind === 'normal' ? toNinetyNine(base) : base;
+      if (base != null && !priceTouched) $('f-price').value = shown.toFixed(2);
       refreshPriceHint();
       // Setting .value fires no input event, so the discount pair would keep a
       // percentage worked out against the old price.
