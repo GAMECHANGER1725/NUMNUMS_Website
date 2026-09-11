@@ -79,6 +79,22 @@ export const FLAVOURS = [
   { name: 'Ferrero Rocher', premium: true },
 ];
 
+/**
+ * The picture of the cake itself, for a **normal** cake — one we sell off the
+ * board, where the flavour is the whole description of what it looks like.
+ *
+ * Derived from the flavour rather than kept in a lookup, so a new flavour needs
+ * nothing but its entry above and a file dropped into `ops/cakes/`; `verify.mjs`
+ * fails the deploy if those two ever disagree. Returns null for anything not on
+ * the list, including a blank flavour, so the caller falls back to a placeholder
+ * rather than a broken image.
+ */
+export const flavourSlug = (name) => String(name || '')
+  .replace(/&/g, 'and').trim().replace(/[^A-Za-z0-9]+/g, '-');
+
+export const cakeImage = (name) =>
+  (FLAVOURS.some((f) => f.name === name) ? `./cakes/${flavourSlug(name)}.webp` : null);
+
 export const sizeByCode   = (code) => SIZES.find((s) => s.code === code) || null;
 export const isPremium    = (name) => Boolean(FLAVOURS.find((f) => f.name === name)?.premium);
 export const basePrice    = (code) => sizeByCode(code)?.price ?? null;

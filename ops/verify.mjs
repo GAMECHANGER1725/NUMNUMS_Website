@@ -8,7 +8,7 @@
 //
 //   node ops/verify.mjs        (and it is the ops site's Netlify build command)
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -179,6 +179,17 @@ const catFlavours = [...catalog.matchAll(/\{\s*name:\s*'([^']+)'/g)].map((m) => 
 if (factFlavours.length && factFlavours.join('|') !== catFlavours.join('|')) {
   fail(`flavours differ from FACTS\n      FACTS:   ${factFlavours.join(', ')}\n      catalog: ${catFlavours.join(', ')}`);
 } else pass(`catalogue matches FACTS (${catFlavours.length} flavours)`);
+
+// ── 8. every flavour has its picture ────────────────────────────────────────
+// A normal cake has no design photo, so the card shows the cake we sell. The
+// filename is derived from the flavour, which means a new flavour silently
+// draws a broken image unless its file lands too.
+const slug = (name) => name.replace(/&/g, 'and').trim().replace(/[^A-Za-z0-9]+/g, '-');
+const missingShots = catFlavours.filter((f) => !existsSync(join(here, 'cakes', `${slug(f)}.webp`)));
+if (!catFlavours.length) fail('could not read the flavour list out of catalog.mjs');
+else if (missingShots.length) {
+  fail(`no cake photo for: ${missingShots.map((f) => `${f} (expected cakes/${slug(f)}.webp)`).join(', ')}`);
+} else pass(`every flavour has a cake photo (${catFlavours.length})`);
 
 console.log(failed ? `\n${failed} check(s) FAILED` : '\nops checks pass');
 process.exit(failed ? 1 : 0);

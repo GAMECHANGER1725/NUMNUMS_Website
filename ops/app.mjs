@@ -25,7 +25,7 @@ import {
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
-import { SIZES, FLAVOURS, basePrice, isPremium, TIERED, tierLabel, tierText, parseTiers, isTiered }
+import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered }
   from './catalog.mjs';
 import { receiptPdf, receiptName } from './receipt.mjs';
 
@@ -347,9 +347,7 @@ function docketHtml(o, now, { showStore = false } = {}) {
         <span class="docket-when">${kindTag(o)}${timeFmt.format(new Date(o.due_at))}</span>
       </div>
       <div class="docket-body">
-        ${o.photo_path
-          ? `<img class="thumb" data-photo="${esc(o.photo_path)}" alt="" loading="lazy">`
-          : '<div class="thumb thumb-empty" aria-hidden="true">◍</div>'}
+        ${thumbHtml(o)}
         <div class="docket-lines">
           <div class="docket-name">${esc(o.customer_name)}</div>
           <div class="docket-what">${esc(what || '—')}</div>
@@ -366,6 +364,30 @@ function docketHtml(o, now, { showStore = false } = {}) {
         </div>
       </div>
     </button>`;
+}
+
+/**
+ * The picture on a card.
+ *
+ * A custom cake shows the customer's own reference photo. A normal cake never
+ * has one — and what it is a picture *of* was never a mystery, it is the
+ * flavour on the board — so it shows that instead of a grey disc. Deliberately
+ * **not** for a custom cake: a stock Vanilla standing in for a design someone
+ * drew is worse than no picture, because it looks like an answer.
+ *
+ * The stock file is local to the ops site (`img-src 'self'`) and carries no
+ * `data-photo`, so it is untouched by the signing pass and never reaches
+ * `orderPhotos` — it is decoration, not a design reference, and must not end up
+ * on an invoice.
+ */
+function thumbHtml(o, cls = 'thumb') {
+  const attr = cls ? ` class="${cls}"` : '';
+  if (o.photo_path) return `<img${attr} data-photo="${esc(o.photo_path)}" alt="" loading="lazy">`;
+
+  const stock = o.kind === 'normal' ? cakeImage(o.flavour) : null;
+  if (stock) return `<img${attr} src="${esc(stock)}" alt="${esc(o.flavour)} cake" loading="lazy">`;
+
+  return cls ? `<div class="${cls} thumb-empty" aria-hidden="true">◍</div>` : '◍';
 }
 
 /** Signed after paint, and all in one request — see photoUrls. */
@@ -707,9 +729,7 @@ function printCardHtml(j, now) {
         <span class="docket-when">${kindTag(o)}${esc(timeFmt.format(new Date(o.due_at)))}</span>
       </div>
       <div class="docket-body">
-        ${o.photo_path
-          ? `<img class="thumb" data-photo="${esc(o.photo_path)}" alt="" loading="lazy">`
-          : '<div class="thumb thumb-empty" aria-hidden="true">◍</div>'}
+        ${thumbHtml(o)}
         <div class="docket-lines">
           <div class="docket-name">${esc(o.customer_name)}</div>
           <div class="docket-what">${esc(what || '—')}</div>
@@ -984,7 +1004,7 @@ async function openNewPrintJob() {
     grid.innerHTML = openOrders.map((o) => `
       <button type="button" class="pick-tile" data-pick="${o.id}" aria-pressed="false">
         <span class="pick-shot">
-          ${o.photo_path ? `<img data-photo="${esc(o.photo_path)}" alt="" loading="lazy">` : '◍'}
+          ${thumbHtml(o, '')}
           <span class="pick-no">${esc(o.order_no)}</span>
         </span>
         <span class="pick-meta">
@@ -1005,9 +1025,7 @@ async function openNewPrintJob() {
       const sum = $('pick-summary');
       sum.className = 'pick-summary';
       sum.innerHTML = `
-        ${picked.photo_path
-          ? `<img class="thumb" data-photo="${esc(picked.photo_path)}" alt="">`
-          : '<div class="thumb thumb-empty" aria-hidden="true">◍</div>'}
+        ${thumbHtml(picked)}
         <div class="grow">
           <div class="docket-name">${esc(picked.customer_name)}</div>
           <div class="docket-what">${esc(what || '—')} · ${esc(storeLabel(picked.store))}</div>

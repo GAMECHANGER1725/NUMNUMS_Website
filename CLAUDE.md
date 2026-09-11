@@ -218,6 +218,17 @@ main site.
   calls the callback, and the invoice button sat disabled on "Building the invoice…"
   forever with no error to report. An invoice with no pictures beats a button that does
   nothing.
+- **A normal cake shows the cake, not a grey disc.** Only a custom order has a design
+  photo, so every normal one used to sit behind the ◍ placeholder — on a board where the
+  picture is how staff find a docket at a glance. `thumbHtml` falls back to the flavour's
+  own product shot in **`ops/cakes/`**, and `cakeImage` in `catalog.mjs` derives the
+  filename from the flavour rather than keeping a second list to drift; `verify.mjs` fails
+  the deploy if a flavour has no file. It is deliberately **never** used for a custom
+  cake — a stock Vanilla standing in for a design someone drew looks like an answer and is
+  not one — and it carries no `data-photo`, so the signing pass ignores it and it can never
+  reach `orderPhotos` or an invoice. The files are the website's product images resized to
+  480px (824KB of originals down to 304KB); re-cut them the same way, since the biggest use
+  on screen is a 52px thumbnail.
 - **Every reference photo shows at once; none of them swipe.** The detail and print sheets
   were a full-width scroll-snap carousel, which on a phone shows one picture and hides the
   rest behind a horizontal gesture inside a vertically scrolling sheet — a four-photo order
