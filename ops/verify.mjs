@@ -30,7 +30,7 @@ try {
 
 // ── 2. every module parses ──────────────────────────────────────────────────
 // db.mjs imports from a CDN so it cannot be executed here, but it can be parsed.
-for (const f of ['app.mjs', 'db.mjs', 'stats.mjs', 'catalog.mjs', 'receipt.mjs']) {
+for (const f of ['app.mjs', 'db.mjs', 'stats.mjs', 'catalog.mjs', 'receipt.mjs', 'help.mjs']) {
   try {
     execFileSync(process.execPath, ['--input-type=module', '--check'], { input: read(f), stdio: 'pipe' });
     pass(`${f} parses`);
@@ -50,7 +50,7 @@ const app = read('app.mjs');
 // way: the order log was fine on an empty store and blew up the moment a real
 // order appeared, so the failure looked like bad data rather than bad code.
 {
-  const EXPORTERS = ['stats.mjs', 'db.mjs', 'catalog.mjs', 'receipt.mjs'];
+  const EXPORTERS = ['stats.mjs', 'db.mjs', 'catalog.mjs', 'receipt.mjs', 'help.mjs'];
   const exported = new Map();                       // name -> module that exports it
   for (const f of EXPORTERS) {
     const src = read(f);
@@ -150,6 +150,29 @@ if (!gallery || !camera) fail(`expected both photo inputs, found: ${inputs.map((
 else if (gallery.capture) fail('#f-photo has capture — Android will skip the picker and force the camera');
 else if (!camera.capture) fail('#f-photo-cam has lost capture — the camera button will open the file picker instead');
 else pass('photo inputs: picker without capture, camera with it');
+
+// ── 6b. the tour still points at something ──────────────────────────────────
+//
+// A tour step whose target has been renamed does not throw — it is dropped, so
+// the tour silently gets shorter and the thing it was there to explain is never
+// shown. That is the same failure mode as check 4, one step further out.
+{
+  const help = read('help.mjs');
+  const ids = [...help.matchAll(/sel:\s*'#([\w-]+)'/g)].map((m) => m[1]);
+  const gone = ids.filter((id) => !declared.has(id));
+  if (!ids.length) fail('no id-based tour steps found in help.mjs — has TOUR moved?');
+  else if (gone.length) fail(`tour steps point at ids that no longer exist: ${gone.join(', ')}`);
+  else pass(`tour targets all exist (${ids.length} by id)`);
+
+  // Role lists are typed by hand in both files and nothing else compares them.
+  const roles = new Set([...help.matchAll(/'(admin|staff|baker|[a-z]+)'/g)]
+    .map((m) => m[1]).filter((r) => /^(admin|staff|baker)$/.test(r)));
+  const bad = [...help.matchAll(/roles:\s*\[([^\]]*)\]/g)]
+    .flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]))
+    .filter((r) => !['admin', 'staff', 'baker'].includes(r));
+  if (bad.length) fail(`help.mjs has unknown roles: ${[...new Set(bad)].join(', ')}`);
+  else pass(`help sections use real roles (${[...roles].sort().join(', ')})`);
+}
 
 // ── 7. the catalogue has not drifted from the build gate ────────────────────
 // catalog.mjs mirrors FACTS in verify-blog.mjs. Nothing enforced that, so the

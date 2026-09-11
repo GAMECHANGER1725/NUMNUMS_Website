@@ -1450,6 +1450,114 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 /* The receipt itself is built as a PDF in receipt.mjs — no print stylesheet,
    because the button downloads a file rather than opening a print dialog. */
 
+/* ── Help ───────────────────────────────────────────────────────────────── */
+/* Nobody is taught this app. It teaches itself twice: a tour that points at the
+   real buttons the first time someone signs in, and this page, which is written
+   to be read at the counter with a customer waiting. */
+.help-btn {
+  width: 32px; height: 32px; flex: none;
+  display: grid; place-items: center;
+  border: 1px solid var(--dough-line); border-radius: 50%;
+  background: var(--dough); color: var(--ink-soft);
+  font-size: 15px; font-weight: 600; line-height: 1;
+  transition: background-color .16s ease, color .16s ease, border-color .16s ease;
+}
+.help-btn:hover { background: var(--rose-pale); color: var(--rose-deep); border-color: var(--rose-pale); }
+.help-btn[aria-pressed="true"] { background: var(--rose); border-color: var(--rose); color: var(--cream); }
+/* The name is what gives way when the bar runs out of room: on a narrow phone
+   you know who you are, and the role chip is the half that carries information.
+   The shared counter tablet is wide enough to keep both. */
+@media (max-width: 400px) { .whoami-name { display: none; } }
+
+/* Prose, not a dashboard: on the counter tablet and Vaidik's laptop the panels
+   stop at the width the order form already uses, rather than running 110
+   characters to the edge of the screen. */
+#view-help { max-width: 620px; margin: 0 auto; }
+.help-top { display: grid; gap: 11px; }
+.help-hello { font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+.help-key-note { font-size: 13px; color: var(--taupe); text-align: right; }
+.help-sec .collapse-head { align-items: flex-start; }
+.help-head { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.help-head .panel-title { margin: 0; }
+.help-sec .collapse-head svg { margin-top: 4px; }
+.help-body { font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.help-body p { margin-bottom: 10px; }
+.help-body p:last-child { margin-bottom: 0; }
+.help-body strong { color: var(--ink); font-weight: 500; }
+.help-list, .help-steps { margin: 0 0 10px; padding-left: 0; list-style: none; }
+.help-list li, .help-steps li { margin-bottom: 8px; }
+/* A marker per item, but only where the content really is a sequence: the order
+   form is one, the things on a card are not. */
+.help-list li { padding-left: 15px; position: relative; }
+.help-list li::before {
+  content: ''; position: absolute; left: 2px; top: 9px;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--rose-pale);
+}
+.help-steps { counter-reset: help-step; }
+.help-steps li { padding-left: 27px; position: relative; counter-increment: help-step; }
+.help-steps li::before {
+  content: counter(help-step); position: absolute; left: 0; top: 1px;
+  width: 19px; height: 19px; border-radius: 50%;
+  background: var(--dough); color: var(--ink-soft);
+  font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums;
+  display: grid; place-items: center;
+}
+.help-note {
+  margin-top: 12px; padding: 9px 11px;
+  background: rgba(200,84,120,.055); border-left: 2px solid var(--rose-pale);
+  border-radius: 0 7px 7px 0;
+  font-size: 13px; line-height: 1.5; color: var(--ink-soft);
+}
+.help-body .help-note:last-child { margin-bottom: 0; }
+.help-kbd {
+  font-variant-numeric: tabular-nums; font-weight: 500;
+  background: var(--dough); border-radius: 4px; padding: 1px 5px;
+}
+.help-foot { border-top: 0; margin-top: 16px; text-align: center; }
+
+/* ── Guided tour ────────────────────────────────────────────────────────── */
+/* The card is shaped like a docket — a rose spine, a tabular counter, a dashed
+   perforation under the head — because the thing doing the teaching may as well
+   look like the thing being taught. */
+.tour { position: fixed; inset: 0; z-index: 60; animation: fade .18s ease; }
+.tour-hole {
+  position: absolute; border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(44,26,14,.74);
+  outline: 2px solid var(--rose);
+  pointer-events: none;
+  transition: left .24s cubic-bezier(.2,.9,.3,1), top .24s cubic-bezier(.2,.9,.3,1),
+              width .24s cubic-bezier(.2,.9,.3,1), height .24s cubic-bezier(.2,.9,.3,1);
+}
+.tour-hole.is-blank { outline: 0; }
+.tour-card {
+  position: absolute;
+  width: min(340px, calc(100vw - 24px));
+  background: var(--cream);
+  border: 1px solid var(--dough-line); border-left: 3px solid var(--rose);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+  padding: 11px 14px 13px;
+  animation: pop .2s cubic-bezier(.2,.9,.3,1);
+}
+.tour-head {
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 8px; border-bottom: 1px dashed var(--dough-line);
+}
+.tour-step {
+  font-size: 11px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums; color: var(--taupe);
+}
+.tour-x {
+  margin-left: auto; width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--dough); color: var(--ink-soft); font-size: 13px; line-height: 1;
+}
+.tour-x:hover { background: var(--rose-pale); color: var(--rose-deep); }
+.tour-title { font-size: 19px; margin: 10px 0 5px; letter-spacing: -0.01em; }
+.tour-text { font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+.tour-foot { display: flex; gap: 8px; margin-top: 13px; }
+.tour-foot .btn { flex: 1; min-height: 42px; }
+.tour-foot .btn[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -1486,6 +1594,10 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
         <span class="whoami-name" id="me-name"></span>
         <span class="role-chip" id="me-role"></span>
         <button class="btn btn-quiet" id="signout" style="min-height:32px;padding:0 11px;font-size:13px;">Sign out</button>
+        <!-- Help is one tap from every screen on purpose. Buried behind the More
+             drawer it would be found by the people who least need it. -->
+        <button class="help-btn" id="help-btn" type="button" aria-pressed="false"
+                aria-label="Help — how this app works">?</button>
       </div>
     </div>
     <div class="segmented hidden" id="store-switch" role="tablist" aria-label="Store"></div>
@@ -1519,6 +1631,7 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
     <section id="view-directory" class="hidden"></section>
     <section id="view-staff" class="hidden"></section>
     <section id="view-export" class="hidden"></section>
+    <section id="view-help" class="hidden"></section>
   </main>
 
   <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>

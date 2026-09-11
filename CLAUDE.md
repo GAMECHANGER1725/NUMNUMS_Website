@@ -32,7 +32,8 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
   blocks that deploy the way `verify-blog.mjs` blocks the public one. Runs `ops/stats.test.mjs`
   (aggregation + Sydney date logic) plus static checks: every module parses, no inline `<script>`
   (the ops CSP forbids it), every id `$()` reaches for exists, **every helper `app.mjs`
-  calls is actually imported**, and `catalog.mjs` still matches `verify-blog.mjs`'s `FACTS`. Local URL is `http://localhost:4000/ops/` — **the trailing slash
+  calls is actually imported**, every guided-tour target still exists, and `catalog.mjs` still
+  matches `verify-blog.mjs`'s `FACTS`. Local URL is `http://localhost:4000/ops/` — **the trailing slash
   matters**, see **Ops app** below.
 - There is no test suite or lint config for the main static site. `verify-blog.mjs` is the closest
   thing to a test for blog content; there is nothing equivalent for the other static pages.
@@ -111,7 +112,8 @@ main site.
 - **Files**: `ops/index.html` (markup + all CSS), `ops/app.mjs` (views, rendering, forms),
   `ops/db.mjs` (every Supabase call), `ops/stats.mjs` (pure date + money logic),
   `ops/stats.test.mjs`, `ops/catalog.mjs` (canonical sizes/flavours, mirrors `verify-blog.mjs`'s
-  `FACTS`), `ops/supabase/functions/purge-photos/` (photo retention job).
+  `FACTS`), `ops/help.mjs` (help page content + the guided tour),
+  `ops/supabase/functions/purge-photos/` (photo retention job).
 - **Print jobs** (`print_jobs` table, "Prints" tab): a cake needing 3D toppers or a photo print
   gets a job pointing at its **order id** — never a re-typed brief or a second photo upload. Admin
   and baker only; staff cannot read the table at all. The baker may change the status of a `photo`
@@ -120,6 +122,20 @@ main site.
   people) — the form just creates both in one pass. Marking an order **baked** or **picked up**
   interrupts with a reminder listing its prints; that interrupt is the whole point of the feature,
   so do not "streamline" it away.
+- **The app teaches itself, because nobody sits a new hire down with it.** Two things in
+  `help.mjs` and they are deliberately not one: a **tour** that spotlights the real buttons on
+  first sign-in, and a **Help page** behind the `?` in the top bar. The tour points at live
+  elements rather than screenshots, so it cannot go stale; a step whose target is not on screen
+  is dropped before the tour starts, which is how one step list covers every role — the baker
+  has no Orders tab and no search box and simply never sees those three. It runs from the role's
+  home view for that reason, replayed from Help included. Seen-state is keyed by **user id**,
+  not by phone: the counter tablet is shared and the second person to sign in on it needs the
+  tour as much as the first. Every help section declares `roles`, and those lists have to track
+  `TABS`/`MENU` and the RLS behind them — showing a baker the invoice button teaches them a
+  thing the database will refuse, which is worse than showing nothing. `verify.mjs` fails the
+  build if a tour step points at an id that no longer exists, because a renamed target does not
+  throw: the tour just gets quietly shorter. Help is a **view, not a sheet** — it is read while
+  you try the thing it describes — and the `?` toggles back to where you were.
 - **Navigation**: the tab bar holds Orders, New, To bake, Prints and **More**, which opens the
   drawer. More is a tab like the rest — same `.tab` class, so it inherits the bar's font, colours
   and active pill — and it hides itself when a role has no groups (the baker sees four). It reads

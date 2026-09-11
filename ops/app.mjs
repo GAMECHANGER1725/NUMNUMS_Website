@@ -28,6 +28,7 @@ import {
 import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered }
   from './catalog.mjs';
 import { receiptPdf, receiptName } from './receipt.mjs';
+import { helpHtml, startTour, tourSeen, markTourSeen } from './help.mjs';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -54,6 +55,7 @@ let printJobs = [];      // jobs for the active print view
 let printsByOrder = new Map();   // order id → its print jobs, for card flags
 let analyticsPage = 'finance';   // which analytics page the drawer last opened
 let bakeStore = 'all';           // store filter on the baker's queue
+let beforeHelp = null;           // the view the ? button was pressed from
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 const ddWho = mountDropdown($('who'), {
@@ -96,8 +98,25 @@ async function start() {
   store = me.stores[0] || 'harris-park';
   buildStoreSwitch();
   buildTabs();
-  view = me.role === 'baker' ? 'bake' : 'log';
+  view = homeView();
   await render();
+
+  // First sign-in for this person: walk them round the real buttons. Nobody
+  // gets sat down with this app, so it has to introduce itself.
+  if (!tourSeen(me.id)) runTour();
+}
+
+/** Where each role starts, and where the tour wants to be run from. */
+const homeView = () => (me.role === 'baker' ? 'bake' : 'log');
+
+/**
+ * The tour points at what is on screen, so it runs from the role's home view —
+ * replayed from the Help page it would otherwise skip the search box and the
+ * store switcher, which are hidden everywhere else.
+ */
+async function runTour() {
+  if (view !== homeView()) { view = homeView(); buildTabs(); await render(); }
+  startTour({ onDone: () => markTourSeen(me.id) });
 }
 
 function buildStoreSwitch() {
@@ -167,12 +186,13 @@ async function render() {
   $('logsearch-row').classList.toggle('hidden', view !== 'log');
   if (view !== 'log') closeRange();
 
-  for (const v of ['log', 'bake', 'prints', ...DRAWER_VIEWS]) $(`view-${v}`).classList.toggle('hidden', v !== view);
+  for (const v of ['log', 'bake', 'prints', 'help', ...DRAWER_VIEWS]) $(`view-${v}`).classList.toggle('hidden', v !== view);
+  $('help-btn').setAttribute('aria-pressed', String(view === 'help'));
 
   const PAINT = {
     log: renderLog, bake: renderBake, prints: renderPrints,
     analytics: renderAnalytics, directory: renderDirectory,
-    staff: renderStaff, export: renderExport,
+    staff: renderStaff, export: renderExport, help: renderHelp,
   };
   // Supabase retries a failed request internally before giving up, so a dead
   // connection sits on "Loading…" for about ten seconds. Say something at four.
@@ -2821,7 +2841,7 @@ const MENU = [
 
 const VIEW_TITLE = {
   log: 'Orders', bake: 'To bake', prints: 'Prints',
-  directory: 'Customers', staff: 'Staff', export: 'Export',
+  directory: 'Customers', staff: 'Staff', export: 'Export', help: 'Help',
 };
 const ANALYTICS_TITLE = { finance: 'Finance', customers: 'Customers', data: 'Data' };
 
@@ -2901,6 +2921,25 @@ function markMoreTab(open) {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && $('drawer-root').innerHTML) closeDrawer();
 });
+
+// ── Help ────────────────────────────────────────────────────────────────────
+//
+// A view rather than a sheet: it is long, it is read rather than acted on, and
+// leaving it open while you try the thing it describes is the whole point. The
+// ? toggles, so the same tap that opened it puts you back where you were.
+
+$('help-btn').addEventListener('click', () => {
+  if (view === 'help') { view = beforeHelp || homeView(); beforeHelp = null; }
+  else { beforeHelp = view; view = 'help'; }
+  buildTabs();
+  render();
+});
+
+function renderHelp() {
+  const root = $('view-help');
+  root.innerHTML = helpHtml(me);
+  root.querySelector('.help-tour').addEventListener('click', () => runTour());
+}
 
 // ── Customer directory ──────────────────────────────────────────────────────
 //
