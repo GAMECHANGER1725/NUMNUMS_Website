@@ -98,12 +98,17 @@ export const handler = async (event) => {
 
     // Issue the next one. Unique on issued_for_order, so a retry cannot mint
     // a second code for the same order.
+    let nextCoupon = null;
     if (email) {
       const expires = new Date(Date.now() + 90 * 86_400_000).toISOString();
+      const newCode = code();
       const { error: cErr } = await db.from('coupons').insert({
-        code: code(), email, percent: 10, expires_at: expires,
+        code: newCode, email, percent: 10, expires_at: expires,
       });
       if (cErr && cErr.code !== DUPLICATE) console.error('coupon issue failed', cErr);
+      // Only hand it to Make if the insert actually landed — a retry that hits
+      // the duplicate guard must not re-announce a code nobody wrote twice.
+      else if (!cErr) nextCoupon = { code: newCode, expires_at: expires };
     }
 
     if (email) {
@@ -124,6 +129,11 @@ export const handler = async (event) => {
           phone: m.phone, email, cakes: count,
           order_nos: (inserted ?? []).map((r) => r.order_no),
           total: (session.amount_total ?? 0) / 100,
+          // The whole reason this field exists: it is what a Make scenario
+          // needs to email the customer their next-order code. Before this it
+          // was minted in the database and never told to anyone.
+          coupon_code: nextCoupon?.code ?? null,
+          coupon_expires_at: nextCoupon?.expires_at ?? null,
         }),
       }).catch((e) => console.error('make hook failed', e));
     }
