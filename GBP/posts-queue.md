@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-12
+
+```yaml
+id: post-rs-2026-09-12
+status: published
+published_at: 2026-09-12
+location: riverstone
+post_type: "Call to action"
+title: "Photo cake orders for Vineyard and Riverstone — pickup open every Sunday"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5751.jpeg"
+keywords_baited:
+  - photo cake add-on
+  - Vineyard Riverstone Sunday hours
+  - bakery open Sunday near Vineyard
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-09-12
 
 ```yaml
