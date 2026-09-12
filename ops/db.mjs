@@ -2,9 +2,18 @@
 // markup and rendering.
 //
 // The key below is the *publishable* key and is meant to be public. What
-// actually guards the data is row-level security in Postgres plus signups
-// being disabled — never assume hiding something in the UI is enough, because
-// anyone holding this key can call the REST API directly.
+// actually guards the data is row-level security in Postgres — never assume
+// hiding something in the UI is enough, because anyone holding this key can
+// call the REST API directly.
+//
+// RLS is the ONLY guard. This comment used to say "plus signups being
+// disabled"; that was checked on 2026-09-12 and was false — the signup
+// endpoint accepts new accounts, and this key sits in a public GitHub repo.
+// So `authenticated` does not mean `staff`. Any policy written `to
+// authenticated` without a `my_role() is not null` test is open to anyone with
+// an email address. Two were, and were fixed that day
+// (ops/supabase/2026-09-12-restrict-writes-to-staff.sql). Check any new one
+// the same way, and test it as a second user rather than as yourself.
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.114.0/+esm';
 
