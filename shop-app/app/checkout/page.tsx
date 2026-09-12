@@ -158,8 +158,14 @@ export default function CheckoutPage() {
         <button type="button" onClick={pay} disabled={!canPay} className="btn-cta mt-5 w-full py-3">
           {busy ? <><Loader2 className="h-4 w-4 animate-spin" />Opening secure checkout</> : <><Lock className="h-4 w-4" />Pay {money(subtotal - discount)}</>}
         </button>
-        <p className="mt-2 text-center text-[0.72rem] text-muted-foreground">
+        <p className="mt-2 text-center text-[0.72rem] leading-relaxed text-muted-foreground">
           Card details are entered on Stripe&rsquo;s secure page — they never touch this site.
+          <br />
+          Paying confirms you accept our{" "}
+          <a href="/terms" target="_blank" rel="noopener" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
+            Terms &amp; Conditions
+          </a>
+          , including the 48-hour change-of-mind window.
         </p>
       </section>
     </main>

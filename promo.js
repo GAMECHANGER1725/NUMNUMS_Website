@@ -35,6 +35,10 @@
   if (safeGet('sessionStorage', SEEN_KEY)) return;
   if (safeGet('localStorage', AUTH_KEY)) return;          // already has an account
   if (location.pathname.indexOf('/shop') === 0) return;   // already in the shop
+  // The legal pages are where the sign-up form SENDS people. Covering them with
+  // the very offer they stepped out of to read the terms is hostile, and it
+  // would obscure the document they are being asked to agree to.
+  if (/^\/(terms|privacy-policy)\/?$/.test(location.pathname)) return;
 
   var opened = false;
   var lastFocus = null;
@@ -101,7 +105,7 @@
     '.nnp-consent-h{margin:0;font-size:.84rem;font-weight:600;line-height:1.35;color:#2C1A0E}',
     '.nnp-consent-p{margin:4px 0 0;font-size:.76rem;line-height:1.45;color:#5C3A22}',
     '.nnp-consent-foot{margin:10px 0 0;font-size:.7rem;line-height:1.45;color:#7A5A44}',
-    '.nnp-check{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0;font-size:.78rem;line-height:1.45;color:#5C3A22;cursor:pointer}',
+    '.nnp-check{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0;padding:4px 0;min-height:32px;font-size:.78rem;line-height:1.45;color:#5C3A22;cursor:pointer}',
     '.nnp-check b{color:#2C1A0E}',
     '.nnp-terms{margin:0 0 12px}',
     '.nnp-terms a{color:#C85478;font-weight:600}',
@@ -182,15 +186,20 @@
                 // boxes, and consent cannot be inferred from an order or from a
                 // phone number given for a receipt. The lift comes from naming
                 // the benefit and the frequency, not from a default.
+                // Unticked, and it stays that way: ACMA prohibits pre-checked
+                // consent boxes outright. What lifts opt-in legitimately is
+                // first-person affirmative phrasing and a named benefit, not a
+                // default — "Email and text me" reads as an admin setting,
+                // "Yes, keep me in the loop" reads as something you want.
                 '<div class="nnp-consent">' +
-                  '<p class="nnp-consent-h">Be first in line</p>' +
-                  '<p class="nnp-consent-p">Festival pre-orders fill fast — Diwali, Christmas, Eid. Members hear before the shop floor does.</p>' +
+                  '<p class="nnp-consent-h">Don\u2019t miss the good stuff</p>' +
+                  '<p class="nnp-consent-p">Festival pre-orders fill fast \u2014 Diwali, Christmas, Eid. Ours go out before the shop floor knows.</p>' +
                   '<label class="nnp-check"><input type="checkbox" id="nnp-mkt">' +
-                    '<span><b>Email and text me</b> — new flavours, seasonal specials and pre-order dates. About twice a month.</span></label>' +
-                  '<p class="nnp-consent-foot">Leave it unticked if you like — your 10% code still comes by email. Unsubscribe any time.</p>' +
+                    '<span><b>Yes, keep me in the loop</b> \u2014 first pick of new flavours, seasonal specials and festival pre-orders.</span></label>' +
+                  '<p class="nnp-consent-foot">By email and text. Unsubscribe any time.</p>' +
                 '</div>' +
                 '<label class="nnp-check nnp-terms"><input type="checkbox" id="nnp-terms">' +
-                  '<span>I agree to the <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a> and to Num Num\u2019s Bakery storing my details to process my orders.</span></label>' +
+                  '<span>I agree to the <a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>' +
                 '<p class="nnp-err" hidden></p>' +
                 '<button type="submit" class="nnp-btn" style="margin-top:6px" disabled>Create account</button>' +
               '</form>' +
@@ -300,7 +309,7 @@
     root.querySelector('.nnp-google').addEventListener('click', function () {
       err.hidden = true;
       if (!root.querySelector('#nnp-terms').checked) {
-        err.textContent = 'Please agree to the Privacy Policy first.';
+        err.textContent = 'Please agree to the Terms & Privacy Policy first.';
         err.hidden = false;
         return;
       }

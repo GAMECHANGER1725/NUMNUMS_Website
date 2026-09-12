@@ -103,7 +103,7 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
   async function handleGoogle() {
     setError(null);
     if (!terms) {
-      setError("Please agree to the Privacy Policy first.");
+      setError("Please agree to the Terms & Privacy Policy first.");
       return;
     }
     if (!supabaseConfigured) {
@@ -289,21 +289,23 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                 </div>
 
                 {/*
-                  Separate, unticked and freely given — ACMA prohibits pre-ticked
-                  boxes outright, and consent cannot be inferred from a purchase
-                  or from a phone number handed over for a receipt. What lifts
-                  opt-in legitimately is naming the benefit and the frequency
-                  instead of asking for abstract "updates".
+                  Unticked, and it stays that way: ACMA prohibits pre-checked
+                  consent boxes outright, and consent cannot be inferred from a
+                  purchase or from a phone number handed over for a receipt.
+                  What lifts opt-in legitimately is first-person affirmative
+                  phrasing and a named benefit, never a default — "Email and
+                  text me" reads as an admin setting, "Yes, keep me in the loop"
+                  reads as something you want.
                 */}
                 <div className="mt-1 rounded-xl border border-border bg-secondary/70 p-3.5">
                   <p className="text-[0.84rem] font-semibold leading-snug text-foreground">
-                    Be first in line
+                    Don&rsquo;t miss the good stuff
                   </p>
                   <p className="mt-1 text-[0.76rem] leading-snug text-muted-foreground">
-                    Festival pre-orders fill fast — Diwali, Christmas, Eid. Members
-                    hear before the shop floor does.
+                    Festival pre-orders fill fast — Diwali, Christmas, Eid. Ours go
+                    out before the shop floor knows.
                   </p>
-                  <label className="mt-3 flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
+                  <label className="mt-3 flex min-h-[32px] cursor-pointer items-start gap-2.5 py-1 text-[0.78rem] leading-snug text-muted-foreground">
                     <input
                       type="checkbox"
                       checked={marketing}
@@ -311,17 +313,16 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                       className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
                     />
                     <span>
-                      <b className="font-semibold text-foreground">Email and text me</b> — new
-                      flavours, seasonal specials and pre-order dates. About twice a month.
+                      <b className="font-semibold text-foreground">Yes, keep me in the loop</b> —
+                      first pick of new flavours, seasonal specials and festival pre-orders.
                     </span>
                   </label>
                   <p className="mt-3 text-[0.7rem] leading-snug text-muted-foreground/80">
-                    Leave it unticked if you like — your 10% code still comes by
-                    email. Unsubscribe any time.
+                    By email and text. Unsubscribe any time.
                   </p>
                 </div>
 
-                <label className="flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
+                <label className="flex min-h-[32px] cursor-pointer items-start gap-2.5 py-1 text-[0.78rem] leading-snug text-muted-foreground">
                   <input
                     type="checkbox"
                     checked={terms}
@@ -331,14 +332,23 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                   <span>
                     I agree to the{" "}
                     <a
+                      href="/terms"
+                      target="_blank"
+                      rel="noopener"
+                      className="font-semibold text-[#C85478] underline-offset-2 hover:underline"
+                    >
+                      Terms &amp; Conditions
+                    </a>{" "}
+                    and{" "}
+                    <a
                       href="/privacy-policy"
                       target="_blank"
                       rel="noopener"
                       className="font-semibold text-[#C85478] underline-offset-2 hover:underline"
                     >
                       Privacy Policy
-                    </a>{" "}
-                    and to Num Num&rsquo;s Bakery storing my details to process my orders.
+                    </a>
+                    .
                   </span>
                 </label>
 
