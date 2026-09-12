@@ -33,6 +33,9 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
 - Screenshot: `node screenshot.mjs http://localhost:4000[/path] [label]` → saves to `temporary screenshots/`.
 - Blog integrity check: `node verify-blog.mjs` — validates blog invariants (index cards, sitemap.xml,
   llms.txt, no duplicate slugs/images) against what's on disk. Run after any blog batch or merge.
+- Google sign-in check: `node check-google-signin.mjs [url]` — loads the sign-up page and
+  fails if Google refuses the origin. The button renders whether or not it works, so this
+  is the only honest signal.
 - IndexNow ping (after a prod deploy is live): `node indexnow.mjs [url ...]` or `--dry` to preview.
 - Tailwind rebuild — only needed for the handful of pages that link `/style.css` (compiled from
   `src/input.css`; most pages use the Tailwind CDN script instead): `npx tailwindcss -i src/input.css -o style.css`.
@@ -575,7 +578,12 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   (The paid custom-domain add-on is the other fix; it needs Pro, so ~$35/mo.) With GIS the
   browser never leaves our origin. Consequences to keep:
   - Google Cloud needs **`https://numnumsbakery.com.au` as an Authorised JavaScript origin**,
-    not a redirect URI. Without it GIS silently renders nothing.
+    not a redirect URI. **A wrong origin is invisible**: GIS draws a perfect, clickable
+    button either way and only refuses on click, logging it to a console no customer
+    reads — so a broken sign-in and a working one are pixel-identical. Never judge it by
+    looking. `node check-google-signin.mjs [url]` reads the console and exits non-zero;
+    run it after any Google Cloud change and after the first production deploy, since an
+    origin that passes on localhost says nothing about the live domain.
   - `accounts.google.com` is in `script-src`, `frame-src` **and** `connect-src`. Miss one
     and it breaks in production only.
   - The nonce is sent to Google **hashed** (SHA-256 hex) and to Supabase **raw**. Swapping
