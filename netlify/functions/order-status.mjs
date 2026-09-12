@@ -10,7 +10,7 @@
  * guessable enough that this must not become a way to read the order book.
  */
 import { createClient } from '@supabase/supabase-js';
-import { json } from './_shared.mjs';
+import { json } from '../lib/shared.mjs';
 
 export default async (req) => {
   const s = new URL(req.url).searchParams.get('s') ?? '';
@@ -36,5 +36,3 @@ export default async (req) => {
     total: data.reduce((a, r) => a + Number(r.price) - Number(r.discount), 0),
   });
 };
-
-export const config = { path: '/api/order-status' };

@@ -511,6 +511,14 @@ Normal cakes are bought online and paid for in full; custom cakes are still quot
 by a person through `/order`. `/order` is the **single fork** between the two — do not
 add a second entry point to the shop elsewhere, or the two have to be kept in step.
 
+- **`netlify/functions/` holds deployable functions and nothing else.** Netlify bundles
+  **every** file in there as a function, so a test file fails the deploy twice over — a v1
+  function bundles to CommonJS and cannot do top-level await, and a dot in the filename is
+  an illegal function name. Tests live in `tests/`, shared helpers in `netlify/lib/`, and
+  `verify-blog.mjs` fails the build if either strays back. Routes are declared in
+  `netlify.toml`, never in a `config.path` export as well.
+  Reproduce a deploy's bundling locally with
+  `npx @netlify/zip-it-and-ship-it netlify/functions /tmp/out` before pushing function changes.
 - **Files**: `shop-app/` is a Next.js app (`output: "export"`, `basePath: "/shop"`) whose
   export is committed as `shop/`. Rebuild it with `cd shop-app && npm run build`, then
   `rm -rf shop && cp -R shop-app/out shop`. The Netlify Functions are

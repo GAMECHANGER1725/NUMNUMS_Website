@@ -12,7 +12,7 @@ process.env.STRIPE_WEBHOOK_SECRET = 'whsec_testsecret123';
 // The function logs every rejection; that is right in production and noise here.
 const realError = console.error;
 console.error = () => {};
-const { handler } = await import('./stripe-webhook.mjs');
+const { handler } = await import('../netlify/functions/stripe-webhook.mjs');
 const Stripe = (await import('stripe')).default;
 const stripe = new Stripe('sk_test_fake');
 

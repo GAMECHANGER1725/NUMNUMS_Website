@@ -9,7 +9,7 @@
  */
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { BadRequest, json, priceCart, splitDiscount, MAX_LINES, dueDayKey } from './_shared.mjs';
+import { BadRequest, json, priceCart, splitDiscount, dueDayKey } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
 
@@ -124,5 +124,5 @@ export default async (req) => {
   }
 };
 
-export const config = { path: '/api/create-checkout' };
-export { MAX_LINES };
+// The route lives in netlify.toml, which this repo treats as the single source
+// of truth for redirects — not in a `config.path` here as well.

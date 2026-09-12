@@ -400,14 +400,30 @@ const FACTS = {
 // price could drift here and be discovered by a customer.
 {
   try {
-    execFileSync(process.execPath, ['netlify/functions/checkout.test.mjs'], { cwd: ROOT, stdio: 'pipe' });
+    execFileSync(process.execPath, ['tests/checkout.test.mjs'], { cwd: ROOT, stdio: 'pipe' });
     notes.push('checkout: price table, discount splitting and the 48h/DST boundary all hold');
   } catch (e) {
     fail(`checkout tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
+  // Netlify bundles EVERY file in netlify/functions as a deployable function.
+  // A test file there is not a mistake you find locally — it fails the deploy,
+  // which is exactly how it was found. So the directory holds deployable
+  // functions and nothing else; helpers live in netlify/lib/.
+  {
+    const dir = join(ROOT, 'netlify', 'functions');
+    for (const f of readdirSync(dir).filter((n) => /\.m?js$/.test(n))) {
+      const src = readFileSync(join(dir, f), 'utf8');
+      if (/\.test\.m?js$/.test(f)) {
+        fail(`netlify/functions/${f} is a test — Netlify deploys it as a function and the dot in its name fails the build. Move it to tests/.`);
+      } else if (!/export\s+(default|const handler|async function handler)|exports\.handler/.test(src)) {
+        fail(`netlify/functions/${f} exports no handler, so it would deploy as a broken endpoint. Move helpers to netlify/lib/.`);
+      }
+    }
+  }
+
   try {
-    const out = execFileSync(process.execPath, ['netlify/functions/webhook.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    const out = execFileSync(process.execPath, ['tests/webhook.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
     notes.push(out.trim());
   } catch (e) {
     fail(`webhook signature tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
