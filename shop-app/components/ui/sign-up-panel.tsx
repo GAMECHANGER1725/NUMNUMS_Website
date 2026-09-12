@@ -102,10 +102,10 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
 
   async function handleGoogle() {
     setError(null);
-    if (!terms) {
-      setError("Please agree to the Terms & Privacy Policy first.");
-      return;
-    }
+    // No blocking tick here. Pressing "Continue with Google" IS the agreement —
+    // it is stated under the button, which is how every large site does it and
+    // is a far lower-friction ask than a checkbox in front of a one-tap signup.
+    // The acceptance is still recorded: prefs() stamps terms_accepted_at.
     if (!supabaseConfigured) {
       setError("Sign-up isn't connected yet. Try again shortly.");
       return;
@@ -209,6 +209,17 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                 <GoogleIcon />
                 Continue with Google
               </button>
+              <p className="mt-2 text-center text-[0.7rem] leading-snug text-muted-foreground">
+                By continuing with Google you agree to our{" "}
+                <a href="/terms" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">
+                  Terms &amp; Conditions
+                </a>{" "}
+                and{" "}
+                <a href="/privacy-policy" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">
+                  Privacy Policy
+                </a>
+                .
+              </p>
 
               <div className="my-4 flex items-center gap-3">
                 <span className="h-px flex-1 bg-border" />

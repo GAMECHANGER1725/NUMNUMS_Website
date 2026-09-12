@@ -113,6 +113,8 @@
     '.nnp-google{display:flex;width:100%;align-items:center;justify-content:center;gap:10px;margin:14px 0 0;padding:10px 16px;border:1px solid #EDE0D6;border-radius:9999px;background:#fff;font:inherit;font-weight:500;font-size:.875rem;color:#2C1A0E;cursor:pointer;transition:background .2s ease}',
     '.nnp-google:hover{background:#F8EEE6}',
     '.nnp-google:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
+    '.nnp-gnote{margin:8px 0 0;text-align:center;font-size:.7rem;line-height:1.45;color:#7A5A44}',
+    '.nnp-gnote a{color:#C85478;font-weight:500}',
     '.nnp-or{display:flex;align-items:center;gap:12px;margin:12px 0}',
     '.nnp-or::before,.nnp-or::after{content:"";flex:1;height:1px;background:#EDE0D6}',
     '.nnp-or span{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5C3A22}',
@@ -173,6 +175,9 @@
               '<h3 class="nnp-title">Create your account</h3>' +
               '<p class="nnp-lede">Order online and collect in store.</p>' +
               '<button type="button" class="nnp-google">' + GOOGLE_SVG + 'Continue with Google</button>' +
+              '<p class="nnp-gnote">By continuing with Google you agree to our ' +
+                '<a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a> and ' +
+                '<a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</p>' +
               '<div class="nnp-or"><span>or</span></div>' +
               '<form novalidate>' +
                 '<div class="nnp-field"><label class="nnp-label" for="nnp-email">Your email</label>' +
@@ -306,13 +311,12 @@
       });
     }
 
+    // No blocking tick on Google. Pressing the button IS the agreement — it is
+    // stated under it, the way every large site does it, and that is a far
+    // lower-friction ask than a checkbox in front of a one-tap signup. The
+    // acceptance is still recorded: prefs() stamps terms_accepted_at.
     root.querySelector('.nnp-google').addEventListener('click', function () {
       err.hidden = true;
-      if (!root.querySelector('#nnp-terms').checked) {
-        err.textContent = 'Please agree to the Terms & Privacy Policy first.';
-        err.hidden = false;
-        return;
-      }
       // The redirect leaves this page, so park the ticks for the shop app to write.
       safeSet('localStorage', PREFS_KEY, JSON.stringify(prefs('promo-dialog:google')));
       sdk().then(function (sb) {
