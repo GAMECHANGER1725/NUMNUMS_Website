@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-12
+
+```yaml
+id: post-hp-2026-09-12
+status: published
+published_at: 2026-09-12
+location: harris-park
+post_type: "Call to action"
+title: "Custom eggless baby shower and gender reveal cakes for Westmead and Parramatta"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1585.jpg"
+keywords_baited:
+  - custom eggless baby shower cake
+  - Westmead Parramatta Harris Park
+  - baby shower cake safe for vegetarian and egg allergy guests
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-09-11
 
 ```yaml
