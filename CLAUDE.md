@@ -567,6 +567,27 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   naming both channels, the benefit and the frequency; the Privacy Policy tick is separate
   and required. Both channels are stored as two fields so a later "stop texting me" does
   not also stop the emails. Do not "simplify" that to one.
+- **Google sign-in is Google Identity Services, NOT `signInWithOAuth`.** The redirect
+  flow sends the browser to `<project-ref>.supabase.co/auth/v1/callback`, and Google then
+  names *that* domain on its consent screen — indistinguishable from a phishing page to a
+  customer. It cannot be fixed with branding settings: Google only shows an app name for a
+  redirect URI on a domain you can prove you own, and only Supabase owns `supabase.co`.
+  (The paid custom-domain add-on is the other fix; it needs Pro, so ~$35/mo.) With GIS the
+  browser never leaves our origin. Consequences to keep:
+  - Google Cloud needs **`https://numnumsbakery.com.au` as an Authorised JavaScript origin**,
+    not a redirect URI. Without it GIS silently renders nothing.
+  - `accounts.google.com` is in `script-src`, `frame-src` **and** `connect-src`. Miss one
+    and it breaks in production only.
+  - The nonce is sent to Google **hashed** (SHA-256 hex) and to Supabase **raw**. Swapping
+    them fails the token exchange.
+  - Reveal the button only once the host actually has a child. `renderButton` returns
+    before it draws and can draw nothing at all, and an empty bordered box above an OR
+    divider reads as broken. Do **not** gate on height — the host sits inside the hidden
+    wrapper, so it measures 0 until shown, which is the thing being decided.
+  - Nothing navigates away, so consent is written straight onto the user with
+    `updateUser`; there is no redirect to park values across any more.
+  - A Google sign-in is already verified, so its success screen must not tell the customer
+    to go and confirm an email that will never arrive.
 - **Lenis must not touch the popup.** `promo.js`'s card carries `data-lenis-prevent`;
   without it Lenis preventDefaults the wheel and the dialog cannot scroll to its own
   submit button. Any new overlay on the static site needs the same attribute.

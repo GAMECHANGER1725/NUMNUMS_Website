@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Loader2, PartyPopper, X } from "lucide-react";
+import { GoogleButton } from "@/components/ui/google-button";
 import { CouponCard } from "@/components/ui/coupon-card";
 import { Confetti, fireSideCannons, type ConfettiRef } from "@/components/ui/confetti";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
-import { applyStashedPrefs, stashPrefs, type SignUpPrefs } from "@/lib/prefs";
+import { type SignUpPrefs } from "@/lib/prefs";
 import { cn } from "@/lib/utils";
 
 const MIN_PASSWORD = 8;
@@ -13,19 +14,6 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Australian mobile, however it was typed: 0412 345 678, +61 412 345 678, 61412345678.
 const MOBILE_RE = /^(?:\+?61|0)4\d{8}$/;
 const normalisePhone = (v: string) => v.replace(/[\s()-]/g, "");
-
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 64 64" className="h-[18px] w-[18px]" aria-hidden>
-      <g transform="translate(3, 2)" fillRule="nonzero">
-        <path fill="#4285F4" d="M57.81,30.15c0-2.43-.2-4.19-.62-6.03H29.5v10.95h16.26c-.33,2.72-2.1,6.82-6.03,9.57l-.06.37,8.76,6.78.6.06c5.57-5.15,8.78-12.72,8.78-21.7" />
-        <path fill="#34A853" d="M29.5,58.99c7.96,0,14.65-2.62,19.53-7.14l-9.31-7.21c-2.49,1.74-5.83,2.95-10.22,2.95-7.8,0-14.42-5.15-16.78-12.26l-.35.03-9.1,7.05-.12.33c4.85,9.64,14.81,16.26,26.35,16.26" />
-        <path fill="#FBBC05" d="M12.72,35.33c-.62-1.84-.98-3.8-.98-5.83s.36-4,.95-5.84l-.02-.39L3.45,16.11l-.3.14C1.15,20.25,0,24.74,0,29.5s1.15,9.24,3.15,13.24l9.57-7.41" />
-        <path fill="#EB4335" d="M29.5,11.41c5.54,0,9.27,2.39,11.4,4.39l8.32-8.13C44.11,2.92,37.46,0,29.5,0,17.96,0,8,6.62,3.15,16.26l9.54,7.41c2.39-7.11,9.01-12.26,16.81-12.26" />
-      </g>
-    </svg>
-  );
-}
 
 export type SignUpPanelProps = {
   /** "dialog" shows the close button and tightens the padding. */
@@ -41,7 +29,9 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
   const [showPassword, setShowPassword] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [terms, setTerms] = useState(false);
-  const [status, setStatus] = useState<"idle" | "submitting" | "done">("idle");
+  // "done" splits: a Google sign-in is already verified, so sending that
+  // customer off to confirm an email that will never arrive is a dead end.
+  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "done-google">("idle");
   const [error, setError] = useState<string | null>(null);
   const confettiRef = useRef<ConfettiRef>(null);
 
@@ -52,13 +42,8 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
   const canSubmit = emailValid && passwordValid && phoneValid && terms && status === "idle";
 
   useEffect(() => {
-    if (status === "done") fireSideCannons(confettiRef.current);
+    if (status === "done" || status === "done-google") fireSideCannons(confettiRef.current);
   }, [status]);
-
-  // This is where Google sends people back, so it is where parked consent lands.
-  useEffect(() => {
-    void applyStashedPrefs();
-  }, []);
 
   function prefs(): SignUpPrefs {
     return {
@@ -98,33 +83,6 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
       return;
     }
     setStatus("done");
-  }
-
-  async function handleGoogle() {
-    setError(null);
-    // No blocking tick here. Pressing "Continue with Google" IS the agreement —
-    // it is stated under the button, which is how every large site does it and
-    // is a far lower-friction ask than a checkbox in front of a one-tap signup.
-    // The acceptance is still recorded: prefs() stamps terms_accepted_at.
-    if (!supabaseConfigured) {
-      setError("Sign-up isn't connected yet. Try again shortly.");
-      return;
-    }
-    // signInWithOAuth navigates away, so park the ticks before we lose them.
-    stashPrefs({ ...prefs(), consent_source: prefs().consent_source + ":google" });
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/shop/sign-up` },
-    });
-    // "provider is not enabled" is our configuration, not the customer's
-    // problem, so it points at the form rather than printing our own error.
-    if (oauthError) {
-      setError(
-        /provider is not enabled|Unsupported provider/i.test(oauthError.message)
-          ? "Google sign-in isn't available right now — please use your email below."
-          : oauthError.message,
-      );
-    }
   }
 
   return (
@@ -176,15 +134,21 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
 
         {/* Right — the form */}
         <div className="flex flex-col justify-center px-6 py-8 md:px-9 md:py-11">
-          {status === "done" ? (
+          {status === "done" || status === "done-google" ? (
             <div className="flex flex-col items-start gap-3 py-6">
               <PartyPopper className="h-9 w-9 text-[#C85478]" />
               <h3 className="font-display text-3xl font-light tracking-tight">
-                Account created
+                {status === "done-google" ? "You\u2019re in" : "Account created"}
               </h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Check <span className="font-medium text-foreground">{email}</span> to
-                confirm your address. Your 10% code lands in the same inbox.
+                {status === "done-google" ? (
+                  <>Your 10% code is on its way to your inbox.</>
+                ) : (
+                  <>
+                    Check <span className="font-medium text-foreground">{email}</span> to
+                    confirm your address. Your 10% code lands in the same inbox.
+                  </>
+                )}
               </p>
               {onClose && (
                 <button type="button" onClick={onClose} className="btn-cta mt-3">
@@ -201,33 +165,15 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                 Order online and collect in store.
               </p>
 
-              <button
-                type="button"
-                onClick={handleGoogle}
-                className="mt-5 flex w-full items-center justify-center gap-2.5 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478]"
-              >
-                <GoogleIcon />
-                Continue with Google
-              </button>
-              <p className="mt-2 text-center text-[0.7rem] leading-snug text-muted-foreground">
-                By continuing with Google you agree to our{" "}
-                <a href="/terms" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">
-                  Terms &amp; Conditions
-                </a>{" "}
-                and{" "}
-                <a href="/privacy-policy" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">
-                  Privacy Policy
-                </a>
-                .
-              </p>
-
-              <div className="my-4 flex items-center gap-3">
-                <span className="h-px flex-1 bg-border" />
-                <span className="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                  or
-                </span>
-                <span className="h-px flex-1 bg-border" />
-              </div>
+              <GoogleButton
+                onSignedIn={async () => {
+                  // No redirect happens in this flow, so consent is written
+                  // straight onto the user rather than parked for the trip back.
+                  await supabase.auth.updateUser({ data: prefs() });
+                  setStatus("done-google");
+                }}
+                onError={setError}
+              />
 
               <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3.5">
                 <div>

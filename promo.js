@@ -24,7 +24,8 @@
   var DELAY_MS = 5000;
   var SCROLL_FRACTION = 0.5;
   var MIN_PASSWORD = 8;
-  var PREFS_KEY = 'nn_signup_prefs_v1';   // read back by shop-app/lib/prefs.ts
+  var GOOGLE_CLIENT_ID = '96266000644-eg3h5tk0i0q9bhf0qs2d2tjse2si6c3v.apps.googleusercontent.com';
+  var GSI_SRC = 'https://accounts.google.com/gsi/client';
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   var MOBILE_RE = /^(?:\+?61|0)4\d{8}$/;  // 0412 345 678, +61 412 345 678, 61412345678
 
@@ -67,6 +68,45 @@
       document.body.style.overflow = prevOverflow;
       if (window.__lenis && window.__lenis.start) window.__lenis.start();
     }
+  }
+
+  function loadGsi() {
+    if (window.google && window.google.accounts && window.google.accounts.id) return Promise.resolve();
+    return new Promise(function (res, rej) {
+      var have = document.querySelector('script[src="' + GSI_SRC + '"]');
+      var el = have || document.createElement('script');
+      el.addEventListener('load', function () { res(); });
+      el.addEventListener('error', function () { rej(new Error('gsi')); });
+      if (!have) { el.src = GSI_SRC; el.async = true; document.head.appendChild(el); }
+    });
+  }
+
+  /**
+   * Calls back only once `el` actually gains a child within ~3s.
+   *
+   * Deliberately NOT a height check: the host sits inside the hidden wrapper,
+   * so it measures 0 until the wrapper is shown — which is the thing this is
+   * deciding. childElementCount is readable while hidden and is enough: a
+   * blocked GIS leaves the host empty.
+   */
+  function whenDrawn(el, cb) {
+    var tries = 0;
+    (function poll() {
+      if (el.childElementCount) return cb();
+      if (++tries > 30) return;
+      setTimeout(poll, 100);
+    })();
+  }
+
+  /** A nonce and its SHA-256. Google gets the hash, Supabase the original. */
+  function makeNonce() {
+    var raw = btoa(String.fromCharCode.apply(null, crypto.getRandomValues(new Uint8Array(32))));
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw)).then(function (buf) {
+      var hashed = Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return ('0' + b.toString(16)).slice(-2);
+      }).join('');
+      return { raw: raw, hashed: hashed };
+    });
   }
 
   /* ---------------------------------------------------------------- styles */
@@ -123,9 +163,9 @@
     '.nnp-terms{margin:0 0 12px}',
     '.nnp-terms a{color:#C85478;font-weight:600}',
     '.nnp-check input{margin:3px 0 0;width:16px;height:16px;flex:none;accent-color:#C85478}',
-    '.nnp-google{display:flex;width:100%;align-items:center;justify-content:center;gap:10px;margin:14px 0 0;padding:10px 16px;border:1px solid #EDE0D6;border-radius:9999px;background:#fff;font:inherit;font-weight:500;font-size:.875rem;color:#2C1A0E;cursor:pointer;transition:background .2s ease}',
-    '.nnp-google:hover{background:#F8EEE6}',
-    '.nnp-google:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
+    '.nnp-gwrap{margin:14px 0 0}',
+    '.nnp-gbtn{display:flex;justify-content:center;min-height:44px}',
+    '.nnp-gbtn>div{width:100%!important}',
     '.nnp-gnote{margin:8px 0 0;text-align:center;font-size:.7rem;line-height:1.45;color:#7A5A44}',
     '.nnp-gnote a{color:#C85478;font-weight:500}',
     '.nnp-or{display:flex;align-items:center;gap:12px;margin:12px 0}',
@@ -146,14 +186,6 @@
   ].join('');
 
   /* ---------------------------------------------------------------- markup */
-
-  var GOOGLE_SVG =
-    '<svg viewBox="0 0 64 64" width="18" height="18" aria-hidden="true"><g transform="translate(3,2)">' +
-      '<path fill="#4285F4" d="M57.81,30.15c0-2.43-.2-4.19-.62-6.03H29.5v10.95h16.26c-.33,2.72-2.1,6.82-6.03,9.57l-.06.37,8.76,6.78.6.06c5.57-5.15,8.78-12.72,8.78-21.7"/>' +
-      '<path fill="#34A853" d="M29.5,58.99c7.96,0,14.65-2.62,19.53-7.14l-9.31-7.21c-2.49,1.74-5.83,2.95-10.22,2.95-7.8,0-14.42-5.15-16.78-12.26l-.35.03-9.1,7.05-.12.33c4.85,9.64,14.81,16.26,26.35,16.26"/>' +
-      '<path fill="#FBBC05" d="M12.72,35.33c-.62-1.84-.98-3.8-.98-5.83s.36-4,.95-5.84l-.02-.39L3.45,16.11l-.3.14C1.15,20.25,0,24.74,0,29.5s1.15,9.24,3.15,13.24l9.57-7.41"/>' +
-      '<path fill="#EB4335" d="M29.5,11.41c5.54,0,9.27,2.39,11.4,4.39l8.32-8.13C44.11,2.92,37.46,0,29.5,0,17.96,0,8,6.62,3.15,16.26l9.54,7.41c2.39-7.11,9.01-12.26,16.81-12.26"/>' +
-    '</g></svg>';
 
   function build() {
     var style = document.createElement('style');
@@ -187,11 +219,16 @@
             '<div class="nnp-form-wrap">' +
               '<h3 class="nnp-title">Create your account</h3>' +
               '<p class="nnp-lede">Order online and collect in store.</p>' +
-              '<button type="button" class="nnp-google">' + GOOGLE_SVG + 'Continue with Google</button>' +
-              '<p class="nnp-gnote">By continuing with Google you agree to our ' +
-                '<a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a> and ' +
-                '<a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</p>' +
-              '<div class="nnp-or"><span>or</span></div>' +
+              // Google draws its own button in here. The block stays hidden
+              // until it does, because an empty bordered box above an "OR"
+              // divider reads as broken.
+              '<div class="nnp-gwrap" hidden>' +
+                '<div class="nnp-gbtn"></div>' +
+                '<p class="nnp-gnote">By continuing with Google you agree to our ' +
+                  '<a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a> and ' +
+                  '<a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</p>' +
+                '<div class="nnp-or"><span>or</span></div>' +
+              '</div>' +
               '<form novalidate>' +
                 '<div class="nnp-field"><label class="nnp-label" for="nnp-email">Your email</label>' +
                   '<input class="nnp-input" id="nnp-email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></div>' +
@@ -317,6 +354,20 @@
       };
     }
 
+    function done(confirmEmail) {
+      root.querySelector('.nnp-form-wrap').innerHTML =
+        '<div class="nnp-done">' +
+          '<h3 class="nnp-title">' + (confirmEmail ? 'Account created' : 'You\u2019re in') + '</h3>' +
+          '<p class="nnp-lede">' + (confirmEmail
+            ? 'Check <strong>' + confirmEmail.replace(/[<>&"]/g, '') +
+              '</strong> to confirm your address. Your 10% code lands in the same inbox.'
+            : 'Your 10% code is on its way to your inbox.') + '</p>' +
+          '<button type="button" class="nnp-btn" style="margin-top:8px">Keep browsing</button>' +
+        '</div>';
+      root.querySelector('.nnp-done .nnp-btn').addEventListener('click', close);
+      celebrate();
+    }
+
     function sdk() {
       // Loaded here, not on page load: most visitors never submit.
       return import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function (m) {
@@ -324,32 +375,65 @@
       });
     }
 
-    // No blocking tick on Google. Pressing the button IS the agreement — it is
-    // stated under it, the way every large site does it, and that is a far
-    // lower-friction ask than a checkbox in front of a one-tap signup. The
-    // acceptance is still recorded: prefs() stamps terms_accepted_at.
-    root.querySelector('.nnp-google').addEventListener('click', function () {
-      err.hidden = true;
-      // The redirect leaves this page, so park the ticks for the shop app to write.
-      safeSet('localStorage', PREFS_KEY, JSON.stringify(prefs('promo-dialog:google')));
-      sdk().then(function (sb) {
-        return sb.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: location.origin + '/shop/sign-up' },
+    // Google Identity Services, NOT signInWithOAuth. The redirect flow sends
+    // the browser to <project-ref>.supabase.co and Google then names that
+    // domain on its consent screen, which is indistinguishable from a phishing
+    // page to a customer and cannot be fixed with branding settings. Here the
+    // browser never leaves this page.
+    //
+    // No blocking tick either: pressing the button IS the agreement, stated
+    // under it. The acceptance is still recorded — prefs() stamps
+    // terms_accepted_at and it is written straight onto the user, because
+    // nothing navigates away any more.
+    function mountGoogle() {
+      if (!window.crypto || !crypto.subtle) return;   // needs a secure context
+      loadGsi()
+        .then(makeNonce)
+        .then(function (n) {
+          if (!root) return;
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            nonce: n.hashed,
+            use_fedcm_for_prompt: true,
+            callback: function (res) {
+              err.hidden = true;
+              sdk().then(function (sb) {
+                return sb.auth.signInWithIdToken({
+                  provider: 'google', token: res.credential, nonce: n.raw,
+                }).then(function (r) {
+                  if (r.error) throw r.error;
+                  return sb.auth.updateUser({ data: prefs('promo-dialog:google') });
+                });
+              }).then(function () {
+                done(null);
+              }).catch(function (e2) {
+                err.textContent = (e2 && e2.message) || 'Could not finish signing in. Try again.';
+                err.hidden = false;
+              });
+            },
+          });
+          var host = root.querySelector('.nnp-gbtn');
+          window.google.accounts.id.renderButton(host, {
+            type: 'standard', theme: 'outline', size: 'large', shape: 'pill',
+            // Stretched to full width, a left-aligned logo strands itself far
+            // from the label; centred keeps the mark and the words together.
+            text: 'continue_with', logo_alignment: 'center', width: 320,
+          });
+          // renderButton returns before it has drawn, and it can draw nothing at
+          // all — the script loads from cache while Google's own calls are
+          // blocked. Unhiding on the call alone leaves an empty bordered box
+          // above an OR divider, which reads as broken. So wait for real
+          // content, and stay hidden if it never comes.
+          whenDrawn(host, function () {
+            if (root) root.querySelector('.nnp-gwrap').hidden = false;
+          });
+        })
+        .catch(function () {
+          // Blocked by an extension, offline, or this origin is not authorised.
+          // The email form below is the whole fallback — say nothing.
         });
-      }).then(function (res) {
-        if (res && res.error) throw res.error;
-      }).catch(function (e2) {
-        // "Unsupported provider: provider is not enabled" is a setup problem on
-        // our side, not something the customer can do anything about — so it
-        // points them at the form below instead of printing our config error.
-        var m = (e2 && e2.message) || '';
-        err.textContent = /provider is not enabled|Unsupported provider/i.test(m)
-          ? 'Google sign-in is not available right now — please use your email below.'
-          : (m || 'Could not reach Google. Try again.');
-        err.hidden = false;
-      });
-    });
+    }
+    mountGoogle();
 
     wireCoupon(root.querySelector('.nnp-coupon'));
     root.querySelector('.nnp-x').addEventListener('click', close);
@@ -388,15 +472,7 @@
         });
       }).then(function (res) {
         if (res.error) throw res.error;
-        root.querySelector('.nnp-form-wrap').innerHTML =
-          '<div class="nnp-done">' +
-            '<h3 class="nnp-title">Account created</h3>' +
-            '<p class="nnp-lede">Check <strong>' + email.value.replace(/[<>&"]/g, '') +
-              '</strong> to confirm your address. Your 10% code lands in the same inbox.</p>' +
-            '<button type="button" class="nnp-btn" style="margin-top:8px">Keep browsing</button>' +
-          '</div>';
-        root.querySelector('.nnp-done .nnp-btn').addEventListener('click', close);
-        celebrate();
+        done(email.value);
       }).catch(function (e2) {
         err.textContent = (e2 && e2.message) || 'Something went wrong. Try again.';
         err.hidden = false;
