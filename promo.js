@@ -14,7 +14,11 @@
   'use strict';
 
   var SEEN_KEY = 'nn_promo_seen_v1';
-  var AUTH_KEY = 'sb-stnmoxsojqbbtgjwkzrc-auth-token';
+  // Supabase derives its session key from the project ref, so hardcoding the
+  // ref means this guard breaks silently the day the URL changes (a custom auth
+  // domain, a project move) — and the symptom is signed-in customers being
+  // shown the sign-up offer, which nobody would report as a bug.
+  var AUTH_KEY_RE = /^sb-.+-auth-token$/;
   var SUPABASE_URL = 'https://stnmoxsojqbbtgjwkzrc.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_5h1APV-FTtXzvF1kDL2uVg_BvE6FB9Y';
   var DELAY_MS = 5000;
@@ -32,8 +36,17 @@
     try { window[store].setItem(key, value); } catch (e) { /* no-op */ }
   }
 
+  function signedIn() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        if (AUTH_KEY_RE.test(localStorage.key(i))) return true;
+      }
+    } catch (e) { /* private mode throws; treat as signed out */ }
+    return false;
+  }
+
   if (safeGet('sessionStorage', SEEN_KEY)) return;
-  if (safeGet('localStorage', AUTH_KEY)) return;          // already has an account
+  if (signedIn()) return;                                 // already has an account
   if (location.pathname.indexOf('/shop') === 0) return;   // already in the shop
   // The legal pages are where the sign-up form SENDS people. Covering them with
   // the very offer they stepped out of to read the terms is hostile, and it
