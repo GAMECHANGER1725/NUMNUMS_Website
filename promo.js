@@ -314,7 +314,13 @@
       }).then(function (res) {
         if (res && res.error) throw res.error;
       }).catch(function (e2) {
-        err.textContent = (e2 && e2.message) || 'Could not reach Google. Try again.';
+        // "Unsupported provider: provider is not enabled" is a setup problem on
+        // our side, not something the customer can do anything about — so it
+        // points them at the form below instead of printing our config error.
+        var m = (e2 && e2.message) || '';
+        err.textContent = /provider is not enabled|Unsupported provider/i.test(m)
+          ? 'Google sign-in is not available right now — please use your email below.'
+          : (m || 'Could not reach Google. Try again.');
         err.hidden = false;
       });
     });

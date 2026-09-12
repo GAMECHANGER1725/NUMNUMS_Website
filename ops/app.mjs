@@ -2084,9 +2084,39 @@ async function openOrder(id) {
     host.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
+  // Cancelling an order in here does NOT refund the card. Staff will assume it
+  // did — that is the whole danger — so a web order says so before it saves,
+  // and names where the money actually has to be given back.
+  function askAboutRefund(status, b) {
+    const host = $('print-warn');
+    $('print-block')?.classList.add('hidden');
+    host.innerHTML = `
+      <div class="warnbox">
+        <div class="warnbox-title">This cake was paid for online</div>
+        <div class="warnbox-note">Cancelling here does <strong>not</strong> refund the card.
+          Refund it in Stripe as well, or the customer has no cake and no money back.</div>
+        <div class="action-row">
+          <button class="btn btn-quiet" data-warn="no">Go back</button>
+          <button class="btn btn-primary" data-warn="yes">I'll refund in Stripe — cancel it</button>
+        </div>
+      </div>`;
+    host.querySelector('[data-warn="no"]').addEventListener('click', () => {
+      host.innerHTML = '';
+      $('print-block')?.classList.remove('hidden');
+      b.disabled = false; b.textContent = STATUS_LABEL[status];
+    });
+    host.querySelector('[data-warn="yes"]').addEventListener('click', () => commitStatus(status, b));
+    host.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
   $('status-actions').querySelectorAll('[data-status]').forEach((b) =>
     b.addEventListener('click', () => {
       const status = b.dataset.status;
+      if (status === 'cancelled' && o.stripe_session_id) {
+        b.disabled = true;
+        askAboutRefund(status, b);
+        return;
+      }
       if (orderPrints.length && (status === 'baked' || status === 'picked_up')) {
         b.disabled = true;
         askAboutPrints(status, b);

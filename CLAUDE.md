@@ -505,6 +505,74 @@ main site.
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
+## Shop (`shop-app/` → `shop/`) — the customer-facing checkout
+
+Normal cakes are bought online and paid for in full; custom cakes are still quoted
+by a person through `/order`. `/order` is the **single fork** between the two — do not
+add a second entry point to the shop elsewhere, or the two have to be kept in step.
+
+- **Files**: `shop-app/` is a Next.js app (`output: "export"`, `basePath: "/shop"`) whose
+  export is committed as `shop/`. Rebuild it with `cd shop-app && npm run build`, then
+  `rm -rf shop && cp -R shop-app/out shop`. The Netlify Functions are
+  `netlify/functions/{_shared,create-checkout,stripe-webhook,order-status}.mjs`.
+- **`ops/catalog.mjs` is the only place a price is written down**, now including
+  `SURCHARGE` (premium flavour → size → **cents**) and `listPriceCents`. It used to live
+  only in `order.html`'s inline script, gated by nothing, and the checkout charges off it.
+  **Both** build gates diff it against `verify-blog.mjs`'s `FACTS` — the two sites deploy
+  independently, so one gate is not enough. `SURCHARGE` must stay a **keyed object**:
+  `ops/verify.mjs` runs `/\{\s*name:\s*'([^']+)'/g` unscoped over the whole file and
+  would read an array as a 16th flavour.
+- **shop-app cannot import across its Turbopack root** (two lockfiles exist; the root is
+  pinned deliberately), so it carries `lib/catalog.generated.mjs`, a byte-for-byte copy
+  written by `scripts/sync-catalog.mjs` on every `dev` and `build`. `verify-blog.mjs`
+  fails the deploy if it drifts. Never edit the copy.
+- **No order row exists until Stripe confirms payment.** There is no payment state in
+  `order_status` and adding one is a ~15-call-site diff plus the `customers` view, so the
+  pending cart lives in the Stripe session's metadata. An abandoned checkout leaves
+  nothing to clean up and no unpaid cake can reach the baker's queue.
+- **The browser sends a cart, never a price.** Every line is re-validated against the
+  catalogue and re-priced in `create-checkout`. `'Slice'` and `'tiered'` have no list
+  price and are **refused**, not sold for $0.
+- **`walk_in` is never true on a web order** — `set_order_defaults()` would force it to
+  `picked_up` and it would never be baked. `deposit = price − discount` is what makes
+  `paidOn()` report it fully paid, so ops stamps **PAID IN FULL** with no ops changes.
+- **A cart becomes one `orders` row per cake**, sharing `order_group_id` and
+  `stripe_session_id`, differing by `cart_line` — one job per cake is how the kitchen
+  works. The coupon discount is split proportionally with remainder cents on the first
+  line, so `sum(price − discount)` equals the Stripe charge **exactly**; a naive split
+  loses a cent and the books never balance again.
+- **Idempotency is a unique index**, `(stripe_session_id, cart_line)`. A retried webhook
+  hits 23505 and returns 200. So a failure can safely return 500 and let Stripe retry for
+  three days — every write is idempotent.
+- **Verify the webhook signature on raw bytes, handling `isBase64Encoded`**, and answer
+  **400** on a bad one. A 200 tells Stripe the forgery was accepted. Never `JSON.parse`
+  before verifying. `netlify/functions/webhook.test.mjs` asserts all of that.
+- **Lead time is 48 HOURS, not two days.** `<input type="date">`'s `min` is a date, so
+  the client must also drop the early slots on the first date and round the earliest hour
+  **up** — truncating 09:30 to 9 offered a 47.5-hour slot the server then refused.
+  Server-side, rebuild the instant with `sydneyDateTimeToISO`; never hardcode `+11:00`,
+  DST flips in October and April.
+- **Cancelling a web order in ops does NOT refund the card.** The status sheet warns and
+  names Stripe when `stripe_session_id` is set. Keep that warning.
+- **Marketing consent: ACMA prohibits pre-ticked boxes**, and consent cannot be inferred
+  from an order or from a phone number given for a receipt. The opt-in is one unticked box
+  naming both channels, the benefit and the frequency; the Privacy Policy tick is separate
+  and required. Both channels are stored as two fields so a later "stop texting me" does
+  not also stop the emails. Do not "simplify" that to one.
+- **Lenis must not touch the popup.** `promo.js`'s card carries `data-lenis-prevent`;
+  without it Lenis preventDefaults the wheel and the dialog cannot scroll to its own
+  submit button. Any new overlay on the static site needs the same attribute.
+- **Env vars (public site only, never on the ops site, never in a file)**:
+  `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_URL`,
+  `SUPABASE_SERVICE_ROLE_KEY`, `ONLINE_ORDERS_USER_ID`, `MAKE_ORDER_HOOK_URL`, and the
+  optional kill switches `BLOCKED_DATES` and `MAX_WEB_ORDERS_PER_DAY`.
+- **RLS is the only guard** and it is verified by signing up a throwaway customer and
+  curling PostgREST with **only** its token — the UI proves nothing. A customer must read
+  `[]` from every table, be refused every write, and be refused a `cake-photos` upload
+  **with a valid mime type** (an invalid one is rejected by a content-type check in front
+  of the policy, which is a false pass). `coupons` is the one exception: read-own via
+  `lower(email) = lower(auth.jwt() ->> 'email')`, and no write policy at all.
+
 ## Anti-Repetition (blog + GBP)
 Repetition is the #1 recurring failure on this project. Before writing anything:
 - **Blog:** `ls blog/` first. Never write a post for a suburb that already has one. Read `blog/topic-ledger.md` before picking a topic — it replaces the old "check the last 10 posts" grep as of 2026-09-01, after the prior calendar-driven process produced 359 posts with no demand validation and real cannibalization (see `blog-cluster-report.md` / `blog-gsc-per-page.md` in the repo root). Topic selection rules live in `skills/blog-write/SKILL.md`'s "Topic selection" checklist item — a topic must come from an open ledger gap or a GSC-validated query, never a fixed calendar.

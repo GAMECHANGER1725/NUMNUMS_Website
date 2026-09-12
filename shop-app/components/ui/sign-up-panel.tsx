@@ -116,7 +116,15 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
       provider: "google",
       options: { redirectTo: `${window.location.origin}/shop/sign-up` },
     });
-    if (oauthError) setError(oauthError.message);
+    // "provider is not enabled" is our configuration, not the customer's
+    // problem, so it points at the form rather than printing our own error.
+    if (oauthError) {
+      setError(
+        /provider is not enabled|Unsupported provider/i.test(oauthError.message)
+          ? "Google sign-in isn't available right now — please use your email below."
+          : oauthError.message,
+      );
+    }
   }
 
   return (
