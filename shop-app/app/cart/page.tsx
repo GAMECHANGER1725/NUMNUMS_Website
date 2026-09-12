@@ -4,12 +4,11 @@ import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Plus, Trash2 } from "lucide-react";
 import {
-  cartStore, writeCart, minDueDate, maxDueDate, money, STORES, MAX_LINES,
+  cartStore, writeCart, minDueDate, maxDueDate, availableHours, money, STORES, MAX_LINES,
   type Cart, type CartLine,
 } from "@/lib/cart";
 import { SELLABLE_SIZES, SELLABLE_FLAVOURS, listPriceCents, sizeServes } from "@/lib/catalog";
 
-const HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 const hourLabel = (h: number) => (h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`);
 
 export default function CartPage() {
@@ -26,11 +25,14 @@ export default function CartPage() {
   const subtotal = lineCents.reduce((a, b) => a + b, 0);
   const draftCents = listPriceCents(draft.size, draft.flavour) ?? 0;
   const full = cart.lines.length >= MAX_LINES;
-  const ready = cart.lines.length > 0 && cart.store !== "" && cart.dueDate !== "";
+  // The form never offers a slot the server would refuse: the lead time is 48
+  // hours, so the earliest date loses its early-morning slots.
+  const hours = availableHours(cart.dueDate);
+  const ready = cart.lines.length > 0 && cart.store !== "" && cart.dueDate !== "" && hours.includes(cart.dueHour);
 
   return (
     <main className="mx-auto w-full max-w-[46rem] px-4 py-10">
-      <Link href="/" className="font-display text-[1.35rem] font-light tracking-tight text-[#C85478]">
+      <Link href="/" className="-m-2 inline-flex min-h-[32px] items-center p-2 font-display text-[1.35rem] font-light tracking-tight text-[#C85478]">
         Num Num&rsquo;s Bakery
       </Link>
       <h1 className="font-display mt-4 text-4xl font-light tracking-tight">Your cakes</h1>
@@ -107,7 +109,13 @@ export default function CartPage() {
         <button
           type="button"
           disabled={full}
-          onClick={() => update({ ...cart, lines: [...cart.lines, draft] })}
+          onClick={() => {
+            update({ ...cart, lines: [...cart.lines, draft] });
+            // Size and flavour stay — people often order two similar cakes —
+            // but the writing is cleared every time. Carrying one cake's name
+            // onto the next is an error that reaches the kitchen as a fact.
+            setDraft({ ...draft, wording: "" });
+          }}
           className="btn-cta mt-4 w-full py-2.5 sm:w-auto"
         >
           <Plus className="h-4 w-4" />
@@ -146,12 +154,13 @@ export default function CartPage() {
             <label htmlFor="c-hour" className="field-label">Time</label>
             <select id="c-hour" className="field-input" value={cart.dueHour}
               onChange={(e) => update({ ...cart, dueHour: Number(e.target.value) })}>
-              {HOURS.map((h) => <option key={h} value={h}>{hourLabel(h)}</option>)}
+              {hours.map((h) => <option key={h} value={h}>{hourLabel(h)}</option>)}
             </select>
           </div>
         </div>
         <p className="mt-2 text-[0.76rem] text-muted-foreground">
-          We need 48 hours&rsquo; notice, so the earliest is {minDueDate()}.
+          We need 48 hours&rsquo; notice, so the earliest is {minDueDate()}
+          {hours.length > 0 && hours[0] > 9 ? ` from ${hourLabel(hours[0])}` : ""}.
         </p>
       </section>
 

@@ -323,7 +323,13 @@ const FACTS = {
       if (clean.endsWith('.html')) { linkBad.htmlHop++; linkEx.push(`${f} → ${raw} (.html costs a 301 hop)`); continue; }
       const key = clean.replace(/\/$/, '');
       if (key.startsWith('/blog/') && key !== '/blog' && !liveSlugs.has(slug)) { linkBad.retired++; linkEx.push(`${f} → ${raw} (no such post)`); continue; }
-      if (key && !key.startsWith('/blog/') && !topSlugs.has(slug) && !['blog', 'review', ''].includes(slug)) { linkBad.broken++; linkEx.push(`${f} → ${raw} (no such page)`); }
+      // A sub-app (review/, shop/) is a real directory of exported pages, so
+      // resolve against disk rather than hardcoding its name — that way a dead
+      // /shop/whatever is caught too, which an allow-list can never do.
+      const subApp = key.split('/')[1];
+      const inSubApp = subApp && subApp !== 'blog' && existsSync(join(ROOT, subApp))
+        && (existsSync(join(ROOT, `${key.slice(1)}.html`)) || existsSync(join(ROOT, key.slice(1), 'index.html')));
+      if (key && !key.startsWith('/blog/') && !topSlugs.has(slug) && !inSubApp && !['blog', ''].includes(slug)) { linkBad.broken++; linkEx.push(`${f} → ${raw} (no such page)`); }
     }
   }
   const linkTotal = Object.values(linkBad).reduce((a, b) => a + b, 0);
@@ -398,6 +404,13 @@ const FACTS = {
     notes.push('checkout: price table, discount splitting and the 48h/DST boundary all hold');
   } catch (e) {
     fail(`checkout tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
+  try {
+    const out = execFileSync(process.execPath, ['netlify/functions/webhook.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`webhook signature tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
   // catalog.mjs is imported by the shop and by the Netlify functions, so a

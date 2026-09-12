@@ -75,7 +75,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="mx-auto w-full max-w-[46rem] px-4 py-10">
-      <Link href="/cart" className="text-[0.82rem] font-semibold text-[#C85478]">&larr; Back to your cakes</Link>
+      <Link href="/cart" className="-m-2 inline-flex min-h-[32px] items-center p-2 text-[0.82rem] font-semibold text-[#C85478]">&larr; Back to your cakes</Link>
       <h1 className="font-display mt-3 text-4xl font-light tracking-tight">Checkout</h1>
 
       <section className="mt-7">

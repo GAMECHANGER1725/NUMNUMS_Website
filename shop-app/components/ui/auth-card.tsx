@@ -17,7 +17,7 @@ export function AuthCard({
       <div className="w-full max-w-[26rem] rounded-[1.25rem] bg-card p-7 shadow-[0_20px_50px_-16px_rgba(44,26,14,0.26),0_2px_8px_rgba(44,26,14,0.06)] sm:p-8">
         <Link
           href="/"
-          className="font-display text-[1.35rem] font-light tracking-tight text-[#C85478] underline-offset-4 hover:underline"
+          className="-m-2 inline-flex min-h-[32px] items-center p-2 font-display text-[1.35rem] font-light tracking-tight text-[#C85478] underline-offset-4 hover:underline"
         >
           Num Num&rsquo;s Bakery
         </Link>

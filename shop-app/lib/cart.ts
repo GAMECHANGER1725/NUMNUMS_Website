@@ -72,10 +72,55 @@ export function clearCart() {
   window.dispatchEvent(new CustomEvent("nn-cart"));
 }
 
-/** Earliest date the shop will take, as an <input type="date"> min. */
+export const LEAD_HOURS = 48;
+export const OPEN_HOUR = 9;
+export const CLOSE_HOUR = 18;
+
+const sydneyDay = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" });
+
+/**
+ * The first whole hour at or after `d`, Sydney local.
+ *
+ * Rounds **up**, and that is the whole point: truncating 09:30 to 9 offered a
+ * 9am slot 47.5 hours out, which the server then refused. Returns the hour it
+ * rolls into on the next day when it passes closing.
+ */
+function nextWholeHour(d: Date): { day: string; hour: number } {
+  const [h, m] = d
+    .toLocaleString("en-GB", { timeZone: "Australia/Sydney", hour: "2-digit", minute: "2-digit", hour12: false })
+    .split(":").map(Number);
+  const hour = m > 0 ? h + 1 : h;
+  if (hour > CLOSE_HOUR) {
+    return { day: sydneyDay(new Date(d.getTime() + 86_400_000)), hour: OPEN_HOUR };
+  }
+  return { day: sydneyDay(d), hour: Math.max(hour, OPEN_HOUR) };
+}
+
+/**
+ * Earliest date the shop will take, as an `<input type="date">` min.
+ *
+ * The lead time is 48 **hours**, not two days, so the first bookable date is
+ * only the day-after-tomorrow when there is still a collection slot left on it.
+ * Order at 8pm and the whole of that day is already inside the window — offering
+ * it would hand the customer a date the server then refuses, which reads as a
+ * broken form rather than as a rule.
+ */
 export function minDueDate(now = new Date()): string {
-  const d = new Date(now.getTime() + 48 * 3600_000);
-  return d.toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" });
+  return nextWholeHour(new Date(now.getTime() + LEAD_HOURS * 3600_000)).day;
+}
+
+/**
+ * The hours still bookable on `date`. Empty for a date before the lead time,
+ * the full list for any date beyond it.
+ */
+export function availableHours(date: string, now = new Date()): number[] {
+  const all: number[] = [];
+  for (let h = OPEN_HOUR; h <= CLOSE_HOUR; h++) all.push(h);
+  if (!date) return all;
+  const first = nextWholeHour(new Date(now.getTime() + LEAD_HOURS * 3600_000));
+  if (date > first.day) return all;
+  if (date < first.day) return [];
+  return all.filter((h) => h >= first.hour);
 }
 
 export function maxDueDate(now = new Date()): string {
