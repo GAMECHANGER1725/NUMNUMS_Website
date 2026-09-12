@@ -135,11 +135,6 @@ export const TOURS = {
         text: 'This is what ties the order to the rest of their history, so it is worth asking for. Without it they are a new customer every time.',
       },
       {
-        sel: '#f-ordered-btn',
-        title: 'When they ordered',
-        text: 'Leave it if they are standing in front of you. Set it back if you are typing up a WhatsApp message from this morning. The calendar greys out the future, because an order cannot have been placed tomorrow.',
-      },
-      {
         sel: '#f-due-btn',
         title: 'When they collect',
         text: 'Pick the day, then the time. This one greys out the past instead — a cake cannot be collected yesterday.',

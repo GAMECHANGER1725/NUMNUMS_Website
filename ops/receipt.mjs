@@ -278,11 +278,16 @@ export function receiptSource(o, ctx) {
 
   // A tier list is a sentence, not a size, and on the description line it runs
   // under the QTY column. Anything that long drops to its own line below.
-  const longSize = (o.size || '').length > 14 ? o.size : '';
-  const item = [o.kind === 'custom' ? 'Custom cake' : 'Cake', o.flavour, longSize ? '' : o.size]
-    .filter(Boolean).join(' · ');
+  // A pav's size IS its quantity ("3 × 6 Pack Pav"), so it belongs in the QTY
+  // column the invoice already prints rather than inside the description.
+  const pavQty = o.kind === 'pav' ? (parseInt(o.size, 10) || 1) : null;
+  const longSize = !pavQty && (o.size || '').length > 14 ? o.size : '';
+  const item = pavQty
+    ? 'Pavlova, 6 pack'
+    : [o.kind === 'custom' ? 'Custom cake' : 'Cake', o.flavour, longSize ? '' : o.size]
+      .filter(Boolean).join(' · ');
   p.down(19).text(item, { size: 11, font: 'F2' });
-  p.text('1', { x: GSTX - 108, size: 10 });
+  p.text(String(pavQty ?? 1), { x: GSTX - 108, size: 10 });
   p.rightAt(GSTX, gstC ? $(gstC) : '—', { size: 10 });
   p.rightAt(RIGHT, listC ? $(listC) : '—', { size: 11 });
   for (const line of [

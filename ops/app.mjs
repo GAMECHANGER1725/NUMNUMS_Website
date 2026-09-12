@@ -25,7 +25,7 @@ import {
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
-import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine }
+import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine, PAV, pavSize }
   from './catalog.mjs';
 import { receiptPdf, receiptName } from './receipt.mjs';
 import { helpHtml, startTour, tourSeen, markTourSeen } from './help.mjs';
@@ -384,7 +384,7 @@ const printFlagHtml = (orderId) => {
  */
 const kindTag = (o) => o.kind === 'custom'
   ? '<span class="tag tag-custom">Custom</span>'
-  : '<span class="tag tag-normal">Normal</span>';
+  : `<span class="tag tag-normal">${o.kind === 'pav' ? 'Pav' : 'Normal'}</span>`;
 
 /** When the customer ordered. Falls back to the log time for rows written
  *  before the column existed, or by the older build still in production. */
@@ -1708,7 +1708,8 @@ async function openOrder(id) {
         ? `${money.format(paidOn(o))} of ${money.format(net)} — ${money.format(owing)} still to collect`
         : money.format(paidOn(o))) : ''}
       ${me.role === 'admin' ? field('Cost', o.cost != null ? money.format(o.cost) : '') : ''}
-      ${field('Kind', o.kind === 'custom' ? 'Custom cake' : (o.walk_in ? 'Normal · bought in store' : 'Normal · ordered ahead'), 'span-2')}
+      ${field('Kind', o.kind === 'custom' ? 'Custom cake'
+        : `${o.kind === 'pav' ? 'Pav' : 'Normal'} · ${o.walk_in ? 'bought in store' : 'ordered ahead'}`, 'span-2')}
     </div>
 
     ${orderPrints.length ? `
@@ -2259,6 +2260,10 @@ function openNewOrder() {
         <div class="kind-name">Normal cake</div>
         <div class="kind-note">Off the menu</div>
       </button>
+      <button class="kind-card" data-kind="pav" aria-pressed="false">
+        <div class="kind-name">Pav</div>
+        <div class="kind-note">${esc(PAV.label)}, ${money.format(PAV.price)} each</div>
+      </button>
     </div>
 
     <form id="order-form" class="hidden">
@@ -2293,19 +2298,6 @@ function openNewOrder() {
       <p class="autofill-note hidden" id="autofill-note"></p>
 
       <div class="field">
-        <span class="field-label">Order time</span>
-        <button type="button" class="datefield" id="f-ordered-btn" aria-expanded="false">
-          <span class="datefield-value" id="f-ordered-label">Choose a date and time</span>
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
-          </svg>
-        </button>
-        <div class="cal hidden" id="f-ordered-cal"></div>
-        <input type="hidden" id="f-ordered">
-        <p class="money-hint">When the customer actually ordered. Starts at now — change it for one relayed off WhatsApp earlier.</p>
-      </div>
-
-      <div class="field">
         <span class="field-label">Pick up <span class="req">*</span></span>
         <button type="button" class="datefield" id="f-due-btn" aria-expanded="false">
           <span class="datefield-value is-empty" id="f-due-label">Choose a date and time</span>
@@ -2317,7 +2309,7 @@ function openNewOrder() {
         <input type="hidden" id="f-due">
       </div>
 
-      <div class="row-2">
+      <div class="row-2" id="cake-fields">
         <div class="field">
           <span class="field-label">Flavour</span>
           <div id="dd-flavour"></div>
@@ -2328,6 +2320,12 @@ function openNewOrder() {
         </div>
       </div>
 
+      <div class="field hidden" id="qty-field">
+        <label class="field-label" for="f-qty">Quantity <span class="req">*</span></label>
+        <input class="input nums" id="f-qty" type="number" min="1" step="1" inputmode="numeric" value="1">
+        <p class="money-hint">How many ${esc(PAV.label)}s.</p>
+      </div>
+
       <div class="field hidden" id="f-tier-field">
         <span class="field-label">Tiers <span class="req">*</span></span>
         <div id="f-tiers"></div>
@@ -2335,7 +2333,7 @@ function openNewOrder() {
         <p class="photo-hint">Bottom tier first — width across, then height tall.</p>
       </div>
 
-      <div class="field">
+      <div class="field" id="wording-field">
         <label class="field-label" for="f-wording">Wording on cake</label>
         <input class="input" id="f-wording" placeholder="Happy Birthday Jainam" autocomplete="off">
       </div>
@@ -2491,6 +2489,17 @@ function openNewOrder() {
       hint.classList.add('hidden');
     }
   }
+
+  // A pav has one price and no variants, so the quantity is the whole order —
+  // it fills the price until someone types over it, the same rule as size.
+  const pavQty = () => Math.max(1, Math.floor(Number($('f-qty').value) || 1));
+  const fillPavPrice = () => {
+    if (kind !== 'pav' || priceTouched) return;
+    $('f-price').value = (pavQty() * PAV.price).toFixed(2);
+    discountLink?.refresh();
+    syncPayment();
+  };
+  $('f-qty').addEventListener('input', fillPavPrice);
 
   $('f-price').addEventListener('input', () => { priceTouched = true; syncPayment(); });
   discountLink = linkDiscount({
@@ -2653,9 +2662,6 @@ function openNewOrder() {
   }));
 
   const due = mountDuePicker();
-  // Defaults to right now, because the common case is logging an order as it
-  // is taken; the field only earns its keep when the two differ.
-  const ordered = mountDuePicker('f-ordered', new Date().toISOString(), { back: true });
 
   // ── Kind ──────────────────────────────────────────────────────────────────
   body.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => {
@@ -2665,9 +2671,14 @@ function openNewOrder() {
     // A custom cake has a design to show and no walk-in question to answer; a
     // normal cake is the reverse. The photos are offered, not demanded —
     // plenty of customers say "do it your way" and hand over nothing.
-    $('walkin-field').classList.toggle('hidden', kind !== 'normal');
+    $('walkin-field').classList.toggle('hidden', kind === 'custom');
     $('photo-field').classList.toggle('hidden', kind !== 'custom');
     $('design-field').classList.toggle('hidden', kind !== 'custom');
+    // A pav has no flavour, no size and nothing written on it — it has a count.
+    $('cake-fields').classList.toggle('hidden', kind === 'pav');
+    $('wording-field').classList.toggle('hidden', kind === 'pav');
+    $('qty-field').classList.toggle('hidden', kind !== 'pav');
+    if (kind === 'pav') { $('f-tier-field').classList.add('hidden'); fillPavPrice(); }
     $('f-name').focus();
   }));
 
@@ -2675,7 +2686,8 @@ function openNewOrder() {
   $('order-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = $('save-order'), msg = $('order-msg');
-    const walkIn = kind === 'normal' && ddWalkin.value() === 'now';
+    const walkIn = kind !== 'custom' && ddWalkin.value() === 'now';
+    const isPav = kind === 'pav';
 
     if (!due.value()) {
       msg.textContent = 'Pick the date and time the cake is being collected.';
@@ -2683,7 +2695,7 @@ function openNewOrder() {
       $('f-due-btn').focus();
       return;
     }
-    const tiered = ddSize.value() === TIERED;
+    const tiered = !isPav && ddSize.value() === TIERED;
     if (tiered && !tiers.complete()) {
       msg.textContent = 'Give every tier a width and a height.';
       msg.className = 'msg msg-error';
@@ -2699,10 +2711,9 @@ function openNewOrder() {
         customer_name: $('f-name').value.trim(),
         customer_phone: $('f-phone').value.trim() || null,
         due_at: due.value(),
-        ordered_at: ordered.value() || null,
-        flavour: ddFlavour.value() || null,
-        size: (tiered ? tiers.value() : ddSize.value()) || null,
-        wording: $('f-wording').value.trim() || null,
+        flavour: isPav ? null : (ddFlavour.value() || null),
+        size: isPav ? pavSize(pavQty()) : ((tiered ? tiers.value() : ddSize.value()) || null),
+        wording: isPav ? null : ($('f-wording').value.trim() || null),
         design_notes: $('f-design').value.trim() || null,
         notes: $('f-notes').value.trim() || null,
         price: $('f-price').value === '' ? null : Number($('f-price').value),

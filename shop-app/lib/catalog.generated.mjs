@@ -123,6 +123,18 @@ export const toNinetyNine = (price) => {
 
 
 /**
+ * Pavlova, sold over the counter by the pack. It has no size and no flavour —
+ * the only thing that varies is how many packs, so the quantity goes into the
+ * same `size` column every screen, the export and the invoice already print.
+ *
+ * Kept as a keyed object, not `{ name: … }`: verify.mjs check 7 greps this file
+ * unscoped for `name:` and would read it as a 16th cake flavour.
+ */
+export const PAV = { label: '6 Pack Pav', price: 3 };
+
+export const pavSize = (qty) => `${qty} × ${PAV.label}`;
+
+/**
  * What a premium flavour adds, in **cents**, per size.
  *
  * Until now this lived only in `order.html`'s inline script and was gated by

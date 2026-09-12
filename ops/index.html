@@ -449,6 +449,9 @@ button { background: none; border: 0; cursor: pointer; }
 
 /* ── New order ──────────────────────────────────────────────────────────── */
 .kind-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 6px; }
+/* An odd number of cards leaves the last one alone on its row — full width
+   reads as a third choice rather than as a half-drawn card. */
+.kind-pick > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 .kind-card {
   padding: 18px 14px; border-radius: var(--radius);
   border: 1.5px solid var(--dough-line); background: var(--cream);
