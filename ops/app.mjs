@@ -2316,7 +2316,7 @@ function openNewOrder() {
       </div>
 
       <div class="field" id="photo-field">
-        <span class="field-label">Design photos <span class="req">*</span></span>
+        <span class="field-label">Design photos</span>
         <div class="photo-drop">
           <!-- Customers routinely send three or four reference pictures, so
                this is a strip that grows rather than one slot that replaces
@@ -2347,7 +2347,7 @@ function openNewOrder() {
               </label>
             </div>
             <p class="photo-name hidden" id="photo-name"></p>
-            <p class="photo-hint">Add as many as the customer sent. Shrunk before upload, and deleted 14 days after the order.</p>
+            <p class="photo-hint">Add as many as the customer sent — or none, if they have left the design to us. Shrunk before upload, and deleted 14 days after the order.</p>
           </div>
         </div>
       </div>
@@ -2632,8 +2632,9 @@ function openNewOrder() {
     kind = b.dataset.kind;
     body.querySelectorAll('[data-kind]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     $('order-form').classList.remove('hidden');
-    // A custom cake is defined by its design, so the photo is required and the
-    // walk-in question is meaningless. A normal cake is the reverse.
+    // A custom cake has a design to show and no walk-in question to answer; a
+    // normal cake is the reverse. The photos are offered, not demanded —
+    // plenty of customers say "do it your way" and hand over nothing.
     $('walkin-field').classList.toggle('hidden', kind !== 'normal');
     $('photo-field').classList.toggle('hidden', kind !== 'custom');
     $('design-field').classList.toggle('hidden', kind !== 'custom');
@@ -2650,11 +2651,6 @@ function openNewOrder() {
       msg.textContent = 'Pick the date and time the cake is being collected.';
       msg.className = 'msg msg-error';
       $('f-due-btn').focus();
-      return;
-    }
-    if (kind === 'custom' && !photoFiles.length) {
-      msg.textContent = 'A custom cake needs a photo of the design.';
-      msg.className = 'msg msg-error';
       return;
     }
     const tiered = ddSize.value() === TIERED;

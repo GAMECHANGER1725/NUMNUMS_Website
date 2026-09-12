@@ -167,7 +167,7 @@ export const TOURS = {
       {
         sel: '#photo-field',
         title: 'Design photos',
-        text: 'Choose photos picks the ones the customer already sent; Take photo opens the camera. Add all of them — the first becomes the cover on the card. They are shrunk before upload and deleted 14 days after the order.',
+        text: 'Choose photos picks the ones the customer already sent; Take photo opens the camera. Add all of them — the first becomes the cover on the card. Leave it empty if the customer has left the design to us; write what they said in Design notes instead. Shrunk before upload, deleted 14 days after the order.',
       },
       {
         sel: '#f-price',
@@ -745,7 +745,7 @@ export const HELP = [
       <p>Tap <strong>New</strong> in the bar at the bottom, then pick what kind of cake it
         is. That first choice changes the rest of the form, so it comes first.</p>
       <ol class="help-steps">
-        <li><strong>Custom cake</strong> — made to a design. Design photos are required.
+        <li><strong>Custom cake</strong> — made to a design.
           <br><strong>Normal cake</strong> — off the menu. You are then asked whether it was
           <em>ordered for later</em> or <em>bought in store now</em>; the second is a walk-in
           and shows as one everywhere.</li>
@@ -774,7 +774,10 @@ export const HELP = [
         <li><strong>Design photos.</strong> <em>Choose photos</em> picks the ones the customer
           already sent; <em>Take photo</em> opens the camera. Add all of them — the baker
           works from these, and the first becomes the cover on the card. They are shrunk
-          before upload and deleted 14 days after the order.</li>
+          before upload and deleted 14 days after the order.
+          <br>Not compulsory: some customers say "do it your way" and send nothing. Save the
+          order without them, and put whatever they did say in <strong>Design notes</strong>
+          so the baker is not working from a blank card.</li>
         <li><strong>Price, discount, deposit.</strong> Price is the full price. Anything you
           take off goes in <strong>Discount</strong> — in dollars or as a percent, whichever
           they said. The line underneath shows what the customer actually owes.</li>
