@@ -1,0 +1,237 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-jost);
+  --font-display: var(--font-cormorant);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-gold: var(--gold);
+  --color-espresso: var(--espresso);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+/* Brand tokens — the exact hex values used across the static site, so the shop
+   is the same bakery and not a second product. Source: order.html inline style. */
+:root {
+  --background: #FFF8F2;          /* cream page */
+  --foreground: #2C1A0E;          /* espresso text */
+  --espresso: #2C1A0E;
+  --card: #FFFFFF;
+  --card-foreground: #2C1A0E;
+  --popover: #FFFFFF;
+  --popover-foreground: #2C1A0E;
+  --primary: #C85478;             /* brand rose */
+  --primary-foreground: #FFFFFF;
+  --secondary: #F8EEE6;           /* cream variant */
+  --secondary-foreground: #2C1A0E;
+  --muted: #F8EEE6;
+  --muted-foreground: #5C3A22;    /* mid brown */
+  --accent: #E8A4B5;              /* light pink */
+  --accent-foreground: #2C1A0E;
+  --gold: #E3B664;                /* premium gold */
+  --destructive: #B3261E;
+  --border: #EDE0D6;
+  --input: #EDE0D6;
+  --ring: #C85478;
+  --radius: 0.625rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-jost), sans-serif;
+    line-height: 1.7;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  .font-display {
+    font-family: var(--font-cormorant), serif;
+  }
+}
+
+@layer components {
+  /* The site's canonical button — order.html:75-78, reproduced exactly so the
+     shop's primary action is the same object the rest of the site uses. */
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-family: var(--font-jost), sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #fff;
+    background: #C85478;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgba(200, 84, 120, 0.28);
+  }
+  .btn-cta:hover:not(:disabled) {
+    background: #A03D5E;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 84, 120, 0.35);
+  }
+  .btn-cta:focus-visible {
+    outline: 2px solid #C85478;
+    outline-offset: 3px;
+  }
+  .btn-cta:active:not(:disabled) { transform: scale(0.97); }
+  .btn-cta:disabled {
+    background: #EADFD6;
+    color: #A08E80;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* Uppercase eyebrow with a leading rule — order.html:90 */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #C85478;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: #C85478;
+    border-radius: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  /* The voucher silhouette. The notches are cut with a mask rather than filled
+     circles, because the card sits on a photo and a filled notch would need to
+     know the colour behind it. Shadow is drop-shadow, not box-shadow: a mask
+     clips box-shadow, but drop-shadow follows the cut shape. */
+  .coupon {
+    --notch: 13px;
+    font-variant-numeric: lining-nums;
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    background:
+      linear-gradient(115deg, #96355A 0%, #C85478 34%, #DB5F7C 58%, #E89A72 84%, #E3B664 104%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    filter: drop-shadow(0 10px 22px rgba(44, 26, 14, 0.38));
+    -webkit-mask:
+      radial-gradient(circle var(--notch) at 0 50%, transparent 98%, #000 100%),
+      radial-gradient(circle var(--notch) at 100% 50%, transparent 98%, #000 100%);
+    -webkit-mask-composite: source-in;
+    mask:
+      radial-gradient(circle var(--notch) at 0 50%, transparent 98%, #000 100%),
+      radial-gradient(circle var(--notch) at 100% 50%, transparent 98%, #000 100%);
+    mask-composite: intersect;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon { transform: none !important; }
+}
+
+@layer components {
+  /* The site's dark surface, reused verbatim from order.html:113-114 so the
+     panel is the same object as every other hero on the site. Deliberately not
+     a cake photo: every product shot is on a white background and goes muddy
+     under a dark overlay. */
+  .panel-dark {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2C1A0E 0%, #5C3A22 60%, #2C1A0E 100%);
+  }
+  .panel-dark::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 22% 42%, rgba(200, 84, 120, 0.30) 0%, transparent 62%),
+      radial-gradient(ellipse at 82% 88%, rgba(227, 182, 100, 0.16) 0%, transparent 58%);
+    pointer-events: none;
+  }
+  /* Vertical light ribs — the one nod to the reference artwork, kept faint so the
+     coupon stays the thing you look at. */
+  .panel-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 248, 242, 0.085) 0 1px,
+      transparent 1px 34px
+    );
+    -webkit-mask-image: linear-gradient(105deg, #000 0%, rgba(0,0,0,0.35) 45%, transparent 78%);
+    mask-image: linear-gradient(105deg, #000 0%, rgba(0,0,0,0.35) 45%, transparent 78%);
+    pointer-events: none;
+  }
+
+  .field-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+    color: var(--foreground);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field-input::placeholder { color: #A89384; }
+  .field-input:focus {
+    outline: none;
+    border-color: #C85478;
+    box-shadow: 0 0 0 3px rgba(200, 84, 120, 0.15);
+  }
+  .field-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+  }
+}
