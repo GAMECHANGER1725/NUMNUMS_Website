@@ -8,7 +8,7 @@
  *
  * It deliberately does NOT open on arrival. Google penalises interstitials that
  * block content immediately after a click from search, and this business runs on
- * local SEO. It opens after real engagement instead: 15s or half a page.
+ * local SEO. It opens after real engagement instead: 5s or half a page.
  */
 (function () {
   'use strict';
@@ -17,9 +17,12 @@
   var AUTH_KEY = 'sb-stnmoxsojqbbtgjwkzrc-auth-token';
   var SUPABASE_URL = 'https://stnmoxsojqbbtgjwkzrc.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_5h1APV-FTtXzvF1kDL2uVg_BvE6FB9Y';
-  var DELAY_MS = 15000;
+  var DELAY_MS = 5000;
   var SCROLL_FRACTION = 0.5;
   var MIN_PASSWORD = 8;
+  var PREFS_KEY = 'nn_signup_prefs_v1';   // read back by shop-app/lib/prefs.ts
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var MOBILE_RE = /^(?:\+?61|0)4\d{8}$/;  // 0412 345 678, +61 412 345 678, 61412345678
 
   // Private mode throws on storage access, so never let it take the page down.
   function safeGet(store, key) {
@@ -57,18 +60,18 @@
     '.nnp-card{position:relative;width:100%;max-width:880px;max-height:92dvh;overflow-y:auto;border-radius:1.5rem;background:#fff;box-shadow:0 24px 60px -12px rgba(44,26,14,.45);transform:translateY(10px) scale(.985);transition:transform .28s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
     '.nnp-backdrop.nnp-in .nnp-card{transform:none}',
     '.nnp-grid{display:grid}',
-    '@media(min-width:768px){.nnp-grid{grid-template-columns:1.02fr 1fr}.nnp-card{max-height:88dvh}}',
-    '.nnp-left{position:relative;overflow:hidden;padding:28px 24px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
-    '@media(min-width:768px){.nnp-left{padding:44px 36px}}',
+    '@media(min-width:768px){.nnp-grid{grid-template-columns:1.02fr 1fr}}',
+    '.nnp-left{position:relative;display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding:22px 22px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
+    '@media(min-width:768px){.nnp-left{padding:40px 36px}}',
     '.nnp-left::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 22% 42%,rgba(200,84,120,.30) 0%,transparent 62%),radial-gradient(ellipse at 82% 88%,rgba(227,182,100,.16) 0%,transparent 58%)}',
     '.nnp-left>*{position:relative;z-index:1}',
     '.nnp-eyebrow{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#E8A4B5;margin:0}',
-    '.nnp-h{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:2rem;line-height:1.06;letter-spacing:-.01em;color:#fff;margin:8px 0 0;max-width:15ch}',
+    '.nnp-h{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:1.7rem;line-height:1.06;letter-spacing:-.01em;color:#fff;margin:8px 0 0;max-width:15ch}',
     '@media(min-width:768px){.nnp-h{font-size:2.5rem}}',
     '.nnp-sub{font-size:.875rem;font-weight:300;color:rgba(255,255,255,.72);margin:8px 0 0;max-width:34ch}',
-    '.nnp-foot{font-size:.72rem;font-weight:300;color:rgba(255,255,255,.55);margin:16px 0 0}',
+    '.nnp-foot{font-size:.72rem;font-weight:300;color:rgba(255,255,255,.55);margin:14px 0 0}',
     /* voucher — notches cut with a mask so they work over the gradient */
-    '.nnp-coupon{position:relative;overflow:hidden;margin:20px 0 0;max-width:344px;border-radius:14px;color:#fff;background:linear-gradient(115deg,#96355A 0%,#C85478 34%,#DB5F7C 58%,#E89A72 84%,#E3B664 104%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);filter:drop-shadow(0 10px 22px rgba(44,26,14,.38));font-variant-numeric:lining-nums;transition:transform .22s cubic-bezier(.34,1.56,.64,1);-webkit-mask:radial-gradient(circle 13px at 0 50%,transparent 98%,#000 100%),radial-gradient(circle 13px at 100% 50%,transparent 98%,#000 100%);-webkit-mask-composite:source-in;mask:radial-gradient(circle 13px at 0 50%,transparent 98%,#000 100%),radial-gradient(circle 13px at 100% 50%,transparent 98%,#000 100%);mask-composite:intersect}',
+    '.nnp-coupon{position:relative;overflow:hidden;margin:16px 0 0;max-width:344px;border-radius:14px;color:#fff;background:linear-gradient(115deg,#96355A 0%,#C85478 34%,#DB5F7C 58%,#E89A72 84%,#E3B664 104%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);filter:drop-shadow(0 10px 22px rgba(44,26,14,.38));font-variant-numeric:lining-nums;transition:transform .22s cubic-bezier(.34,1.56,.64,1);-webkit-mask:radial-gradient(circle 13px at 0 50%,transparent 98%,#000 100%),radial-gradient(circle 13px at 100% 50%,transparent 98%,#000 100%);-webkit-mask-composite:source-in;mask:radial-gradient(circle 13px at 0 50%,transparent 98%,#000 100%),radial-gradient(circle 13px at 100% 50%,transparent 98%,#000 100%);mask-composite:intersect}',
     '.nnp-coupon-row{display:flex;align-items:stretch;gap:14px;padding:16px}',
     '@media(min-width:640px){.nnp-coupon-row{gap:20px;padding:20px 24px}}',
     '.nnp-amt{display:flex;flex-direction:column;justify-content:center;padding-right:14px}',
@@ -81,23 +84,38 @@
     '.nnp-for code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem;font-weight:600;letter-spacing:.16em}',
     '.nnp-sheen{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s ease}',
     /* form side */
-    '.nnp-right{padding:28px 24px}',
-    '@media(min-width:768px){.nnp-right{padding:44px 36px}}',
+    '.nnp-right{padding:24px 22px}',
+    '@media(min-width:768px){.nnp-right{padding:28px 34px}}',
     '.nnp-title{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:1.9rem;line-height:1.15;letter-spacing:-.01em;margin:0}',
     '.nnp-lede{font-size:.875rem;color:#5C3A22;margin:4px 0 0}',
     '.nnp-label{display:block;margin:0 0 6px;font-size:.78rem;font-weight:500;color:#5C3A22}',
     '.nnp-input{width:100%;border:1px solid #EDE0D6;border-radius:.5rem;background:#fff;padding:10px 14px;font:inherit;font-size:.9rem;color:#2C1A0E;transition:border-color .15s ease,box-shadow .15s ease}',
     '.nnp-input::placeholder{color:#A89384}',
     '.nnp-input:focus{outline:none;border-color:#C85478;box-shadow:0 0 0 3px rgba(200,84,120,.15)}',
-    '.nnp-field{margin:0 0 14px}',
-    '.nnp-check{display:flex;align-items:flex-start;gap:10px;margin:0 0 8px;font-size:.8rem;line-height:1.45;color:#5C3A22;cursor:pointer}',
+    '.nnp-field{margin:0 0 11px}',
+    '.nnp-input[aria-invalid="true"]{border-color:#B3261E}',
+    '.nnp-hint{margin:5px 0 0;font-size:.72rem;line-height:1.4;color:#5C3A22}',
+    '.nnp-pill{margin-left:8px;border-radius:9999px;background:#F8EEE6;padding:2px 8px;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#C85478}',
+    /* consent: a named benefit and a stated frequency, never a pre-ticked box */
+    '.nnp-consent{margin:2px 0 12px;border:1px solid #EDE0D6;border-radius:.75rem;background:#FBF4EE;padding:12px}',
+    '.nnp-consent-h{margin:0;font-size:.84rem;font-weight:600;line-height:1.35;color:#2C1A0E}',
+    '.nnp-consent-p{margin:4px 0 0;font-size:.76rem;line-height:1.45;color:#5C3A22}',
+    '.nnp-consent-foot{margin:10px 0 0;font-size:.7rem;line-height:1.45;color:#7A5A44}',
+    '.nnp-check{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0;font-size:.78rem;line-height:1.45;color:#5C3A22;cursor:pointer}',
+    '.nnp-check b{color:#2C1A0E}',
     '.nnp-check input{margin:3px 0 0;width:16px;height:16px;flex:none;accent-color:#C85478}',
+    '.nnp-google{display:flex;width:100%;align-items:center;justify-content:center;gap:10px;margin:14px 0 0;padding:10px 16px;border:1px solid #EDE0D6;border-radius:9999px;background:#fff;font:inherit;font-weight:500;font-size:.875rem;color:#2C1A0E;cursor:pointer;transition:background .2s ease}',
+    '.nnp-google:hover{background:#F8EEE6}',
+    '.nnp-google:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
+    '.nnp-or{display:flex;align-items:center;gap:12px;margin:12px 0}',
+    '.nnp-or::before,.nnp-or::after{content:"";flex:1;height:1px;background:#EDE0D6}',
+    '.nnp-or span{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5C3A22}',
     '.nnp-btn{display:inline-flex;width:100%;align-items:center;justify-content:center;gap:6px;padding:11px 22px;border:none;border-radius:9999px;font:inherit;font-weight:600;font-size:.875rem;color:#fff;background:#C85478;cursor:pointer;box-shadow:0 4px 14px rgba(200,84,120,.28);transition:background .2s cubic-bezier(.34,1.56,.64,1),transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease}',
     '.nnp-btn:hover:not(:disabled){background:#A03D5E;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,84,120,.35)}',
     '.nnp-btn:active:not(:disabled){transform:scale(.97)}',
     '.nnp-btn:disabled{background:#EADFD6;color:#A08E80;cursor:not-allowed;box-shadow:none;transform:none}',
-    '.nnp-alt{margin:14px 0 0;text-align:center;font-size:.8rem;color:#5C3A22}',
-    '.nnp-alt a{color:#C85478;font-weight:600}',
+    '.nnp-alt{margin:12px 0 0;text-align:center;font-size:.8rem;color:#5C3A22}',
+    '.nnp-alt a{display:inline-flex;align-items:center;min-height:32px;margin:-8px;padding:8px;color:#C85478;font-weight:600}',
     '.nnp-err{margin:0 0 10px;font-size:.8rem;font-weight:500;color:#B3261E}',
     '.nnp-x{position:absolute;top:10px;right:10px;z-index:3;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border:none;border-radius:9999px;background:rgba(255,255,255,.12);color:#fff;font-size:19px;line-height:1;cursor:pointer;transition:background .2s ease}',
     '.nnp-x:hover{background:rgba(255,255,255,.24)}',
@@ -107,6 +125,14 @@
   ].join('');
 
   /* ---------------------------------------------------------------- markup */
+
+  var GOOGLE_SVG =
+    '<svg viewBox="0 0 64 64" width="18" height="18" aria-hidden="true"><g transform="translate(3,2)">' +
+      '<path fill="#4285F4" d="M57.81,30.15c0-2.43-.2-4.19-.62-6.03H29.5v10.95h16.26c-.33,2.72-2.1,6.82-6.03,9.57l-.06.37,8.76,6.78.6.06c5.57-5.15,8.78-12.72,8.78-21.7"/>' +
+      '<path fill="#34A853" d="M29.5,58.99c7.96,0,14.65-2.62,19.53-7.14l-9.31-7.21c-2.49,1.74-5.83,2.95-10.22,2.95-7.8,0-14.42-5.15-16.78-12.26l-.35.03-9.1,7.05-.12.33c4.85,9.64,14.81,16.26,26.35,16.26"/>' +
+      '<path fill="#FBBC05" d="M12.72,35.33c-.62-1.84-.98-3.8-.98-5.83s.36-4,.95-5.84l-.02-.39L3.45,16.11l-.3.14C1.15,20.25,0,24.74,0,29.5s1.15,9.24,3.15,13.24l9.57-7.41"/>' +
+      '<path fill="#EB4335" d="M29.5,11.41c5.54,0,9.27,2.39,11.4,4.39l8.32-8.13C44.11,2.92,37.46,0,29.5,0,17.96,0,8,6.62,3.15,16.26l9.54,7.41c2.39-7.11,9.01-12.26,16.81-12.26"/>' +
+    '</g></svg>';
 
   function build() {
     var style = document.createElement('style');
@@ -140,13 +166,29 @@
             '<div class="nnp-form-wrap">' +
               '<h3 class="nnp-title">Create your account</h3>' +
               '<p class="nnp-lede">Order online and collect in store.</p>' +
-              '<form novalidate style="margin-top:18px">' +
+              '<button type="button" class="nnp-google">' + GOOGLE_SVG + 'Continue with Google</button>' +
+              '<div class="nnp-or"><span>or</span></div>' +
+              '<form novalidate>' +
                 '<div class="nnp-field"><label class="nnp-label" for="nnp-email">Your email</label>' +
                   '<input class="nnp-input" id="nnp-email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></div>' +
                 '<div class="nnp-field"><label class="nnp-label" for="nnp-pw">Create a password</label>' +
                   '<input class="nnp-input" id="nnp-pw" type="password" autocomplete="new-password" placeholder="At least ' + MIN_PASSWORD + ' characters"></div>' +
-                '<label class="nnp-check"><input type="checkbox" id="nnp-mkt-email">Email me cake offers and seasonal specials</label>' +
-                '<label class="nnp-check"><input type="checkbox" id="nnp-mkt-sms">Text me cake offers and seasonal specials</label>' +
+                '<div class="nnp-field"><label class="nnp-label" for="nnp-phone">Mobile<span class="nnp-pill">Recommended</span></label>' +
+                  '<input class="nnp-input" id="nnp-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="0412 345 678" aria-describedby="nnp-phone-help">' +
+                  '<p class="nnp-hint" id="nnp-phone-help">We text you the moment your cake is ready to collect — no ringing the shop.</p></div>' +
+                // Unticked by default and freely given: ACMA prohibits pre-ticked
+                // boxes, and consent cannot be inferred from an order or from a
+                // phone number given for a receipt. The lift comes from naming
+                // the benefit and the frequency, not from a default.
+                '<div class="nnp-consent">' +
+                  '<p class="nnp-consent-h">Be first in line</p>' +
+                  '<p class="nnp-consent-p">Festival pre-orders fill fast — Diwali, Christmas, Eid. Members hear before the shop floor does.</p>' +
+                  '<label class="nnp-check"><input type="checkbox" id="nnp-mkt-email">' +
+                    '<span><b>Email me</b> — new flavours, seasonal specials and pre-order dates. About twice a month.</span></label>' +
+                  '<label class="nnp-check"><input type="checkbox" id="nnp-mkt-sms">' +
+                    '<span><b>Text me</b> — only the big ones: pre-orders opening, members-only deals. About once a month.</span></label>' +
+                  '<p class="nnp-consent-foot">Leave both unticked if you like — your 10% code still comes by email. Unsubscribe any time.</p>' +
+                '</div>' +
                 '<p class="nnp-err" hidden></p>' +
                 '<button type="submit" class="nnp-btn" style="margin-top:6px" disabled>Create account</button>' +
               '</form>' +
@@ -226,8 +268,46 @@
     var form = root.querySelector('form');
     var email = root.querySelector('#nnp-email');
     var pw = root.querySelector('#nnp-pw');
+    var phone = root.querySelector('#nnp-phone');
+    var phoneHelp = root.querySelector('#nnp-phone-help');
     var btn = root.querySelector('.nnp-btn');
     var err = root.querySelector('.nnp-err');
+
+    function cleanPhone() { return phone.value.replace(/[\s()-]/g, ''); }
+
+    function prefs(source) {
+      return {
+        phone: phone.value.trim() ? cleanPhone() : '',
+        marketing_email: root.querySelector('#nnp-mkt-email').checked,
+        marketing_sms: root.querySelector('#nnp-mkt-sms').checked,
+        consent_at: new Date().toISOString(),
+        consent_source: source,
+      };
+    }
+
+    function sdk() {
+      // Loaded here, not on page load: most visitors never submit.
+      return import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function (m) {
+        return m.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'pkce' } });
+      });
+    }
+
+    root.querySelector('.nnp-google').addEventListener('click', function () {
+      err.hidden = true;
+      // The redirect leaves this page, so park the ticks for the shop app to write.
+      safeSet('localStorage', PREFS_KEY, JSON.stringify(prefs('promo-dialog:google')));
+      sdk().then(function (sb) {
+        return sb.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: location.origin + '/shop/sign-up' },
+        });
+      }).then(function (res) {
+        if (res && res.error) throw res.error;
+      }).catch(function (e2) {
+        err.textContent = (e2 && e2.message) || 'Could not reach Google. Try again.';
+        err.hidden = false;
+      });
+    });
 
     wireCoupon(root.querySelector('.nnp-coupon'));
     root.querySelector('.nnp-x').addEventListener('click', close);
@@ -235,12 +315,19 @@
     document.addEventListener('keydown', onKey);
 
     function validate() {
-      var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) && pw.value.length >= MIN_PASSWORD;
+      // Phone is optional, so blank passes; typed-but-wrong does not.
+      var phoneOk = phone.value.trim() === '' || MOBILE_RE.test(cleanPhone());
+      phone.setAttribute('aria-invalid', phoneOk ? 'false' : 'true');
+      phoneHelp.textContent = phoneOk
+        ? 'We text you the moment your cake is ready to collect — no ringing the shop.'
+        : "That doesn't look like an Australian mobile. Leave it blank if you'd rather not.";
+      var ok = EMAIL_RE.test(email.value) && pw.value.length >= MIN_PASSWORD && phoneOk;
       btn.disabled = !ok;
       return ok;
     }
     email.addEventListener('input', validate);
     pw.addEventListener('input', validate);
+    phone.addEventListener('input', validate);
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -249,18 +336,11 @@
       btn.textContent = 'Creating account';
       err.hidden = true;
 
-      // Loaded here, not on page load: most visitors never submit.
-      import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function (m) {
-        var sb = m.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'pkce' } });
+      sdk().then(function (sb) {
         return sb.auth.signUp({
           email: email.value,
           password: pw.value,
-          options: { data: {
-            marketing_email: root.querySelector('#nnp-mkt-email').checked,
-            marketing_sms: root.querySelector('#nnp-mkt-sms').checked,
-            consent_at: new Date().toISOString(),
-            consent_source: 'promo-dialog',
-          } },
+          options: { data: prefs('promo-dialog') },
         });
       }).then(function (res) {
         if (res.error) throw res.error;

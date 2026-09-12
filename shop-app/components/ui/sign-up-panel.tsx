@@ -5,10 +5,14 @@ import { Eye, EyeOff, Loader2, PartyPopper, X } from "lucide-react";
 import { CouponCard } from "@/components/ui/coupon-card";
 import { Confetti, fireSideCannons, type ConfettiRef } from "@/components/ui/confetti";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
+import { applyStashedPrefs, stashPrefs, type SignUpPrefs } from "@/lib/prefs";
 import { cn } from "@/lib/utils";
 
 const MIN_PASSWORD = 8;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Australian mobile, however it was typed: 0412 345 678, +61 412 345 678, 61412345678.
+const MOBILE_RE = /^(?:\+?61|0)4\d{8}$/;
+const normalisePhone = (v: string) => v.replace(/[\s()-]/g, "");
 
 function GoogleIcon() {
   return (
@@ -33,6 +37,7 @@ export type SignUpPanelProps = {
 export function SignUpPanel({ variant = "page", onClose, className }: SignUpPanelProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailOptIn, setEmailOptIn] = useState(false);
   const [smsOptIn, setSmsOptIn] = useState(false);
@@ -42,11 +47,28 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
 
   const emailValid = EMAIL_RE.test(email);
   const passwordValid = password.length >= MIN_PASSWORD;
-  const canSubmit = emailValid && passwordValid && status === "idle";
+  // Optional, so blank passes; typed-but-wrong does not.
+  const phoneValid = phone.trim() === "" || MOBILE_RE.test(normalisePhone(phone));
+  const canSubmit = emailValid && passwordValid && phoneValid && status === "idle";
 
   useEffect(() => {
     if (status === "done") fireSideCannons(confettiRef.current);
   }, [status]);
+
+  // This is where Google sends people back, so it is where parked consent lands.
+  useEffect(() => {
+    void applyStashedPrefs();
+  }, []);
+
+  function prefs(): SignUpPrefs {
+    return {
+      phone: phone.trim() ? normalisePhone(phone) : "",
+      marketing_email: emailOptIn,
+      marketing_sms: smsOptIn,
+      consent_at: new Date().toISOString(),
+      consent_source: variant === "dialog" ? "promo-dialog" : "sign-up-page",
+    };
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -63,15 +85,8 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        // Consent is captured here and is the record of what was agreed and when.
-        data: {
-          marketing_email: emailOptIn,
-          marketing_sms: smsOptIn,
-          consent_at: new Date().toISOString(),
-          consent_source: variant === "dialog" ? "promo-dialog" : "sign-up-page",
-        },
-      },
+      // Consent is captured here and is the record of what was agreed and when.
+      options: { data: prefs() },
     });
 
     if (signUpError) {
@@ -88,6 +103,8 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
       setError("Sign-up isn't connected yet. Try again shortly.");
       return;
     }
+    // signInWithOAuth navigates away, so park the ticks before we lose them.
+    stashPrefs({ ...prefs(), consent_source: prefs().consent_source + ":google" });
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/shop/sign-up` },
@@ -228,28 +245,81 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                   </div>
                 </div>
 
-                {/* Separate, unticked, and not bundled — Spam Act 2003. */}
-                <fieldset className="mt-1 flex flex-col gap-2">
-                  <legend className="sr-only">Marketing preferences</legend>
-                  <label className="flex cursor-pointer items-start gap-2.5 text-[0.8rem] leading-snug text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      checked={emailOptIn}
-                      onChange={(e) => setEmailOptIn(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
-                    />
-                    Email me cake offers and seasonal specials
-                  </label>
-                  <label className="flex cursor-pointer items-start gap-2.5 text-[0.8rem] leading-snug text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      checked={smsOptIn}
-                      onChange={(e) => setSmsOptIn(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
-                    />
-                    Text me cake offers and seasonal specials
-                  </label>
-                </fieldset>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <label htmlFor="su-phone" className="field-label mb-0">
+                      Mobile
+                    </label>
+                    <span className="rounded-full bg-[#F8EEE6] px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-[#C85478]">
+                      Recommended
+                    </span>
+                  </div>
+                  <input
+                    id="su-phone"
+                    type="tel"
+                    autoComplete="tel"
+                    inputMode="tel"
+                    placeholder="0412 345 678"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    aria-describedby="su-phone-help"
+                    aria-invalid={!phoneValid}
+                    className={cn("field-input mt-1.5", !phoneValid && "border-destructive")}
+                  />
+                  <p id="su-phone-help" className="mt-1 text-[0.72rem] leading-snug text-muted-foreground">
+                    {phoneValid
+                      ? "We text you the moment your cake is ready to collect — no ringing the shop."
+                      : "That doesn't look like an Australian mobile. Leave it blank if you'd rather not."}
+                  </p>
+                </div>
+
+                {/*
+                  Separate, unticked and freely given — ACMA prohibits pre-ticked
+                  boxes outright, and consent cannot be inferred from a purchase
+                  or from a phone number handed over for a receipt. What lifts
+                  opt-in legitimately is naming the benefit and the frequency
+                  instead of asking for abstract "updates".
+                */}
+                <div className="mt-1 rounded-xl border border-border bg-secondary/70 p-3.5">
+                  <p className="text-[0.84rem] font-semibold leading-snug text-foreground">
+                    Be first in line
+                  </p>
+                  <p className="mt-1 text-[0.76rem] leading-snug text-muted-foreground">
+                    Festival pre-orders fill fast — Diwali, Christmas, Eid. Members
+                    hear before the shop floor does.
+                  </p>
+                  <fieldset className="mt-3 flex flex-col gap-2.5">
+                    <legend className="sr-only">Marketing preferences</legend>
+                    <label className="flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        checked={emailOptIn}
+                        onChange={(e) => setEmailOptIn(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
+                      />
+                      <span>
+                        <b className="font-semibold text-foreground">Email me</b> — new
+                        flavours, seasonal specials and pre-order dates. About twice a month.
+                      </span>
+                    </label>
+                    <label className="flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        checked={smsOptIn}
+                        onChange={(e) => setSmsOptIn(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
+                      />
+                      <span>
+                        <b className="font-semibold text-foreground">Text me</b> — only the
+                        big ones: pre-orders opening, members-only deals. About once a month.
+                      </span>
+                    </label>
+                  </fieldset>
+                  <p className="mt-3 text-[0.7rem] leading-snug text-muted-foreground/80">
+                    Leave both unticked if you like — your 10% code still comes by
+                    email. Unsubscribe any time.
+                  </p>
+                </div>
 
                 {error && (
                   <p role="alert" className="text-[0.8rem] font-medium text-destructive">
