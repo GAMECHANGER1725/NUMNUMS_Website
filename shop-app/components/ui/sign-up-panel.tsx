@@ -39,8 +39,8 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [emailOptIn, setEmailOptIn] = useState(false);
-  const [smsOptIn, setSmsOptIn] = useState(false);
+  const [marketing, setMarketing] = useState(false);
+  const [terms, setTerms] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
   const confettiRef = useRef<ConfettiRef>(null);
@@ -49,7 +49,7 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
   const passwordValid = password.length >= MIN_PASSWORD;
   // Optional, so blank passes; typed-but-wrong does not.
   const phoneValid = phone.trim() === "" || MOBILE_RE.test(normalisePhone(phone));
-  const canSubmit = emailValid && passwordValid && phoneValid && status === "idle";
+  const canSubmit = emailValid && passwordValid && phoneValid && terms && status === "idle";
 
   useEffect(() => {
     if (status === "done") fireSideCannons(confettiRef.current);
@@ -63,10 +63,13 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
   function prefs(): SignUpPrefs {
     return {
       phone: phone.trim() ? normalisePhone(phone) : "",
-      marketing_email: emailOptIn,
-      marketing_sms: smsOptIn,
+      // One tick, two channels — but kept as two fields so a later
+      // "stop texting me" does not silently also stop the emails.
+      marketing_email: marketing,
+      marketing_sms: marketing,
       consent_at: new Date().toISOString(),
       consent_source: variant === "dialog" ? "promo-dialog" : "sign-up-page",
+      terms_accepted_at: new Date().toISOString(),
     };
   }
 
@@ -99,6 +102,10 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
 
   async function handleGoogle() {
     setError(null);
+    if (!terms) {
+      setError("Please agree to the Privacy Policy first.");
+      return;
+    }
     if (!supabaseConfigured) {
       setError("Sign-up isn't connected yet. Try again shortly.");
       return;
@@ -288,38 +295,44 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                     Festival pre-orders fill fast — Diwali, Christmas, Eid. Members
                     hear before the shop floor does.
                   </p>
-                  <fieldset className="mt-3 flex flex-col gap-2.5">
-                    <legend className="sr-only">Marketing preferences</legend>
-                    <label className="flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
-                      <input
-                        type="checkbox"
-                        checked={emailOptIn}
-                        onChange={(e) => setEmailOptIn(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
-                      />
-                      <span>
-                        <b className="font-semibold text-foreground">Email me</b> — new
-                        flavours, seasonal specials and pre-order dates. About twice a month.
-                      </span>
-                    </label>
-                    <label className="flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
-                      <input
-                        type="checkbox"
-                        checked={smsOptIn}
-                        onChange={(e) => setSmsOptIn(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
-                      />
-                      <span>
-                        <b className="font-semibold text-foreground">Text me</b> — only the
-                        big ones: pre-orders opening, members-only deals. About once a month.
-                      </span>
-                    </label>
-                  </fieldset>
+                  <label className="mt-3 flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      checked={marketing}
+                      onChange={(e) => setMarketing(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
+                    />
+                    <span>
+                      <b className="font-semibold text-foreground">Email and text me</b> — new
+                      flavours, seasonal specials and pre-order dates. About twice a month.
+                    </span>
+                  </label>
                   <p className="mt-3 text-[0.7rem] leading-snug text-muted-foreground/80">
-                    Leave both unticked if you like — your 10% code still comes by
+                    Leave it unticked if you like — your 10% code still comes by
                     email. Unsubscribe any time.
                   </p>
                 </div>
+
+                <label className="flex cursor-pointer items-start gap-2.5 text-[0.78rem] leading-snug text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={terms}
+                    onChange={(e) => setTerms(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
+                  />
+                  <span>
+                    I agree to the{" "}
+                    <a
+                      href="/privacy-policy"
+                      target="_blank"
+                      rel="noopener"
+                      className="font-semibold text-[#C85478] underline-offset-2 hover:underline"
+                    >
+                      Privacy Policy
+                    </a>{" "}
+                    and to Num Num&rsquo;s Bakery storing my details to process my orders.
+                  </span>
+                </label>
 
                 {error && (
                   <p role="alert" className="text-[0.8rem] font-medium text-destructive">

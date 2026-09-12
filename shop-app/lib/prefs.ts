@@ -17,6 +17,7 @@ export type SignUpPrefs = {
   marketing_sms: boolean;
   consent_at: string;
   consent_source: string;
+  terms_accepted_at: string;
 };
 
 export function stashPrefs(prefs: SignUpPrefs) {

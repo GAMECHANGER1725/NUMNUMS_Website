@@ -60,7 +60,7 @@
     '.nnp-card{position:relative;width:100%;max-width:880px;max-height:92dvh;overflow-y:auto;border-radius:1.5rem;background:#fff;box-shadow:0 24px 60px -12px rgba(44,26,14,.45);transform:translateY(10px) scale(.985);transition:transform .28s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
     '.nnp-backdrop.nnp-in .nnp-card{transform:none}',
     '.nnp-grid{display:grid}',
-    '@media(min-width:768px){.nnp-grid{grid-template-columns:1.02fr 1fr}}',
+    '@media(min-width:768px){.nnp-card{overflow:hidden}.nnp-grid{grid-template-columns:1.02fr 1fr;grid-template-rows:minmax(0,1fr);max-height:92dvh}.nnp-left{overflow:hidden}.nnp-right{overflow-y:auto;min-height:0}}',
     '.nnp-left{position:relative;display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding:22px 22px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
     '@media(min-width:768px){.nnp-left{padding:40px 36px}}',
     '.nnp-left::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 22% 42%,rgba(200,84,120,.30) 0%,transparent 62%),radial-gradient(ellipse at 82% 88%,rgba(227,182,100,.16) 0%,transparent 58%)}',
@@ -103,6 +103,8 @@
     '.nnp-consent-foot{margin:10px 0 0;font-size:.7rem;line-height:1.45;color:#7A5A44}',
     '.nnp-check{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0;font-size:.78rem;line-height:1.45;color:#5C3A22;cursor:pointer}',
     '.nnp-check b{color:#2C1A0E}',
+    '.nnp-terms{margin:0 0 12px}',
+    '.nnp-terms a{color:#C85478;font-weight:600}',
     '.nnp-check input{margin:3px 0 0;width:16px;height:16px;flex:none;accent-color:#C85478}',
     '.nnp-google{display:flex;width:100%;align-items:center;justify-content:center;gap:10px;margin:14px 0 0;padding:10px 16px;border:1px solid #EDE0D6;border-radius:9999px;background:#fff;font:inherit;font-weight:500;font-size:.875rem;color:#2C1A0E;cursor:pointer;transition:background .2s ease}',
     '.nnp-google:hover{background:#F8EEE6}',
@@ -145,7 +147,7 @@
     back.setAttribute('aria-modal', 'true');
     back.setAttribute('aria-labelledby', 'nnp-h');
     back.innerHTML =
-      '<div class="nnp-card">' +
+      '<div class="nnp-card" data-lenis-prevent>' +
         '<button type="button" class="nnp-x" aria-label="Close">&times;</button>' +
         '<div class="nnp-grid">' +
           '<div class="nnp-left">' +
@@ -183,12 +185,12 @@
                 '<div class="nnp-consent">' +
                   '<p class="nnp-consent-h">Be first in line</p>' +
                   '<p class="nnp-consent-p">Festival pre-orders fill fast — Diwali, Christmas, Eid. Members hear before the shop floor does.</p>' +
-                  '<label class="nnp-check"><input type="checkbox" id="nnp-mkt-email">' +
-                    '<span><b>Email me</b> — new flavours, seasonal specials and pre-order dates. About twice a month.</span></label>' +
-                  '<label class="nnp-check"><input type="checkbox" id="nnp-mkt-sms">' +
-                    '<span><b>Text me</b> — only the big ones: pre-orders opening, members-only deals. About once a month.</span></label>' +
-                  '<p class="nnp-consent-foot">Leave both unticked if you like — your 10% code still comes by email. Unsubscribe any time.</p>' +
+                  '<label class="nnp-check"><input type="checkbox" id="nnp-mkt">' +
+                    '<span><b>Email and text me</b> — new flavours, seasonal specials and pre-order dates. About twice a month.</span></label>' +
+                  '<p class="nnp-consent-foot">Leave it unticked if you like — your 10% code still comes by email. Unsubscribe any time.</p>' +
                 '</div>' +
+                '<label class="nnp-check nnp-terms"><input type="checkbox" id="nnp-terms">' +
+                  '<span>I agree to the <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a> and to Num Num\u2019s Bakery storing my details to process my orders.</span></label>' +
                 '<p class="nnp-err" hidden></p>' +
                 '<button type="submit" class="nnp-btn" style="margin-top:6px" disabled>Create account</button>' +
               '</form>' +
@@ -278,10 +280,13 @@
     function prefs(source) {
       return {
         phone: phone.value.trim() ? cleanPhone() : '',
-        marketing_email: root.querySelector('#nnp-mkt-email').checked,
-        marketing_sms: root.querySelector('#nnp-mkt-sms').checked,
+        // One tick, two channels — but kept as two fields so a later
+        // "stop texting me" does not silently also stop the emails.
+        marketing_email: root.querySelector('#nnp-mkt').checked,
+        marketing_sms: root.querySelector('#nnp-mkt').checked,
         consent_at: new Date().toISOString(),
         consent_source: source,
+        terms_accepted_at: new Date().toISOString(),
       };
     }
 
@@ -294,6 +299,11 @@
 
     root.querySelector('.nnp-google').addEventListener('click', function () {
       err.hidden = true;
+      if (!root.querySelector('#nnp-terms').checked) {
+        err.textContent = 'Please agree to the Privacy Policy first.';
+        err.hidden = false;
+        return;
+      }
       // The redirect leaves this page, so park the ticks for the shop app to write.
       safeSet('localStorage', PREFS_KEY, JSON.stringify(prefs('promo-dialog:google')));
       sdk().then(function (sb) {
@@ -321,13 +331,15 @@
       phoneHelp.textContent = phoneOk
         ? 'We text you the moment your cake is ready to collect — no ringing the shop.'
         : "That doesn't look like an Australian mobile. Leave it blank if you'd rather not.";
-      var ok = EMAIL_RE.test(email.value) && pw.value.length >= MIN_PASSWORD && phoneOk;
+      var ok = EMAIL_RE.test(email.value) && pw.value.length >= MIN_PASSWORD && phoneOk &&
+               root.querySelector('#nnp-terms').checked;
       btn.disabled = !ok;
       return ok;
     }
     email.addEventListener('input', validate);
     pw.addEventListener('input', validate);
     phone.addEventListener('input', validate);
+    root.querySelector('#nnp-terms').addEventListener('change', validate);
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
