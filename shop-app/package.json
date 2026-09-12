@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prebuild": "node scripts/sync-catalog.mjs",
+    "predev": "node scripts/sync-catalog.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

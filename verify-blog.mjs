@@ -207,6 +207,13 @@ const FACTS = {
   // size -> [serves, price] — canonical chart on /order and /cakes
   sizes: { 6: ['6-8', '39.99'], 8: ['12-14', '49.99'], 10: ['20-22', '74.99'],
            12: ['25-30', '89.99'], 14: ['40-45', '114.99'], 16: ['50-55', '134.99'] },
+  // premium flavour -> size -> surcharge in CENTS. Lived only in order.html's
+  // inline script until 2026-09-13, gated by nothing; the web checkout charges
+  // off it now, so it is canonical here like every other price.
+  surcharge: {
+    'Rasmalai':       { 6: 1000, 8: 2000, 10: 2500, 12: 3500, 14: 4000, 16: 4500 },
+    'Ferrero Rocher': { 6:  500, 8: 1500, 10: 1500, 12: 2500, 14: 3000, 16: 3500 },
+  },
   // the 15 orderable flavours, from the /order dropdown
   flavours: ['Vanilla', 'Chocolate', 'Red Velvet', 'Butterscotch', 'Black Forest',
              'White Forest', 'Strawberry', 'Mango', 'Cookies & Cream', 'Lychee',
@@ -378,6 +385,53 @@ const FACTS = {
   }
 
   notes.push(`facts: ${pages.length} pages · ${ldTotal} JSON-LD blocks (${ldBad} invalid) · serving sizes, prices, NAP, entity @ids and internal links all checked`);
+}
+
+// ---------- The money path ----------
+// The public shop charges cards off ops/catalog.mjs, a file only the OPS build
+// watches — and the two sites deploy independently. So this build gate runs the
+// checkout's own tests and re-checks the catalogue against FACTS itself, or a
+// price could drift here and be discovered by a customer.
+{
+  try {
+    execFileSync(process.execPath, ['netlify/functions/checkout.test.mjs'], { cwd: ROOT, stdio: 'pipe' });
+    notes.push('checkout: price table, discount splitting and the 48h/DST boundary all hold');
+  } catch (e) {
+    fail(`checkout tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
+  // catalog.mjs is imported by the shop and by the Netlify functions, so a
+  // drifted price here reaches a card before anyone reads a report.
+  const cat = await import('./ops/catalog.mjs');
+  for (const [size, [, price]] of Object.entries(FACTS.sizes)) {
+    const got = cat.basePrice(`${size} inch`);
+    if (String(got) !== price) fail(`catalog.mjs: ${size}" is ${got}, FACTS says ${price}`);
+  }
+  const catFlavours = cat.FLAVOURS.map((f) => f.name);
+  if (catFlavours.join('|') !== FACTS.flavours.join('|')) {
+    fail(`catalog.mjs flavours differ from FACTS:\n      ${catFlavours.join(', ')}`);
+  }
+  for (const [flavour, sizes] of Object.entries(FACTS.surcharge)) {
+    for (const [size, cents] of Object.entries(sizes)) {
+      const got = cat.SURCHARGE[flavour]?.[`${size} inch`];
+      if (got !== cents) fail(`catalog.mjs: ${flavour} ${size}" surcharge is ${got}c, FACTS says ${cents}c`);
+    }
+  }
+  // shop-app cannot import across its Turbopack root, so it carries a generated
+  // byte-for-byte copy. That copy is what the checkout page prices off, so it
+  // has to be the same file — not merely a file that once was.
+  const generated = 'shop-app/lib/catalog.generated.mjs';
+  if (!existsSync(join(ROOT, generated))) {
+    fail(`${generated} is missing — run: cd shop-app && node scripts/sync-catalog.mjs`);
+  } else {
+    const want = read('ops/catalog.mjs');
+    const got = read(generated).replace(/^\/\/ GENERATED[^\n]*\n/, '');
+    if (got !== want) fail(`${generated} has drifted from ops/catalog.mjs — run: cd shop-app && node scripts/sync-catalog.mjs`);
+  }
+
+  // The one number a customer is actually charged, end to end.
+  if (cat.listPriceCents('16 inch', 'Rasmalai') !== 17999) fail('listPriceCents drifted: 16" Rasmalai should be 17999c');
+  if (cat.listPriceCents('Slice', 'Vanilla') !== null) fail('listPriceCents must return null for a Slice, never NaN');
 }
 
 // ---------- Report ----------

@@ -1,3 +1,4 @@
+// GENERATED from ops/catalog.mjs by scripts/sync-catalog.mjs — do not edit.
 // What the shop actually sells. Mirrors the canonical FACTS block in
 // verify-blog.mjs (the build gate) — if a price or flavour changes, it changes
 // THERE first, then here, then on /cakes and /order.

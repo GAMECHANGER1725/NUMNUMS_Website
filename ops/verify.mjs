@@ -236,6 +236,33 @@ if (factFlavours.length && factFlavours.join('|') !== catFlavours.join('|')) {
   fail(`flavours differ from FACTS\n      FACTS:   ${factFlavours.join(', ')}\n      catalog: ${catFlavours.join(', ')}`);
 } else pass(`catalogue matches FACTS (${catFlavours.length} flavours)`);
 
+// The premium surcharge is charged by the web checkout, so it gets the same
+// treatment as the base prices: one table, diffed against the build gate.
+// Read as text on both sides rather than imported, because a drifted FACTS
+// block must fail here rather than quietly agreeing with itself.
+{
+  const factBlock = facts.slice(facts.indexOf('surcharge: {'), facts.indexOf('// the 15 orderable'));
+  const catBlock = catalog.slice(catalog.indexOf('export const SURCHARGE'), catalog.indexOf('export const listPriceCents'));
+  const rows = (text, sizeRe) => {
+    const out = new Map();
+    for (const m of text.matchAll(/'([^']+)':\s*\{([^}]*)\}/g)) {
+      for (const n of m[2].matchAll(sizeRe)) out.set(`${m[1]}/${n[1]}`, n[2]);
+    }
+    return out;
+  };
+  const wanted = rows(factBlock, /(\d+):\s*(\d+)/g);
+  const got = rows(catBlock, /'(\d+) inch':\s*(\d+)/g);
+  if (!wanted.size) fail('could not read FACTS.surcharge out of verify-blog.mjs');
+  else {
+    const drift = [...wanted].filter(([k, v]) => got.get(k) !== v)
+      .map(([k, v]) => `${k} is ${v}c in FACTS but ${got.get(k) ?? 'missing'} in catalog.mjs`);
+    const extra = [...got.keys()].filter((k) => !wanted.has(k));
+    if (drift.length || extra.length) {
+      fail(['surcharge drift:', ...drift, ...extra.map((k) => `${k} is in catalog.mjs but not FACTS`)].join('\n      '));
+    } else pass(`surcharge matches FACTS (${wanted.size} entries)`);
+  }
+}
+
 // ── 8. every flavour has its picture ────────────────────────────────────────
 // A normal cake has no design photo, so the card shows the cake we sell. The
 // filename is derived from the flavour, which means a new flavour silently

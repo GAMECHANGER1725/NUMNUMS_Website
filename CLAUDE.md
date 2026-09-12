@@ -8,6 +8,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   other sessions/routines push directly to `main`. Skip this for read-only questions that involve
   no file changes.
 
+## Verify Before Deciding
+- **Every big decision, plan, or action gets verified with deep contextual online research first** —
+  not answered from memory or training-data assumptions. "Big" means anything that changes strategy,
+  spends money, ships to production, or would be expensive to reverse (pricing changes, new tech/vendor
+  choices, SEO/marketing strategy shifts, architecture decisions, legal/compliance claims). Search for
+  current, specific, sourced information relevant to the actual decision — not a generic search, one
+  that would change the recommendation if it turned up something contrary.
+- Routine code edits, small bug fixes, and content that follows an existing pattern in this repo don't
+  need this — use judgement, and when unsure, research.
+
 ## Project Overview
 Static multi-page HTML site for Num Nums Bakery (100% eggless cakes + Indian sweets, Sydney).
 No bundler/framework for the main site — `index.html`, `cakes.html`, `order.html`, `about.html`,
