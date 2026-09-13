@@ -979,7 +979,10 @@ export const HELP = [
           pickup times, who logged what, photos due to be purged, and what has been deleted.</li>
       </ul>
       <p>On the takings panel, tap a tile — takings, orders, average, discounts — to draw that
-        one underneath. Two things worth trusting the app about:</p>
+        one underneath. The row above it picks how far back it looks: today, seven days, thirty,
+        ninety, or <strong>Custom…</strong> for any two dates. Whatever you pick, the change
+        figures compare it against the same number of days immediately before it.</p>
+      <p>Two things worth trusting the app about:</p>
       <ul class="help-list">
         <li>A <strong>margin</strong> is greyed out and labelled when only some of the orders
           have a cost recorded. A rate from two cakes out of twenty is not a fact.</li>
@@ -1010,6 +1013,19 @@ export const HELP = [
         in recently.</p>
       <p><strong>This page is read-only.</strong> Roles and shop access are changed in
         Supabase, so the change is deliberate rather than an admin mistapping their own row.</p>`,
+  },
+  {
+    title: 'Who changed what',
+    sub: 'More \u203a Staff \u203a Edits',
+    roles: ['admin'],
+    body: `
+      <p>Every order logged, every status moved and every field corrected, newest first, with
+        who did it. Deleted orders are in here too \u2014 an order's own history goes with it when
+        it is deleted, so this is the only place that remembers.</p>
+      <p>Search it by anything on a row: a staff member's name, an order number, a customer,
+        or what changed \u2014 type <em>price</em> for price changes, <em>deleted</em> for
+        deletions.</p>
+      <p>Tap a row to open the cake it belongs to.</p>`,
   },
   {
     title: 'Cancelling vs deleting',

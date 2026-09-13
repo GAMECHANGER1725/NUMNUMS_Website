@@ -12,7 +12,7 @@ import {
   missingPrice, searchOrders, phoneKey,
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
-  dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
+  dailyTakings, dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
   productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats, pricingGaps,
   netPrice, discountOn,
 } from './stats.mjs';
@@ -691,6 +691,22 @@ test('the takings tiles compare a period with the one before it', () => {
   assert.equal(m.was.revenue, 50);
   assert.equal(Math.round(m.change.revenue), 300);
   assert.equal(Math.round(m.change.count), 100);
+});
+
+// A custom window does not have to end today, and the comparison period behind
+// it is built the same way — so the series has to be expressible as two dates.
+test('a takings window in the past compares against the days before it', () => {
+  const orders = [
+    { status: 'picked_up', created_at: '2026-08-12T01:00:00Z', price: 100 },   // in
+    { status: 'picked_up', created_at: '2026-08-11T01:00:00Z', price: 60 },    // in
+    { status: 'picked_up', created_at: '2026-08-09T01:00:00Z', price: 40 },    // comparison
+    { status: 'picked_up', created_at: '2026-09-04T01:00:00Z', price: 999 },   // after the window
+  ];
+  const series = dailyTakingsBetween(orders, '2026-08-09', '2026-08-12');
+  const m = takingsMetrics(series, 2);
+  assert.deepEqual(m.rows.map((r) => r.dayKey), ['2026-08-11', '2026-08-12']);
+  assert.equal(m.now.revenue, 160);
+  assert.equal(m.was.revenue, 40, 'the two days before the window, and nothing after it');
 });
 
 test('the average is the period average, not the average of the days', () => {

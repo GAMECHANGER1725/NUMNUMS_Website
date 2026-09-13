@@ -683,8 +683,19 @@ export function toCsv(headers, rows) {
  */
 export function dailyTakings(orders, days = 30, now = new Date()) {
   const todayKey = sydneyParts(now).dayKey;
+  return dailyTakingsBetween(orders, addDayKey(todayKey, -(days - 1)), todayKey);
+}
+
+/**
+ * The same series over an arbitrary pair of Sydney days, inclusive.
+ *
+ * The finance panel can be pointed at a window that does not end today — a
+ * custom range, or last month — so the window cannot be expressed as "N days
+ * back from now" any more.
+ */
+export function dailyTakingsBetween(orders, fromKey, toKey) {
   const buckets = new Map();
-  for (let i = days - 1; i >= 0; i--) buckets.set(addDayKey(todayKey, -i), { revenue: 0, count: 0, discount: 0 });
+  for (let k = fromKey; k <= toKey; k = addDayKey(k, 1)) buckets.set(k, { revenue: 0, count: 0, discount: 0 });
 
   for (const o of orders) {
     if (o.status === 'cancelled') continue;

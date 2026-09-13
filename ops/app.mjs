@@ -9,7 +9,7 @@ import {
   signIn, signOut, currentProfile, listProfiles, isAuthError, refreshSession,
   listOrders, listToBake, createOrder, updateOrder, setStatus, setCost,
   findCustomerByPhone, searchCustomers, getCustomer,
-  recentAuthEvents, orderEvents, uploadPhotos, removePhoto, orderPhotos, photoUrls, photoForPdf,
+  recentAuthEvents, orderEvents, recentEdits, uploadPhotos, removePhoto, orderPhotos, photoUrls, photoForPdf,
   invoiceUrl, deleteOrder, deletedOrders,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote,
@@ -23,7 +23,7 @@ import {
   dayLabel, soldWithin, salesByWeek, logSections, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex, inDateRange,
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
-  dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
+  dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine, PAV, pavSize }
   from './catalog.mjs';
@@ -243,7 +243,7 @@ async function render() {
   const PAINT = {
     log: renderLog, bake: renderBake, prints: renderPrints,
     analytics: renderAnalytics, directory: renderDirectory,
-    staff: renderStaff, export: renderExport, help: renderHelp,
+    staff: renderStaff, edits: renderEdits, export: renderExport, help: renderHelp,
   };
   // Supabase retries a failed request internally before giving up, so a dead
   // connection sits on "Loading…" for about ten seconds. Say something at four.
@@ -1242,17 +1242,37 @@ function closeRange() {
   $('range-btn').setAttribute('aria-expanded', 'false');
 }
 
-let rangePick = { anchor: null, view: null };
+// The two shortcut buttons under the grid. A worklist looks forward — what is
+// coming in — and takings look back at what has already been sold, so the same
+// pair of buttons has to point opposite ways.
+const FORWARD_QUICK = [
+  { label: 'Today', range: (t) => ({ from: t, to: t }) },
+  { label: 'Next 7 days', range: (t) => ({ from: t, to: addDayKey(t, 6) }) },
+];
+const BACK_QUICK = [
+  { label: 'Today', range: (t) => ({ from: t, to: t }) },
+  { label: 'Last 7 days', range: (t) => ({ from: addDayKey(t, -6), to: t }) },
+];
 
-function paintRangePanel() {
-  const panel = $('range-cal');
+/**
+ * The day-range calendar, painted into whatever panel it is handed.
+ *
+ * Two places filter by a range of days now — the worklists' top bar and the
+ * takings panel — and a second calendar that behaved not quite the same is the
+ * thing the shared one exists to avoid. The caller owns the range it is
+ * picking (`get`/`set`), what to redraw afterwards, and its own half-finished
+ * pick, so the two never tread on each other.
+ */
+function paintCal(panel, ctx) {
+  const pick = ctx.pick;
+  const quick = ctx.quick || FORWARD_QUICK;
   const today = sydneyParts(new Date()).dayKey;
-  const v = rangePick.view || { year: +today.slice(0, 4), month: +today.slice(5, 7) };
-  rangePick.view = v;
+  const v = pick.view || { year: +today.slice(0, 4), month: +today.slice(5, 7) };
+  pick.view = v;
 
-  const range = rangeOf();
-  const from = range?.from ?? rangePick.anchor;
-  const to = range?.to ?? rangePick.anchor;
+  const range = ctx.get();
+  const from = range?.from ?? pick.anchor;
+  const to = range?.to ?? pick.anchor;
 
   panel.innerHTML = `
     <div class="cal-head">
@@ -1277,44 +1297,52 @@ function paintRangePanel() {
       }).join('')}
     </div>
     <div class="cal-foot">
-      <button type="button" class="btn btn-quiet" data-quick="today">Today</button>
-      <button type="button" class="btn btn-quiet" data-quick="week">Next 7 days</button>
+      ${quick.map((q, i) => `
+        <button type="button" class="btn btn-quiet" data-quick="${i}">${esc(q.label)}</button>`).join('')}
       <button type="button" class="btn btn-primary" data-done>Done</button>
     </div>
-    <p class="range-hint">${rangePick.anchor && !range
+    <p class="range-hint">${pick.anchor && !range
       ? 'Now tap the last day, or the same day again for just that one.'
       : 'Tap a day, then tap another for a range.'}</p>`;
 
   panel.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
-    rangePick.view = shiftMonth(v.year, v.month, Number(b.dataset.step));
-    paintRangePanel();
+    pick.view = shiftMonth(v.year, v.month, Number(b.dataset.step));
+    paintCal(panel, ctx);
   }));
 
   panel.querySelectorAll('[data-day]').forEach((b) => b.addEventListener('click', () => {
     const key = b.dataset.day;
-    if (!rangePick.anchor || rangeOf()) {
-      rangePick.anchor = key;
-      setRange(null);
+    if (!pick.anchor || ctx.get()) {
+      pick.anchor = key;
+      ctx.set(null);
     } else {
-      const a = rangePick.anchor;
-      setRange({ from: a <= key ? a : key, to: a <= key ? key : a });
-      rangePick.anchor = null;
+      const a = pick.anchor;
+      ctx.set({ from: a <= key ? a : key, to: a <= key ? key : a });
+      pick.anchor = null;
     }
-    paintRangePanel();
-    repaintRange();
+    paintCal(panel, ctx);
+    ctx.onChange();
   }));
 
   panel.querySelectorAll('[data-quick]').forEach((b) => b.addEventListener('click', () => {
-    setRange(b.dataset.quick === 'today'
-      ? { from: today, to: today }
-      : { from: today, to: addDayKey(today, 6) });
-    rangePick.anchor = null;
-    paintRangePanel();
-    repaintRange();
+    ctx.set(quick[Number(b.dataset.quick)].range(today));
+    pick.anchor = null;
+    paintCal(panel, ctx);
+    ctx.onChange();
   }));
 
-  panel.querySelector('[data-done]').addEventListener('click', closeRange);
+  panel.querySelector('[data-done]').addEventListener('click', () => ctx.close());
 }
+
+const logCal = {
+  get: rangeOf,
+  set: setRange,
+  onChange: repaintRange,
+  close: closeRange,
+  quick: FORWARD_QUICK,
+  pick: { anchor: null, view: null },
+};
+const paintRangePanel = () => paintCal($('range-cal'), logCal);
 
 $('range-btn').addEventListener('click', () => {
   const opening = $('range-cal').classList.contains('hidden');
@@ -1332,7 +1360,7 @@ $('log-search').addEventListener('input', (e) => {
 
 $('range-clear').addEventListener('click', () => {
   setRange(null);
-  rangePick = { anchor: null, view: null };
+  logCal.pick = { anchor: null, view: null };
   closeRange();
   repaintRange();
 });
@@ -2960,6 +2988,7 @@ const MENU = [
     icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M16 7a4 4 0 11-8 0 4 4 0 018 0z"/>',
     children: [
       { view: 'staff', label: 'People & sign-ins', note: 'Who has an account, and who has been on' },
+      { view: 'edits', label: 'Edits', note: 'Every change anyone has made to an order' },
     ],
   },
   {
@@ -2974,12 +3003,12 @@ const MENU = [
 
 const VIEW_TITLE = {
   log: 'Orders', bake: 'To bake', prints: 'Prints',
-  directory: 'Customers', staff: 'Staff', export: 'Export', help: 'Help',
+  directory: 'Customers', staff: 'Staff', edits: 'Edits', export: 'Export', help: 'Help',
 };
 const ANALYTICS_TITLE = { finance: 'Finance', customers: 'Customers', data: 'Data' };
 
 /** Every view the drawer can reach, so render() knows what to show and hide. */
-const DRAWER_VIEWS = ['analytics', 'directory', 'staff', 'export'];
+const DRAWER_VIEWS = ['analytics', 'directory', 'staff', 'edits', 'export'];
 
 const menuGroups = () => MENU.filter((g) => g.roles.includes(me.role));
 
@@ -3297,6 +3326,144 @@ async function renderStaff() {
         </div>`).join('')
       : '<div class="list-row"><span class="grow list-meta">Nothing recorded yet.</span></div>'}
     </div>`;
+}
+
+// ── Edits ───────────────────────────────────────────────────────────────────
+//
+// The same trail the order sheet shows, read across the whole book instead of
+// one cake: who logged an order, who marked it collected, who changed a price.
+// It is already written by a trigger for every order — there was just nowhere
+// to read it except one order at a time, which is no use for "who moved that".
+//
+// Deletions ride along from `deleted_orders`, because an order's own events go
+// with it on the cascade — the one action that would otherwise leave no trace
+// here at all.
+
+let editsQuery = '';
+
+/** A value as it should read in a trail line, not as it is stored. */
+const editValue = (v) => {
+  if (v === null || v === undefined || v === '') return '—';
+  if (Array.isArray(v)) return v.length ? `${v.length} photo${v.length === 1 ? '' : 's'}` : 'none';
+  if (typeof v === 'boolean') return v ? 'yes' : 'no';
+  const s = String(v);
+  if (/^\d{4}-\d{2}-\d{2}T/.test(s)) return dateTimeFmt.format(new Date(s));
+  return s.length > 44 ? `${s.slice(0, 44)}…` : s;
+};
+
+const PHOTO_FIELDS = new Set(['photo_path', 'photo_paths']);
+
+/** One order_events row as something a person can read. */
+function editSummary(e) {
+  if (e.kind === 'created') return { verb: 'Logged the order', lines: [] };
+  if (e.kind === 'status') {
+    const to = STATUS_LABEL[e.detail?.to] || e.detail?.to || 'something';
+    const from = STATUS_LABEL[e.detail?.from] || e.detail?.from;
+    return { verb: `Marked ${to}`, lines: from ? [`was ${from}`] : [] };
+  }
+  const fields = Object.keys(e.detail || {});
+  const names = [...new Set(fields.map(fieldLabel))];
+  return {
+    verb: names.length ? `Changed ${names.join(', ')}` : 'Changed the order',
+    // Photos are paths: naming the file tells nobody anything, and the field
+    // name above already says a picture moved.
+    lines: fields.filter((f) => !PHOTO_FIELDS.has(f)).map((f) =>
+      `${fieldLabel(f)}: ${editValue(e.detail[f]?.from)} → ${editValue(e.detail[f]?.to)}`),
+  };
+}
+
+async function renderEdits() {
+  const root = $('view-edits');
+  root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+
+  const [profiles, events, binned] = await Promise.all([
+    listProfiles(), recentEdits(300), deletedOrders(60).catch(() => []),
+  ]);
+  peopleById = new Map(profiles.map((p) => [p.id, p]));
+
+  const rows = [
+    ...events.map((e) => {
+      const s = editSummary(e);
+      return {
+        at: e.at,
+        who: peopleById.get(e.actor)?.name || 'Someone',
+        kind: e.kind,
+        verb: s.verb,
+        lines: s.lines,
+        orderNo: e.orders?.order_no || '',
+        customer: e.orders?.customer_name || '',
+        orderId: e.order_id,
+      };
+    }),
+    ...binned.map((d) => ({
+      at: d.deleted_at,
+      who: peopleById.get(d.deleted_by)?.name || 'Someone',
+      kind: 'deleted',
+      verb: 'Deleted the order',
+      lines: [`${d.row?.customer_name || 'Unknown'} · ${money.format(Number(d.row?.price || 0))}`],
+      orderNo: d.order_no || '',
+      customer: d.row?.customer_name || '',
+      orderId: null,
+    })),
+  ].sort((a, b) => new Date(b.at) - new Date(a.at));
+
+  const KIND_WORDS = {
+    created: 'new order created logged',
+    status: 'status collected baked arrived cancelled picked up',
+    edit: 'edit edited changed',
+    deleted: 'delete deleted removed',
+  };
+  for (const r of rows) {
+    r.hay = [r.who, r.verb, r.orderNo, r.customer, KIND_WORDS[r.kind], ...r.lines]
+      .join(' ').toLowerCase();
+  }
+
+  const paint = () => {
+    const q = editsQuery.trim().toLowerCase();
+    const shown = q ? rows.filter((r) => q.split(/\s+/).every((w) => r.hay.includes(w))) : rows;
+    $('edits-rows').innerHTML = shown.length ? shown.map((r) => {
+      // A deleted order has nothing left to open, so that row is not a button.
+      const tag = r.orderId ? 'button' : 'div';
+      return `
+      <${tag} class="edit-row"${r.orderId ? ` data-order="${esc(r.orderId)}"` : ''}>
+        <span class="edit-lines">
+          <span class="edit-what">${esc(r.who)} · ${esc(r.verb)}</span>
+          <span class="edit-sub">${r.orderNo ? `${esc(r.orderNo)} · ` : ''}${esc(r.customer || '—')}</span>
+          ${r.lines.map((l) => `<span class="edit-sub">${esc(l)}</span>`).join('')}
+        </span>
+        <span class="edit-when">${esc(dateTimeFmt.format(new Date(r.at)))}</span>
+      </${tag}>`;
+    }).join('')
+      : `<div class="list-row"><span class="grow list-meta">${
+          q ? 'Nothing matches that.' : 'Nothing recorded yet.'}</span></div>`;
+    $('edits-count').textContent = q
+      ? `${shown.length} of ${rows.length} shown`
+      : `The last ${rows.length}, newest first`;
+    wireDockets($('edits-rows'));
+  };
+
+  root.innerHTML = `
+    <div class="panel">
+      <div class="panel-title">Edits</div>
+      <div class="panel-note">
+        Everything staff have done to an order — logged it, moved its status,
+        corrected a field, deleted it. Tap a row to open the cake it belongs to.
+      </div>
+      <input class="input" id="edits-search" type="search" autocomplete="off"
+             style="margin-bottom:10px;"
+             placeholder="Search staff, order number, what changed" value="${esc(editsQuery)}">
+      <p class="panel-note" id="edits-count"></p>
+      <div id="edits-rows"></div>
+    </div>`;
+
+  let timer = null;
+  $('edits-search').addEventListener('input', (e) => {
+    editsQuery = e.target.value;
+    clearTimeout(timer);
+    timer = setTimeout(paint, 140);
+  });
+
+  paint();
 }
 
 // ── Export ──────────────────────────────────────────────────────────────────
@@ -3707,9 +3874,10 @@ function takingsPanel(stats, key = 'revenue') {
 
 /** Tile taps redraw the line; a finger or a mouse on the line reads it out. */
 function wireTakings(stats) {
-  let key = 'revenue';
+  let key = takingsMetric;
 
   const paint = () => {
+    takingsMetric = key;
     $('metric-row').innerHTML = metricTiles(stats, key);
     $('takings-chart').firstElementChild?.remove();
     $('takings-chart').insertAdjacentHTML('afterbegin', takingsChart(stats.rows, key));
@@ -3738,7 +3906,11 @@ function wireTakings(stats) {
       const vx = ((e.clientX - box.left) / box.width) * W;
       const i = Math.max(0, Math.min(stats.rows.length - 1,
         Math.round(((vx - padL) / plotW) * (stats.rows.length - 1))));
-      const px = padL + (i / (stats.rows.length - 1)) * plotW;
+      // A one-day window is a single point, drawn mid-plot. Spacing it by
+      // (length - 1) divides by zero and puts the dot and the rule at NaN.
+      const px = stats.rows.length === 1
+        ? padL + plotW / 2
+        : padL + (i / (stats.rows.length - 1)) * plotW;
       const py = padT + plotH - (vals[i] / max) * plotH;
 
       rule.setAttribute('x1', px); rule.setAttribute('x2', px);
@@ -3763,6 +3935,143 @@ function wireTakings(stats) {
 
   wireRow();
   wireSvg();
+}
+
+// ── How much of the book the takings panel is looking at ────────────────────
+//
+// The panel used to be thirty days and nothing else. "How did the long weekend
+// go" and "what did we take today" were the same question asked of a window
+// that could not answer either.
+//
+// Whatever the window is, the panel compares it against the same number of days
+// immediately before it, which is what the tiles' change figures mean — so the
+// series is always built over twice the days it draws.
+
+const TAKINGS_PERIODS = [
+  { key: 'today', label: 'Today', days: 1 },
+  { key: '7',  label: 'Last 7 days',  days: 7 },
+  { key: '30', label: 'Last 30 days', days: 30 },
+  { key: '90', label: 'Last 90 days', days: 90 },
+];
+
+let takingsKey = '30';
+let takingsRange = null;       // the custom window; null while one is half-picked
+let takingsMetric = 'revenue'; // survives a period change, so the line stays put
+let takingsCalOpen = false;
+let takingsCtx = null;         // { all, now } from the analytics fetch
+let lastTakings = null;        // what is drawn now, kept for a mid-pick repaint
+
+const takingsCal = {
+  get: () => takingsRange,
+  set: (r) => { takingsRange = r; },
+  onChange: () => repaintTakings(),
+  close: () => { takingsCalOpen = false; $('takings-cal').classList.add('hidden'); },
+  quick: BACK_QUICK,
+  pick: { anchor: null, view: null },
+};
+
+/** The days the panel is drawing, or null while a custom range is half-picked. */
+function takingsWindow() {
+  const today = sydneyParts(new Date()).dayKey;
+  if (takingsKey === 'custom') return takingsRange;
+  const days = TAKINGS_PERIODS.find((p) => p.key === takingsKey).days;
+  return { from: addDayKey(today, -(days - 1)), to: today };
+}
+
+/**
+ * The orders the window needs.
+ *
+ * The analytics fetch is 63 days, which covers the comparison period for
+ * everything up to thirty days — but not ninety, and not a custom range back in
+ * March. Those fetch their own window and hold it until something is written,
+ * rather than widening the fetch every page on Analytics pays for.
+ */
+let takingsFetch = null;
+async function takingsSource(prevFrom, todayKey) {
+  if (daysBetween(prevFrom, todayKey) <= 60) return takingsCtx.all;
+  if (takingsFetch && takingsFetch.stamp === writeStamp.v && takingsFetch.from <= prevFrom) {
+    return takingsFetch.rows;
+  }
+  // A day early: the key is a Sydney date and the filter is an instant, and an
+  // extra few hours of orders costs nothing — the bucketing drops them anyway.
+  const rows = await listOrders({ since: `${addDayKey(prevFrom, -1)}T00:00:00Z`, complete: true });
+  takingsFetch = { from: prevFrom, stamp: writeStamp.v, rows };
+  return rows;
+}
+
+async function takingsFor(win) {
+  const days = daysBetween(win.from, win.to) + 1;
+  const prevFrom = addDayKey(win.from, -days);
+  const rows = await takingsSource(prevFrom, sydneyParts(takingsCtx.now).dayKey);
+  return takingsMetrics(dailyTakingsBetween(rows, prevFrom, win.to), days);
+}
+
+const takingsTitle = (win) => {
+  const p = TAKINGS_PERIODS.find((x) => x.key === takingsKey);
+  if (p) return `Takings, ${p.key === 'today' ? 'today' : p.label.toLowerCase()}`;
+  if (!win) return 'Takings';
+  return `Takings, ${dayKeyLabel(win.from)} – ${dayKeyLabel(win.to)}`;
+};
+
+function takingsBlock(stats, win) {
+  const days = stats.days;
+  return `
+    <div class="panel-title">${esc(takingsTitle(win))}</div>
+    <div class="sortbar" id="takings-tabs" role="group" aria-label="Takings period">
+      ${TAKINGS_PERIODS.map((p) => `
+        <button data-period="${p.key}" aria-pressed="${p.key === takingsKey}">${esc(p.label)}</button>`).join('')}
+      <button data-period="custom" aria-pressed="${takingsKey === 'custom'}">Custom…</button>
+    </div>
+    <div class="cal hidden" id="takings-cal"></div>
+    <div class="panel-note">${takingsKey === 'custom' && !takingsRange
+      ? 'Pick the first and last day on the calendar. Until then this is still showing the last window.'
+      : `Against the ${days === 1 ? 'day' : `${days} days`} before it. Tap a figure to draw it — by the date the order was written.`}</div>
+    ${takingsPanel(stats, takingsMetric)}
+    ${chartTable('Show the daily numbers', null,
+      stats.rows.filter((d) => d.count).reverse().map((d) => [
+        dayKeyLabel(d.dayKey), `${d.count} order${d.count === 1 ? '' : 's'}`, money.format(d.revenue)]))}`;
+}
+
+/**
+ * Redraw just this panel.
+ *
+ * Re-running the analytics page would rebuild every other panel on it for a
+ * number none of them use — and on a custom pick this runs on every tap.
+ */
+async function repaintTakings() {
+  const host = $('takings-block');
+  if (!host) return;
+  const win = takingsWindow();
+  if (win) {
+    try { lastTakings = await takingsFor(win); }
+    catch (err) { toast(err.message, 'error'); return; }
+  }
+  host.innerHTML = takingsBlock(lastTakings, win);
+  wireTakingsBlock();
+}
+
+function wireTakingsBlock() {
+  $('takings-tabs').querySelectorAll('[data-period]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const k = b.dataset.period;
+      if (k === 'custom') {
+        takingsCalOpen = takingsKey !== 'custom' || !takingsCalOpen;
+        takingsKey = 'custom';
+      } else {
+        takingsKey = k;
+        takingsCalOpen = false;
+      }
+      repaintTakings();
+    }));
+
+  // The calendar lives inside the block this redraws, so a first tap would
+  // otherwise close it before the second tap that completes the range.
+  if (takingsCalOpen) {
+    $('takings-cal').classList.remove('hidden');
+    paintCal($('takings-cal'), takingsCal);
+  }
+
+  wireTakings(lastTakings);
 }
 
 /** Weekly takings as columns stacked by store, newest at the right. */
@@ -3925,10 +4234,11 @@ async function renderAnalytics({ force = false } = {}) {
     return d >= 0 && d < 56;          // pickups that have already happened
   }));
 
-  // Sixty days for a thirty-day panel: the older half is what the tiles compare
-  // against and is never drawn.
-  const daily = dailyTakings(all, 60, now);
-  const takings = takingsMetrics(daily, 30);
+  // Whatever window the takings panel is on, plus the same again behind it for
+  // the comparison — which is never drawn.
+  takingsCtx = { all, now };
+  const takingsWin = takingsWindow() || { from: addDayKey(todayKey, -29), to: todayKey };
+  lastTakings = await takingsFor(takingsWin);
   const weeks = weeklyByStore(all, STORES.map((st) => st.code), 8, now);
   const board = customerLeaderboard(customerRows, now);
   const ahead = forwardBook(all, 7, now);
@@ -4039,14 +4349,7 @@ async function renderAnalytics({ force = false } = {}) {
       ${ahead.unpriced ? `<p class="ahead-warn">${ahead.unpriced} of these ${ahead.unpriced === 1 ? 'has' : 'have'} no price yet, so the totals above are understated.</p>` : ''}
     </div>
 
-    <div class="panel">
-      <div class="panel-title">Takings, last 30 days</div>
-      <div class="panel-note">Against the thirty days before it. Tap a figure to draw it — by the date the order was written.</div>
-      ${takingsPanel(takings)}
-      ${chartTable('Show the daily numbers', null,
-        takings.rows.filter((d) => d.count).reverse().map((d) => [
-          dayKeyLabel(d.dayKey), `${d.count} order${d.count === 1 ? '' : 's'}`, money.format(d.revenue)]))}
-    </div>
+    <div class="panel" id="takings-block">${takingsBlock(lastTakings, takingsWin)}</div>
 
     <div class="panel">
       <div class="panel-title">Weekly takings by store</div>
@@ -4446,7 +4749,7 @@ async function renderAnalytics({ force = false } = {}) {
   // The rows are buttons carrying an order id, so the log's own handler works.
   wireDockets(root);
 
-  if (analyticsPage === 'finance') wireTakings(takings);
+  if (analyticsPage === 'finance') wireTakingsBlock();
 
   if (analyticsPage === 'data' && flavourMix.length) {
     const paintMix = () => {

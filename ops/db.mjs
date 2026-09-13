@@ -397,6 +397,23 @@ export async function orderEvents(orderId) {
   return data || [];
 }
 
+/**
+ * The same trail across the whole book rather than one order — every order
+ * logged, every status moved, every field corrected, newest first.
+ *
+ * The order is embedded so a row can say which cake it was without a lookup per
+ * event; the embed runs under the caller's own policy on `orders`, so there is
+ * no second scoping rule to keep in step. Admin only, by RLS.
+ */
+export async function recentEdits(limit = 300) {
+  const { data, error } = await sb.from('order_events')
+    .select('at,actor,kind,detail,order_id,orders(order_no,customer_name,store)')
+    .order('at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
 export async function recentAuthEvents(limit = 30) {
   const { data } = await sb.from('auth_events')
     .select('event,at,user_id').order('at', { ascending: false }).limit(limit);
