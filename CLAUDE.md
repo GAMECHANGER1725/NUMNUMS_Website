@@ -529,6 +529,21 @@ main site.
   `assertPickIsNotPremium` throws during `next build` if "Our pick" is moved
   onto a premium flavour. The two badges live in different files, so the
   mistake is otherwise invisible.
+- **The board's first row is merchandised, not sorted.** It holds the three
+  most-ordered flavours **and both premiums** — Rasmalai and Ferrero Rocher are
+  the highest-value cakes and the two a chain bakery cannot sell, and Ferrero
+  was sitting at position 15 where nobody scrolls. The flavour carrying "Our
+  pick" follows them, because a recommendation nobody sees recommends nothing.
+  Everything after is popularity order, where it decides nothing. `HERO` in
+  `shop-app/app/page.tsx`.
+- **The cakes are cut-outs on white and need a shadow we add ourselves.**
+  `.cake-ground` is an ellipse that deliberately **overlaps** the plate rather
+  than sitting under it: six of the fifteen stand on a white board whose lower
+  half is white-on-white, so a shadow placed neatly below the measured edge
+  floats free of anything the eye can see and reads as a smudge. That was the
+  first attempt and it looked worse than none. Photos also carry a light
+  `contrast(1.04) saturate(1.06)` — deliberately small, because a product
+  image that flatters beyond the real cake is its own ACL problem.
 - **Where a cake sits in its tile is measured, not eyeballed.** The fifteen
   product shots were taken at two aspect ratios and the cake sits at a different
   height in each, so the 2:3 ones floated in an `aspect-square` tile.

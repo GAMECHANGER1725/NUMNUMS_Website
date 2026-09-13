@@ -52,7 +52,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
       <div className="mt-4 grid gap-8 md:grid-cols-2 md:gap-12">
         {/* ── The cake, with the writing on it ── */}
         <div>
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
+          <div className="cake-photo overflow-hidden rounded-2xl border border-border">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={photo}
@@ -60,6 +60,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               className="block aspect-square w-full object-cover"
               style={{ objectPosition: cakeFraming(flavourSlug(flavour)) }}
             />
+            <span className="cake-ground" aria-hidden />
             {wording.trim() && (
               <span
                 aria-hidden
@@ -202,7 +203,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
           {related.map((name) => (
             <li key={name}>
               <Link href={`/cakes/${urlSlug(name)}`} className="cake-card block">
-                <span className="block aspect-square overflow-hidden bg-secondary">
+                <span className="cake-photo block aspect-square overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/shop/cakes/${flavourSlug(name)}.webp`}
@@ -211,6 +212,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
                     className="h-full w-full object-cover"
                     style={{ objectPosition: cakeFraming(flavourSlug(name)) }}
                   />
+                  <span className="cake-ground" aria-hidden />
                 </span>
                 <span className="block px-3 py-2.5">
                   <span className="block text-[0.86rem] font-medium leading-tight">{name}</span>

@@ -13,19 +13,39 @@ export const metadata = {
 };
 
 /**
- * Display order, taken from the order book on 2026-09-13 (32 orders).
- * Chocolate was 41% of everything sold; the old form defaulted to Vanilla, which
- * was 9%. This only decides what people see first — every flavour is on the
- * board, and a wrong guess costs nothing but a scroll.
+ * Popularity from the order book on 2026-09-13 (32 orders). Chocolate was 41%
+ * of everything sold; the old form defaulted to Vanilla, which was 9%.
  */
 const BY_POPULARITY = [
   "Chocolate", "Butterscotch", "Pineapple", "Vanilla", "Rasmalai", "Black Forest",
   "Cookies & Cream", "White Forest", "Mango", "Strawberry",
   "Red Velvet", "Lychee", "Tiramisu", "Blueberry", "Ferrero Rocher",
 ];
-const flavours = [...SELLABLE_FLAVOURS].sort(
-  (a, b) => BY_POPULARITY.indexOf(a.name) - BY_POPULARITY.indexOf(b.name),
-);
+
+/**
+ * The board is merchandised, not just sorted.
+ *
+ * The first row is what most people will ever look at, so it holds the three
+ * most-ordered flavours **and both premiums**. Rasmalai and Ferrero Rocher are
+ * the two highest-value cakes on the list and the two the chain bakeries cannot
+ * sell, and Ferrero was buried at position 15 where nobody scrolls.
+ *
+ * The flavour carrying "Our pick" is pulled up behind them, because a
+ * recommendation nobody sees recommends nothing.
+ *
+ * Everything after that is plain popularity order. Only the first eight or so
+ * positions are worth arguing about; below that it decides nothing.
+ */
+const HERO = ["Chocolate", "Butterscotch", "Pineapple", "Rasmalai", "Ferrero Rocher"];
+
+const rank = (name: string) => {
+  const hero = HERO.indexOf(name);
+  if (hero !== -1) return hero;
+  if (badgeFor(name)?.kind === "ours") return HERO.length;
+  return HERO.length + 1 + BY_POPULARITY.indexOf(name);
+};
+
+const flavours = [...SELLABLE_FLAVOURS].sort((a, b) => rank(a.name) - rank(b.name));
 
 assertPickIsNotPremium(SELLABLE_FLAVOURS.filter((f) => f.premium).map((f) => f.name));
 
@@ -57,7 +77,7 @@ export default function ShopPage() {
             return (
             <li key={f.name}>
               <Link href={`/cakes/${urlSlug(f.name)}`} className="cake-card block">
-                <span className="relative block aspect-square overflow-hidden bg-secondary">
+                <span className="cake-photo block aspect-square overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/shop/cakes/${flavourSlug(f.name)}.webp`}
@@ -66,6 +86,7 @@ export default function ShopPage() {
                     className="h-full w-full object-cover"
                     style={{ objectPosition: cakeFraming(flavourSlug(f.name)) }}
                   />
+                  <span className="cake-ground" aria-hidden />
                   {f.premium && <span className="badge-premium absolute left-2 top-2">Premium</span>}
                   {badge && (
                     <span className={`badge-claim badge-claim-${badge.kind} absolute right-2 top-2`}>
