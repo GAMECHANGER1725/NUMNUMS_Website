@@ -9,11 +9,11 @@
  * over the counter by the piece and a tiered cake is quoted per build, so both
  * return null and the checkout refuses them.
  */
-import { SIZES, FLAVOURS, listPriceCents } from "./catalog.generated.mjs";
+import { SIZES, FLAVOURS, listPriceCents, flavourSlug } from "./catalog.generated.mjs";
 
 export const SELLABLE_SIZES = SIZES.filter((s) => s.price != null);
 export const SELLABLE_FLAVOURS = FLAVOURS;
-export { listPriceCents };
+export { listPriceCents, flavourSlug };
 
 export const sizeLabel = (code: string) =>
   SIZES.find((s) => s.code === code)?.label ?? code;

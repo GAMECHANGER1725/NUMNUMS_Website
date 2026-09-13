@@ -235,3 +235,86 @@
     color: var(--muted-foreground);
   }
 }
+
+/* ── The cake board ──────────────────────────────────────────────────────── */
+
+@layer components {
+  /*
+   * A flavour card. The photo does the selling — research is blunt that imagery
+   * is the highest-impact investment for food — so the card is mostly photo and
+   * the chrome stays out of its way.
+   */
+  .cake-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    text-align: left;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.22s ease, border-color 0.18s ease;
+  }
+  .cake-card:hover {
+    transform: translateY(-3px);
+    border-color: #E8A4B5;
+    box-shadow: 0 12px 28px -10px rgba(44, 26, 14, 0.28);
+  }
+  .cake-card:focus-visible {
+    outline: 2px solid #C85478;
+    outline-offset: 3px;
+  }
+  .cake-card[aria-pressed='true'] {
+    border-color: #C85478;
+    box-shadow: 0 0 0 2px #C85478, 0 12px 28px -10px rgba(44, 26, 14, 0.3);
+  }
+
+  /* Gold, because the surcharge is a tier worth wanting, not a penalty. */
+  .badge-premium {
+    background: linear-gradient(105deg, #E3B664, #C9973F);
+    color: #2C1A0E;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 9999px;
+  }
+
+  /*
+   * Piped writing. Not photoreal — it is a legible promise of what will be on
+   * the cake, which is the anxiety it exists to settle. The shadow reads as
+   * buttercream sitting proud of the surface rather than text lying on glass.
+   */
+  .icing {
+    font-family: var(--font-icing), 'Segoe Script', cursive;
+    color: #FFFDF8;
+    text-shadow:
+      0 1px 0 rgba(140, 100, 62, 0.65),
+      0 2px 4px rgba(44, 26, 14, 0.5),
+      0 0 2px rgba(44, 26, 14, 0.35);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  /* Size chips carry serves + price so the whole ladder anchors at a glance. */
+  .size-chip {
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  }
+  .size-chip:hover { border-color: #E8A4B5; }
+  .size-chip:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+  .size-chip[aria-pressed='true'] {
+    border-color: #C85478;
+    background: #FDF3F6;
+    box-shadow: inset 0 0 0 1px #C85478;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cake-card, .size-chip { transition: none; }
+    .cake-card:hover { transform: none; }
+  }
+}

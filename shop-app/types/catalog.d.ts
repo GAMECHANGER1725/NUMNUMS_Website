@@ -10,4 +10,5 @@ declare module "*/ops/catalog.mjs" {
   export function isPremium(name: string): boolean;
   export function sizeByCode(code: string): { code: string; label: string; serves: string | null; price: number | null } | null;
   export function cakeImage(name: string): string | null;
+  export function flavourSlug(name: string): string;
 }
