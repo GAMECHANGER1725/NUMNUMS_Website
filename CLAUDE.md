@@ -584,6 +584,10 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
     looking. `node check-google-signin.mjs [url]` reads the console and exits non-zero;
     run it after any Google Cloud change and after the first production deploy, since an
     origin that passes on localhost says nothing about the live domain.
+    **A Netlify deploy preview can never pass**: its URL carries a per-deploy hash
+    (`https://<hash>--numnumstest.netlify.app`) that changes every build, so it cannot be
+    registered and Google answers `Error 400: origin_mismatch`. Correct behaviour, not a
+    bug — test on localhost or the published domain, never on a preview link.
   - `accounts.google.com` is in `script-src`, `frame-src` **and** `connect-src`. Miss one
     and it breaks in production only.
   - The nonce is sent to Google **hashed** (SHA-256 hex) and to Supabase **raw**. Swapping

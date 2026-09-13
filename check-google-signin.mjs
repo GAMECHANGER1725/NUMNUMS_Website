@@ -14,6 +14,12 @@
 // Run it after any change to the Google Cloud client, and after the first
 // production deploy — a JavaScript origin is per-origin, so localhost passing
 // says nothing about numnumsbakery.com.au.
+//
+// **A Netlify deploy preview can never pass.** Its URL carries a per-deploy
+// hash (https://<hash>--numnumstest.netlify.app) that changes on every build,
+// so it cannot be registered as an authorised origin and Google answers
+// `Error 400: origin_mismatch`. That is correct behaviour, not a bug — test
+// Google sign-in on localhost or on the published domain, never on a preview.
 
 import puppeteer from 'puppeteer';
 
