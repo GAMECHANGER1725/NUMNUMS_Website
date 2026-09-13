@@ -508,6 +508,52 @@ main site.
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
+## Site structure — a shop with marketing around it
+
+Modelled on how The Cheesecake Shop and Bannos actually lay their sites out:
+**product entries first in the nav, story and policy in the footer, blog last.**
+Both put every marketing page (our story, awards, franchising, store locator)
+in the footer only, and lead the homepage with products before any story.
+
+- **The nav is `Shop · Our Cakes · Indian Sweets · Custom Cakes · Locations ·
+  Blog`, plus the cart pill.** It is identical on all ~243 static pages and is
+  re-created in React by `shop-app/components/ui/shop-header.tsx`, so the shop
+  is not a second-looking website. `verify-blog.mjs` fails the deploy if a page
+  drifts out of that shape — the markup has a dozen whitespace variants across
+  those files, so a page that misses an edit looks completely normal and just
+  quietly keeps sending people to the old door.
+- **`/shop` and `/cakes` are different intents, not two doors.** `/shop` is the
+  transaction — 15 product pages, a cart, a card. `/cakes` is inspiration:
+  weddings, kids, baby showers, the flavour FAQ, the serving calculator. Its
+  URL, and every internal link to it, is untouched deliberately: it is an old
+  indexed page and this site has already paid once for cannibalising itself.
+  Do not merge them and do not point both at the same queries.
+- **`About` left the nav and lives in the footer**; the footer also leads with
+  **Shop Cakes**. Nothing was deleted — an orphaned page loses the internal
+  links it ranks on.
+- **`/order` is labelled "Custom Cakes", because that is what it is.** It is the
+  quote form for a cake somebody draws, not the shop. The old label "Order
+  Online" promised the shop and delivered a form, which is the single most
+  expensive wrong word on the site.
+- **The success page is `/shop/thank-you`, not `/shop/order`** — that collided
+  with `/order` in every conversation about this site. It is Stripe's
+  `success_url`; renaming it means changing `create-checkout.mjs` too.
+- **The cart follows you off `/shop`.** `paintCart` in `promo.js` paints the
+  header pill on every static page from the same `nn_cart_v1` key the Next app
+  writes (same origin). It lives in `promo.js` because that is the only script
+  already on all ~243 pages, and it runs **above** the popup's suppression
+  guards — those stop the popup, not the cart. Empty it reads "Order Now" and
+  opens `/shop`; with cakes in it, "Your order (2)" opening `/shop/cart`. The
+  static nav hides that pill entirely under 640px, which is right for a CTA and
+  wrong for a cart, so a non-empty one comes back as a filled chip via CSS
+  `paintCart` injects once.
+- **`/shop` is `noindex` while the checkout is unfinished** (`shop-app/app/
+  layout.tsx`), which is why it is not in `sitemap.xml` or `llms.txt`. It has to
+  be flipped at cutover, or the shop-first structure points at a page Google
+  cannot see. That is the same switch as the Stripe live keys.
+- Checkout deliberately renders **no nav** — nav in a payment flow is an exit,
+  and neither chain puts one there either.
+
 ## Shop (`shop-app/` → `shop/`) — the customer-facing checkout
 
 Normal cakes are bought online and paid for in full; custom cakes are still quoted

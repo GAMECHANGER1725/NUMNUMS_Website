@@ -39,6 +39,75 @@
     try { window[store].setItem(key, value); } catch (e) { /* no-op */ }
   }
 
+  /* ------------------------------------------------------- the header cart */
+
+  /**
+   * The cart badge on the static site's nav pill.
+   *
+   * It lives in this file because this is the only script already loaded on
+   * all ~242 static pages, and a cart that disappears the moment you leave
+   * /shop reads as a cart that emptied itself. It runs ABOVE the suppression
+   * guards below — those stop the popup, not the cart — but never on /shop,
+   * which has its own header.
+   *
+   * Same origin, so the key the Next app writes is the key read here. See
+   * shop-app/lib/cart.ts.
+   */
+  // Injected rather than added to 242 inline <style> blocks, and only once
+  // somebody actually has a cake in the cart.
+  function mobileCartCss() {
+    if (document.getElementById('nn-cart-css')) return;
+    var st = document.createElement('style');
+    st.id = 'nn-cart-css';
+    st.textContent = '@media (max-width:640px){'
+      + '#nav-cart.nn-has-items{display:inline-flex!important;min-width:0!important;'
+      + 'padding:7px 14px!important;font-size:0.75rem!important;'
+      + 'background:#C85478!important;color:#fff!important;border-color:#C85478!important;}'
+      + '#nav-cart.nn-has-items .bhi-bg,#nav-cart.nn-has-items .bhi-hover{display:none!important;}'
+      + '#nav-cart.nn-has-items .bhi-text{transform:none!important;opacity:1!important;}}';
+    document.head.appendChild(st);
+  }
+
+  function paintCart() {
+    var pill = document.getElementById('nav-cart');
+    var mob = document.getElementById('nav-cart-m');
+    if (!pill && !mob) return;
+
+    var n = 0;
+    try {
+      var cart = JSON.parse(safeGet('localStorage', 'nn_cart_v1') || '{}');
+      if (cart && Array.isArray(cart.lines)) n = cart.lines.length;
+    } catch (e) { /* a stale or half-written cart is simply no cart */ }
+
+    // "Your order" is what the shop's own header calls it. One name for one
+    // thing, the whole way through — and an empty cart still needs to be a
+    // door into the shop, not a dead button.
+    var label = n ? 'Your order (' + n + ')' : 'Order Now';
+    var href = n ? '/shop/cart' : '/shop';
+
+    if (pill) {
+      pill.setAttribute('href', href);
+      // The static nav hides this pill entirely under 640px, which is fine for
+      // a CTA and wrong for a cart — most of this traffic is on a phone, and a
+      // cart you cannot see is a cart you assume you lost. A non-empty one
+      // comes back as a compact filled chip beside the hamburger.
+      pill.classList.toggle('nn-has-items', n > 0);
+      if (n > 0) mobileCartCss();
+      var plain = pill.querySelector('.bhi-text');
+      var hover = pill.querySelector('.bhi-hover');
+      if (plain) plain.textContent = label;
+      // The hover copy is the words followed by an arrow. Replace the words.
+      if (hover && hover.firstChild) hover.firstChild.nodeValue = label + ' ';
+      if (!plain && !hover) pill.textContent = label;
+    }
+    if (mob) { mob.setAttribute('href', href); mob.textContent = label; }
+  }
+
+  paintCart();
+  // Another tab checking out, and the bfcache restoring this page on Back.
+  window.addEventListener('storage', paintCart);
+  window.addEventListener('pageshow', paintCart);
+
   // Supabase derives its session key from the project ref, so matching any
   // sb-*-auth-token survives a project or auth-domain change. Hardcoding the
   // ref means signed-in customers silently start seeing the offer again.

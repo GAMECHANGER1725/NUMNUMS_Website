@@ -95,7 +95,7 @@ export default async (req) => {
       line_items,
       metadata,
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
-      success_url: `${SITE}/shop/order?s={CHECKOUT_SESSION_ID}`,
+      success_url: `${SITE}/shop/thank-you?s={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE}/shop/cart`,
     });
 

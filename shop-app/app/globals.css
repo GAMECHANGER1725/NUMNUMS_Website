@@ -318,3 +318,110 @@
     .cake-card:hover { transform: none; }
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   The site header, inside the shop.
+
+   Ported value-for-value from the navbar in `index.html` so the shop is not
+   a second-looking website. It renders in the static site's *scrolled* state
+   — cream, espresso links — because the shop has no dark hero to sit over.
+   If those tokens change there, change them here.
+   ───────────────────────────────────────────────────────────────────────── */
+.nn-nav {
+  position: sticky; top: 0; z-index: 50;
+  background-color: rgba(255, 248, 242, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 2px 20px rgba(44, 26, 14, 0.10);
+}
+.nn-nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;
+  height: 68px; display: flex; align-items: center; justify-content: space-between;
+}
+.nn-logo { display: flex; align-items: center; flex-shrink: 0; }
+.nn-logo img {
+  width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
+}
+.nn-pill {
+  display: flex; align-items: center;
+  background: rgba(255, 248, 242, 0.15);
+  border: 1px solid rgba(200, 84, 120, 0.25);
+  border-radius: 9999px; padding: 4px;
+}
+.nn-nav-link {
+  font-family: var(--font-jost), sans-serif;
+  font-weight: 500; font-size: 0.875rem; letter-spacing: 0.02em;
+  color: rgba(44, 26, 14, 0.75);
+  text-decoration: none; padding: 8px 20px; border-radius: 9999px;
+  white-space: nowrap; transition: color 0.2s ease;
+}
+.nn-nav-link:hover, .nn-nav-active { color: #C85478; }
+.nn-nav-link:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+
+/* The static pill's hover-swap needs three nested spans and a sliding dot.
+   Here the label changes with the cart, so the swap would fight it — this is
+   the same shape and colour, with a plain hover fill. */
+.nn-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  margin-left: 8px; padding: 8px 20px; border-radius: 9999px;
+  border: 2px solid #C85478; background: transparent; color: #C85478;
+  font-family: var(--font-jost), sans-serif;
+  font-weight: 600; font-size: 0.8rem; letter-spacing: 0.02em;
+  text-decoration: none; white-space: nowrap;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.nn-cta:hover { background: #C85478; color: #fff; }
+.nn-cta:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
+
+.nn-ham {
+  display: none; flex-direction: column; justify-content: center; align-items: center;
+  gap: 6px; width: 40px; height: 40px; margin-left: 8px;
+  background: transparent; border: none; cursor: pointer; padding: 0;
+}
+.nn-ham span {
+  display: block; width: 22px; height: 2px; background: #2C1A0E;
+  border-radius: 9999px; transform-origin: center;
+  transition: transform 0.38s cubic-bezier(.5, .85, .25, 1.1), opacity 0.22s ease;
+}
+.nn-ham.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nn-ham.open span:nth-child(2) { opacity: 0; transform: scaleX(0.4); }
+.nn-ham.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+#nn-mobile-menu {
+  position: fixed; top: 80px; left: 12px; right: 12px; z-index: 90;
+  display: flex; flex-direction: column;
+  background: rgba(255, 248, 242, 0.94);
+  border-radius: 1.5rem; padding: 0 1.75rem 1.75rem;
+  box-shadow: 0 20px 60px rgba(44, 26, 14, 0.20), 0 6px 20px rgba(44, 26, 14, 0.10);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+}
+#nn-mobile-menu > a {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 1.35rem; font-weight: 500; color: #2C1A0E; text-decoration: none;
+  padding: 1.05rem 0; border-bottom: 1px solid rgba(44, 26, 14, 0.35);
+}
+#nn-mobile-menu > a:last-of-type { border-bottom: none; }
+#nn-mobile-menu > div { margin-top: 1.6rem; }
+#nn-mobile-menu > div > a {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0.85rem 1.75rem; border-radius: 9999px;
+  background: #C85478; color: #FFF8F2; text-decoration: none;
+  font-family: var(--font-jost), sans-serif; font-weight: 600; font-size: 0.95rem;
+}
+
+@media (max-width: 640px) {
+  .nn-nav-link { display: none; }
+  .nn-pill { background: transparent; border: none; backdrop-filter: none; padding: 0; }
+  .nn-ham { display: flex; }
+  /* Unlike the static site's CTA, the cart stays put on a phone — it is the
+     only running total of what you have chosen. */
+  .nn-cta { padding: 7px 14px; font-size: 0.75rem; }
+}
+@media (min-width: 641px) {
+  #nn-mobile-menu { display: none; }
+}
+
+/* A cart with something in it is filled, the way the static site's chip is —
+   an outline reads as "available", a fill reads as "you have one going". */
+.nn-cta-full { background: #C85478; color: #FFF8F2; }
+.nn-cta-full:hover { background: #A03D5E; border-color: #A03D5E; }

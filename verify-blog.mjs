@@ -463,6 +463,34 @@ const FACTS = {
   if (cat.listPriceCents('Slice', 'Vanilla') !== null) fail('listPriceCents must return null for a Slice, never NaN');
 }
 
+// ---------- Navigation ----------
+// The site is shop-first: every page's nav opens with Shop, and /order is
+// labelled for what it is. That shape lives in 242 hand-written files with a
+// dozen whitespace variants, so a page that misses an edit looks completely
+// normal — it just quietly keeps sending people to the old door. The pill's
+// id is what promo.js paints the cart onto; without it the cart is invisible
+// off /shop, which is the whole point of putting it there.
+{
+  const navPages = [...readdirSync(ROOT).filter((f) => f.endsWith('.html')),
+    ...posts.map((s) => `blog/${s}.html`), 'blog/index.html'].filter((f) => read(f).includes('>Our Cakes<'));
+  if (navPages.length < 200) fail(`only ${navPages.length} pages carry the nav — expected every static page`);
+  for (const f of navPages) {
+    const src = read(f);
+    if (!/href="\/shop"/.test(src)) fail(`${f}: nav has no link to /shop`);
+    if (/<a href="\/order"[^>]*>Order(?: Online)?<\/a>/.test(src)) {
+      fail(`${f}: nav still calls /order "Order Online" — it is the custom-cake quote form, not the shop`);
+    }
+    if (/<a href="\/about"[^>]*class="nav-link/.test(src)) {
+      fail(`${f}: About is back in the nav — it belongs in the footer`);
+    }
+  }
+  const pills = navPages.filter((f) => read(f).includes('id="nav-cart"'));
+  if (pills.length !== navPages.length) {
+    fail(`only ${pills.length}/${navPages.length} pages carry id="nav-cart", so the cart is invisible on the rest`);
+  }
+  notes.push(`nav: ${navPages.length} pages are shop-first, ${pills.length} carry the cart pill`);
+}
+
 // ---------- Report ----------
 const n = posts.length;
 console.log(`posts ${n} | cards ${cardSlugs.length} | sitemap ${sitemapSlugs.length} | llms ${llmsSlugs.length} | redirects ${redirectSlugs.length} (= posts + 1)`);

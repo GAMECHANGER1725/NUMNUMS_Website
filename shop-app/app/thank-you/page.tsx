@@ -12,7 +12,7 @@ const POLL_MS = 1500;
 const GIVE_UP_AFTER = 12_000;
 const FIRED_KEY = "nn_order_celebrated";
 
-export default function OrderPage() {
+export default function ThankYouPage() {
   const [status, setStatus] = useState<Status | null>(null);
   const [slow, setSlow] = useState(false);
   const confettiRef = useRef<ConfettiRef>(null);
