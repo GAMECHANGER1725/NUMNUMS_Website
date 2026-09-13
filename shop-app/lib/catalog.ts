@@ -20,3 +20,10 @@ export const sizeLabel = (code: string) =>
 
 export const sizeServes = (code: string) =>
   SIZES.find((s) => s.code === code)?.serves ?? null;
+
+/**
+ * The URL form of a flavour. Lowercased `flavourSlug` — kept separate because
+ * `flavourSlug` names the image files and is gated by `ops/verify.mjs` against
+ * the contents of `ops/cakes/`, so it cannot be changed to suit a URL.
+ */
+export const urlSlug = (name: string) => flavourSlug(name).toLowerCase();
