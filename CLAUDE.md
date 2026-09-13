@@ -565,11 +565,19 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   DST flips in October and April.
 - **Cancelling a web order in ops does NOT refund the card.** The status sheet warns and
   names Stripe when `stripe_session_id` is set. Keep that warning.
-- **Marketing consent: ACMA prohibits pre-ticked boxes**, and consent cannot be inferred
-  from an order or from a phone number given for a receipt. The opt-in is one unticked box
-  naming both channels, the benefit and the frequency; the Privacy Policy tick is separate
-  and required. Both channels are stored as two fields so a later "stop texting me" does
-  not also stop the emails. Do not "simplify" that to one.
+- **Marketing consent takes two different shapes, and the difference is the primary action.**
+  ACMA prohibits a **pre-ticked box sitting beside some other primary action** — consent
+  cannot be inferred from an order, or from a phone number given for a receipt.
+  - **Account sign-up** (`/shop/sign-up`): the primary action is creating an account, so
+    marketing is secondary and needs its own **unticked** box naming the channels and the
+    benefit. The Privacy Policy tick is separate and required.
+  - **The offer popup** (`promo.js`): the primary action *is* subscribing — the heading,
+    the button and the notice all say so — which makes submitting the form **express
+    consent**, no tickbox needed. This is the same pattern the big AU chains use. It is
+    not a loophole and it is not a licence to drop the box on the sign-up form.
+  Both channels are stored as two fields so a later "stop texting me" does not also stop
+  the emails. `subscribe.mjs` stores the exact consent wording shown, so there is a record
+  of what was agreed — keep that when the copy changes.
 - **Google sign-in is Google Identity Services, NOT `signInWithOAuth`.** The redirect
   flow sends the browser to `<project-ref>.supabase.co/auth/v1/callback`, and Google then
   names *that* domain on its consent screen — indistinguishable from a phishing page to a
@@ -603,6 +611,12 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **Lenis must not touch the popup.** `promo.js`'s card carries `data-lenis-prevent`;
   without it Lenis preventDefaults the wheel and the dialog cannot scroll to its own
   submit button. Any new overlay on the static site needs the same attribute.
+- **The popup is a newsletter signup, not a sign-in.** It asks for a first name and an
+  email and mints a 10% coupon through `/api/subscribe` → `netlify/functions/subscribe.mjs`.
+  It writes `marketing_contacts` and `coupons` with the **service role**, because both are
+  RLS with no write policy at all — nothing holding the publishable key gets to mint a
+  discount. It returns one live coupon per email rather than minting on every submit, or
+  clearing a cookie and resubmitting is an unlimited discount printer.
 - **Env vars (public site only, never on the ops site, never in a file)**:
   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_URL`,
   `SUPABASE_SERVICE_ROLE_KEY`, `ONLINE_ORDERS_USER_ID`, `MAKE_ORDER_HOOK_URL`, and the

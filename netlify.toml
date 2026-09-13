@@ -45,6 +45,11 @@
 # The shop is a Next.js static export committed to shop/. Clean URLs, same as
 # the rest of the site.
 [[redirects]]
+  from = "/api/subscribe"
+  to = "/.netlify/functions/subscribe"
+  status = 200
+
+[[redirects]]
   from = "/api/create-checkout"
   to = "/.netlify/functions/create-checkout"
   status = 200
