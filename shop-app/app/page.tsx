@@ -3,6 +3,8 @@ import { Star } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
 import { SELLABLE_FLAVOURS, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { money } from "@/lib/cart";
+import { cakeFraming } from "@/lib/cake-framing";
+import { badgeFor, assertPickIsNotPremium } from "@/lib/badges";
 
 export const metadata = {
   title: "Order an eggless cake online | Num Num's Bakery",
@@ -24,6 +26,8 @@ const BY_POPULARITY = [
 const flavours = [...SELLABLE_FLAVOURS].sort(
   (a, b) => BY_POPULARITY.indexOf(a.name) - BY_POPULARITY.indexOf(b.name),
 );
+
+assertPickIsNotPremium(SELLABLE_FLAVOURS.filter((f) => f.premium).map((f) => f.name));
 
 export default function ShopPage() {
   return (
@@ -48,7 +52,9 @@ export default function ShopPage() {
         </header>
 
         <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {flavours.map((f) => (
+          {flavours.map((f) => {
+            const badge = badgeFor(f.name);
+            return (
             <li key={f.name}>
               <Link href={`/cakes/${urlSlug(f.name)}`} className="cake-card block">
                 <span className="relative block aspect-square overflow-hidden bg-secondary">
@@ -58,8 +64,14 @@ export default function ShopPage() {
                     alt={`${f.name} eggless cake`}
                     loading="lazy"
                     className="h-full w-full object-cover"
+                    style={{ objectPosition: cakeFraming(flavourSlug(f.name)) }}
                   />
                   {f.premium && <span className="badge-premium absolute left-2 top-2">Premium</span>}
+                  {badge && (
+                    <span className={`badge-claim badge-claim-${badge.kind} absolute right-2 top-2`}>
+                      {badge.label}
+                    </span>
+                  )}
                 </span>
                 <span className="block px-3 py-2.5">
                   <span className="block text-[0.86rem] font-medium leading-tight">{f.name}</span>
@@ -69,7 +81,8 @@ export default function ShopPage() {
                 </span>
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
 
         <section className="mt-12 grid gap-4 border-t border-border pt-8 sm:grid-cols-3">

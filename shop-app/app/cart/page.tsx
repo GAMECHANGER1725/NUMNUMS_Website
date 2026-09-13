@@ -9,6 +9,7 @@ import {
   type Cart,
 } from "@/lib/cart";
 import { listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
+import { cakeFraming } from "@/lib/cake-framing";
 
 const hourLabel = (h: number) => (h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`);
 
@@ -61,6 +62,7 @@ export default function CartPage() {
                   src={`/shop/cakes/${flavourSlug(l.flavour)}.webp`}
                   alt=""
                   className="h-16 w-16 rounded-lg object-cover"
+                  style={{ objectPosition: cakeFraming(flavourSlug(l.flavour)) }}
                 />
               </Link>
               <div className="flex-1">

@@ -281,6 +281,28 @@
   }
 
   /*
+   * The conversion badge, opposite corner to Premium so the two can never
+   * collide or read as one strip. Rose for a fact about what other customers
+   * ordered; outlined for an opinion of ours, because those are different
+   * kinds of claim and should not look identical.
+   */
+  .badge-claim {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+  .badge-claim-fact { background: #C85478; color: #FFF8F2; }
+  .badge-claim-ours {
+    background: rgba(255, 248, 242, 0.92);
+    color: #96355A;
+    border: 1px solid rgba(200, 84, 120, 0.45);
+  }
+
+  /*
    * Piped writing. Not photoreal — it is a legible promise of what will be on
    * the cake, which is the anxiety it exists to settle. The shadow reads as
    * buttercream sitting proud of the surface rather than text lying on glass.
@@ -298,6 +320,12 @@
 
   /* Size chips carry serves + price so the whole ladder anchors at a glance. */
   .size-chip {
+    /* Equal height, top-aligned: one chip carries an extra line, and a button's
+       default centring would then push every size label off a common baseline. */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     border-radius: 0.75rem;
     border: 1px solid var(--border);
     background: #fff;

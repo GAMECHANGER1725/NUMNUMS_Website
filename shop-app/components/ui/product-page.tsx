@@ -6,6 +6,8 @@ import { Check, ChevronLeft, Star } from "lucide-react";
 import { cartStore, writeCart, money, MAX_LINES } from "@/lib/cart";
 import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { copyFor } from "@/lib/flavour-copy";
+import { cakeFraming } from "@/lib/cake-framing";
+import { badgeFor, ORDER_BOOK } from "@/lib/badges";
 import { useSyncExternalStore } from "react";
 
 const DEFAULT_SIZE = "8 inch";   // 47% of orders, and the middle of the ladder
@@ -23,6 +25,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
   const [added, setAdded] = useState(false);
 
   const copy = copyFor(flavour);
+  const badge = badgeFor(flavour);
   const photo = `/shop/cakes/${flavourSlug(flavour)}.webp`;
   const cents = listPriceCents(size, flavour) ?? 0;
   const full = cart.lines.length >= MAX_LINES;
@@ -55,6 +58,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               src={photo}
               alt={`${flavour} eggless cake`}
               className="block aspect-square w-full object-cover"
+              style={{ objectPosition: cakeFraming(flavourSlug(flavour)) }}
             />
             {wording.trim() && (
               <span
@@ -65,6 +69,11 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               </span>
             )}
             {premium && <span className="badge-premium absolute left-3 top-3">Premium</span>}
+            {badge && (
+              <span className={`badge-claim badge-claim-${badge.kind} absolute right-3 top-3`}>
+                {badge.label}
+              </span>
+            )}
           </div>
           <p className="mt-2 text-center text-[0.72rem] text-muted-foreground">
             {wording.trim()
@@ -111,6 +120,11 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
                   <span className="mt-0.5 block text-[0.7rem] font-medium tabular-nums">
                     {money(listPriceCents(s.code, flavour) ?? 0)}
                   </span>
+                  {s.code === ORDER_BOOK.topSize && (
+                    <span className="mt-1 block text-[0.56rem] font-bold uppercase leading-[1.15] tracking-[0.04em] text-[#C85478]">
+                      Most ordered
+                    </span>
+                  )}
                 </button>
               </li>
             ))}
@@ -195,6 +209,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
                     alt={`${name} eggless cake`}
                     loading="lazy"
                     className="h-full w-full object-cover"
+                    style={{ objectPosition: cakeFraming(flavourSlug(name)) }}
                   />
                 </span>
                 <span className="block px-3 py-2.5">

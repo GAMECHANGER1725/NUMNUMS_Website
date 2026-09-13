@@ -463,6 +463,42 @@ const FACTS = {
   if (cat.listPriceCents('Slice', 'Vanilla') !== null) fail('listPriceCents must return null for a Slice, never NaN');
 }
 
+// ---------- Shop claims ----------
+// Urgency and scarcity claims have to be true at the moment a customer sees
+// them. The ACCC fined three retailers in June 2025 over misleading sale
+// representations and the ceiling is $50m per breach, so a countdown or a
+// "selling fast" on a static page — which cannot know either — is not a growth
+// tactic, it is an exposure. Badges are in shop-app/lib/badges.ts and every one
+// of them is a fact from the order book or an opinion marked as ours.
+{
+  const BANNED = [
+    /selling fast/i, /only \d+ left/i, /\bhurry\b/i, /ends in \d/i,
+    /limited time/i, /\d+ (?:people|others) (?:are )?viewing/i, /almost gone/i,
+    /last chance/i, /\bwas \$\d/i,
+  ];
+  const shopDir = join(ROOT, 'shop');
+  if (existsSync(shopDir)) {
+    const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(join(d, e.name)) : e.name.endsWith('.html') ? [join(d, e.name)] : []);
+    const pages = walk(shopDir);
+    for (const f of pages) {
+      const src = readFileSync(f, 'utf8');
+      for (const re of BANNED) {
+        if (re.test(src)) {
+          fail(`${f.replace(ROOT + '/', '')} contains an urgency claim (${re}) a static page cannot know is true`);
+        }
+      }
+    }
+    const board = readFileSync(join(shopDir, 'index.html'), 'utf8');
+    // `class="` and not `className\":\"` — the export inlines the RSC payload
+    // beside the markup, so every badge otherwise counts twice.
+    const claims = (board.match(/class="badge-claim /g) || []).length;
+    if (claims === 0) fail('the shop board carries no claim badge at all — see shop-app/lib/badges.ts');
+    if (claims > 3) fail(`the shop board carries ${claims} claim badges; badge everything and you have labelled nothing`);
+    notes.push(`shop: ${pages.length} pages carry no unprovable urgency claim, board has ${claims} badges`);
+  }
+}
+
 // ---------- Navigation ----------
 // The site is shop-first: every page's nav opens with Shop, and /order is
 // labelled for what it is. That shape lives in 242 hand-written files with a

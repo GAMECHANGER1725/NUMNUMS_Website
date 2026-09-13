@@ -508,6 +508,36 @@ main site.
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
+## Product cards — what a claim is allowed to say
+
+- **Every badge is a fact from the order book or an opinion marked as ours.**
+  They live in `shop-app/lib/badges.ts` with the sample they came from
+  (`ORDER_BOOK`: 32 orders, counted 2026-09-13). "Most ordered" is Chocolate
+  because it was 41% of everything sold; "Most ordered" on the 8" size chip is
+  47% of orders. `verify-blog.mjs` scans the built `shop/` for urgency language
+  a static page cannot know is true — *selling fast*, *only N left*, *ends in*,
+  *N people viewing* — and fails the deploy on any of it. That is not caution
+  for its own sake: the ACCC fined three retailers in June 2025 over misleading
+  sale claims and the ceiling is $50m per breach.
+- **At most one claim badge per card, and at most three on the board.** Neither
+  The Cheesecake Shop nor Bannos badges individual products on a collection page
+  at all — both put the claim in a section heading instead. Baymard's list-item
+  research is why: a list item holds a few attributes before it stops being
+  scannable. The gate enforces the cap.
+- **Premium and a claim never share a card.** Premium says why it costs more, a
+  claim says why you'd choose it, and two chips on one tile is clutter — so
+  `assertPickIsNotPremium` throws during `next build` if "Our pick" is moved
+  onto a premium flavour. The two badges live in different files, so the
+  mistake is otherwise invisible.
+- **Where a cake sits in its tile is measured, not eyeballed.** The fifteen
+  product shots were taken at two aspect ratios and the cake sits at a different
+  height in each, so the 2:3 ones floated in an `aspect-square` tile.
+  `shop-app/lib/cake-framing.ts` holds an `object-position` per flavour that
+  puts every cake's **base** on a common line at 93% of the tile. Re-derive it
+  with `node shop-app/tools/measure-cake-framing.mjs` (dev server up) after
+  adding or replacing a photo — the script prints the tightest headroom, and a
+  negative one means a photo is being clipped.
+
 ## Site structure — a shop with marketing around it
 
 Modelled on how The Cheesecake Shop and Bannos actually lay their sites out:
