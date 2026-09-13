@@ -16,6 +16,8 @@ function expiryText(c: Coupon) {
 export type CouponFieldProps = {
   applied: Coupon | null;
   onApply: (c: Coupon | null) => void;
+  /** A coupon is bound to the email it was issued to, so checking needs it. */
+  email: string;
   className?: string;
 };
 
@@ -27,7 +29,8 @@ export type CouponFieldProps = {
  * re-prices every line server-side, so a tampered code changes nothing that is
  * charged.
  */
-export function CouponField({ applied, onApply, className }: CouponFieldProps) {
+export function CouponField({ applied, onApply, email, className }: CouponFieldProps) {
+  const haveEmail = email.includes("@");
   const [mine, setMine] = useState<Coupon[]>([]);
   const [code, setCode] = useState("");
   const [problem, setProblem] = useState<string | null>(null);
@@ -46,7 +49,7 @@ export function CouponField({ applied, onApply, className }: CouponFieldProps) {
   async function apply(raw: string) {
     setChecking(true);
     setProblem(null);
-    const { coupon, problem: why } = await lookUpCoupon(raw);
+    const { coupon, problem: why } = await lookUpCoupon(raw, email);
     setChecking(false);
     if (why || !coupon) {
       setProblem(why ?? "We don't recognise that code.");
@@ -92,7 +95,7 @@ export function CouponField({ applied, onApply, className }: CouponFieldProps) {
               <button
                 type="button"
                 onClick={() => apply(c.code)}
-                disabled={checking}
+                disabled={checking || !haveEmail}
                 className="flex w-full items-center gap-3 rounded-lg border border-border bg-card px-3 py-2.5 text-left transition-colors hover:border-[#C85478] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] disabled:opacity-60"
               >
                 <span className="font-display text-[1.35rem] font-light leading-none tabular-nums text-[#C85478]">
@@ -114,7 +117,7 @@ export function CouponField({ applied, onApply, className }: CouponFieldProps) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (!checking) apply(code);
+          if (!checking && haveEmail) apply(code);
         }}
         className="mt-2.5 flex gap-2"
       >
@@ -137,12 +140,18 @@ export function CouponField({ applied, onApply, className }: CouponFieldProps) {
         />
         <button
           type="submit"
-          disabled={checking || !code.trim()}
+          disabled={checking || !haveEmail || !code.trim()}
           className="shrink-0 rounded-full border border-border bg-card px-4 text-[0.82rem] font-semibold transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478]"
         >
           {checking ? <Loader2 className="h-4 w-4 animate-spin" /> : "Apply"}
         </button>
       </form>
+
+      {!haveEmail && (
+        <p className="mt-2 text-[0.76rem] text-muted-foreground">
+          Enter your email above and we&rsquo;ll check your code &mdash; they&rsquo;re issued to one address.
+        </p>
+      )}
 
       {problem && (
         <p id="coupon-problem" role="alert" className="mt-2 text-[0.76rem] font-medium text-destructive">

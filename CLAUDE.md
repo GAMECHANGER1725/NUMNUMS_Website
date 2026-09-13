@@ -525,7 +525,8 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **Files**: `shop-app/` is a Next.js app (`output: "export"`, `basePath: "/shop"`) whose
   export is committed as `shop/`. Rebuild it with `cd shop-app && npm run build`, then
   `rm -rf shop && cp -R shop-app/out shop`. The Netlify Functions are
-  `netlify/functions/{_shared,create-checkout,stripe-webhook,order-status}.mjs`.
+  `netlify/functions/{create-checkout,check-coupon,stripe-webhook,order-status,subscribe}.mjs`,
+  sharing `netlify/lib/shared.mjs`.
 - **`ops/catalog.mjs` is the only place a price is written down**, now including
   `SURCHARGE` (premium flavour → size → **cents**) and `listPriceCents`. It used to live
   only in `order.html`'s inline script, gated by nothing, and the checkout charges off it.
@@ -611,6 +612,17 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **Lenis must not touch the popup.** `promo.js`'s card carries `data-lenis-prevent`;
   without it Lenis preventDefaults the wheel and the dialog cannot scroll to its own
   submit button. Any new overlay on the static site needs the same attribute.
+- **A coupon is validated server-side, never through RLS.** `coupons` is
+  read-own-by-email (`auth.jwt() ->> 'email'`), so a popup subscriber — who by
+  design has no account — reads nothing and is told their own code is not
+  recognised. The rules live once, in `couponFor` in `netlify/lib/shared.mjs`:
+  `check-coupon` shows the customer the reason, `create-checkout` reads the
+  coupon and **ignores** the reason (a mistyped code must not block buying a
+  cake), and the webhook claims it a third time. A code bound to somebody
+  else's email answers *"we don't recognise that code"*, the same as one that
+  does not exist, so it is not an oracle. Checkout **clears an applied coupon
+  when the email changes** — the binding is to one address, and a stale
+  discount is a total that goes UP on Stripe's page.
 - **The popup is a newsletter signup, not a sign-in.** It asks for a first name and an
   email and mints a 10% coupon through `/api/subscribe` → `netlify/functions/subscribe.mjs`.
   It writes `marketing_contacts` and `coupons` with the **service role**, because both are

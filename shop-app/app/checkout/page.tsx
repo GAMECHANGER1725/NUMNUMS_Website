@@ -90,7 +90,14 @@ export default function CheckoutPage() {
             <label htmlFor="k-email" className="field-label">Email</label>
             <input id="k-email" type="email" autoComplete="email" inputMode="email"
               placeholder="you@example.com" className="field-input"
-              value={email} onChange={(e) => setEmail(e.target.value)} />
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                // A coupon is bound to one address, so changing it invalidates
+                // the applied one. Leaving it shows a discount the server will
+                // refuse — a total that goes UP on Stripe's page.
+                setCoupon(null);
+              }} />
           </div>
           <div className="sm:col-span-2">
             <div className="flex items-center gap-2">
@@ -132,7 +139,7 @@ export default function CheckoutPage() {
       </section>
 
       <section className="mt-7">
-        <CouponField applied={coupon} onApply={setCoupon} />
+        <CouponField applied={coupon} onApply={setCoupon} email={email} />
       </section>
 
       <section className="mt-7 border-t border-border pt-5">

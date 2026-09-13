@@ -24,31 +24,36 @@ export async function listMyCoupons(): Promise<Coupon[]> {
   return (data ?? []) as Coupon[];
 }
 
-/** Why a code cannot be used, or null if it can. Advisory only — see below. */
-export function couponProblem(c: Coupon | undefined): string | null {
-  if (!c) return "We don't recognise that code.";
-  if (c.redeemed_at) return "That code has already been used.";
-  if (c.expires_at && new Date(c.expires_at) < new Date()) return "That code has expired.";
-  return null;
-}
-
 /**
- * Look a typed code up against this customer's coupons.
+ * Look a typed code up through `/api/check-coupon`.
  *
- * This is convenience, not enforcement: a coupon bound to someone else's email
- * is invisible to RLS and so reads as "not recognised", which is the right
- * message anyway. The binding check that decides what is actually charged
- * happens server-side in `create-checkout`, and the claim happens again in the
- * Stripe webhook. Never price off this result.
+ * It cannot be done from here. The `coupons` read policy is
+ * `lower(email) = lower(auth.jwt() ->> 'email')`, so a customer who took the
+ * 10% code from the newsletter popup and never made an account reads nothing
+ * and is told their own code is not recognised.
+ *
+ * Coupons are bound to the email they were issued to, which is why the address
+ * typed at checkout goes with the code.
+ *
+ * Advisory only: `create-checkout` re-validates through the same server-side
+ * rules and the webhook claims it again. Never price off this result.
  */
-export async function lookUpCoupon(raw: string): Promise<{ coupon?: Coupon; problem: string | null }> {
+export async function lookUpCoupon(
+  raw: string,
+  email: string,
+): Promise<{ coupon?: Coupon; problem: string | null }> {
   const code = raw.trim().toUpperCase();
   if (!code) return { problem: "Enter a code first." };
-  const { data } = await supabase
-    .from("coupons")
-    .select("code,percent,expires_at,redeemed_at")
-    .eq("code", code)
-    .maybeSingle();
-  const coupon = (data ?? undefined) as Coupon | undefined;
-  return { coupon, problem: couponProblem(coupon) };
+  try {
+    const res = await fetch("/api/check-coupon", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ code, email }),
+    });
+    const body = (await res.json()) as { coupon?: Coupon | null; problem?: string | null };
+    if (!res.ok) return { problem: body?.problem ?? "We couldn't check that code just then." };
+    return { coupon: body.coupon ?? undefined, problem: body.problem ?? null };
+  } catch {
+    return { problem: "We couldn't check that code just then." };
+  }
 }

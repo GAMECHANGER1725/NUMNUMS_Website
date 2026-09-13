@@ -9,28 +9,9 @@
  */
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { BadRequest, json, priceCart, splitDiscount, dueDayKey } from '../lib/shared.mjs';
+import { BadRequest, couponFor, json, priceCart, splitDiscount, dueDayKey } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
-
-/**
- * Look a coupon up as the shop, not as the customer.
- *
- * Bound to the email it was issued to and checked again in the webhook. A code
- * that is unknown, redeemed, expired, or belongs to somebody else quotes no
- * discount — it does not fail the checkout, because a customer who mistypes a
- * code should still be able to buy a cake.
- */
-async function discountFor(db, code, email) {
-  if (!code || !email) return { cents: 0, code: null };
-  const { data } = await db.from('coupons').select('code,email,percent,expires_at,redeemed_at')
-    .eq('code', String(code).trim().toUpperCase()).maybeSingle();
-  if (!data) return { cents: 0, code: null };
-  if (data.redeemed_at) return { cents: 0, code: null };
-  if (data.expires_at && new Date(data.expires_at) < new Date()) return { cents: 0, code: null };
-  if (data.email.toLowerCase() !== String(email).toLowerCase()) return { cents: 0, code: null };
-  return { percent: data.percent, code: data.code };
-}
 
 /** The kill switch for the morning somebody buys twenty Saturday cakes. */
 async function capReached(db, dueAt, store) {
@@ -70,8 +51,10 @@ export default async (req) => {
       throw new BadRequest('We are fully booked for that day. Please pick another date.');
     }
 
-    const coupon = await discountFor(db, body?.coupon, email);
-    const discountTotal = coupon.percent
+    // The problem is deliberately dropped: a mistyped code quotes no discount
+    // and still sells the cake. The checkout box already told them why.
+    const { coupon } = await couponFor(db, body?.coupon, email);
+    const discountTotal = coupon?.percent
       ? Math.round((cart.subtotalCents * coupon.percent) / 100)
       : 0;
     const shares = splitDiscount(cart.lines.map((l) => l.cents), discountTotal);
@@ -97,7 +80,7 @@ export default async (req) => {
       due_at: cart.dueAt,
       name,
       phone,
-      coupon: coupon.code ?? '',
+      coupon: coupon?.code ?? '',
       lines: String(cart.lines.length),
     };
     cart.lines.forEach((l, i) => {
