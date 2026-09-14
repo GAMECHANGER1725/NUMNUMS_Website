@@ -18,6 +18,8 @@ import { cakeFraming } from "@/lib/cake-framing";
 import { supabase } from "@/lib/supabase";
 
 const hourLabel = (h: number) => (h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`);
+const prettyDate = (d: string) =>
+  new Date(`${d}T12:00:00`).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" });
 
 export default function CartPage() {
   const cart = useSyncExternalStore(cartStore.subscribe, cartStore.getSnapshot, cartStore.getServerSnapshot);
@@ -232,8 +234,7 @@ export default function CartPage() {
                 </div>
               </div>
               <p className="mt-2 text-[0.76rem] text-muted-foreground">
-                We need 48 hours&rsquo; notice, so the earliest is {minDueDate()}
-                {hours.length > 0 && hours[0] > 9 ? ` from ${hourLabel(hours[0])}` : ""}.
+                Baked to order, so the earliest we can have it ready is {prettyDate(minDueDate())}.
               </p>
               {busyDay && (
                 <p className="mt-2 rounded-lg bg-[#FDF3F6] px-3 py-2 text-[0.78rem] text-[#96355A]">

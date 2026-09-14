@@ -158,55 +158,56 @@ export function clearCart() {
   window.dispatchEvent(new CustomEvent("nn-cart"));
 }
 
-export const LEAD_HOURS = 48;
+/**
+ * A shop cake is **next day**, not a number of hours. Must agree with
+ * `netlify/lib/shared.mjs` — that is the copy the money is checked against.
+ * Custom cakes are a different product and keep their own 48 hours' notice.
+ */
+export const LEAD_DAYS = 1;
+/** Sydney hour at or after which an order rolls to the day after. 24 = none. */
+export const CUTOFF_HOUR = 24;
 export const OPEN_HOUR = 9;
 export const CLOSE_HOUR = 18;
 
-const sydneyDay = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" });
-
-/**
- * The first whole hour at or after `d`, Sydney local.
- *
- * Rounds **up**, and that is the whole point: truncating 09:30 to 9 offered a
- * 9am slot 47.5 hours out, which the server then refused. Returns the hour it
- * rolls into on the next day when it passes closing.
- */
-function nextWholeHour(d: Date): { day: string; hour: number } {
-  const [h, m] = d
-    .toLocaleString("en-GB", { timeZone: "Australia/Sydney", hour: "2-digit", minute: "2-digit", hour12: false })
-    .split(":").map(Number);
-  const hour = m > 0 ? h + 1 : h;
-  if (hour > CLOSE_HOUR) {
-    return { day: sydneyDay(new Date(d.getTime() + 86_400_000)), hour: OPEN_HOUR };
+const sydneyParts = (d: Date) => {
+  const p: Record<string, string> = {};
+  for (const { type, value } of new Intl.DateTimeFormat("en-AU", {
+    timeZone: "Australia/Sydney",
+    year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hour12: false,
+  }).formatToParts(d)) {
+    if (type !== "literal") p[type] = value;
   }
-  return { day: sydneyDay(d), hour: Math.max(hour, OPEN_HOUR) };
-}
+  // "24" is a real answer from hour12:false at midnight in some engines.
+  return { y: +p.year, m: +p.month, d: +p.day, hour: +p.hour % 24 };
+};
 
 /**
- * Earliest date the shop will take, as an `<input type="date">` min.
+ * Earliest collection date, as an `input`-style `YYYY-MM-DD`.
  *
- * The lead time is 48 **hours**, not two days, so the first bookable date is
- * only the day-after-tomorrow when there is still a collection slot left on it.
- * Order at 8pm and the whole of that day is already inside the window — offering
- * it would hand the customer a date the server then refuses, which reads as a
- * broken form rather than as a rule.
+ * Built as a calendar date in Sydney parts and read back the same way. Never
+ * add 86_400_000ms to an instant for this: the day that lands on is wrong on
+ * the two nights a year DST shifts, and it books cakes for the wrong date.
  */
 export function minDueDate(now = new Date()): string {
-  return nextWholeHour(new Date(now.getTime() + LEAD_HOURS * 3600_000)).day;
+  const p = sydneyParts(now);
+  const roll = p.hour >= CUTOFF_HOUR ? 1 : 0;
+  const d = new Date(Date.UTC(p.y, p.m - 1, p.d + LEAD_DAYS + roll));
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
 }
 
 /**
- * The hours still bookable on `date`. Empty for a date before the lead time,
- * the full list for any date beyond it.
+ * The hours bookable on `date`.
+ *
+ * A whole day, or none — which is the simplification a calendar rule buys.
+ * Under the old 48-hour rule the first bookable date was a partial day and the
+ * early slots had to be filtered off it, and rounding that wrong offered a
+ * 47.5-hour slot the server then refused.
  */
 export function availableHours(date: string, now = new Date()): number[] {
   const all: number[] = [];
   for (let h = OPEN_HOUR; h <= CLOSE_HOUR; h++) all.push(h);
   if (!date) return all;
-  const first = nextWholeHour(new Date(now.getTime() + LEAD_HOURS * 3600_000));
-  if (date > first.day) return all;
-  if (date < first.day) return [];
-  return all.filter((h) => h >= first.hour);
+  return date < minDueDate(now) ? [] : all;
 }
 
 export function maxDueDate(now = new Date()): string {

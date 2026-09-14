@@ -9,7 +9,7 @@ import { badgeFor, assertPickIsNotPremium } from "@/lib/badges";
 export const metadata = {
   title: "Order an eggless cake online | Num Num's Bakery",
   description:
-    "Pick from 15 eggless cake flavours, choose your size, and collect from Harris Park or Riverstone in 48 hours.",
+    "Pick from 15 eggless cake flavours, choose your size, and collect from Harris Park or Riverstone tomorrow.",
 };
 
 /**
@@ -55,7 +55,7 @@ export default function ShopPage() {
       <ShopHeader />
       <main className="mx-auto w-full max-w-[72rem] px-4 pb-20 pt-8 sm:px-6">
         <header>
-          <p className="section-label">100% eggless · ready in 48 hours</p>
+          <p className="section-label">100% eggless · ready tomorrow</p>
           <h1 className="font-display mt-2 text-[2.6rem] font-light leading-[1.05] tracking-tight sm:text-[3.4rem]">
             Pick your cake
           </h1>
@@ -109,7 +109,7 @@ export default function ShopPage() {
         <section className="mt-12 grid gap-4 border-t border-border pt-8 sm:grid-cols-3">
           {[
             ["100% eggless", "Every cake we make, without exception. It is the whole reason the bakery exists."],
-            ["48 hours' notice", "Each cake is made to order, so we need two days. Weekends book out first."],
+            ["Ready tomorrow", "Every cake is baked to order, so we need a day. Weekends book out first."],
             ["Collect in store", "Harris Park or Riverstone. We text you the moment it's ready."],
           ].map(([h, p]) => (
             <div key={h}>

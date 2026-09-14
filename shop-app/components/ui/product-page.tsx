@@ -168,7 +168,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
             </p>
           ) : (
             <p className="mt-3 text-center text-[0.78rem] text-muted-foreground">
-              Pay online · collect from Harris Park or Riverstone · 48 hours&rsquo; notice
+              Pay online · collect from Harris Park or Riverstone · ready tomorrow
             </p>
           )}
 

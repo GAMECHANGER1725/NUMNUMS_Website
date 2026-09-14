@@ -142,7 +142,7 @@ export function NnDateField({
             </div>
 
             <p className="mt-2 border-t border-[rgba(200,84,120,0.15)] pt-2 text-[0.7rem] leading-snug text-muted-foreground">
-              Greyed days are inside our 48 hours&rsquo; notice, or too far ahead to book online.
+              Greyed days are sooner than we can bake, or too far ahead to book online.
             </p>
           </Popover.Popup>
         </Popover.Positioner>

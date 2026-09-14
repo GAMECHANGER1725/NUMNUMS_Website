@@ -712,11 +712,24 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **Verify the webhook signature on raw bytes, handling `isBase64Encoded`**, and answer
   **400** on a bad one. A 200 tells Stripe the forgery was accepted. Never `JSON.parse`
   before verifying. `netlify/functions/webhook.test.mjs` asserts all of that.
-- **Lead time is 48 HOURS, not two days.** `<input type="date">`'s `min` is a date, so
-  the client must also drop the early slots on the first date and round the earliest hour
-  **up** — truncating 09:30 to 9 offered a 47.5-hour slot the server then refused.
-  Server-side, rebuild the instant with `sydneyDateTimeToISO`; never hardcode `+11:00`,
-  DST flips in October and April.
+- **A shop cake is NEXT DAY; a custom cake still needs 48 hours.** They are
+  different products and the numbers are not interchangeable — the 48 hours
+  quoted on `/order`, `index.html` and `cakes.html` is about a cake somebody
+  draws, and must not be "tidied" to match the shop. The shop's rule lives in
+  `LEAD_DAYS` in `netlify/lib/shared.mjs`, mirrored in `shop-app/lib/cart.ts`.
+  `CUTOFF_HOUR` is the Sydney hour at or after which an order rolls to the day
+  after; **24 means no cut-off**, which is what "we do next day" says — an
+  order at 11pm still offers tomorrow. Lower it to 18 the day a late order
+  arrives that the kitchen could not make.
+- **It is a calendar rule, so compare day strings, never instants.** Adding
+  86_400_000ms to a `Date` lands on the wrong day on the two nights a year
+  Sydney shifts DST, which books a cake for the wrong date; `earliestDueDay`
+  builds the date from Sydney wall-clock parts instead. `checkout.test.mjs`
+  pins both DST nights, plus month and year rollover. The old 48-hour rule made
+  the first bookable date a *partial* day whose early slots had to be filtered
+  off — truncating 09:30 to 9 once offered a 47.5-hour slot the server refused.
+  A day boundary removes that whole class of bug; do not reintroduce an hours
+  offset without reintroducing the rounding care too.
 - **Cancelling a web order in ops does NOT refund the card.** The status sheet warns and
   names Stripe when `stripe_session_id` is set. Keep that warning.
 - **Marketing consent takes two different shapes, and the difference is the primary action.**
