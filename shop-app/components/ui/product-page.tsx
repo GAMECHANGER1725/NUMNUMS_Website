@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check, ChevronLeft, Star } from "lucide-react";
-import { cartStore, writeCart, money, MAX_LINES } from "@/lib/cart";
+import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES } from "@/lib/cart";
 import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { copyFor } from "@/lib/flavour-copy";
 import { cakeFraming } from "@/lib/cake-framing";
@@ -28,11 +28,13 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
   const badge = badgeFor(flavour);
   const photo = `/shop/cakes/${flavourSlug(flavour)}.webp`;
   const cents = listPriceCents(size, flavour) ?? 0;
-  const full = cart.lines.length >= MAX_LINES;
+  const inCart = cartCount(cart);
+  const full = inCart >= MAX_CAKES;
 
   function add() {
     if (full) return;
-    writeCart({ ...cart, lines: [...cart.lines, { size, flavour, wording }] });
+    // Same cake, same writing merges into a quantity — see addLine.
+    writeCart(addLine(cart, { size, flavour, wording }));
     // Writing is cleared every time — one cake's name landing on the next is an
     // error that reaches the kitchen as a fact.
     setWording("");
@@ -161,7 +163,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
 
           {full ? (
             <p className="mt-2 text-[0.78rem] text-muted-foreground">
-              {MAX_LINES} cakes is the most we take in one online order. For more,{" "}
+              {MAX_CAKES} cakes is the most we take in one online order. For more,{" "}
               <a href="/order" className="font-semibold text-[#C85478]">talk to us directly</a>.
             </p>
           ) : (
@@ -170,12 +172,12 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
             </p>
           )}
 
-          {cart.lines.length > 0 && (
+          {inCart > 0 && (
             <Link
               href="/cart"
               className="mt-3 block w-full rounded-full border border-[#C85478] py-2.5 text-center text-[0.88rem] font-semibold text-[#C85478] transition-colors hover:bg-[#FDF3F6]"
             >
-              Your order ({cart.lines.length}) →
+              Your order ({inCart}) →
             </Link>
           )}
 

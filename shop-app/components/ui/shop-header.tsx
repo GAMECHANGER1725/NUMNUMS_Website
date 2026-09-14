@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
-import { cartStore } from "@/lib/cart";
+import { cartStore, cartCount } from "@/lib/cart";
 
 /**
  * The site's header, rendered inside the shop.
@@ -33,7 +33,7 @@ const NAV = [
 
 export function ShopHeader() {
   const cart = useSyncExternalStore(cartStore.subscribe, cartStore.getSnapshot, cartStore.getServerSnapshot);
-  const n = cart.lines.length;
+  const n = cartCount(cart);
   const [open, setOpen] = useState(false);
   const path = usePathname();
 

@@ -4,10 +4,10 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Loader2, Lock } from "lucide-react";
 import { CouponField } from "@/components/ui/coupon-field";
-import { cartStore, money, STORES } from "@/lib/cart";
+import { cartStore, writeCart, cartCount, money, STORES } from "@/lib/cart";
+import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { listPriceCents } from "@/lib/catalog";
 import { supabase } from "@/lib/supabase";
-import type { Coupon } from "@/lib/coupons";
 
 const MOBILE_RE = /^(?:\+?61|0)4\d{8}$/;
 const normalisePhone = (v: string) => v.replace(/[\s()-]/g, "");
@@ -18,7 +18,6 @@ export default function CheckoutPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,13 +31,17 @@ export default function CheckoutPage() {
     });
   }, []);
 
-  const lineCents = cart.lines.map((l) => listPriceCents(l.size, l.flavour) ?? 0);
+  const lineCents = cart.lines.map((l) => l.qty * (listPriceCents(l.size, l.flavour) ?? 0));
   const subtotal = lineCents.reduce((a, b) => a + b, 0);
+  const count = cartCount(cart);
+  // The cart is where an applied coupon lives, so it survives Back and a
+  // reload and there is never a second copy to keep in step.
+  const coupon = cart.coupon;
   // Indicative only: create-checkout re-prices every line and re-validates the
   // coupon server-side, so this number can never decide what is charged.
   const discount = coupon ? Math.round((subtotal * coupon.percent) / 100) : 0;
   const phoneValid = phone.trim() === "" || MOBILE_RE.test(normalisePhone(phone));
-  const canPay = loaded && cart.lines.length > 0 && name.trim() !== "" && email.includes("@") && phoneValid && !busy;
+  const canPay = loaded && count > 0 && name.trim() !== "" && email.includes("@") && phoneValid && !busy;
 
   async function pay() {
     setBusy(true);
@@ -61,7 +64,7 @@ export default function CheckoutPage() {
     }
   }
 
-  if (loaded && cart.lines.length === 0) {
+  if (loaded && count === 0) {
     return (
       <main className="mx-auto w-full max-w-[46rem] px-4 py-16 text-center">
         <h1 className="font-display text-3xl font-light tracking-tight">Your cart is empty</h1>
@@ -76,7 +79,8 @@ export default function CheckoutPage() {
   return (
     <main className="mx-auto w-full max-w-[46rem] px-4 py-10">
       <Link href="/cart" className="-m-2 inline-flex min-h-[32px] items-center p-2 text-[0.82rem] font-semibold text-[#C85478]">&larr; Back to your cakes</Link>
-      <h1 className="font-display mt-3 text-4xl font-light tracking-tight">Checkout</h1>
+      <h1 className="font-display mt-3 text-center text-4xl font-light tracking-tight">Your details</h1>
+      <CheckoutSteps current={2} />
 
       <section className="mt-7">
         <h2 className="section-label">Your details</h2>
@@ -96,7 +100,7 @@ export default function CheckoutPage() {
                 // A coupon is bound to one address, so changing it invalidates
                 // the applied one. Leaving it shows a discount the server will
                 // refuse — a total that goes UP on Stripe's page.
-                setCoupon(null);
+                if (cart.coupon) writeCart({ ...cart, coupon: null });
               }} />
           </div>
           <div className="sm:col-span-2">
@@ -125,6 +129,7 @@ export default function CheckoutPage() {
           {cart.lines.map((l, i) => (
             <li key={i} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
               <span className="text-[0.92rem]">
+                {l.qty > 1 && <span className="font-semibold tabular-nums">{l.qty} × </span>}
                 {l.size} {l.flavour}
                 {l.wording && <span className="block text-[0.76rem] text-muted-foreground">“{l.wording}”</span>}
               </span>
@@ -139,13 +144,21 @@ export default function CheckoutPage() {
       </section>
 
       <section className="mt-7">
-        <CouponField applied={coupon} onApply={setCoupon} email={email} />
+        <CouponField
+          applied={coupon}
+          email={email}
+          onApply={(c) =>
+            writeCart({ ...cart, coupon: c ? { code: c.code, percent: c.percent } : null })
+          }
+        />
       </section>
 
       <section className="mt-7 border-t border-border pt-5">
         <dl className="flex flex-col gap-1.5 text-[0.9rem]">
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Subtotal</dt>
+            <dt className="text-muted-foreground">
+              Subtotal <span className="text-[0.78rem]">({count} {count === 1 ? "cake" : "cakes"})</span>
+            </dt>
             <dd className="tabular-nums">{money(subtotal)}</dd>
           </div>
           {discount > 0 && (

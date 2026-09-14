@@ -13,11 +13,15 @@ function expiryText(c: Coupon) {
   return `${days} days left`;
 }
 
+export type AppliedCoupon = Pick<Coupon, "code" | "percent">;
+
 export type CouponFieldProps = {
-  applied: Coupon | null;
+  applied: AppliedCoupon | null;
   onApply: (c: Coupon | null) => void;
   /** A coupon is bound to the email it was issued to, so checking needs it. */
   email: string;
+  /** What to say when there is no email yet — it differs by page. */
+  noEmailNote?: string;
   className?: string;
 };
 
@@ -29,7 +33,7 @@ export type CouponFieldProps = {
  * re-prices every line server-side, so a tampered code changes nothing that is
  * charged.
  */
-export function CouponField({ applied, onApply, email, className }: CouponFieldProps) {
+export function CouponField({ applied, onApply, email, noEmailNote, className }: CouponFieldProps) {
   const haveEmail = email.includes("@");
   const [mine, setMine] = useState<Coupon[]>([]);
   const [code, setCode] = useState("");
@@ -149,7 +153,8 @@ export function CouponField({ applied, onApply, email, className }: CouponFieldP
 
       {!haveEmail && (
         <p className="mt-2 text-[0.76rem] text-muted-foreground">
-          Enter your email above and we&rsquo;ll check your code &mdash; they&rsquo;re issued to one address.
+          {noEmailNote ??
+            "Enter your email above and we\u2019ll check your code \u2014 they\u2019re issued to one address."}
         </p>
       )}
 

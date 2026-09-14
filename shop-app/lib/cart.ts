@@ -11,10 +11,21 @@
  */
 export const CART_KEY = "nn_cart_v1";
 
-/** Stripe caps session metadata, so the cart is bounded. Mirrors MAX_LINES. */
-export const MAX_LINES = 10;
+/**
+ * The cap is on **cakes**, not on rows.
+ *
+ * Every cake becomes its own `orders` row — one job per cake is how the kitchen
+ * works — and every row becomes a Stripe line item and a metadata key, which
+ * caps at 50. So a line of quantity 4 counts as four against this, and
+ * `create-checkout` re-checks it after expanding server-side.
+ */
+export const MAX_CAKES = 10;
+export const MAX_QTY = 10;
 
-export type CartLine = { size: string; flavour: string; wording: string };
+export type CartLine = { size: string; flavour: string; wording: string; qty: number };
+
+/** Display only. `create-checkout` re-validates the code and re-prices. */
+export type CartCoupon = { code: string; percent: number };
 
 export type Cart = {
   store: string;
@@ -23,9 +34,73 @@ export type Cart = {
   /** Sydney wall-clock hour, 9–18. */
   dueHour: number;
   lines: CartLine[];
+  coupon: CartCoupon | null;
 };
 
-export const emptyCart = (): Cart => ({ store: "", dueDate: "", dueHour: 12, lines: [] });
+export const emptyCart = (): Cart =>
+  ({ store: "", dueDate: "", dueHour: 12, lines: [], coupon: null });
+
+/** Cakes in the cart, which is not the same as rows in the cart. */
+export const cartCount = (cart: Cart) => cart.lines.reduce((n, l) => n + l.qty, 0);
+
+const clampQty = (v: unknown) => {
+  const n = Math.floor(Number(v));
+  return Number.isFinite(n) && n >= 1 ? Math.min(n, MAX_QTY) : 1;
+};
+
+/**
+ * Fold identical cakes into one line.
+ *
+ * Carts written before quantities existed hold one row per cake, so a customer
+ * who added the same cake twice has two identical rows sitting in localStorage
+ * right now. Left alone they render as two lines with the same React key —
+ * which is a silent bug, not a warning the customer ever sees.
+ */
+export function mergeLines(lines: CartLine[]): CartLine[] {
+  const out: CartLine[] = [];
+  for (const l of lines) {
+    const same = out.find(
+      (o) => o.size === l.size && o.flavour === l.flavour && o.wording === l.wording,
+    );
+    if (same) same.qty = Math.min(same.qty + l.qty, MAX_QTY);
+    else out.push({ ...l });
+  }
+  return out;
+}
+
+/**
+ * Trim a list of lines so the cakes in it never exceed `MAX_CAKES`. The last
+ * line in is the one shortened, so an existing cart is never silently reduced
+ * under someone who is only adding.
+ */
+export function capLines(lines: CartLine[]): CartLine[] {
+  const out: CartLine[] = [];
+  let left = MAX_CAKES;
+  for (const l of lines) {
+    if (left <= 0) break;
+    out.push({ ...l, qty: Math.min(l.qty, left) });
+    left -= out[out.length - 1].qty;
+  }
+  return out;
+}
+
+/**
+ * Add a cake, merging into the line it matches.
+ *
+ * Same size, same flavour and the same writing is the same cake, so it becomes
+ * a quantity rather than a second row — otherwise "add to order" twice reads as
+ * a broken button. Different writing is a different cake and stays its own row,
+ * because the writing is what the kitchen pipes on it.
+ */
+export function addLine(cart: Cart, line: Omit<CartLine, "qty">, qty = 1): Cart {
+  const same = (l: CartLine) =>
+    l.size === line.size && l.flavour === line.flavour && l.wording === line.wording;
+  const i = cart.lines.findIndex(same);
+  const lines = i === -1
+    ? [...cart.lines, { ...line, qty }]
+    : cart.lines.map((l, j) => (j === i ? { ...l, qty: Math.min(l.qty + qty, MAX_QTY) } : l));
+  return { ...cart, lines: capLines(lines) };
+}
 
 export function readCart(): Cart {
   let raw: string | null = null;
@@ -39,14 +114,25 @@ export function readCart(): Cart {
     const c = JSON.parse(raw) as Partial<Cart>;
     // Anything unexpected is treated as no cart rather than crashing the page.
     if (!Array.isArray(c.lines)) return emptyCart();
+    const coupon = c.coupon;
     return {
       store: typeof c.store === "string" ? c.store : "",
       dueDate: typeof c.dueDate === "string" ? c.dueDate : "",
       dueHour: Number.isInteger(c.dueHour) ? (c.dueHour as number) : 12,
-      lines: c.lines
-        .filter((l): l is CartLine => Boolean(l && typeof l.size === "string" && typeof l.flavour === "string"))
-        .slice(0, MAX_LINES)
-        .map((l) => ({ size: l.size, flavour: l.flavour, wording: String(l.wording ?? "") })),
+      // A cart written before quantities existed has no qty; it means one cake.
+      lines: capLines(
+        mergeLines(c.lines
+          .filter((l): l is CartLine => Boolean(l && typeof l.size === "string" && typeof l.flavour === "string"))
+          .map((l) => ({
+            size: l.size,
+            flavour: l.flavour,
+            wording: String(l.wording ?? ""),
+            qty: clampQty(l.qty),
+          }))),
+      ),
+      coupon: coupon && typeof coupon.code === "string" && Number.isFinite(coupon.percent)
+        ? { code: coupon.code, percent: Number(coupon.percent) }
+        : null,
     };
   } catch {
     return emptyCart();

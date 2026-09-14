@@ -639,6 +639,28 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **`walk_in` is never true on a web order** — `set_order_defaults()` would force it to
   `picked_up` and it would never be baked. `deposit = price − discount` is what makes
   `paidOn()` report it fully paid, so ops stamps **PAID IN FULL** with no ops changes.
+- **A quantity is expanded once, server-side, in `priceCart`.** A line of three
+  becomes three priced lines at the door, so the discount split, the Stripe line
+  items, the metadata keys, the webhook's rows and `cart_line` all keep working
+  on a flat list and cannot disagree with the kitchen about how many cakes were
+  bought. The cap is on **cakes**, not rows: ten, because every cake costs a
+  metadata key and Stripe allows fifty.
+- **Adding the same cake twice is a quantity, not a second row** (`addLine`) —
+  same size, same flavour, same writing. Different writing is a different cake
+  and keeps its own row, because the writing is what gets piped on it.
+  `readCart` also folds duplicates it finds, since carts written before
+  quantities existed hold one row per cake and two identical rows would
+  otherwise collide as React keys — silently, not as a warning anyone sees.
+- **The applied coupon lives in the cart, not in a component.** It survives
+  Back and a reload, and there is never a second copy to keep in step; the
+  checkout page reads it from there. Display only — `create-checkout`
+  re-validates the code and re-prices every line.
+- **The cart says "Collection — Free", never a delivery fee.** There is no
+  delivery. Both reference carts we were shown have a delivery line; copying it
+  would be the kind of small untruth that costs a five-star review. For the same
+  reason the summary rail carries a *Paying* note rather than a payment-method
+  picker: the card is entered on Stripe's page, so a choice offered here would
+  be a choice of something that does not exist.
 - **A cart becomes one `orders` row per cake**, sharing `order_group_id` and
   `stripe_session_id`, differing by `cart_line` — one job per cake is how the kitchen
   works. The coupon discount is split proportionally with remainder cents on the first

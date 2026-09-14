@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Confetti, fireSideCannons, type ConfettiRef } from "@/components/ui/confetti";
+import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { clearCart, money, STORES } from "@/lib/cart";
 
 type Status = { paid: boolean; order_nos?: string[]; due_at?: string; store?: string; total?: number };
@@ -56,7 +57,8 @@ export default function ThankYouPage() {
 
       {status?.paid ? (
         <>
-          <p className="section-label">Paid</p>
+          <CheckoutSteps current={3} />
+          <p className="section-label mt-8">Paid</p>
           <h1 className="font-display mt-2 text-4xl font-light tracking-tight">Thank you — we&rsquo;re on it</h1>
           <p className="mt-3 text-[0.95rem] leading-relaxed text-muted-foreground">
             {status.order_nos?.length === 1 ? "Your order is" : "Your orders are"}{" "}
