@@ -44,6 +44,23 @@
 
 # The shop is a Next.js static export committed to shop/. Clean URLs, same as
 # the rest of the site.
+# /cakes was a second custom-cake page — its own H1 read "100% Eggless Custom
+# Cakes in Sydney" — competing with /order for the same queries on a site that
+# has already paid once for cannibalising itself. Its galleries, flavours and
+# eggless section now live on /order, so this sends the page, and every link
+# anyone ever built to it, where its content actually went.
+[[redirects]]
+  from = "/cakes"
+  to = "/order"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cakes/*"
+  to = "/order"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/api/subscribe"
   to = "/.netlify/functions/subscribe"
@@ -113,12 +130,12 @@
 
 [[redirects]]
   from = "/services"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/services/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -128,22 +145,22 @@
 
 [[redirects]]
   from = "/gallery"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/gallery/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/kids-cake"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/kids-cake/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -174,7 +191,7 @@
 
 [[redirects]]
   from = "/soft-sponge-cake-with-dark-chocolate-topping-and-nuts/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -196,7 +213,7 @@
 
 [[redirects]]
   from = "/cakes.html"
-  to = "/cakes"
+  to = "/order"
   status = 301
   force = true
 
@@ -2341,12 +2358,12 @@
 
 [[redirects]]
   from = "/portfolio/*"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/portfolio_group/*"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -2366,32 +2383,32 @@
 
 [[redirects]]
   from = "/23-tier-cake/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/23-tier-cake"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/pastry/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/pastry"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/services/birthday-cakes/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/services/birthday-cakes"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]

@@ -202,9 +202,9 @@ if (!declared.size) {
 // URLs in llms.txt, a Harris Park entity split across two @ids.
 //
 // FACTS is the single source of truth. If the business changes a price or a
-// flavour, change it HERE and on /cakes and /order — nowhere else.
+// flavour, change it HERE and on /order — nowhere else.
 const FACTS = {
-  // size -> [serves, price] — canonical chart on /order and /cakes
+  // size -> [serves, price] — canonical chart on /order
   sizes: { 6: ['6-8', '39.99'], 8: ['12-14', '49.99'], 10: ['20-22', '74.99'],
            12: ['25-30', '89.99'], 14: ['40-45', '114.99'], 16: ['50-55', '134.99'] },
   // premium flavour -> size -> surcharge in CENTS. Lived only in order.html's
@@ -266,7 +266,7 @@ const FACTS = {
     }
     for (const m of h.matchAll(priceRe)) {
       const want = FACTS.sizes[m[1]]?.[1];
-      if (want && m[3] !== want) priceBad.push(`${f}: ${m[1]}" priced $${m[3]} but /cakes says $${want}`);
+      if (want && m[3] !== want) priceBad.push(`${f}: ${m[1]}" priced $${m[3]} but FACTS says $${want}`);
     }
     for (const fl of FACTS.offMenu) {
       const n = (h.match(new RegExp(`\\b${fl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi')) || []).length;
@@ -279,7 +279,7 @@ const FACTS = {
   }
 
   if (serveBad.length) fail(`serving sizes: ${serveBad.length} assertion(s) contradict the canonical chart on /order → ${serveBad.slice(0, 5).join(' | ')}`);
-  if (priceBad.length) fail(`prices: ${priceBad.length} assertion(s) contradict /cakes → ${priceBad.slice(0, 5).join(' | ')}`);
+  if (priceBad.length) fail(`prices: ${priceBad.length} assertion(s) contradict FACTS → ${priceBad.slice(0, 5).join(' | ')}`);
 
   // HARD FAILURE as of 2026-09-02: the owner confirmed these flavours are not sold.
   // The site previously advertised nine of them with invented supporting detail
@@ -558,8 +558,17 @@ const FACTS = {
 // off /shop, which is the whole point of putting it there.
 {
   const navPages = [...readdirSync(ROOT).filter((f) => f.endsWith('.html')),
-    ...posts.map((s) => `blog/${s}.html`), 'blog/index.html'].filter((f) => read(f).includes('>Our Cakes<'));
-  if (navPages.length < 200) fail(`only ${navPages.length} pages carry the nav — expected every static page`);
+    ...posts.map((s) => `blog/${s}.html`), 'blog/index.html']
+    // Detected by the nav itself. This used to look for ">Our Cakes<", which
+    // after that entry was removed only matched a FOOTER heading — the check
+    // went on passing while measuring the wrong thing.
+    .filter((f) => /<a href="\/shop"[^>]*class="nav-link/.test(read(f)));
+  if (navPages.length < 230) fail(`only ${navPages.length} pages carry the nav — expected every static page`);
+  // /cakes was folded into /order. An internal link to it costs a redirect hop
+  // on every page load, so none should remain.
+  for (const f of navPages) {
+    if (/href="\/cakes(?:["#/])/.test(read(f))) fail(`${f}: links to /cakes, which now 301s to /order`);
+  }
   for (const f of navPages) {
     const src = read(f);
     if (!/href="\/shop"/.test(src)) fail(`${f}: nav has no link to /shop`);
