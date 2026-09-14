@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { cartStore, cartCount } from "@/lib/cart";
+import { AccountMenu } from "@/components/ui/account-menu";
 
 /**
  * The site's header, rendered inside the shop.
@@ -23,7 +24,7 @@ import { cartStore, cartCount } from "@/lib/cart";
  * neither of the two chains we looked at puts it there either.
  */
 const NAV = [
-  { href: "/shop", label: "Shop", internal: true },
+  { href: "/shop", label: "Signature Cakes", internal: true },
   { href: "/cakes", label: "Our Cakes" },
   { href: "/indian-sweet", label: "Indian Sweets" },
   { href: "/order", label: "Custom Cakes" },
@@ -88,6 +89,8 @@ export function ShopHeader() {
               </svg>
             </Link>
             )}
+
+            <AccountMenu />
 
             <button
               type="button"

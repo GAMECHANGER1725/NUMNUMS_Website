@@ -472,7 +472,9 @@
   font-family: var(--font-jost), sans-serif; font-weight: 600; font-size: 0.95rem;
 }
 
-@media (max-width: 640px) {
+/* 1024px, not 640: six labels plus the cart pill need ~950px, and "Signature
+   Cakes" is what tipped a tablet into a horizontal scroll. */
+@media (max-width: 1024px) {
   .nn-nav-link { display: none; }
   .nn-pill { background: transparent; border: none; backdrop-filter: none; padding: 0; }
   .nn-ham { display: flex; }
@@ -480,7 +482,7 @@
      only running total of what you have chosen. */
   .nn-cta { padding: 7px 14px; font-size: 0.75rem; }
 }
-@media (min-width: 641px) {
+@media (min-width: 1025px) {
   #nn-mobile-menu { display: none; }
 }
 
@@ -607,4 +609,21 @@
 
 @media (prefers-reduced-motion: reduce) {
   .nd-menu, .nd-caret, .nd-opt, .nd-cal-day, .nd-cal-nav { transition: none; }
+}
+
+/* The account icon in the header, and the dot that says you are signed in. */
+.nn-icon-btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 38px; width: 38px; margin-left: 4px;
+  border-radius: 9999px; color: #2C1A0E;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+.nn-icon-btn:hover { background: rgba(200, 84, 120, 0.1); color: #C85478; }
+.nn-icon-btn:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+.nn-icon-btn[data-popup-open] { background: rgba(200, 84, 120, 0.13); color: #C85478; }
+.nn-icon-dot {
+  position: absolute; right: 6px; top: 6px;
+  height: 8px; width: 8px; border-radius: 9999px;
+  background: #C85478; box-shadow: 0 0 0 2px #FFF8F2;
 }

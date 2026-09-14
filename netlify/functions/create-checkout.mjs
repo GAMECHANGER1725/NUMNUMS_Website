@@ -43,7 +43,13 @@ export default async (req) => {
     if (!email.includes('@')) throw new BadRequest('We need an email to send your receipt to.');
     const name = String(body?.name ?? '').trim().slice(0, 80);
     if (!name) throw new BadRequest('We need a name for the order.');
+    // Required, not optional. The shop texts when a cake is ready, and a web
+    // order with no number is one nobody can chase. Validated here because the
+    // browser proves nothing — MOBILE_RE in the UI is a courtesy.
     const phone = String(body?.phone ?? '').replace(/[\s()-]/g, '').slice(0, 20);
+    if (!/^(?:\+?61|0)4\d{8}$/.test(phone)) {
+      throw new BadRequest('We need an Australian mobile so we can text you when it is ready.');
+    }
 
     const cart = priceCart(body?.cart);
 

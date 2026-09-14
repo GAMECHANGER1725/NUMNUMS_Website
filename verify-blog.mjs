@@ -563,6 +563,11 @@ const FACTS = {
   for (const f of navPages) {
     const src = read(f);
     if (!/href="\/shop"/.test(src)) fail(`${f}: nav has no link to /shop`);
+    // The category has a name now. "Shop" was a placeholder that said nothing
+    // about what is behind it, and it has to pair with "Custom Cakes".
+    if (/<a href="\/shop"[^>]*class="nav-link[^>]*>Shop</.test(src)) {
+      fail(`${f}: nav still says "Shop" — the category is Signature Cakes`);
+    }
     if (/<a href="\/order"[^>]*>Order(?: Online)?<\/a>/.test(src)) {
       fail(`${f}: nav still calls /order "Order Online" — it is the custom-cake quote form, not the shop`);
     }
@@ -573,6 +578,12 @@ const FACTS = {
   const pills = navPages.filter((f) => read(f).includes('id="nav-cart"'));
   if (pills.length !== navPages.length) {
     fail(`only ${pills.length}/${navPages.length} pages carry id="nav-cart", so the cart is invisible on the rest`);
+  }
+  // The account menu is injected by promo.js rather than written into 243
+  // files, so the check is that the code is still there to do it.
+  const promo = read('promo.js');
+  for (const fn of ['mountAccount', 'paintCart', 'navBreakpointCss']) {
+    if (!promo.includes(fn)) fail(`promo.js has lost ${fn}() — every static page loses that behaviour at once`);
   }
   notes.push(`nav: ${navPages.length} pages are shop-first, ${pills.length} carry the cart pill`);
 }

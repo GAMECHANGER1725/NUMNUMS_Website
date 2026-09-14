@@ -508,6 +508,41 @@ main site.
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
+## Accounts — the category name, the mobile, and the second sign-in
+
+- **The online range is "Signature Cakes".** Internally the DB still says
+  `kind: 'normal'` and that stays — renaming an enum across ~15 call sites and
+  the `customers` view buys nothing. The customer-facing name pairs against
+  **Custom Cakes**: Signature is ours to design, Custom is yours. "Shop" was a
+  placeholder that said nothing about what was behind it, and `verify-blog.mjs`
+  now fails the deploy if it comes back.
+- **The mobile is required, at sign-up and at checkout, and on the server.**
+  It is how the shop says a cake is ready and the only way to reach somebody
+  about their own order, so a web order without one is one nobody can chase.
+  `create-checkout` re-checks it — the browser's `MOBILE_RE` is a courtesy.
+- **Verification is a six-digit code, not a link, and it signs them in.** A
+  link opens a *different tab*, so the tab they filled the form in never learns
+  they confirmed and sits on "check your email" forever; they come back, find
+  it unchanged, and sign in again. `verifyOtp({ type: 'signup' })` returns a
+  session, so entering the code **is** signing in, and nobody is ever asked to
+  sign in twice. ⚠️ **This needs the Supabase "Confirm signup" email template
+  to contain `{{ .Token }}`** — the default only has `{{ .ConfirmationURL }}`,
+  and with that template the email carries a link and no code, which makes the
+  box unanswerable. There is no way to detect it from the client.
+- **The account menu is two states and no dead ends.** Signed out it offers
+  sign in / create an account; signed in it names the address and offers the
+  way out. It deliberately has **no "My orders"** — there is no order-history
+  page, and a menu item that opens nothing is worse than an absent one. Add it
+  the day that page exists, with `customer_user_id` and its RLS policy.
+  The static version is injected by `promo.js` (same reason as the cart badge:
+  it is the only script on all 243 pages) and reads the session by matching
+  `sb-*-auth-token`, including the newer `base64-` prefixed shape.
+- **The nav collapses to the hamburger at 1024px, not 640px.** Six labels plus
+  the cart pill need ~950px; the old 640px breakpoint was already tight and
+  "Signature Cakes" tipped a 768px tablet into a horizontal scroll. The static
+  rule is injected by `promo.js` as a **separate** media query — widening the
+  existing one would drag the trust-bar and hero rules along with it.
+
 ## No OS controls, anywhere
 
 A native `<select>` or `<input type="date">` hands its list to the operating

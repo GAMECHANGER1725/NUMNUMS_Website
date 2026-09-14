@@ -7,7 +7,7 @@ import { cakeFraming } from "@/lib/cake-framing";
 import { badgeFor, assertPickIsNotPremium } from "@/lib/badges";
 
 export const metadata = {
-  title: "Order an eggless cake online | Num Num's Bakery",
+  title: "Signature Cakes — order eggless cakes online | Num Num's Bakery",
   description:
     "Pick from 15 eggless cake flavours, choose your size, and collect from Harris Park or Riverstone tomorrow.",
 };
@@ -55,10 +55,18 @@ export default function ShopPage() {
       <ShopHeader />
       <main className="mx-auto w-full max-w-[72rem] px-4 pb-20 pt-8 sm:px-6">
         <header>
-          <p className="section-label">100% eggless · ready tomorrow</p>
+          <p className="section-label">Signature Cakes</p>
           <h1 className="font-display mt-2 text-[2.6rem] font-light leading-[1.05] tracking-tight sm:text-[3.4rem]">
             Pick your cake
           </h1>
+          <p className="mt-2 max-w-[46ch] text-[0.95rem] leading-relaxed text-muted-foreground">
+            Fifteen flavours we bake and decorate ourselves, 100% eggless, ready
+            tomorrow. Want one designed to your own brief instead?{" "}
+            <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
+              That&rsquo;s a custom cake
+            </a>
+            .
+          </p>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.84rem] text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <span className="inline-flex text-[#E3B664]" aria-hidden>
@@ -121,7 +129,8 @@ export default function ShopPage() {
 
         <p className="mt-10 rounded-xl border border-border bg-secondary/50 p-4 text-[0.86rem] leading-relaxed text-muted-foreground">
           <b className="font-semibold text-foreground">Want something made to your own design?</b>{" "}
-          Tiered cakes, photo prints and 3D toppers are quoted individually —{" "}
+          A Signature cake is ours to design and yours to collect tomorrow. Tiered
+          cakes, photo prints and 3D toppers are a custom build, quoted individually —{" "}
           <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
             tell us what you have in mind
           </a>

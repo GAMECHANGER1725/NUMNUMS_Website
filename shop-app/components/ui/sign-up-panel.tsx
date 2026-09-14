@@ -5,6 +5,7 @@ import { Eye, EyeOff, Loader2, PartyPopper, X } from "lucide-react";
 import { GoogleButton } from "@/components/ui/google-button";
 import { CouponCard } from "@/components/ui/coupon-card";
 import { Confetti, fireSideCannons, type ConfettiRef } from "@/components/ui/confetti";
+import { VerifyEmail } from "@/components/ui/verify-email";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
 import { type SignUpPrefs } from "@/lib/prefs";
 import { cn } from "@/lib/utils";
@@ -29,16 +30,22 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
   const [showPassword, setShowPassword] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [terms, setTerms] = useState(false);
-  // "done" splits: a Google sign-in is already verified, so sending that
-  // customer off to confirm an email that will never arrive is a dead end.
-  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "done-google">("idle");
+  // "done" splits three ways. A Google sign-in is already verified, so sending
+  // that customer off to confirm an email that will never arrive is a dead end;
+  // an email sign-up goes through "verify" and comes out the other side already
+  // signed in, so it never asks anyone to sign in twice.
+  const [status, setStatus] =
+    useState<"idle" | "submitting" | "verify" | "done" | "done-google">("idle");
   const [error, setError] = useState<string | null>(null);
   const confettiRef = useRef<ConfettiRef>(null);
 
   const emailValid = EMAIL_RE.test(email);
   const passwordValid = password.length >= MIN_PASSWORD;
-  // Optional, so blank passes; typed-but-wrong does not.
-  const phoneValid = phone.trim() === "" || MOBILE_RE.test(normalisePhone(phone));
+  // Required. The shop texts when a cake is ready and it is the only way to
+  // reach somebody about their own order, so a blank one is not an account we
+  // can serve. `create-checkout` enforces the same rule server-side.
+  const phoneValid = MOBILE_RE.test(normalisePhone(phone));
+  const phoneShown = phone.trim() === "" || phoneValid;
   const canSubmit = emailValid && passwordValid && phoneValid && terms && status === "idle";
 
   useEffect(() => {
@@ -47,7 +54,7 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
 
   function prefs(): SignUpPrefs {
     return {
-      phone: phone.trim() ? normalisePhone(phone) : "",
+      phone: normalisePhone(phone),
       // One tick, two channels — but kept as two fields so a later
       // "stop texting me" does not silently also stop the emails.
       marketing_email: marketing,
@@ -82,7 +89,7 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
       setStatus("idle");
       return;
     }
-    setStatus("done");
+    setStatus("verify");
   }
 
   return (
@@ -134,21 +141,19 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
 
         {/* Right — the form */}
         <div className="flex flex-col justify-center px-6 py-8 md:px-9 md:py-11">
-          {status === "done" || status === "done-google" ? (
+          {status === "verify" ? (
+            <VerifyEmail email={email} onVerified={() => setStatus("done")} />
+          ) : status === "done" || status === "done-google" ? (
             <div className="flex flex-col items-start gap-3 py-6">
               <PartyPopper className="h-9 w-9 text-[#C85478]" />
               <h3 className="font-display text-3xl font-light tracking-tight">
-                {status === "done-google" ? "You\u2019re in" : "Account created"}
+                You&rsquo;re in
               </h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {status === "done-google" ? (
-                  <>Your 10% code is on its way to your inbox.</>
-                ) : (
-                  <>
-                    Check <span className="font-medium text-foreground">{email}</span> to
-                    confirm your address. Your 10% code lands in the same inbox.
-                  </>
-                )}
+                {/* Verified means signed in — verifyOtp returns a session — so
+                    this never tells anybody to go and sign in again. */}
+                You&rsquo;re signed in and your 10% code is on its way to{" "}
+                <span className="font-medium text-foreground">{email}</span>.
               </p>
               {onClose && (
                 <button type="button" onClick={onClose} className="btn-cta mt-3">
@@ -222,9 +227,7 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                     <label htmlFor="su-phone" className="field-label mb-0">
                       Mobile
                     </label>
-                    <span className="rounded-full bg-[#F8EEE6] px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-[#C85478]">
-                      Recommended
-                    </span>
+
                   </div>
                   <input
                     id="su-phone"
@@ -235,13 +238,14 @@ export function SignUpPanel({ variant = "page", onClose, className }: SignUpPane
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     aria-describedby="su-phone-help"
-                    aria-invalid={!phoneValid}
-                    className={cn("field-input mt-1.5", !phoneValid && "border-destructive")}
+                    aria-invalid={!phoneShown}
+                    aria-required="true"
+                    className={cn("field-input mt-1.5", !phoneShown && "border-destructive")}
                   />
                   <p id="su-phone-help" className="mt-1 text-[0.72rem] leading-snug text-muted-foreground">
-                    {phoneValid
+                    {phoneShown
                       ? "We text you the moment your cake is ready to collect — no ringing the shop."
-                      : "That doesn't look like an Australian mobile. Leave it blank if you'd rather not."}
+                      : "That doesn't look like an Australian mobile."}
                   </p>
                 </div>
 

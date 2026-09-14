@@ -40,7 +40,11 @@ export default function CheckoutPage() {
   // Indicative only: create-checkout re-prices every line and re-validates the
   // coupon server-side, so this number can never decide what is charged.
   const discount = coupon ? Math.round((subtotal * coupon.percent) / 100) : 0;
-  const phoneValid = phone.trim() === "" || MOBILE_RE.test(normalisePhone(phone));
+  // Required, same as the sign-up form and same as create-checkout. It is how
+  // the shop says a cake is ready, and the only way to reach somebody about
+  // their own order.
+  const phoneValid = MOBILE_RE.test(normalisePhone(phone));
+  const phoneShown = phone.trim() === "" || phoneValid;
   const canPay = loaded && count > 0 && name.trim() !== "" && email.includes("@") && phoneValid && !busy;
 
   async function pay() {
@@ -51,7 +55,7 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name, email, phone: phone.trim() ? normalisePhone(phone) : "",
+          name, email, phone: normalisePhone(phone),
           coupon: coupon?.code ?? "", cart,
         }),
       });
@@ -106,18 +110,16 @@ export default function CheckoutPage() {
           <div className="sm:col-span-2">
             <div className="flex items-center gap-2">
               <label htmlFor="k-phone" className="field-label mb-0">Mobile</label>
-              <span className="rounded-full bg-[#F8EEE6] px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-[#C85478]">
-                Recommended
-              </span>
             </div>
             <input id="k-phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="0412 345 678"
-              aria-invalid={!phoneValid}
-              className={`field-input mt-1.5${phoneValid ? "" : " border-destructive"}`}
+              aria-invalid={!phoneShown}
+              aria-required="true"
+              className={`field-input mt-1.5${phoneShown ? "" : " border-destructive"}`}
               value={phone} onChange={(e) => setPhone(e.target.value)} />
             <p className="mt-1 text-[0.72rem] text-muted-foreground">
-              {phoneValid
+              {phoneShown
                 ? "We text you the moment your cake is ready to collect."
-                : "That doesn't look like an Australian mobile. Leave it blank if you'd rather not."}
+                : "That doesn't look like an Australian mobile."}
             </p>
           </div>
         </div>

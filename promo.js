@@ -39,6 +39,152 @@
     try { window[store].setItem(key, value); } catch (e) { /* no-op */ }
   }
 
+  /**
+   * The nav collapses to the hamburger below 1024px, not 640px.
+   *
+   * Each page's own stylesheet collapses it at 640, which was already tight
+   * and stopped fitting the day "Shop" became "Signature Cakes": the pill
+   * needs ~950px and a tablet at 768 pushed the page into a horizontal
+   * scroll. Injected here rather than edited into 243 inline <style> blocks,
+   * and deliberately a SEPARATE query — widening the existing one would drag
+   * the trust-bar and hero rules along with it.
+   */
+  function navBreakpointCss() {
+    if (document.getElementById('nn-nav-css')) return;
+    var st = document.createElement('style');
+    st.id = 'nn-nav-css';
+    st.textContent = '@media (min-width:641px) and (max-width:1024px){'
+      + '.nav-link{display:none!important;}'
+      + '#nav-indicator{display:none!important;}'
+      + '#nav-pill{background:transparent!important;border:none!important;'
+      + 'backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;}'
+      + '#mobile-menu-btn{display:flex!important;}'
+      + '.btn-hover-interactive{display:none!important;}'
+      + '#mobile-menu-btn.open .ham-bar:nth-child(1){transform:translateY(8px) rotate(45deg);}'
+      + '#mobile-menu-btn.open .ham-bar:nth-child(2){opacity:0;transform:scaleX(0.4);}'
+      + '#mobile-menu-btn.open .ham-bar:nth-child(3){transform:translateY(-8px) rotate(-45deg);}}';
+    document.head.appendChild(st);
+  }
+
+  navBreakpointCss();
+
+  /* ---------------------------------------------------- the account menu */
+
+  /**
+   * The person icon in the nav, and the little panel behind it.
+   *
+   * Injected rather than written into 243 static files, for the same reason
+   * the cart badge is painted here: this is the only script already on all of
+   * them. It mirrors the shop's own AccountMenu — two states, the same two
+   * doors signed out, the address you are signed in as and the way out signed
+   * in. Deliberately no "My orders": there is no order-history page, and a
+   * menu item that opens nothing is worse than an absent one.
+   *
+   * Signed-in detection is the same `sb-*-auth-token` match used to suppress
+   * the popup — derived from the project ref, so it survives a project change.
+   * Reading the email out of it is best effort: a shape we do not recognise
+   * just means the menu says "Signed in" without naming the address.
+   */
+  var ACCOUNT_CSS = ''
+    + '.nn-acct{position:relative;display:inline-flex;align-items:center;}'
+    + '.nn-acct-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;'
+    + 'height:38px;width:38px;margin-left:4px;border:0;background:transparent;border-radius:9999px;'
+    + 'color:inherit;cursor:pointer;padding:0;transition:background-color .16s ease,color .16s ease;}'
+    + '.nn-acct-btn:hover{background:rgba(200,84,120,0.12);color:#C85478;}'
+    + '.nn-acct-btn:focus-visible{outline:2px solid #C85478;outline-offset:2px;}'
+    + '.nn-acct-btn[aria-expanded="true"]{background:rgba(200,84,120,0.15);color:#C85478;}'
+    + '.nn-acct-dot{position:absolute;right:6px;top:6px;height:8px;width:8px;border-radius:9999px;'
+    + 'background:#C85478;box-shadow:0 0 0 2px #FFF8F2;}'
+    + '.nn-acct-pop{position:absolute;top:calc(100% + 8px);right:0;z-index:120;width:15rem;'
+    + 'max-width:calc(100vw - 24px);padding:8px;background:#FFF8F2;border:1px solid rgba(200,84,120,0.18);'
+    + 'border-radius:0.7rem;box-shadow:0 2px 6px rgba(44,26,14,.06),0 18px 38px -14px rgba(44,26,14,.28);'
+    + 'font-family:Jost,sans-serif;text-align:left;}'
+    + '.nn-acct-pop h4{margin:4px 8px 8px;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;'
+    + 'text-transform:uppercase;color:rgba(92,58,34,0.55);}'
+    + '.nn-acct-who{margin:0 8px 10px;padding-bottom:10px;font-size:0.84rem;font-weight:500;color:#2C1A0E;'
+    + 'border-bottom:1px solid rgba(200,84,120,0.15);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}'
+    + '.nn-acct-pop a,.nn-acct-pop button.nn-acct-item{display:block;width:100%;margin:6px 0 0;padding:10px 12px;'
+    + 'border-radius:9999px;font-size:0.85rem;font-weight:600;text-align:center;text-decoration:none;cursor:pointer;}'
+    + '.nn-acct-primary{background:#C85478;color:#FFF8F2;border:2px solid #C85478;}'
+    + '.nn-acct-primary:hover{background:#A03D5E;border-color:#A03D5E;}'
+    + '.nn-acct-ghost{background:transparent;color:#C85478;border:2px solid #C85478;}'
+    + '.nn-acct-ghost:hover{background:rgba(200,84,120,0.08);}';
+
+  function accountEmail() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!AUTH_KEY_RE.test(k)) continue;
+        var raw = localStorage.getItem(k);
+        // Newer supabase-js stores a base64- prefixed JSON blob.
+        if (raw && raw.indexOf('base64-') === 0) raw = atob(raw.slice(7));
+        var v = JSON.parse(raw);
+        var u = (v && v.user) || (v && v.currentSession && v.currentSession.user);
+        if (u && u.email) return u.email;
+        return '';   // signed in, address not readable from this shape
+      }
+    } catch (e) { /* private mode, or a shape we do not know */ }
+    return null;    // signed out
+  }
+
+  function mountAccount() {
+    var pill = document.getElementById('nav-cart');
+    if (!pill || document.querySelector('.nn-acct')) return;
+
+    var st = document.createElement('style');
+    st.textContent = ACCOUNT_CSS;
+    document.head.appendChild(st);
+
+    var who = accountEmail();
+    var wrap = document.createElement('span');
+    wrap.className = 'nn-acct';
+    wrap.innerHTML =
+      '<button type="button" class="nn-acct-btn" aria-expanded="false" aria-haspopup="dialog" aria-label="'
+      + (who === null ? 'Account' : 'Account menu') + '">'
+      + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"'
+      + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+      + (who === null ? '' : '<span class="nn-acct-dot"></span>')
+      + '</button>';
+
+    var pop = document.createElement('div');
+    pop.className = 'nn-acct-pop';
+    pop.hidden = true;
+    pop.innerHTML = '<h4>My account</h4>' + (who === null
+      ? '<a class="nn-acct-primary" href="/shop/log-in">Sign in</a>'
+        + '<a class="nn-acct-ghost" href="/shop/sign-up">Create an account</a>'
+      : '<p class="nn-acct-who">' + (who ? who.replace(/[<>&]/g, '') : 'Signed in') + '</p>'
+        + '<a class="nn-acct-ghost" href="/shop/cart">Your order</a>'
+        + '<button type="button" class="nn-acct-item nn-acct-primary" data-signout>Sign out</button>');
+    wrap.appendChild(pop);
+    pill.parentNode.insertBefore(wrap, pill.nextSibling);
+
+    var btn = wrap.querySelector('.nn-acct-btn');
+    function show(on) {
+      pop.hidden = !on;
+      btn.setAttribute('aria-expanded', String(on));
+    }
+    btn.addEventListener('click', function (e) { e.stopPropagation(); show(pop.hidden); });
+    document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) show(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !pop.hidden) { show(false); btn.focus(); }
+    });
+    var out = pop.querySelector('[data-signout]');
+    if (out) out.addEventListener('click', function () {
+      // No Supabase client on a static page, so the session is cleared the
+      // only way available here: drop its key and reload.
+      try {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (AUTH_KEY_RE.test(k)) localStorage.removeItem(k);
+        }
+      } catch (e) { /* no-op */ }
+      location.reload();
+    });
+  }
+
+  mountAccount();
+
   /* ------------------------------------------------------- the header cart */
 
   /**
@@ -59,7 +205,7 @@
     if (document.getElementById('nn-cart-css')) return;
     var st = document.createElement('style');
     st.id = 'nn-cart-css';
-    st.textContent = '@media (max-width:640px){'
+    st.textContent = '@media (max-width:1024px){'
       + '#nav-cart.nn-has-items{display:inline-flex!important;min-width:0!important;'
       + 'padding:7px 14px!important;font-size:0.75rem!important;'
       + 'background:#C85478!important;color:#fff!important;border-color:#C85478!important;}'
