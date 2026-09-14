@@ -581,11 +581,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- ══════════════════════════════════════ FILTER TABS ═══ -->
   <div style="background:#fff; border-bottom:1px solid rgba(200,84,120,0.10); position:sticky; top:68px; z-index:40;">
     <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem;">
-      <div class="no-scrollbar" style="overflow-x:auto; padding:14px 0; display:flex; align-items:center; gap:8px;">
-        <button class="filter-tab active" data-filter="all">All</button>
-        <button class="filter-tab" data-filter="wedding">Wedding</button>
-        <button class="filter-tab" data-filter="kids">Kids</button>
-        <button class="filter-tab" data-filter="baby-shower">Baby Shower</button>
+      <!-- The tabs scroll; the button does not. They are in separate flex
+           children with min-width:0 on the scroller, because an auto margin
+           inside an overflowing flex row pushes the button off the end of the
+           scroll on a phone — reachable only by swiping, which nobody does to
+           find a call to action. -->
+      <div style="display:flex; align-items:center; gap:12px; padding:14px 0;">
+        <div class="no-scrollbar gallery-tabs" style="flex:1 1 auto; min-width:0; overflow-x:auto; display:flex; align-items:center; gap:8px;">
+          <button class="filter-tab active" data-filter="all">All</button>
+          <button class="filter-tab" data-filter="wedding">Wedding</button>
+          <button class="filter-tab" data-filter="kids">Kids</button>
+          <button class="filter-tab" data-filter="baby-shower">Baby Shower</button>
+        </div>
+        <!-- Espresso, not rose: the selected filter is already a solid rose
+             pill, and two of those side by side read as two filters. This is
+             an action, so it gets the other brand colour and an arrow that
+             points where it actually goes — down this page, not away. -->
+        <a href="#custom-form" class="gallery-cta">Start my order<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></a>
       </div>
     </div>
   </div>
@@ -2045,6 +2057,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 .filter-tab.active { background: #C85478; color: #fff; border-color: #C85478; box-shadow: 0 4px 14px rgba(200,84,120,0.28); }
 .filter-tab:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
 .filter-tab:active { transform: scale(0.97); }
+/* A tab cut flat by the button's edge reads as clipped; a fade reads as
+   "there is more, swipe". On a wide screen the last 20px is empty space, so
+   the mask has nothing to fade and costs nothing. */
+.gallery-tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent); }
+.gallery-cta { flex:0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 9999px; background: #2C1A0E; color: #FFF8F2; font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.03em; text-decoration: none; white-space: nowrap; box-shadow: 0 4px 14px rgba(44,26,14,0.22); transition: background 0.2s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; }
+.gallery-cta:hover { background: #4A2E1A; box-shadow: 0 6px 18px rgba(44,26,14,0.30); }
+.gallery-cta:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
+.gallery-cta:active { transform: scale(0.97); }
+.gallery-cta svg { transition: transform 0.2s ease; }
+.gallery-cta:hover svg { transform: translateY(2px); }
+@media (max-width: 420px) { .gallery-cta { padding: 9px 14px; letter-spacing: 0.01em; } }
+@media (prefers-reduced-motion: reduce) { .gallery-cta, .gallery-cta svg { transition-duration: 0.01ms; } }
 /* Gallery card */
     .gallery-card { background: #2C1A0E; border-radius: 1.5rem; overflow: hidden; border: 1px solid rgba(200,84,120,0.10); box-shadow: 0 4px 20px rgba(44,26,14,0.10), 0 1px 4px rgba(44,26,14,0.06); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; }
 .gallery-card:hover { transform: translateY(-7px); box-shadow: 0 16px 44px -6px rgba(200,84,120,0.22), 0 6px 16px -2px rgba(44,26,14,0.12); }
