@@ -7,6 +7,8 @@ import { ShopHeader } from "@/components/ui/shop-header";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { QtyStepper } from "@/components/ui/qty-stepper";
 import { CouponField } from "@/components/ui/coupon-field";
+import { NnSelect } from "@/components/ui/select";
+import { NnDateField } from "@/components/ui/date-field";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
   availableHours, money, MAX_CAKES, STORES, type Cart,
@@ -196,27 +198,37 @@ export default function CartPage() {
               <div className="mt-3 grid gap-3 sm:grid-cols-3">
                 <div className="sm:col-span-3">
                   <label htmlFor="c-store" className="field-label">Shop</label>
-                  <select id="c-store" className="field-input" value={cart.store}
-                    onChange={(e) => update({ ...cart, store: e.target.value })}>
-                    <option value="">Choose a shop…</option>
-                    {STORES.map((s) => (
-                      <option key={s.code} value={s.code}>{s.label} — {s.address}</option>
-                    ))}
-                  </select>
+                  <NnSelect
+                    id="c-store"
+                    value={cart.store}
+                    onChange={(v) => update({ ...cart, store: v })}
+                    placeholder="Choose a shop…"
+                    ariaLabel="Shop to collect from"
+                    options={STORES.map((st) => ({
+                      value: st.code, label: st.label, note: st.address,
+                    }))}
+                  />
                 </div>
                 <div className="sm:col-span-2">
                   <label htmlFor="c-date" className="field-label">Collection date</label>
                   {/* min/max are convenience; the server rebuilds and re-checks both. */}
-                  <input id="c-date" type="date" className="field-input" value={cart.dueDate}
-                    min={minDueDate()} max={maxDueDate()}
-                    onChange={(e) => update({ ...cart, dueDate: e.target.value })} />
+                  <NnDateField
+                    id="c-date"
+                    value={cart.dueDate}
+                    min={minDueDate()}
+                    max={maxDueDate()}
+                    onChange={(v) => update({ ...cart, dueDate: v })}
+                  />
                 </div>
                 <div>
                   <label htmlFor="c-hour" className="field-label">Time</label>
-                  <select id="c-hour" className="field-input" value={cart.dueHour}
-                    onChange={(e) => update({ ...cart, dueHour: Number(e.target.value) })}>
-                    {hours.map((h) => <option key={h} value={h}>{hourLabel(h)}</option>)}
-                  </select>
+                  <NnSelect
+                    id="c-hour"
+                    value={String(cart.dueHour)}
+                    onChange={(v) => update({ ...cart, dueHour: Number(v) })}
+                    ariaLabel="Collection time"
+                    options={hours.map((h) => ({ value: String(h), label: hourLabel(h) }))}
+                  />
                 </div>
               </div>
               <p className="mt-2 text-[0.76rem] text-muted-foreground">

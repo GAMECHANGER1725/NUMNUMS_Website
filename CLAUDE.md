@@ -508,6 +508,46 @@ main site.
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
+## No OS controls, anywhere
+
+A native `<select>` or `<input type="date">` hands its list to the operating
+system — a grey iOS wheel, an Android system sheet, in somebody else's
+typeface. On a site this deliberately styled it is the one control that looks
+like another app. `order.html` replaced its own long ago; the shop now does too.
+
+- **`verify-blog.mjs` fails the deploy** on a native `<select>`, `type="date"`
+  or `type="time"` in `shop-app/**/*.tsx`, on a static page with a `<select>`
+  and no `.nd-*` enhancer, and on an enhancer with no `fit()`. All three are
+  two-line mistakes that are invisible until somebody taps the control.
+- **The shop uses `NnSelect` and `NnDateField`** (`shop-app/components/ui/`),
+  built on **Base UI** — already a dependency, so no new one. A listbox has to
+  answer type-ahead, Home/End, PageUp/Down, Escape, focus return and
+  `aria-activedescendant`; hand-rolling that is how a keyboard user ends up
+  unable to buy a cake. The calendar grid *is* hand-written, because a month of
+  buttons does not need a library — only its positioning does.
+- **A popup must fit the screen, and that is two properties, not one.** Base UI
+  publishes `--available-height` *and* `--available-width`; reading only the
+  height is how the calendar came to hang 12px off the right edge of a 320px
+  phone while passing every height check. `.nd-menu` sets `max-width`, the lists
+  set `max-height`, and `.nd-cal-day` carries **no** `min-width` — seven cells
+  have to divide whatever the narrowest phone gives them.
+- **The static enhancer measures before it opens.** `fit()` in `order.html`
+  compares the room above and below the field, flips to `.nd-up` when below is
+  smaller, and caps the height to what is actually there. Before it, the menu
+  was a fixed 264px pinned under the trigger and opened straight off the bottom
+  of the page. It re-fits on resize and scroll.
+- **The calendar picks its month when it opens, not on mount.** The cart is
+  empty on the first paint (`useSyncExternalStore`'s server snapshot), so a
+  one-time `useState` init read no date at all and a customer who had chosen
+  3 October reopened on September.
+- **Greyed days are the rule made visible**: inside the 48-hour lead time, or
+  past the 120-day horizon. A date you can pick and the server then refuses
+  reads as a broken form rather than as a rule.
+- Audited open at 320×568, 430×740, 900×420 and 1440×900, on the store list,
+  the ten-entry time list and the calendar: all inside the viewport, scrolling
+  inside themselves, no tap target under 32px. Re-run that sweep after touching
+  either component.
+
 ## Product cards — what a claim is allowed to say
 
 - **Every badge is a fact from the order book or an opinion marked as ours.**

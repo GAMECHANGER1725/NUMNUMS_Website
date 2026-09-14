@@ -298,6 +298,10 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       animation: nd-rise .16s cubic-bezier(.2,.9,.3,1);
     }
     .nd-compact .nd-menu { left: 0; right: auto; }
+    /* Opened upwards when there is no room underneath — see fit() below. */
+    .nd-menu.nd-up { top: auto; bottom: calc(100% + 5px); }
+    @keyframes nd-drop { from { transform: translateY(-8px); opacity: 0; } }
+    .nd-menu.nd-up { animation-name: nd-drop; }
     @keyframes nd-rise { from { transform: translateY(8px); opacity: 0; } }
 
     .nd-opt {
@@ -1748,13 +1752,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           items[row].scrollIntoView({ block: 'nearest' });
         }
 
+        // A menu that opens downward off the bottom of the screen is a menu
+        // you cannot reach — the list had a fixed 264px cap and no idea where
+        // the field was sitting. Measure the room on both sides, flip to
+        // whichever is bigger, and cap the height to what is actually there so
+        // it scrolls inside itself rather than off the page.
+        function fit() {
+          menu.classList.remove('nd-up');
+          menu.style.maxHeight = '';
+          var r = btn.getBoundingClientRect();
+          var GAP = 5, EDGE = 8, FLOOR = 120;
+          var below = window.innerHeight - r.bottom - GAP - EDGE;
+          var above = r.top - GAP - EDGE;
+          var needed = menu.scrollHeight;
+          var room = below;
+          if (needed > below && above > below) {
+            menu.classList.add('nd-up');
+            room = above;
+          }
+          menu.style.maxHeight = Math.max(FLOOR, Math.min(needed, room)) + 'px';
+        }
+
         function toggle(want) {
           if (want && open && open !== toggle) open(false);
           menu.hidden = !want;
           btn.setAttribute('aria-expanded', String(want));
           open = want ? toggle : null;
-          if (want) highlight(Math.max(0, rowOf()));
+          if (want) { fit(); highlight(Math.max(0, rowOf())); }
         }
+
+        // The room available changes underneath an open menu.
+        window.addEventListener('resize', function () { if (!menu.hidden) fit(); });
+        window.addEventListener('scroll', function () { if (!menu.hidden) fit(); }, { passive: true });
 
         function move(step) {
           var at = items.findIndex(function(it) { return it.classList.contains('is-active'); });

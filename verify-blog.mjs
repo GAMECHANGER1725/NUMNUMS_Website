@@ -463,6 +463,56 @@ const FACTS = {
   if (cat.listPriceCents('Slice', 'Vanilla') !== null) fail('listPriceCents must return null for a Slice, never NaN');
 }
 
+// ---------- No OS controls ----------
+// A native <select> or <input type="date"> hands its list to the operating
+// system: a grey iOS wheel, an Android system sheet, in somebody else's
+// typeface. On a site this deliberately styled it is the one control that
+// looks like another app, which is why order.html replaced its own and why
+// the shop now does too. This is the gate that stops one creeping back —
+// it is a two-line change to make and invisible until somebody taps it.
+{
+  const NATIVE = [
+    [/<select[\s>]/i, '<select> — use NnSelect (shop) or the .nd-* enhancer (static)'],
+    [/<input[^>]*type=["']?date["']?/i, 'type="date" — use NnDateField'],
+    [/<input[^>]*type=["']?time["']?/i, 'type="time" — use NnSelect for the hour'],
+  ];
+
+  // The shop's own source, where the message can name the component.
+  const srcDir = join(ROOT, 'shop-app');
+  if (existsSync(srcDir)) {
+    const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => {
+      if (e.name === 'node_modules' || e.name === 'out' || e.name === '.next') return [];
+      const full = join(d, e.name);
+      return e.isDirectory() ? walk(full) : /\.tsx$/.test(e.name) ? [full] : [];
+    });
+    for (const f of [...walk(join(srcDir, 'app')), ...walk(join(srcDir, 'components'))]) {
+      // Block comments only. These components' own doc comments name the
+      // control they replace, and stripping quoted strings instead would trip
+      // over an apostrophe inside a template literal — the same trap ops/
+      // verify.mjs documents.
+      const src = readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+      for (const [re, why] of NATIVE) {
+        if (re.test(src)) fail(`${f.replace(ROOT + '/', '')} uses a native ${why}`);
+      }
+    }
+  }
+
+  // Every static page that offers a choice must ship the enhancer that dresses
+  // it. A <select> with no .nd-btn on the page is a native one in production.
+  const statics = readdirSync(ROOT).filter((f) => f.endsWith('.html'));
+  for (const f of statics) {
+    const src = read(f);
+    if (/<select[\s>]/i.test(src) && !src.includes('.nd-btn')) {
+      fail(`${f} has a <select> but no .nd-* enhancer, so it renders the OS control`);
+    }
+    // A dropdown that cannot see the viewport opens off the bottom of a phone.
+    if (src.includes('.nd-btn') && !/function fit\(/.test(src)) {
+      fail(`${f}'s dropdowns have no fit() — the menu will open off-screen near the bottom of the page`);
+    }
+  }
+  notes.push('controls: no native select/date/time anywhere; static menus clamp to the viewport');
+}
+
 // ---------- Shop claims ----------
 // Urgency and scarcity claims have to be true at the moment a customer sees
 // them. The ACCC fined three retailers in June 2025 over misleading sale
