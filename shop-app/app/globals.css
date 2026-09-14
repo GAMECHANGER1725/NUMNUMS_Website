@@ -627,32 +627,3 @@
   height: 8px; width: 8px; border-radius: 9999px;
   background: #C85478; box-shadow: 0 0 0 2px #FFF8F2;
 }
-
-/* ---- "Our Cakes", the nav's two-range menu (see components/ui/cakes-menu) ---
-   The surface is the account popup's, deliberately: one panel shape for
-   everything that hangs off this nav. The static twin is CAKES_CSS in
-   promo.js and the two are meant to look identical side by side. */
-.nn-cakes-popup {
-  background: #FFF8F2;
-  border: 1px solid rgba(200, 84, 120, 0.18);
-  border-radius: 0.7rem;
-  box-shadow: 0 2px 6px rgba(44, 26, 14, .06), 0 18px 38px -14px rgba(44, 26, 14, .28);
-  max-width: var(--available-width);
-  transition: opacity .18s ease, transform .24s cubic-bezier(.34, 1.3, .64, 1);
-}
-.nn-cakes-popup[data-starting-style],
-.nn-cakes-popup[data-ending-style] { opacity: 0; transform: translateY(-5px); }
-/* Same 1024px line as .nn-nav-link: below it the pill is a hamburger, and a
-   hover menu means nothing on a touch screen. */
-@media (max-width: 1024px) { .nn-cakes-root { display: none; } }
-@media (prefers-reduced-motion: reduce) {
-  .nn-cakes-popup { transition-duration: .01ms; }
-}
-
-/* The hamburger's version of the same grouping (promo.js mirrors these). */
-#nn-mobile-menu > .nn-m-group {
-  margin: 0; padding: 18px 0 2px;
-  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em;
-  text-transform: uppercase; color: rgba(92, 58, 34, 0.45);
-}
-#nn-mobile-menu > a.nn-m-sub { padding-left: 14px; }

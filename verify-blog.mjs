@@ -591,34 +591,8 @@ const FACTS = {
   // The account menu is injected by promo.js rather than written into 243
   // files, so the check is that the code is still there to do it.
   const promo = read('promo.js');
-  for (const fn of ['mountAccount', 'paintCart', 'navBreakpointCss', 'mountCakesMenu']) {
+  for (const fn of ['mountAccount', 'paintCart', 'navBreakpointCss']) {
     if (!promo.includes(fn)) fail(`promo.js has lost ${fn}() — every static page loses that behaviour at once`);
-  }
-  // The two ranges live behind one "Our Cakes" trigger, in the same order and
-  // with the same names, on both sides of the site. They are written twice —
-  // CAKES_ITEMS in promo.js for the 243 static pages, ITEMS in cakes-menu.tsx
-  // for the shop — so the only thing stopping them drifting is this check.
-  // A nav that renames itself when you cross into /shop reads as a different
-  // company, which is the whole reason the shop copies the static header.
-  {
-    const inPromo = (promo.match(/name: '([^']+)'/g) || []).map((m) => m.slice(7, -1));
-    const tsx = read('shop-app/components/ui/cakes-menu.tsx');
-    const inShop = (tsx.match(/label: "([^"]+)"/g) || []).map((m) => m.slice(8, -1));
-    const want = ['Signature Flavours', 'Custom Cakes'];
-    if (String(inPromo) !== String(want)) {
-      fail(`promo.js CAKES_ITEMS reads [${inPromo}] — expected [${want}]`);
-    }
-    if (String(inShop) !== String(want)) {
-      fail(`cakes-menu.tsx ITEMS reads [${inShop}] — expected [${want}]`);
-    }
-    // The static markup keeps both plain links so the nav still works with JS
-    // off; the menu is an enhancement over them, never a replacement for them.
-    for (const f of navPages) {
-      if (!/<a href="\/order"[^>]*class="nav-link/.test(read(f))) {
-        fail(`${f}: no plain /order link left in the nav — with JS off the custom-cake page is unreachable`);
-      }
-    }
-    notes.push(`cakes menu: both sides offer ${want.join(' + ')} behind "Our Cakes"`);
   }
   notes.push(`nav: ${navPages.length} pages are shop-first, ${pills.length} carry the cart pill`);
 }
