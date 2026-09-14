@@ -642,12 +642,17 @@ in the footer only, and lead the homepage with products before any story.
   out of that shape — the markup has a dozen whitespace variants across those
   files, so a page that misses an edit looks completely normal and just quietly
   keeps sending people to the old door.
-- **"Our Cakes" is a menu over the two ranges, not a page.** Signature Flavours
-  (`/shop`) and Custom Cakes (`/order`) are one question with two answers — a
-  cake we designed or a cake you design — and as flat siblings they were being
-  compared against Locations and Blog. There is deliberately **no `/our-cakes`
-  page** behind the label: the last thing at that URL was `cakes.html`, which
-  was deleted for cannibalising `/order`.
+- **"Our Cakes" is a menu over the three, not a page.** Signature Flavours
+  (`/shop`), Build Your Cake (`/build-your-cake`) and Custom Cakes (`/order`)
+  are one question with three answers — buy one of ours, design your own, or
+  look at what we have made. As flat siblings they were being compared against
+  Locations and Blog. There is deliberately **no `/our-cakes` page** behind the
+  label: the last thing at that URL was `cakes.html`, which was deleted for
+  cannibalising `/order`.
+  - **The hamburger's list is rebuilt from `CAKES_ITEMS`, not from the DOM.**
+    `/build-your-cake` has no link in the 243 static navs, so a group built
+    from the markup leaves a phone as the one place the builder cannot be
+    reached from the menu.
   - The static copy is injected by `mountCakesMenu` in **promo.js**, the only
     script on all ~243 pages; the shop's twin is
     `shop-app/components/ui/cakes-menu.tsx`. The two item lists are written
@@ -680,10 +685,60 @@ in the footer only, and lead the homepage with products before any story.
 - **`About` left the nav and lives in the footer**; the footer also leads with
   **Shop Cakes**. Nothing was deleted — an orphaned page loses the internal
   links it ranks on.
-- **`/order` is labelled "Custom Cakes", because that is what it is.** It is the
-  quote form for a cake somebody draws, not the shop. The old label "Order
-  Online" promised the shop and delivered a form, which is the single most
-  expensive wrong word on the site.
+- **`/order` is the proof; `/build-your-cake` is the brief.** `/order` keeps
+  the galleries, the flavour guide, the serving calculator and the eggless
+  promise — everything that convinces somebody — and hands over with one CTA.
+  The quote form itself moved out. Do not put a second form back on `/order`.
+- **`/order` is labelled "Custom Cakes", because that is what it is.** The old
+  label "Order Online" promised the shop and delivered a form, which is the
+  single most expensive wrong word on the site.
+
+### `/build-your-cake` — the custom-cake brief
+
+The form that used to sit on `/order` asked **eleven decisions on one card**,
+3,468px down the page behind two thousand pixels of gallery. It is now six
+questions on their own page, never more than three fields on a screen.
+
+- **The win is fields per screen, not steps.** Baymard: *"the number of form
+  fields impacts overall usability far more than the number of steps."* So
+  adding a step to ask the same eleven things would buy nothing — the count
+  came down on the way (hour + minute + AM/PM became one time list). If you add
+  a question, take one out.
+- **The reference photo is question one.** It is the single most important
+  input for a custom cake and the old form never collected it — it only *asked
+  for it in a sentence* at the end of a WhatsApp message. It is read locally
+  with `URL.createObjectURL` and shown on the card, so the customer can see we
+  are holding it. ⚠️ **`wa.me` carries text only**, so the file still cannot
+  ride along; the card reminds them to attach it in the chat. Closing that
+  properly means POSTing the brief and the photo to Supabase through a Netlify
+  function with the service role (`cake-photos` is staff-only under RLS, so the
+  browser cannot upload directly) — **not done, and the biggest remaining gap
+  in the custom-cake path.**
+- **The card on the right is a pure render of one `brief` object.** There is no
+  second copy of the answers, so the card and the message cannot disagree.
+- **Its price table is a second copy of the price list, and it is gated.**
+  A static page cannot import `ops/catalog.mjs`, so `BASE` and `SURCHARGE` are
+  inline — exactly what `order.html` carried for months with nothing watching
+  it. `verify-blog.mjs` now diffs both against `FACTS` and fails the deploy on
+  a mismatch, and `build-your-cake.html` is in the page list the prose price
+  and serving checks walk.
+- **`LEAD_DAYS = 2`, and the gate enforces it.** A custom cake is 48 hours; the
+  shop is next day. They are different products and tidying one to match the
+  other books a cake the kitchen cannot make.
+- **On a phone the card moves ABOVE the questions** and drops to just the photo,
+  the wording and the price — watching the cake come together is the whole
+  point of it, and below the fold that never happens. The six rows come back on
+  the last step, where they are what is being checked. The card stays hidden
+  until there is something in it (`body.bld-started`).
+- **`go()` scrolls to the rail, not the panel.** Aiming at the panel pushed the
+  progress dots up behind the fixed nav at the exact moment somebody moved step.
+- The frosted glass is the site's own (`backdrop-filter: blur(22px)`), turned up
+  and put on espresso rather than cream. `@supports not (backdrop-filter)` is a
+  real fallback, not a nicety: older Safari drops it silently and 7% white on
+  espresso is an invisible panel.
+- `tests/build-your-cake.browser.mjs` drives all six steps plus every step at
+  seven widths. It needs Chrome and a live server, so the Netlify build cannot
+  run it.
 - **The success page is `/shop/thank-you`, not `/shop/order`** — that collided
   with `/order` in every conversation about this site. It is Stripe's
   `success_url`; renaming it means changing `create-checkout.mjs` too.

@@ -76,7 +76,7 @@ import puppeteer from 'puppeteer';
     ok(on.open && on.vis === 'visible', `${label}: hover did not open the menu`);
     ok(on.expanded === 'true', `${label}: aria-expanded is ${on.expanded}`);
     ok(on.inView, `${label}: menu overflows the viewport`);
-    ok(String(on.hrefs) === '/shop,/order', `${label}: items are ${on.hrefs}`);
+    ok(String(on.hrefs) === '/shop,/build-your-cake,/order', `${label}: items are ${on.hrefs}`);
     ok(on.minH >= 32, `${label}: smallest item is ${on.minH}px tall`);
     if (label === 'order') ok(String(on.current) === '/order', `order: aria-current is ${on.current}`);
 
@@ -109,7 +109,7 @@ import puppeteer from 'puppeteer';
     });
     ok(m.deskHidden === true, `${label}: the hover menu is still rendered at 390px`);
     const seq = m.order.join(' | ');
-    ok(/P:Our Cakes \| A:Signature Flavours \| A:Custom Cakes/.test(seq), `${label}: mobile menu reads ${seq}`);
+    ok(/P:Our Cakes \| A:Signature Flavours \| A:Build Your Cake \| A:Custom Cakes/.test(seq), `${label}: mobile menu reads ${seq}`);
 
     // horizontal overflow + JS errors
     const scroll = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
@@ -170,12 +170,13 @@ import puppeteer from 'puppeteer';
         minH: items.length ? Math.min(...items.map(a => a.getBoundingClientRect().height)) : 0,
       };
     });
-    ok(on.n === 2, `${path}: menu has ${on.n} items`);
+    ok(on.n === 3, `${path}: menu has ${on.n} items`);
     ok(on.inView, `${path}: menu overflows the viewport`);
     ok(on.minH >= 32, `${path}: smallest item ${on.minH}px`);
     ok(/Signature Flavours/.test(on.names[0] || ''), `${path}: first item is "${on.names[0]}"`);
-    ok(/Custom Cakes/.test(on.names[1] || ''), `${path}: second item is "${on.names[1]}"`);
-    const want = ['/shop', '/order'];  // basePath turns the app's own '/' into /shop
+    ok(/Build Your Cake/.test(on.names[1] || ''), `${path}: second item is "${on.names[1]}"`);
+  ok(/Custom Cakes/.test(on.names[2] || ''), `${path}: third item is "${on.names[2]}"`);
+    const want = ['/shop', '/build-your-cake', '/order'];  // basePath turns the app's own '/' into /shop
     ok(String(on.hrefs) === String(want), `${path}: hrefs are ${on.hrefs}, expected ${want}`);
     ok(errs.length === 0, `${path}: JS error ${errs[0]}`);
 

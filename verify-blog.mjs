@@ -240,7 +240,7 @@ const FACTS = {
 
 {
   const pages = [...posts.map((s) => `blog/${s}.html`),
-    'index.html', 'cakes.html', 'order.html', 'about.html',
+    'index.html', 'cakes.html', 'order.html', 'about.html', 'build-your-cake.html',
     'indian-sweet.html', 'locations.html', 'privacy-policy.html'].filter((f) => existsSync(join(ROOT, f)));
 
   const DASH = '(?:-|–|&ndash;)';
@@ -549,6 +549,56 @@ const FACTS = {
   }
 }
 
+// ---------- The builder's price table ----------
+// /build-your-cake quotes a starting price from its own inline BASE and
+// SURCHARGE objects, because a static page cannot import ops/catalog.mjs. That
+// is a second copy of the price list, which is the exact thing this project
+// has already paid for once — order.html carried one for months, gated by
+// nothing. The prose check above only reads sentences; these are JS literals,
+// so they need their own gate or they drift silently and quote the wrong
+// number to a customer.
+{
+  const src = read('build-your-cake.html');
+  const grab = (name) => {
+    const m = src.match(new RegExp(`var ${name} = (\\{[\\s\\S]*?\\n      \\};)`));
+    return m ? m[1].replace(/;$/, '') : null;
+  };
+  const baseRaw = src.match(/var BASE = \{([^}]*)\}/);
+  if (!baseRaw) {
+    fail('build-your-cake.html: cannot find its BASE price table — the gate below is now blind');
+  } else {
+    const got = {};
+    for (const m of baseRaw[1].matchAll(/'(\d+)':\s*(\d+)/g)) got[m[1]] = +m[2];
+    for (const [size, [, price]] of Object.entries(FACTS.sizes)) {
+      const want = Math.round(parseFloat(price) * 100);
+      if (got[size] !== want) {
+        fail(`build-your-cake.html: ${size}" base price is ${got[size]} cents, FACTS says ${want}`);
+      }
+    }
+    const extra = Object.keys(got).filter((k) => !FACTS.sizes[k]);
+    if (extra.length) fail(`build-your-cake.html: BASE has sizes we do not sell → ${extra.join(', ')}`);
+  }
+  for (const [flavour, bySize] of Object.entries(FACTS.surcharge)) {
+    const row = src.match(new RegExp(`'${flavour}':\\s*\\{([^}]*)\\}`));
+    if (!row) { fail(`build-your-cake.html: no surcharge row for ${flavour}`); continue; }
+    const got = {};
+    for (const m of row[1].matchAll(/'(\d+)':\s*(\d+)/g)) got[m[1]] = +m[2];
+    for (const [size, cents] of Object.entries(bySize)) {
+      if (got[size] !== cents) {
+        fail(`build-your-cake.html: ${flavour} ${size}" surcharge is ${got[size]} cents, FACTS says ${cents}`);
+      }
+    }
+  }
+  // A custom cake is 48 hours. The shop's next-day rule is a different product
+  // and the two are not interchangeable — tidying one to match the other books
+  // a cake the kitchen cannot make.
+  if (!/var LEAD_DAYS = 2\b/.test(src)) {
+    fail('build-your-cake.html: LEAD_DAYS is not 2 — a custom cake needs 48 hours, unlike the shop');
+  }
+  void grab;
+  notes.push('builder: inline price table and the 48-hour lead match FACTS');
+}
+
 // ---------- Navigation ----------
 // The site is shop-first: every page's nav opens with Shop, and /order is
 // labelled for what it is. That shape lives in 242 hand-written files with a
@@ -604,7 +654,7 @@ const FACTS = {
     const inPromo = (promo.match(/name: '([^']+)'/g) || []).map((m) => m.slice(7, -1));
     const tsx = read('shop-app/components/ui/cakes-menu.tsx');
     const inShop = (tsx.match(/label: "([^"]+)"/g) || []).map((m) => m.slice(8, -1));
-    const want = ['Signature Flavours', 'Custom Cakes'];
+    const want = ['Signature Flavours', 'Build Your Cake', 'Custom Cakes'];
     if (String(inPromo) !== String(want)) {
       fail(`promo.js CAKES_ITEMS reads [${inPromo}] — expected [${want}]`);
     }
