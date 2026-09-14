@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { cartStore, cartCount } from "@/lib/cart";
 import { AccountMenu } from "@/components/ui/account-menu";
+import { CakesMenu } from "@/components/ui/cakes-menu";
 
 /**
  * The site's header, rendered inside the shop.
@@ -23,13 +24,22 @@ import { AccountMenu } from "@/components/ui/account-menu";
  * Not rendered on `/checkout`. Nav in a payment flow is an exit, which is why
  * neither of the two chains we looked at puts it there either.
  */
+/*
+ * The two cake ranges moved behind "Our Cakes" (see CakesMenu) — they are one
+ * question with two answers, and as siblings here they read as two unrelated
+ * destinations. What is left is everything that is genuinely its own place.
+ */
 const NAV = [
-  { href: "/shop", label: "Signature Cakes", internal: true },
-  { href: "/cakes", label: "Our Cakes" },
   { href: "/indian-sweet", label: "Indian Sweets" },
-  { href: "/order", label: "Custom Cakes" },
   { href: "/locations", label: "Locations" },
   { href: "/blog/", label: "Blog" },
+];
+
+// The hamburger has no hover, so the pair is flattened back out under a
+// caption. An accordion here would be two taps to reach a page that is one.
+const MOBILE_CAKES = [
+  { href: "/", label: "Signature Flavours", internal: true },
+  { href: "/order", label: "Custom Cakes", internal: false },
 ];
 
 export function ShopHeader() {
@@ -67,17 +77,12 @@ export function ShopHeader() {
           </a>
 
           <div className="nn-pill">
-            {NAV.map((item) =>
-              item.internal ? (
-                <Link key={item.href} href="/" className="nn-nav-link nn-nav-active">
-                  {item.label}
-                </Link>
-              ) : (
-                <a key={item.href} href={item.href} className="nn-nav-link">
-                  {item.label}
-                </a>
-              ),
-            )}
+            <CakesMenu />
+            {NAV.map((item) => (
+              <a key={item.href} href={item.href} className="nn-nav-link">
+                {item.label}
+              </a>
+            ))}
 
             {showCart && (
             <Link href={cartHref} className={n ? "nn-cta nn-cta-full" : "nn-cta"}>
@@ -106,13 +111,19 @@ export function ShopHeader() {
       </nav>
 
       <div id="nn-mobile-menu" hidden={!open}>
-        {NAV.map((item) =>
+        <p className="nn-m-group">Our Cakes</p>
+        {MOBILE_CAKES.map((item) =>
           item.internal ? (
-            <Link key={item.href} href="/" onClick={() => setOpen(false)}>{item.label}</Link>
+            <Link key={item.href} href={item.href} className="nn-m-sub" onClick={() => setOpen(false)}>
+              {item.label}
+            </Link>
           ) : (
-            <a key={item.href} href={item.href}>{item.label}</a>
+            <a key={item.href} href={item.href} className="nn-m-sub">{item.label}</a>
           ),
         )}
+        {NAV.map((item) => (
+          <a key={item.href} href={item.href}>{item.label}</a>
+        ))}
         {showCart && (
           <div>
             <Link href={cartHref} onClick={() => setOpen(false)}>{cartLabel}</Link>

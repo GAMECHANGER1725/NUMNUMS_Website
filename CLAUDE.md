@@ -635,19 +635,48 @@ Modelled on how The Cheesecake Shop and Bannos actually lay their sites out:
 Both put every marketing page (our story, awards, franchising, store locator)
 in the footer only, and lead the homepage with products before any story.
 
-- **The nav is `Shop · Our Cakes · Indian Sweets · Custom Cakes · Locations ·
-  Blog`, plus the cart pill.** It is identical on all ~243 static pages and is
-  re-created in React by `shop-app/components/ui/shop-header.tsx`, so the shop
-  is not a second-looking website. `verify-blog.mjs` fails the deploy if a page
-  drifts out of that shape — the markup has a dozen whitespace variants across
-  those files, so a page that misses an edit looks completely normal and just
-  quietly keeps sending people to the old door.
-- **`/shop` and `/cakes` are different intents, not two doors.** `/shop` is the
-  transaction — 15 product pages, a cart, a card. `/cakes` is inspiration:
-  weddings, kids, baby showers, the flavour FAQ, the serving calculator. Its
-  URL, and every internal link to it, is untouched deliberately: it is an old
-  indexed page and this site has already paid once for cannibalising itself.
-  Do not merge them and do not point both at the same queries.
+- **The nav is `Our Cakes ▾ · Indian Sweets · Locations · Blog`, plus the cart
+  pill.** It is identical on all ~243 static pages and is re-created in React
+  by `shop-app/components/ui/shop-header.tsx`, so the shop is not a
+  second-looking website. `verify-blog.mjs` fails the deploy if a page drifts
+  out of that shape — the markup has a dozen whitespace variants across those
+  files, so a page that misses an edit looks completely normal and just quietly
+  keeps sending people to the old door.
+- **"Our Cakes" is a menu over the two ranges, not a page.** Signature Flavours
+  (`/shop`) and Custom Cakes (`/order`) are one question with two answers — a
+  cake we designed or a cake you design — and as flat siblings they were being
+  compared against Locations and Blog. There is deliberately **no `/our-cakes`
+  page** behind the label: the last thing at that URL was `cakes.html`, which
+  was deleted for cannibalising `/order`.
+  - The static copy is injected by `mountCakesMenu` in **promo.js**, the only
+    script on all ~243 pages; the shop's twin is
+    `shop-app/components/ui/cakes-menu.tsx`. The two item lists are written
+    twice on purpose and **gated** — `verify-blog.mjs` fails the deploy if the
+    names or their order drift apart, because a nav that renames itself when
+    you cross into `/shop` reads as a different company.
+  - **The static markup keeps both plain links.** The menu is an enhancement
+    over them, never a replacement: with JS off the nav still reaches both
+    pages, and the shop-first gate still reads the shape it expects. A gate
+    enforces that too — it found three blog posts that had never linked to
+    `/order` at all.
+  - **The container is found through the `/shop` link's parent, not by id.**
+    Most pages hold the nav in `#nav-pill`, some older posts use `#nav-links`,
+    and on at least one `#nav-pill` is the *sliding indicator div* — an id
+    lookup there finds an empty box and the menu silently never mounts.
+  - **It takes over the tubelight indicator for itself.** Each page's inline
+    script captures its link list before `promo.js` runs, so the two `<a>`s it
+    holds are detached the moment they move into the menu; on `/order` that
+    left the active page with no indicator at all, because a removed node
+    measures zero.
+  - **The trigger is a `<button>`, not a link.** A menu parent that navigates
+    on click fires the moment a mouse pauses on its way to the item below it,
+    landing you on a page you never chose.
+  - Below 1024px the pill is a hamburger and hover means nothing, so the pair
+    is **flattened back out** under an "Our Cakes" caption. An accordion there
+    would be two taps to reach a page that is one.
+- **`/cakes` no longer exists** — it was folded into `/order` and 301s there.
+  Do not add an internal link to it; the gate fails the deploy on one, because
+  it costs a redirect hop on every page load.
 - **`About` left the nav and lives in the footer**; the footer also leads with
   **Shop Cakes**. Nothing was deleted — an orphaned page loses the internal
   links it ranks on.

@@ -68,6 +68,201 @@
 
   navBreakpointCss();
 
+  /* ------------------------------------------------------ the cakes menu */
+
+  /**
+   * "Our Cakes" in the nav, with Signature Flavours and Custom Cakes behind it.
+   *
+   * The two ranges are one question with two answers — a cake we designed or a
+   * cake you design — and sitting them as siblings in a flat nav made a visitor
+   * compare them against Locations and Blog. Grouping them puts the choice
+   * where it belongs, and takes two labels off a pill that already needed the
+   * hamburger at 1024px.
+   *
+   * Injected here for the same reason as the account menu and the cart badge:
+   * this is the only script on all ~243 static pages. The static markup keeps
+   * both plain links, so with JS off the nav still reaches both pages — and
+   * `verify-blog.mjs`'s shop-first gate still reads the shape it expects.
+   *
+   * The trigger is a BUTTON, not a link. A menu parent that navigates on click
+   * fires the moment a mouse pauses on its way to the item below it, which
+   * lands you on a page you never chose.
+   *
+   * It takes over the tubelight indicator for itself. The inline script in each
+   * page captured its link list before this file runs, so the two <a>s it holds
+   * are detached the moment they move in here — on /order that left the active
+   * page with no indicator at all, because a removed node measures zero.
+   */
+  var CAKES_CSS = ''
+    + '.nn-cakes{position:relative;display:inline-flex;align-items:center;}'
+    + '.nn-cakes-btn{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;'
+    + 'cursor:pointer;font-family:Jost,sans-serif;font-weight:500;font-size:0.875rem;letter-spacing:0.02em;}'
+    + '.nn-cakes-btn svg{transition:transform .22s cubic-bezier(.34,1.3,.64,1);}'
+    + '.nn-cakes-btn[aria-expanded="true"] svg{transform:rotate(180deg);}'
+    // padding-top is the bridge: without it the pointer crosses a dead gap on
+    // its way from the trigger to the first item and the menu shuts underneath.
+    + '.nn-cakes-pop{position:absolute;top:100%;left:50%;z-index:120;padding-top:9px;'
+    + 'opacity:0;visibility:hidden;transform:translateX(-50%) translateY(-5px);'
+    + 'transition:opacity .18s ease,transform .24s cubic-bezier(.34,1.3,.64,1),visibility .18s;}'
+    + '.nn-cakes-pop.nn-open{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}'
+    + '.nn-cakes-card{width:17.5rem;max-width:calc(100vw - 24px);padding:6px;background:#FFF8F2;'
+    + 'border:1px solid rgba(200,84,120,0.18);border-radius:0.7rem;text-align:left;'
+    + 'box-shadow:0 2px 6px rgba(44,26,14,.06),0 18px 38px -14px rgba(44,26,14,.28);}'
+    + '.nn-cakes-item{display:block;padding:10px 13px;border-radius:0.5rem;text-decoration:none;'
+    + 'transition:background-color .16s ease;}'
+    + '.nn-cakes-item+.nn-cakes-item{margin-top:2px;}'
+    + '.nn-cakes-item:hover,.nn-cakes-item:focus-visible{background:rgba(200,84,120,0.08);outline:none;}'
+    + '.nn-cakes-item:focus-visible{box-shadow:inset 0 0 0 2px #C85478;}'
+    + '.nn-cakes-name{display:flex;align-items:center;gap:6px;font-family:Jost,sans-serif;'
+    + 'font-size:0.9rem;font-weight:600;line-height:1.25;color:#2C1A0E;}'
+    + '.nn-cakes-name svg{opacity:0;transform:translateX(-4px);transition:opacity .16s ease,transform .16s ease;}'
+    + '.nn-cakes-item:hover .nn-cakes-name svg,.nn-cakes-item:focus-visible .nn-cakes-name svg'
+    + '{opacity:1;transform:translateX(0);}'
+    + '.nn-cakes-item[aria-current="page"] .nn-cakes-name{color:#C85478;}'
+    + '.nn-cakes-desc{display:block;margin-top:3px;font-family:Jost,sans-serif;font-size:0.76rem;'
+    + 'line-height:1.4;color:rgba(92,58,34,0.62);}'
+    // The pill is hidden for the hamburger from 1024px down (see
+    // navBreakpointCss), and a hover menu has no meaning on a touch screen
+    // anyway — the mobile menu lists both, grouped, below.
+    + '@media (max-width:1024px){.nn-cakes{display:none!important;}}'
+    + '@media (prefers-reduced-motion:reduce){.nn-cakes-pop,.nn-cakes-btn svg,.nn-cakes-name svg'
+    + '{transition-duration:.01ms!important;}}'
+    + '.nn-m-group{margin:0;padding:18px 0 2px;font-family:Jost,sans-serif;font-size:0.68rem;'
+    + 'font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(92,58,34,0.45);}'
+    + '#mobile-menu > a.nn-m-sub{padding-left:14px;}';
+
+  var CHEV = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    + ' stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    + '<polyline points="6 9 12 15 18 9"/></svg>';
+  var ARROW = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C85478"'
+    + ' stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    + '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+
+  // What each range actually is. The difference between them is lead time and
+  // who draws the cake, so that is what the two lines say — a menu of two
+  // near-identical names with no subtitles makes the reader guess.
+  var CAKES_ITEMS = [
+    { href: '/shop',  name: 'Signature Flavours',
+      desc: '15 cakes, priced online. Ready tomorrow.' },
+    { href: '/order', name: 'Custom Cakes',
+      desc: 'Your design, quoted by us. 48 hours.' }
+  ];
+
+  function mountCakesMenu() {
+    if (document.querySelector('.nn-cakes')) return;
+    // Found through the link rather than by container id. Most pages hold the
+    // nav in #nav-pill, a handful of older posts use #nav-links — and on at
+    // least one, #nav-pill is the sliding indicator div, so an id lookup finds
+    // an empty box and the menu silently never mounts.
+    var shopLink = document.querySelector('a.nav-link[href="/shop"]');
+    if (!shopLink) return;
+    var pill = shopLink.parentNode;
+    var customLink = pill.querySelector('a.nav-link[href="/order"]');
+    if (!customLink) return;
+
+    var st = document.createElement('style');
+    st.id = 'nn-cakes-css';
+    st.textContent = CAKES_CSS;
+    document.head.appendChild(st);
+
+    var path = location.pathname.replace(/\/+$/, '') || '/';
+    var here = path === '/shop' || path.indexOf('/shop/') === 0 ? '/shop'
+             : path === '/order' ? '/order' : null;
+
+    var wrap = document.createElement('span');
+    wrap.className = 'nn-cakes';
+    wrap.innerHTML = '<button type="button" class="nav-link nn-cakes-btn" aria-expanded="false"'
+      + ' aria-haspopup="true">Our Cakes' + CHEV + '</button>'
+      + '<div class="nn-cakes-pop"><div class="nn-cakes-card" role="menu" aria-label="Our Cakes">'
+      + CAKES_ITEMS.map(function (it) {
+          return '<a class="nn-cakes-item" role="menuitem" href="' + it.href + '"'
+            + (here === it.href ? ' aria-current="page"' : '') + '>'
+            + '<span class="nn-cakes-name">' + it.name + ARROW + '</span>'
+            + '<span class="nn-cakes-desc">' + it.desc + '</span></a>';
+        }).join('')
+      + '</div></div>';
+
+    pill.insertBefore(wrap, shopLink);
+    shopLink.parentNode.removeChild(shopLink);
+    customLink.parentNode.removeChild(customLink);
+
+    var btn = wrap.querySelector('.nn-cakes-btn');
+    var pop = wrap.querySelector('.nn-cakes-pop');
+    var items = Array.prototype.slice.call(wrap.querySelectorAll('.nn-cakes-item'));
+    if (here) btn.classList.add('nav-active');
+
+    /* -- the tubelight indicator, which the page's own script can no longer
+          drive for these two pages because its link list is now detached -- */
+    var ind = document.getElementById('nav-indicator');
+    function place(el) {
+      if (!ind) return;
+      if (!el) { ind.style.width = '0'; return; }
+      var p = pill.getBoundingClientRect(), r = el.getBoundingClientRect();
+      ind.style.left = (r.left - p.left - 4) + 'px';
+      ind.style.width = r.width + 'px';
+    }
+    var activeEl = pill.querySelector('.nav-active');
+    if (here) requestAnimationFrame(function () { place(btn); });
+    btn.addEventListener('mouseenter', function () { place(btn); });
+    // Each remaining link's own mouseleave still returns the indicator to the
+    // stale active node it captured, so the pill gets the last word.
+    pill.addEventListener('mouseleave', function () { place(activeEl); });
+
+    var shut;
+    function show(on) {
+      window.clearTimeout(shut);
+      pop.classList.toggle('nn-open', on);
+      btn.setAttribute('aria-expanded', String(on));
+    }
+    function delayedClose() {
+      window.clearTimeout(shut);
+      shut = window.setTimeout(function () { show(false); }, 160);
+    }
+
+    wrap.addEventListener('mouseenter', function () { show(true); });
+    wrap.addEventListener('mouseleave', delayedClose);
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      show(btn.getAttribute('aria-expanded') !== 'true');
+    });
+    btn.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown' || e.key === 'Down') { e.preventDefault(); show(true); items[0].focus(); }
+    });
+    wrap.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' || e.key === 'Esc') { show(false); btn.focus(); return; }
+      var i = items.indexOf(document.activeElement);
+      if (i < 0) return;
+      if (e.key === 'ArrowDown' || e.key === 'Down') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+      if (e.key === 'ArrowUp' || e.key === 'Up') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+    });
+    // Tabbing past the last item, or clicking anywhere else, closes it.
+    wrap.addEventListener('focusout', function (e) {
+      if (!wrap.contains(e.relatedTarget)) show(false);
+    });
+    document.addEventListener('click', function (e) {
+      if (!wrap.contains(e.target)) show(false);
+    });
+
+    /* -- the same grouping in the hamburger, where hover means nothing -- */
+    var mob = document.getElementById('mobile-menu');
+    if (!mob || mob.querySelector('.nn-m-group')) return;
+    var mShop = mob.querySelector('a[href="/shop"]:not(#nav-cart-m)');
+    var mCustom = mob.querySelector('a[href="/order"]');
+    if (!mShop || !mCustom) return;
+    var cap = document.createElement('p');
+    cap.className = 'nn-m-group';
+    cap.textContent = 'Our Cakes';
+    mob.insertBefore(cap, mShop);
+    mShop.className = 'nn-m-sub';
+    mShop.textContent = CAKES_ITEMS[0].name;
+    mCustom.className = 'nn-m-sub';
+    // Sit the pair together; they are one choice, and Indian Sweets was
+    // between them.
+    mob.insertBefore(mCustom, mShop.nextSibling);
+  }
+
+  mountCakesMenu();
+
   /* ---------------------------------------------------- the account menu */
 
   /**
