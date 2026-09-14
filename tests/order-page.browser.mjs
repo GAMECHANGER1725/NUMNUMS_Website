@@ -48,23 +48,20 @@ for (const w of [320, 375, 430, 768, 1024, 1280, 1440]) {
   });
   ok(m, `@${w}: no .gallery-cta`);
   if (!m) { await p.close(); continue; }
-  ok(m.href === '/build-your-cake', `@${w}: href is ${m.href}`);
-  ok(m.text === 'Build your cake', `@${w}: reads "${m.text}"`);
+  ok(m.href === '#custom-form', `@${w}: href is ${m.href}`);
+  ok(m.text === 'Start my order', `@${w}: reads "${m.text}"`);
   ok(m.inView, `@${w}: button is not fully on screen (left ${m.left}, right ${m.right}, vw ${w})`);
   ok(m.afterTabs, `@${w}: button is not after the tab strip`);
   ok(m.h >= 32, `@${w}: button is ${m.h}px tall`);
   ok(m.bg === 'rgb(44, 26, 14)', `@${w}: button is ${m.bg}, expected espresso`);
 
-  // It now leaves the page for the builder, so the check is that the link
-  // actually lands there rather than that it scrolled.
-  await Promise.all([
-    p.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => null),
-    p.click('.gallery-cta'),
-  ]);
-  await new Promise(r => setTimeout(r, 600));
-  const landed = p.url();
-  ok(/\/build-your-cake$/.test(landed), `@${w}: landed on ${landed}`);
-  ok(await p.evaluate(() => !!document.querySelector('.bld-step.is-on')), `@${w}: builder did not render`);
+  // It jumps to the form, clear of the fixed nav. No hash to assert: Lenis
+  // intercepts every a[href^="#"], preventDefaults and animates instead, so
+  // the URL never changes on this page by design.
+  await p.click('.gallery-cta');
+  await new Promise(r => setTimeout(r, 2500));
+  const j = await p.evaluate(() => Math.round(document.getElementById('custom-form').getBoundingClientRect().top));
+  ok(j >= 60 && j < 200, `@${w}: form landed at top ${j} — under the 68px nav, or it never scrolled`);
   ok(errs.length === 0, `@${w}: JS error ${errs[0]}`);
   await p.close();
 }

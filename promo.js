@@ -142,12 +142,10 @@
   // who draws the cake, so that is what the two lines say — a menu of two
   // near-identical names with no subtitles makes the reader guess.
   var CAKES_ITEMS = [
-    { href: '/shop', name: 'Signature Flavours',
+    { href: '/shop',  name: 'Signature Flavours',
       desc: '15 cakes, priced online. Ready tomorrow.' },
-    { href: '/build-your-cake', name: 'Build Your Cake',
-      desc: 'Design your own, step by step. 48 hours.' },
     { href: '/order', name: 'Custom Cakes',
-      desc: 'Weddings, kids, baby showers — see our work.' }
+      desc: 'Your design, quoted by us. 48 hours.' }
   ];
 
   function mountCakesMenu() {
@@ -169,7 +167,6 @@
 
     var path = location.pathname.replace(/\/+$/, '') || '/';
     var here = path === '/shop' || path.indexOf('/shop/') === 0 ? '/shop'
-             : path === '/build-your-cake' ? '/build-your-cake'
              : path === '/order' ? '/order' : null;
 
     var wrap = document.createElement('span');
@@ -256,26 +253,12 @@
     cap.className = 'nn-m-group';
     cap.textContent = 'Our Cakes';
     mob.insertBefore(cap, mShop);
-
-    // Rebuilt from CAKES_ITEMS rather than from the two links that happen to
-    // be in the markup. /build-your-cake has no static counterpart — it is not
-    // in the 243 files' navs — so a phone would otherwise be the one place the
-    // builder is unreachable from the menu.
-    var have = {};
-    have[mShop.getAttribute('href')] = mShop;
-    have[mCustom.getAttribute('href')] = mCustom;
-    var prev = cap;
-    CAKES_ITEMS.forEach(function (it) {
-      var a = have[it.href];
-      if (!a) {
-        a = document.createElement('a');
-        a.setAttribute('href', it.href);
-      }
-      a.className = 'nn-m-sub';
-      a.textContent = it.name;
-      mob.insertBefore(a, prev.nextSibling);
-      prev = a;
-    });
+    mShop.className = 'nn-m-sub';
+    mShop.textContent = CAKES_ITEMS[0].name;
+    mCustom.className = 'nn-m-sub';
+    // Sit the pair together; they are one choice, and Indian Sweets was
+    // between them.
+    mob.insertBefore(mCustom, mShop.nextSibling);
   }
 
   mountCakesMenu();

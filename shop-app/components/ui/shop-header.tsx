@@ -39,7 +39,6 @@ const NAV = [
 // caption. An accordion here would be two taps to reach a page that is one.
 const MOBILE_CAKES = [
   { href: "/", label: "Signature Flavours", internal: true },
-  { href: "/build-your-cake", label: "Build Your Cake", internal: false },
   { href: "/order", label: "Custom Cakes", internal: false },
 ];
 

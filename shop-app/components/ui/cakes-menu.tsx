@@ -26,15 +26,9 @@ const ITEMS = [
     internal: true,
   },
   {
-    href: "/build-your-cake",
-    label: "Build Your Cake",
-    desc: "Design your own, step by step. 48 hours.",
-    internal: false,
-  },
-  {
     href: "/order",
     label: "Custom Cakes",
-    desc: "Weddings, kids, baby showers \u2014 see our work.",
+    desc: "Your design, quoted by us. 48 hours.",
     internal: false,
   },
 ] as const;

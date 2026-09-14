@@ -39,8 +39,7 @@ Address: 2/4 Nelson Road, Yennora NSW 2161
 - Indian Sweets: https://numnumsbakery.com.au/indian-sweet
 - About Us: https://numnumsbakery.com.au/about
 - Locations: https://numnumsbakery.com.au/locations
-- Build Your Cake (custom cake builder): https://numnumsbakery.com.au/build-your-cake
-- Custom Cake Gallery: https://numnumsbakery.com.au/order
+- Order Online: https://numnumsbakery.com.au/order
 - Privacy Policy: https://numnumsbakery.com.au/privacy-policy
 - Terms & Conditions: https://numnumsbakery.com.au/terms
 
@@ -317,10 +316,9 @@ per-kilogram prices by range (Kaju, Barfi, Peda, Milk Sweets, Laddoos) and per-p
 
 ## Ordering
 
-Custom cakes are made to order and quoted per design. To brief one, use the step-by-step
-builder at https://numnumsbakery.com.au/build-your-cake — it asks for the occasion, a reference
-photo, size, flavour, wording, and a collection date and shop, then hands the whole brief to the
-bakery on WhatsApp. You can also WhatsApp or call +61 425 697 725 directly. Minimum 48 hours
-notice is required for a custom cake. Multi-tier cakes are quoted individually. A deposit may be
-requested to confirm custom orders; final pricing and payment are agreed directly with the bakery.
-Examples of past work are at https://numnumsbakery.com.au/order.
+Num Num's Bakery does not currently sell online via a self-serve store. Cakes are custom and
+made to order. To order: WhatsApp or call +61 425 697 725, or use the order form at
+https://numnumsbakery.com.au/order, with your preferred date, design, and pickup location
+(Harris Park or Riverstone). Minimum 48 hours notice is required. Multi-tier cakes are quoted
+individually. A deposit may be requested to confirm custom orders; final pricing and payment are
+agreed directly with the bakery.
