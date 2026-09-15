@@ -549,6 +549,36 @@ const FACTS = {
   }
 }
 
+// ---------- The loading overlay ----------
+// Every page carries a full-screen skeleton. It used to clear on window
+// 'load', which waits for the hero video, GTM and the Meta pixel — and those
+// settle at 22-31s on this site, so the 3000ms fallback was doing 100% of the
+// work: every visitor waited 3s to see a page that had already painted at
+// 240-1168ms. Measured before the fix: overlay cleared at 3475-4369ms against
+// an FCP of 240-1168ms.
+//
+// The rule is simply that no page may gate anything on window 'load' again.
+// It is a one-word edit to reintroduce and invisible until somebody profiles
+// the site on a phone.
+{
+  const pages = [...readdirSync(ROOT).filter((f) => f.endsWith('.html')),
+    ...readdirSync(join(ROOT, 'blog')).filter((f) => f.endsWith('.html')).map((f) => `blog/${f}`)];
+  const OVERLAY = /id="(?:sk-overlay|page-skeleton|skeleton-overlay)"/;
+  const LOAD = /window\.addEventListener\(\s*['"]load['"]/;
+  const late = [];
+  let withOverlay = 0;
+  for (const f of pages) {
+    const src = read(f);
+    if (!OVERLAY.test(src)) continue;
+    withOverlay++;
+    if (LOAD.test(src)) late.push(f);
+  }
+  if (late.length) {
+    fail(`${late.length} page(s) gate on window 'load' again, which hides an already-painted page for seconds → ${late.slice(0, 5).join(', ')}`);
+  }
+  notes.push(`overlay: ${withOverlay} pages reveal at DOM readiness, none wait for window 'load'`);
+}
+
 // ---------- Navigation ----------
 // The site is shop-first: every page's nav opens with Shop, and /order is
 // labelled for what it is. That shape lives in 242 hand-written files with a

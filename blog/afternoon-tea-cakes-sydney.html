@@ -688,7 +688,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   })();
 
   // skeleton dismiss
-  window.addEventListener('load',function(){
+  function nnReveal(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(f);});else requestAnimationFrame(f);}nnReveal(function(){
     var sk=document.getElementById('page-skeleton');
     if(sk){sk.style.opacity='0';setTimeout(function(){sk.style.display='none';},420);}
   });

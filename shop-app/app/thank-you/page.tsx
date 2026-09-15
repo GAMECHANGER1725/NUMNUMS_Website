@@ -5,13 +5,21 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Confetti, fireSideCannons, type ConfettiRef } from "@/components/ui/confetti";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
-import { clearCart, money, STORES } from "@/lib/cart";
+import { clearCart, money, readCart, STORES } from "@/lib/cart";
+import { listPriceCents } from "@/lib/catalog";
+import { purchase } from "@/lib/analytics";
 
 type Status = { paid: boolean; order_nos?: string[]; due_at?: string; store?: string; total?: number };
 
 const POLL_MS = 1500;
 const GIVE_UP_AFTER = 12_000;
 const FIRED_KEY = "nn_order_celebrated";
+// Revenue needs a LONGER-lived guard than the confetti. sessionStorage is
+// per-tab: reopening the thank-you link in a new tab or a week later is a
+// fresh session, and GA4 does not reliably dedupe a repeated
+// transaction_id — so the same order would be banked twice. Re-firing the
+// cannons in that situation is harmless; re-firing `purchase` is not.
+const BANKED_KEY = "nn_order_banked_v1";
 
 export default function ThankYouPage() {
   const [status, setStatus] = useState<Status | null>(null);
@@ -33,8 +41,34 @@ export default function ThankYouPage() {
         const body: Status = await res.json();
         if (body.paid) {
           setStatus(body);
+          // Read the cart BEFORE clearing it: order-status returns the total
+          // but not the line items, and this is the last moment they exist.
+          const bought = readCart().lines.map((l) => ({
+            size: l.size,
+            flavour: l.flavour,
+            qty: l.qty ?? 1,
+            cents: listPriceCents(l.size, l.flavour) ?? 0,
+          }));
           clearCart();
-          // Guarded so a refresh does not re-fire the cannons.
+          // The same guard the cannons use, and for a stronger reason: a
+          // refresh that re-fires `purchase` books the same revenue twice.
+          // Only ever on a confirmed payment — this page is reachable by
+          // anyone with the URL, and Stripe can return before the webhook has
+          // written the order.
+          // Defaults to NOT banked: if storage is unavailable we cannot dedupe,
+          // and losing every private-mode purchase is a worse error than a rare
+          // duplicate, which needs the same link reopened in the same private
+          // session to happen at all.
+          let banked = false;
+          try { banked = localStorage.getItem(BANKED_KEY) === s; } catch { /* private mode */ }
+          if (!banked) {
+            try { localStorage.setItem(BANKED_KEY, s!); } catch { /* private mode */ }
+            purchase(
+              body.order_nos?.join(", ") ?? s!,
+              bought,
+              Math.round((body.total ?? 0) * 100),
+            );
+          }
           if (sessionStorage.getItem(FIRED_KEY) !== s) {
             try { sessionStorage.setItem(FIRED_KEY, s!); } catch { /* private mode */ }
             fireSideCannons(confettiRef.current);

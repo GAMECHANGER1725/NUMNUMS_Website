@@ -801,7 +801,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <script>
     // Skeleton dismiss
-    window.addEventListener('load', function() {
+    function nnReveal(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(f);});else requestAnimationFrame(f);}nnReveal(function() {
       var sk = document.getElementById('skeleton-overlay');
       if (sk) { setTimeout(function(){ sk.classList.add('hidden'); setTimeout(function(){ sk.remove(); }, 600); }, 200); }
     });

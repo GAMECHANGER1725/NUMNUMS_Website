@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Check, ChevronLeft, Star } from "lucide-react";
 import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES } from "@/lib/cart";
@@ -8,6 +8,7 @@ import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/cata
 import { copyFor } from "@/lib/flavour-copy";
 import { cakeFraming } from "@/lib/cake-framing";
 import { badgeFor, ORDER_BOOK } from "@/lib/badges";
+import { viewItem, addToCart } from "@/lib/analytics";
 import { useSyncExternalStore } from "react";
 
 const DEFAULT_SIZE = "8 inch";   // 47% of orders, and the middle of the ladder
@@ -31,10 +32,23 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
   const inCart = cartCount(cart);
   const full = inCart >= MAX_CAKES;
 
+  // One view_item per flavour per visit, not per size tap: changing the size
+  // chip is still the same product being considered, and firing again would
+  // report six views of a cake nobody looked at twice.
+  const seen = useRef<string | null>(null);
+  useEffect(() => {
+    if (seen.current === flavour) return;
+    seen.current = flavour;
+    viewItem({ size, flavour, cents: listPriceCents(size, flavour) ?? 0 });
+    // `size` is deliberately absent from the deps for the reason above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flavour]);
+
   function add() {
     if (full) return;
     // Same cake, same writing merges into a quantity — see addLine.
     writeCart(addLine(cart, { size, flavour, wording }));
+    addToCart({ size, flavour, cents });
     // Writing is cleared every time — one cake's name landing on the next is an
     // error that reaches the kitchen as a fact.
     setWording("");

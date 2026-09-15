@@ -416,8 +416,16 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         el.style.opacity = '0';
         setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 580);
       }
-      window.addEventListener('load', hideSkeleton);
-      setTimeout(hideSkeleton, 3000);
+      // Cleared at DOM readiness plus one frame — NEVER on window 'load'.
+      // 'load' waits for the hero video, GTM and the Meta pixel, which on
+      // this site settle at 22-31s, so the old 3000ms fallback was doing
+      // 100% of the work: every visitor waited 3s to see a page that had
+      // already painted at ~250-1200ms. The cap below is a safety net for
+      // a parse failure, not the normal path.
+      function revealPage(){ requestAnimationFrame(hideSkeleton); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', revealPage);
+      else revealPage();
+      setTimeout(hideSkeleton, 1200);
     })();
   </script>
 </div>

@@ -8,6 +8,7 @@ import { cartStore, writeCart, cartCount, money, STORES } from "@/lib/cart";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { listPriceCents } from "@/lib/catalog";
 import { supabase } from "@/lib/supabase";
+import { beginCheckout } from "@/lib/analytics";
 
 const MOBILE_RE = /^(?:\+?61|0)4\d{8}$/;
 const normalisePhone = (v: string) => v.replace(/[\s()-]/g, "");
@@ -50,6 +51,18 @@ export default function CheckoutPage() {
   async function pay() {
     setBusy(true);
     setError(null);
+    // Fired before the redirect, not after: once window.location changes this
+    // page is gone, and an event queued on a document that is unloading is an
+    // event that may never be sent.
+    beginCheckout(
+      cart.lines.map((l) => ({
+        size: l.size,
+        flavour: l.flavour,
+        qty: l.qty ?? 1,
+        cents: listPriceCents(l.size, l.flavour) ?? 0,
+      })),
+      subtotal - discount,
+    );
     try {
       const res = await fetch("/api/create-checkout", {
         method: "POST",
