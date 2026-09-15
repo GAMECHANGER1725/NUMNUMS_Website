@@ -688,7 +688,7 @@ export async function listPrintJobs() {
  * entire orders table pulled twice on every trip to the log.
  */
 export async function listPrintFlags() {
-  return pageAll(() => sb.from('print_jobs').select('order_id,kind,status'), 'listPrintFlags');
+  return pageAll(() => sb.from('print_jobs').select('order_id,kind,status,created_at'), 'listPrintFlags');
 }
 
 /** Orders still in play, for the "which cake is this for" picker. */

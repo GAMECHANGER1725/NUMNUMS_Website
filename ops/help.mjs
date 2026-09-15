@@ -1356,3 +1356,16 @@ export function tourSeen(userId) {
 export function markTourSeen(userId) {
   try { store()?.setItem(`${SEEN}:${userId}`, 'yes'); } catch { /* private mode; it just runs again */ }
 }
+
+// Same per-user pattern for the print board's notification dot: it should
+// flag jobs that arrived since this person last opened Prints, never the
+// whole backlog on their first sign-in on a new device.
+const PRINTS_SEEN = 'ops-prints-seen-v1';
+
+export function printsSeenAt(userId) {
+  try { return store()?.getItem(`${PRINTS_SEEN}:${userId}`); } catch { return null; }
+}
+
+export function markPrintsSeen(userId) {
+  try { store()?.setItem(`${PRINTS_SEEN}:${userId}`, new Date().toISOString()); } catch { /* private mode; dot just persists */ }
+}

@@ -324,6 +324,12 @@ button { background: none; border: 0; cursor: pointer; }
 .tab[aria-expanded="true"] { color: var(--rose); background: rgba(200,84,120,.09); }
 .tab svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.6; }
 .tab[aria-current="page"] { color: var(--rose); background: rgba(200,84,120,.09); }
+.tab { position: relative; }
+.tab-dot {
+  position: absolute; top: 3px; right: 50%; margin-right: -17px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--rose); border: 1.5px solid rgba(255,248,242,.95);
+}
 
 /* ── Sheet (order detail / new order) ───────────────────────────────────── */
 .sheet-scrim {

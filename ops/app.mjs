@@ -28,7 +28,7 @@ import {
 import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine, PAV, pavSize }
   from './catalog.mjs';
 import { receiptPdf, receiptName } from './receipt.mjs';
-import { helpHtml, startTour, tourSeen, markTourSeen } from './help.mjs';
+import { helpHtml, startTour, tourSeen, markTourSeen, printsSeenAt, markPrintsSeen } from './help.mjs';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -54,6 +54,7 @@ let bakeRange = null;    // the same filter over the baking queue, kept separate
 let printKind = '3d';    // active tab on the print board
 let printJobs = [];      // jobs for the active print view
 let printsByOrder = new Map();   // order id → its print jobs, for card flags
+let hasNewPrint = false;         // a job arrived since this person last opened Prints
 let analyticsPage = 'finance';   // which analytics page the drawer last opened
 let bakeStore = 'all';           // store filter on the baker's queue
 let beforeHelp = null;           // the view the ? button was pressed from
@@ -210,6 +211,7 @@ function buildTabs() {
       <button class="tab" data-tab="${t.key}" aria-current="${t.current ? 'page' : 'false'}">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg>
         <span>${t.label}</span>
+        ${t.key === 'prints' && hasNewPrint ? '<span class="tab-dot" aria-label="New print"></span>' : ''}
       </button>`).join('');
   $('tabbar').querySelectorAll('[data-tab]').forEach((b) =>
     b.addEventListener('click', () => go(b.dataset.tab)));
@@ -239,6 +241,11 @@ async function render() {
 
   for (const v of ['log', 'bake', 'prints', 'help', ...DRAWER_VIEWS]) $(`view-${v}`).classList.toggle('hidden', v !== view);
   $('help-btn').setAttribute('aria-pressed', String(view === 'help'));
+
+  // Opening the board itself is what clears the dot; any other view re-checks
+  // whether a job has arrived since it was last cleared.
+  if (view === 'prints') { markPrintsSeen(me.id); hasNewPrint = false; buildTabs(); }
+  else { await refreshPrintDot(); buildTabs(); }
 
   const PAINT = {
     log: renderLog, bake: renderBake, prints: renderPrints,
@@ -346,6 +353,23 @@ function paintOfflineBar() {
  * board belongs to — staff cannot read the table at all, and asking would just
  * return an empty list on every paint.
  */
+/**
+ * The tab-bar dot: a job arrived since this person last opened Prints. Checked
+ * on every render (the table stays small — a handful a week — so this is one
+ * cheap query, not a reason to build a caching layer) so it lights up even
+ * when the job came from someone else's phone. A never-seen device marks
+ * itself seen instead of flagging the whole backlog as new.
+ */
+async function refreshPrintDot() {
+  if (!TABS.prints.roles.includes(me.role)) { hasNewPrint = false; return; }
+  const seenAt = printsSeenAt(me.id);
+  if (seenAt === null) { markPrintsSeen(me.id); hasNewPrint = false; return; }
+  try {
+    const jobs = await listPrintFlags();
+    hasNewPrint = jobs.some((j) => j.status !== 'printed' && j.created_at > seenAt);
+  } catch { /* never hold up the worklist for a flag */ }
+}
+
 async function loadPrintFlags() {
   if (me.role !== 'admin' && me.role !== 'baker') { printsByOrder = new Map(); return; }
   try {
