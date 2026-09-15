@@ -520,7 +520,7 @@ main site.
   It is how the shop says a cake is ready and the only way to reach somebody
   about their own order, so a web order without one is one nobody can chase.
   `create-checkout` re-checks it — the browser's `MOBILE_RE` is a courtesy.
-- **Verification is a six-digit code, not a link, and it signs them in.** A
+- **Verification is an eight-digit code, not a link, and it signs them in.** A
   link opens a *different tab*, so the tab they filled the form in never learns
   they confirmed and sits on "check your email" forever; they come back, find
   it unchanged, and sign in again. `verifyOtp({ type: 'signup' })` returns a
@@ -542,16 +542,19 @@ main site.
   `smtp.resend.com:465`, username `resend`, password a **sending-only** API key.
   Turning custom SMTP on also lifted the auth email rate limit from **2/hour to
   30/hour** — the built-in provider's 2/hour is not a shop, it is a demo.
-- **"Email OTP length" in Supabase must stay 6, and it was 8.** The box is
-  `CODE_LEN = 6` in `shop-app/components/ui/verify-email.tsx`, with
-  `maxLength`, a `.slice(0, CODE_LEN)` on input, and an auto-submit the moment
-  six digits are typed. With the project issuing eight, a customer read
+- **"Email OTP length" in Supabase and `CODE_LEN` in
+  `shop-app/components/ui/verify-email.tsx` must always agree — both are 8.**
+  The project's OTP length was already 8 when this was first wired up, but the
+  box was hard-coded `CODE_LEN = 6`, with `maxLength`, a `.slice(0, CODE_LEN)`
+  on input, and an auto-submit the moment six digits are typed. A customer read
   `18924560` off the email, the field silently kept `189245`, submitted it
   itself, and answered *"That code doesn't match"* — forever, with nothing in
-  the UI naming the cause. Verified end to end on 2026-09-15 after setting it
-  to 6: signup → delivered → six-digit code → `verifyOtp` → session with
+  the UI naming the cause. Fixed by raising `CODE_LEN` to 8 to match Supabase
+  (not by lowering Supabase to 6) on 2026-09-15. Verified end to end: signup →
+  delivered → eight-digit code → `verifyOtp` → session with
   `email_confirmed_at` stamped, no second sign-in. **Changing either number
-  alone breaks the box**, and it breaks silently in exactly this way.
+  without the other breaks the box**, and it breaks silently in exactly this
+  way — grep both sides before touching either.
 - **The account menu is two states and no dead ends.** Signed out it offers
   sign in / create an account; signed in it names the address and offers the
   way out. It deliberately has **no "My orders"** — there is no order-history

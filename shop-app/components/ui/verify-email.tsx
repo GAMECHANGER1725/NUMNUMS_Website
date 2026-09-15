@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { Loader2, MailCheck } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-const CODE_LEN = 6;
+const CODE_LEN = 8;
 const RESEND_SECONDS = 45;
 
 /**
- * The six digits from the confirmation email, and then straight in.
+ * The eight digits from the confirmation email, and then straight in.
  *
  * A code, not a link, for one reason: a link opens a **different tab**, so the
  * tab the customer filled the form in never learns they confirmed and sits
