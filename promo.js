@@ -229,7 +229,12 @@
     // thing, the whole way through — and an empty cart still needs to be a
     // door into the shop, not a dead button.
     var label = n ? 'Your order (' + n + ')' : 'Order Now';
-    var href = n ? '/shop/cart' : '/shop';
+    // An empty cart is a door into the shop everywhere EXCEPT /order, where the
+    // page you are already on is the custom-cake order form. Sending the most
+    // prominent button on that page off to the Signature shop was the loudest
+    // of five links that routed people away from the thing they came to do.
+    var onOrderPage = location.pathname.replace(/\/+$/, '') === '/order';
+    var href = n ? '/shop/cart' : (onOrderPage ? '#custom-form' : '/shop');
 
     if (pill) {
       pill.setAttribute('href', href);
@@ -272,7 +277,13 @@
   // The legal pages are where this very form SENDS people. Covering the
   // document someone stepped out to read, with the offer they stepped out of,
   // is hostile.
-  if (/^\/(terms|privacy-policy)\/?$/.test(location.pathname)) return;
+  //
+  // /order is here for the same reason, one step further on: it is the custom
+  // cake form. This popup locks body scroll and can fire on a 50% scroll depth
+  // that a half-filled form reaches easily, so it covers somebody mid-order to
+  // sell them a discount on a later one. The shop is already excluded above;
+  // the other page that takes an order deserves the same.
+  if (/^\/(terms|privacy-policy|order)\/?$/.test(location.pathname)) return;
 
   var opened = false;
   var lastFocus = null;

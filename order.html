@@ -513,7 +513,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <a href="/order"     class="nav-link" data-page="order">Custom Cakes</a>
           <a href="/locations" class="nav-link" data-page="locations">Locations</a>
           <a href="/blog/" class="nav-link" data-page="blog">Blog</a>
-          <a href="/shop" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px; padding:8px 20px; font-size:0.8rem; position:relative; z-index:1; min-width:auto;">
+          <a href="#custom-form" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px; padding:8px 20px; font-size:0.8rem; position:relative; z-index:1; min-width:auto;">
             <span class="bhi-text">Order Now</span>
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
@@ -533,7 +533,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="/order">Custom Cakes</a>
     <a href="/locations">Locations</a>
     <a href="/blog/">Blog</a>
-    <div><a href="/shop" id="nav-cart-m">Order Now</a></div>
+    <div><a href="#custom-form" id="nav-cart-m">Order Now</a></div>
   </div>
 
   <!-- Sticky progress bar — mobile only. Mirrors #order-progress-bar so the
@@ -580,318 +580,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
-  <!-- ═════════════════════════════ WHAT WE HAVE MADE ═══
-       Moved here when /cakes was folded into this page. The gallery sits
-       ABOVE the form deliberately: nobody writes a brief for a cake they are
-       not yet sure you can make. The hero CTA jumps past it, for the people
-       who already know what they want. -->
-  <div id="gallery" style="scroll-margin-top:76px;">
-  <!-- ══════════════════════════════════════ FILTER TABS ═══ -->
-  <div style="background:#fff; border-bottom:1px solid rgba(200,84,120,0.10); position:sticky; top:68px; z-index:40;">
-    <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem;">
-      <div class="no-scrollbar" style="overflow-x:auto; padding:14px 0; display:flex; align-items:center; gap:8px;">
-        <button class="filter-tab active" data-filter="all">All</button>
-        <button class="filter-tab" data-filter="wedding">Wedding</button>
-        <button class="filter-tab" data-filter="kids">Kids</button>
-        <button class="filter-tab" data-filter="baby-shower">Baby Shower</button>
-      </div>
-    </div>
-  </div>
-
-  <section style="max-width:1280px; margin:0 auto; padding:1.5rem 1.5rem 3rem;">
-    <!-- ── WEDDING CAKES ── -->
-    <div class="gallery-category" data-category="wedding" style="margin-top:1.5rem;">
-      <div class="category-heading reveal">
-        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Wedding Cakes <span style="font-family:'Jost',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#C85478; background:rgba(200,84,120,0.10); padding:3px 10px; border-radius:9999px; vertical-align:middle; margin-left:8px;">Examples</span></h2>
-      </div>
-      <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:#5C3A22; margin:0 0 1.5rem;" class="reveal">Tiered, fondant, 100% eggless — priced from a photo.</p>
-      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
-
-        <div class="gallery-card cake-item reveal" data-category="wedding">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_White_1.jpg" alt="eggless white wedding cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Classic White Tier</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Elegant white fondant, multi-tier. 100% eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d1" data-category="wedding">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_White_2.jpg" alt="eggless ivory floral wedding cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Ivory Floral Tier</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Handcrafted floral details, ivory finish. Fully eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d2" data-category="wedding">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_Red_1.jpg" alt="eggless red wedding cake Harris Park" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Crimson Romance</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Bold red accents with floral crown. 100% eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d3" data-category="wedding">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_White_3.jpg" alt="eggless two-tier red velvet wedding cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Red Velvet Celebration</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Dramatic two-tier with red velvet crumb. Fully eggless.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="order-strip reveal">
-        <div>
-          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Love this style?</p>
-          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">All wedding cakes are custom made to order. Free quote, no obligation — send a photo and your date.</p>
-        </div>
-        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-          <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20quick%20question%20about%20a%20wedding%20cake." target="_blank" rel="noopener" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; color:#C85478; text-decoration:none;">Quick question? WhatsApp us</a>
-          <a href="/order" class="btn-cta">Order a Custom Wedding Cake</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── KIDS CAKES ── -->
-    <div class="gallery-category" data-category="kids" style="margin-top:1.5rem;">
-      <div class="category-heading reveal">
-        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Kids Birthday Cakes <span style="font-family:'Jost',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#C85478; background:rgba(200,84,120,0.10); padding:3px 10px; border-radius:9999px; vertical-align:middle; margin-left:8px;">Examples</span></h2>
-      </div>
-      <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:#5C3A22; margin:0 0 1.5rem;" class="reveal">Any character, any theme — we match the picture.</p>
-      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
-
-        <div class="gallery-card cake-item reveal" data-category="kids">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Dinosaur_1.webp" alt="eggless dinosaur birthday cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Dinosaur Adventure</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Roar into birthdays with this dino favourite. 100% eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d1" data-category="kids">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Elsa_1.webp" alt="eggless Frozen Elsa birthday cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Frozen Fantasy</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Icy-cool Elsa design for little royalty. Fully eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d2" data-category="kids">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Pink_1.webp" alt="eggless pink kids birthday cake Riverstone" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Pretty in Pink</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Dreamy pink layers perfect for any little one. 100% eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d3" data-category="kids">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Spiderman_1.webp" alt="eggless Spiderman birthday cake Harris Park" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Spider-Man Hero</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Your little superhero's dream cake. Fully eggless.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="order-strip reveal">
-        <div>
-          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Any character, any theme.</p>
-          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">Send us a photo of your child's favourite character. Free quote, no obligation.</p>
-        </div>
-        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-          <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20quick%20question%20about%20a%20kids%20birthday%20cake." target="_blank" rel="noopener" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; color:#C85478; text-decoration:none;">Quick question? WhatsApp us</a>
-          <a href="/order" class="btn-cta">Order a Custom Kids Cake</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── BABY SHOWER ── -->
-    <div class="gallery-category" data-category="baby-shower" style="margin-top:1.5rem;">
-      <div class="category-heading reveal">
-        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Baby Shower Cakes <span style="font-family:'Jost',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#C85478; background:rgba(200,84,120,0.10); padding:3px 10px; border-radius:9999px; vertical-align:middle; margin-left:8px;">Examples</span></h2>
-      </div>
-      <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:#5C3A22; margin:0 0 1.5rem;" class="reveal">Soft palettes, delicate detail — any theme, any size.</p>
-      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
-
-        <div class="gallery-card cake-item reveal" data-category="baby-shower">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_1.jpg" alt="eggless baby shower cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Sweet Arrival</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Delicate pastel design for welcoming a new baby. 100% eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d1" data-category="baby-shower">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_2.jpg" alt="eggless blush floral baby shower cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Blush & Bloom</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Soft blush with florals, timeless baby shower style. Fully eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d2" data-category="baby-shower">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_3.jpg" alt="eggless teddy bear baby shower cake Sydney" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Teddy &amp; Twinkles</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Adorable teddy detail, gold stars. 100% eggless.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-card cake-item reveal reveal-d3" data-category="baby-shower">
-          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
-            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_4.jpg" alt="eggless custom baby shower cake Riverstone" loading="lazy">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
-            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
-              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Oh Baby!</h3>
-              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Classic baby shower cake with a modern finish. Fully eggless.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="order-strip reveal">
-        <div>
-          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Welcoming a new arrival?</p>
-          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">Custom baby shower cakes, free quote, no obligation. Order at least 48 hours in advance.</p>
-        </div>
-        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-          <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20quick%20question%20about%20a%20baby%20shower%20cake." target="_blank" rel="noopener" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; color:#C85478; text-decoration:none;">Quick question? WhatsApp us</a>
-          <a href="/order" class="btn-cta">Order a Custom Baby Shower Cake</a>
-        </div>
-      </div>
-    </div>
-
-  </section>
-  </div>
-
-  <section style="padding:4rem 1.5rem 1rem; background:#FFF8F2;">
-    <div style="max-width:960px; margin:0 auto;">
-      <div style="margin-bottom:2.5rem; text-align:center;" class="reveal">
-        <div class="section-label" style="margin-bottom:1rem; justify-content:center;">Pricing</div>
-        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.6rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; margin:0 0 0.5rem;">How Many Guests?</h2>
-        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22; font-size:0.9rem; margin:0;">Drag for your guest count and we'll recommend the right cake size and price.</p>
-      </div>
-
-      <div class="ps-wrap reveal" id="pricing-slider-order">
-
-        <!-- Left card: guest count slider -->
-        <div class="ps-card ps-card-left cursor-card">
-          <!-- Info button -->
-          <button class="ps-info-btn" aria-label="View full pricing table" type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <!-- Tooltip -->
-            <div class="ps-tooltip" role="tooltip">
-              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,248,242,0.4);margin:0 0 0.75rem;">Full Pricing Guide</p>
-              <table style="width:100%;border-collapse:collapse;">
-                <thead>
-                  <tr>
-                    <th style="font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);">Size</th>
-                    <th style="font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);">Guests</th>
-                    <th style="font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:right;padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">6"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">6–8</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$39.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">8"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">12–14</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$49.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">10" ✦</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">20–22</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$74.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">12"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">25–30</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$89.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">14"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">40–45</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$114.99</td></tr>
-                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">16"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">50–55</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$134.99</td></tr>
-                </tbody>
-              </table>
-              <p style="font-family:'Jost',sans-serif;font-size:0.66rem;color:rgba(255,248,242,0.55);margin:0.7rem 0 0;line-height:1.6;border-top:1px solid rgba(255,248,242,0.08);padding-top:0.6rem;">✦ Most popular size. Send us your photo and we'll confirm the exact price before you pay anything.</p>
-              <p style="font-family:'Jost',sans-serif;font-size:0.66rem;color:rgba(255,248,242,0.4);margin:0.5rem 0 0;line-height:1.5;">Photo print +$20 · <b style="color:#E3B664;">Premium</b> flavours — Rasmalai +$10–$45 · Ferrero Rocher +$5–$35 by size.</p>
-            </div>
-          </button>
-
-          <p style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#C85478;margin:0 0 1rem;">Number of Guests</p>
-          <div class="ps-people-display">8 guests</div>
-          <input type="range" class="ps-slider" min="1" max="60" value="8" aria-label="Number of guests">
-          <!-- Need more -->
-          <div class="ps-custom-msg" style="display:none; margin-top:-1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background:rgba(200,84,120,0.07); border-radius:0.75rem; border:1px solid rgba(200,84,120,0.15);">
-            <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#5C3A22;margin:0;">Over 55 guests? We'll create a custom multi-tier cake for you. <a href="https://wa.me/61425697725" target="_blank" rel="noopener" style="color:#C85478;font-weight:600;text-decoration:none;">Contact us</a></p>
-          </div>
-          <a href="https://wa.me/61425697725" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:500;color:rgba(92,58,34,0.55);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#C85478'" onmouseleave="this.style.color='rgba(92,58,34,0.55)'">
-            Need something larger? Contact us
-          </a>
-        </div>
-
-        <!-- Right card: cake recommendation -->
-        <div class="ps-card ps-card-right cursor-card" style="display:flex;flex-direction:column;justify-content:space-between;">
-          <div>
-            <p style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(92,58,34,0.5);margin:0 0 0.75rem;">Your Cake</p>
-            <span class="ps-popular" style="display:none;padding:3px 10px;border-radius:9999px;background:#2C1A0E;font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;margin-bottom:0.5rem;"></span>
-            <div class="ps-size-display">6"</div>
-            <div class="ps-price-display">$39.99</div>
-            <p class="ps-serves" style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:#5C3A22;margin:0 0 1.5rem;line-height:1.5;">Serves 6–8 guests</p>
-          </div>
-          <a href="https://wa.me/61425697725" target="_blank" rel="noopener" class="btn-cta ps-order-btn" style="align-self:flex-start;background:#25D366;box-shadow:0 4px 14px rgba(37,211,102,0.25);" onmouseenter="this.style.background='#1DAD56'" onmouseleave="this.style.background='#25D366'">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-            WhatsApp to Order
-          </a>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
   <!-- ══════════════════════════════════ CUSTOM ORDERS ═══ -->
   <section id="custom-form" style="padding:4rem 1.5rem 4rem; scroll-margin-top:80px;">
     <div style="max-width:960px; margin:0 auto;">
 
-      <div style="text-align:center; margin-bottom:3rem;" class="reveal">
+      <div style="text-align:center; margin-bottom:1.5rem;" class="reveal">
         <div class="section-label" style="justify-content:center; margin-bottom:1rem;">Custom Cakes</div>
         <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.6rem); font-weight:600; letter-spacing:-0.03em; color:#2C1A0E; margin:0 0 0.5rem;">
           Order a Custom Cake
         </h2>
-        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22; max-width:440px; margin:0 auto;">
-          We can make any cake you can imagine: any design, any size, any occasion. Not just what's on our website. Message us or give us a call. We just need 48 hours notice.
-        </p>
       </div>
 
       <!-- Order cards -->
@@ -902,7 +599,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,0.10);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
             <span class="material-symbols-outlined" style="font-size:1.5rem;color:#25D366;">chat</span>
           </div>
-          <h3 class="font-display" style="font-size:1.4rem;font-weight:600;color:#2C1A0E;margin:0 0 0.4rem;letter-spacing:-0.02em;">Build Your Cake</h3>
           <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0 0 0.85rem;line-height:1.6;">Fill in the details below and we'll pre-fill a WhatsApp message with your cake, ready to send.</p>
 
           <!-- GOAL-GRADIENT PROGRESS -->
@@ -936,11 +632,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <!-- Calendar popover -->
               <div id="cal-popover" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:200;background:#fff;border:1px solid rgba(200,84,120,0.15);border-radius:1.25rem;padding:1rem 1rem 0.75rem;box-shadow:0 8px 32px rgba(44,26,14,0.14);min-width:272px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                  <button type="button" id="cal-prev" style="width:28px;height:28px;border-radius:50%;border:1px solid rgba(200,84,120,0.15);background:transparent;color:#5C3A22;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;outline:none;" aria-label="Previous month">
+                  <button type="button" id="cal-prev" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(200,84,120,0.15);background:transparent;color:#5C3A22;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;outline:none;" aria-label="Previous month">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                   </button>
                   <span id="cal-month-label" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;color:#2C1A0E;letter-spacing:-0.01em;"></span>
-                  <button type="button" id="cal-next" style="width:28px;height:28px;border-radius:50%;border:1px solid rgba(200,84,120,0.15);background:transparent;color:#5C3A22;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;outline:none;" aria-label="Next month">
+                  <button type="button" id="cal-next" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(200,84,120,0.15);background:transparent;color:#5C3A22;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;outline:none;" aria-label="Next month">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                   </button>
                 </div>
@@ -952,28 +648,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <!-- TIME PICKER -->
+          <!-- One list, not three. Hour + minute + AM/PM was six taps and the
+               commonest way to end up with a half-filled time; it is also what
+               made the 48-hour rule contradict itself, because the default
+               10:00 AM could sit inside the lead time on the earliest date the
+               calendar offered. The .nd-* enhancer dresses this automatically,
+               so it stays a custom control. -->
           <div style="margin-bottom:0.85rem;">
-            <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Pickup Time</label>
-            <div style="display:flex;align-items:center;gap:5px;">
+            <label for="ord-time" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Pickup Time</label>
+            <div style="display:flex;align-items:center;gap:6px;">
               <span class="material-symbols-outlined" style="font-size:1.05rem;color:rgba(92,58,34,0.4);font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;flex-shrink:0;">schedule</span>
-              <div style="position:relative;">
-                <select id="ord-hour" data-dd="compact" data-dd-label="Pickup hour" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option selected>10</option><option>11</option><option>12</option>
+              <div style="position:relative;flex:1;">
+                <select id="ord-time" data-dd-label="Pickup time" style="width:100%;padding:8px 24px 8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
+                  <option>9:00 AM</option><option>9:30 AM</option><option selected>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>12:30 PM</option><option>1:00 PM</option><option>1:30 PM</option><option>2:00 PM</option><option>2:30 PM</option><option>3:00 PM</option><option>3:30 PM</option><option>4:00 PM</option><option>4:30 PM</option><option>5:00 PM</option><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option>
                 </select>
-                <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
-              <span style="font-family:'Jost',sans-serif;font-size:0.9rem;color:#5C3A22;font-weight:500;line-height:1;">:</span>
-              <div style="position:relative;">
-                <select id="ord-min" data-dd="compact" data-dd-label="Pickup minute" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <option>00</option><option>15</option><option>30</option><option>45</option>
-                </select>
-                <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
-              <div style="position:relative;">
-                <select id="ord-ampm" data-dd="compact" data-dd-label="AM or PM" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <option>AM</option><option>PM</option>
-                </select>
-                <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg style="position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
             </div>
           </div>
@@ -987,9 +676,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>
 
-          <!-- FLAVOUR + OCCASION -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-bottom:0.85rem;" id="form-row-1">
-            <div>
+          <!-- FLAVOUR -->
+          <!-- Occasion used to sit beside this as a required field. It is gone:
+               the design notes and the wording say what the cake is for, and we
+               ask again on WhatsApp anyway, so it was two taps that told us
+               nothing we did not already learn. Required fields: 6 -> 5. -->
+          <div style="margin-bottom:0.85rem;" id="form-row-1">
               <label for="cake-flavour" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Flavour</label>
               <div style="position:relative;">
                 <select id="cake-flavour" style="width:100%;padding:8px 24px 8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
@@ -1004,19 +696,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </div>
               <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
             </div>
-            <div>
-              <label for="cake-occasion" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Occasion</label>
-              <div style="position:relative;">
-                <select id="cake-occasion" style="width:100%;padding:8px 24px 8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <option value="">Occasion…</option>
-                  <option>Birthday</option><option>Wedding</option>
-                  <option>Baby Shower</option><option>Anniversary</option><option>Other</option>
-                </select>
-                <svg style="position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
-              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
-            </div>
-          </div>
 
           <!-- WORDING + SIZE -->
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-bottom:0.85rem;" id="form-row-2">
@@ -1130,6 +809,306 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </section>
 
   <!-- [Duplicate hidden form section removed — duplicate IDs eliminated] -->
+
+  <!-- ═════════════════════════════ WHAT WE HAVE MADE ═══
+       Moved here when /cakes was folded into this page. The gallery sits
+       ABOVE the form deliberately: nobody writes a brief for a cake they are
+       not yet sure you can make. The hero CTA jumps past it, for the people
+       who already know what they want. -->
+  <div id="gallery" style="scroll-margin-top:76px;">
+  <!-- ══════════════════════════════════════ FILTER TABS ═══ -->
+  <div style="background:#fff; border-bottom:1px solid rgba(200,84,120,0.10); position:sticky; top:68px; z-index:40;">
+    <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem;">
+      <div class="no-scrollbar" style="overflow-x:auto; padding:14px 0; display:flex; align-items:center; gap:8px;">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="wedding">Wedding</button>
+        <button class="filter-tab" data-filter="kids">Kids</button>
+        <button class="filter-tab" data-filter="baby-shower">Baby Shower</button>
+      </div>
+    </div>
+  </div>
+
+  <section style="max-width:1280px; margin:0 auto; padding:1.5rem 1.5rem 3rem;">
+    <!-- ── WEDDING CAKES ── -->
+    <div class="gallery-category" data-category="wedding" style="margin-top:1.5rem;">
+      <div class="category-heading reveal">
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Wedding Cakes <span style="font-family:'Jost',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#C85478; background:rgba(200,84,120,0.10); padding:3px 10px; border-radius:9999px; vertical-align:middle; margin-left:8px;">Examples</span></h2>
+      </div>
+      <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:#5C3A22; margin:0 0 1.5rem;" class="reveal">Tiered, fondant, 100% eggless — priced from a photo.</p>
+      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
+
+        <div class="gallery-card cake-item reveal" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_White_1.jpg" alt="eggless white wedding cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Classic White Tier</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Elegant white fondant, multi-tier. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_White_2.jpg" alt="eggless ivory floral wedding cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Ivory Floral Tier</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Handcrafted floral details, ivory finish. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_Red_1.jpg" alt="eggless red wedding cake Harris Park" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Crimson Romance</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Bold red accents with floral crown. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="wedding">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Wedding%20Cakes/Wedding_White_3.jpg" alt="eggless two-tier red velvet wedding cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Red Velvet Celebration</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Dramatic two-tier with red velvet crumb. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="order-strip reveal">
+        <div>
+          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Love this style?</p>
+          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">All wedding cakes are custom made to order. Free quote, no obligation — send a photo and your date.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20quick%20question%20about%20a%20wedding%20cake." target="_blank" rel="noopener" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; color:#C85478; text-decoration:none;">Quick question? WhatsApp us</a>
+          <a href="#custom-form" class="btn-cta">Order a Custom Wedding Cake</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── KIDS CAKES ── -->
+    <div class="gallery-category" data-category="kids" style="margin-top:1.5rem;">
+      <div class="category-heading reveal">
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Kids Birthday Cakes <span style="font-family:'Jost',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#C85478; background:rgba(200,84,120,0.10); padding:3px 10px; border-radius:9999px; vertical-align:middle; margin-left:8px;">Examples</span></h2>
+      </div>
+      <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:#5C3A22; margin:0 0 1.5rem;" class="reveal">Any character, any theme — we match the picture.</p>
+      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
+
+        <div class="gallery-card cake-item reveal" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Dinosaur_1.webp" alt="eggless dinosaur birthday cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Dinosaur Adventure</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Roar into birthdays with this dino favourite. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Elsa_1.webp" alt="eggless Frozen Elsa birthday cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Frozen Fantasy</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Icy-cool Elsa design for little royalty. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Pink_1.webp" alt="eggless pink kids birthday cake Riverstone" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Pretty in Pink</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Dreamy pink layers perfect for any little one. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="kids">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Kids%20Cakes/Spiderman_1.webp" alt="eggless Spiderman birthday cake Harris Park" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Spider-Man Hero</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Your little superhero's dream cake. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="order-strip reveal">
+        <div>
+          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Any character, any theme.</p>
+          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">Send us a photo of your child's favourite character. Free quote, no obligation.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20quick%20question%20about%20a%20kids%20birthday%20cake." target="_blank" rel="noopener" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; color:#C85478; text-decoration:none;">Quick question? WhatsApp us</a>
+          <a href="#custom-form" class="btn-cta">Order a Custom Kids Cake</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BABY SHOWER ── -->
+    <div class="gallery-category" data-category="baby-shower" style="margin-top:1.5rem;">
+      <div class="category-heading reveal">
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.4rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; white-space:nowrap; margin:0;">Baby Shower Cakes <span style="font-family:'Jost',sans-serif; font-size:0.75rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#C85478; background:rgba(200,84,120,0.10); padding:3px 10px; border-radius:9999px; vertical-align:middle; margin-left:8px;">Examples</span></h2>
+      </div>
+      <p style="font-family:'Jost',sans-serif; font-size:0.85rem; font-weight:400; color:#5C3A22; margin:0 0 1.5rem;" class="reveal">Soft palettes, delicate detail — any theme, any size.</p>
+      <div class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem; margin-bottom:1rem;">
+
+        <div class="gallery-card cake-item reveal" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_1.jpg" alt="eggless baby shower cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Sweet Arrival</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Delicate pastel design for welcoming a new baby. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d1" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_2.jpg" alt="eggless blush floral baby shower cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Blush & Bloom</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Soft blush with florals, timeless baby shower style. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d2" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_3.jpg" alt="eggless teddy bear baby shower cake Sydney" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Teddy &amp; Twinkles</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Adorable teddy detail, gold stars. 100% eggless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-card cake-item reveal reveal-d3" data-category="baby-shower">
+          <div style="position:relative; aspect-ratio:3/4; overflow:hidden; background:#FFF8F2;">
+            <img width="360" height="480" src="cake_photos/Baby%20Shower/Baby_Shower_4.jpg" alt="eggless custom baby shower cake Riverstone" loading="lazy">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(44,26,14,0.90) 0%,rgba(44,26,14,0.40) 42%,transparent 72%);pointer-events:none;"></div>
+            <div style="position:absolute;inset:0;background:rgba(200,84,120,0.07);mix-blend-mode:multiply;pointer-events:none;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.25rem 1.3rem;">
+              <h3 class="font-display" style="font-size:1.15rem;font-weight:600;color:#fff;margin:0 0 5px;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(44,26,14,0.5);">Oh Baby!</h3>
+              <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.8rem;color:rgba(255,255,255,0.85);margin:0;line-height:1.5;text-shadow:0 1px 4px rgba(44,26,14,0.5);">Classic baby shower cake with a modern finish. Fully eggless.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="order-strip reveal">
+        <div>
+          <p style="font-family:'Jost',sans-serif; font-size:0.9rem; font-weight:500; color:#2C1A0E; margin:0 0 2px;">Welcoming a new arrival?</p>
+          <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:300; color:#5C3A22; margin:0;">Custom baby shower cakes, free quote, no obligation. Order at least 48 hours in advance.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20quick%20question%20about%20a%20baby%20shower%20cake." target="_blank" rel="noopener" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; color:#C85478; text-decoration:none;">Quick question? WhatsApp us</a>
+          <a href="#custom-form" class="btn-cta">Order a Custom Baby Shower Cake</a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+  </div>
+
+  <section style="padding:4rem 1.5rem 1rem; background:#FFF8F2;">
+    <div style="max-width:960px; margin:0 auto;">
+      <div style="margin-bottom:2.5rem; text-align:center;" class="reveal">
+        <div class="section-label" style="margin-bottom:1rem; justify-content:center;">Pricing</div>
+        <h2 class="font-display" style="font-size:clamp(1.8rem,3vw,2.6rem); font-weight:600; letter-spacing:-0.02em; color:#2C1A0E; margin:0 0 0.5rem;">How Many Guests?</h2>
+        <p style="font-family:'Jost',sans-serif; font-weight:300; color:#5C3A22; font-size:0.9rem; margin:0;">Drag for your guest count and we'll recommend the right cake size and price.</p>
+      </div>
+
+      <div class="ps-wrap reveal" id="pricing-slider-order">
+
+        <!-- Left card: guest count slider -->
+        <div class="ps-card ps-card-left cursor-card">
+          <!-- Info button -->
+          <button class="ps-info-btn" aria-label="View full pricing table" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <!-- Tooltip -->
+            <div class="ps-tooltip" role="tooltip">
+              <p style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,248,242,0.4);margin:0 0 0.75rem;">Full Pricing Guide</p>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);">Size</th>
+                    <th style="font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:left;padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);">Guests</th>
+                    <th style="font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;color:rgba(255,248,242,0.5);text-align:right;padding:0 0 6px;border-bottom:1px solid rgba(255,248,242,0.1);">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">6"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">6–8</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$39.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">8"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">12–14</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$49.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">10" ✦</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">20–22</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$74.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">12"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">25–30</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$89.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">14"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">40–45</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$114.99</td></tr>
+                  <tr><td style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#FFF8F2;padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">16"</td><td style="font-family:'Jost',sans-serif;font-size:0.7rem;color:rgba(255,248,242,0.55);padding:4px 6px 4px 0;border-top:1px solid rgba(255,248,242,0.07);">50–55</td><td style="font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;text-align:right;padding:4px 0;border-top:1px solid rgba(255,248,242,0.07);color:#FFF8F2;">$134.99</td></tr>
+                </tbody>
+              </table>
+              <p style="font-family:'Jost',sans-serif;font-size:0.66rem;color:rgba(255,248,242,0.55);margin:0.7rem 0 0;line-height:1.6;border-top:1px solid rgba(255,248,242,0.08);padding-top:0.6rem;">✦ Most popular size. Send us your photo and we'll confirm the exact price before you pay anything.</p>
+              <p style="font-family:'Jost',sans-serif;font-size:0.66rem;color:rgba(255,248,242,0.4);margin:0.5rem 0 0;line-height:1.5;">Photo print +$20 · <b style="color:#E3B664;">Premium</b> flavours — Rasmalai +$10–$45 · Ferrero Rocher +$5–$35 by size.</p>
+            </div>
+          </button>
+
+          <p style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#C85478;margin:0 0 1rem;">Number of Guests</p>
+          <div class="ps-people-display">8 guests</div>
+          <input type="range" class="ps-slider" min="1" max="60" value="8" aria-label="Number of guests">
+          <!-- Need more -->
+          <div class="ps-custom-msg" style="display:none; margin-top:-1rem; margin-bottom:1.5rem; padding:0.75rem 1rem; background:rgba(200,84,120,0.07); border-radius:0.75rem; border:1px solid rgba(200,84,120,0.15);">
+            <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#5C3A22;margin:0;">Over 55 guests? We'll create a custom multi-tier cake for you. <a href="https://wa.me/61425697725" target="_blank" rel="noopener" style="color:#C85478;font-weight:600;text-decoration:none;">Contact us</a></p>
+          </div>
+          <a href="https://wa.me/61425697725" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:500;color:rgba(92,58,34,0.55);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#C85478'" onmouseleave="this.style.color='rgba(92,58,34,0.55)'">
+            Need something larger? Contact us
+          </a>
+        </div>
+
+        <!-- Right card: cake recommendation -->
+        <div class="ps-card ps-card-right cursor-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+          <div>
+            <p style="font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(92,58,34,0.5);margin:0 0 0.75rem;">Your Cake</p>
+            <span class="ps-popular" style="display:none;padding:3px 10px;border-radius:9999px;background:#2C1A0E;font-family:'Jost',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;margin-bottom:0.5rem;"></span>
+            <div class="ps-size-display">6"</div>
+            <div class="ps-price-display">$39.99</div>
+            <p class="ps-serves" style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:#5C3A22;margin:0 0 1.5rem;line-height:1.5;">Serves 6–8 guests</p>
+          </div>
+          <a href="#custom-form" class="btn-cta ps-order-btn" style="align-self:flex-start;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            Order this size
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <!-- ══════════════════════════════════════════ FLAVOURS ═══
        Moved from /cakes. Below the form, not above it: a flavour is chosen
@@ -1665,8 +1644,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       var DAYS_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
       var now        = new Date();
+      // A WHOLE-DAY rule, so the form can never offer a date it will then
+      // refuse. The old line truncated `now + 48h` to midnight, which enabled a
+      // day whose EARLY times were still inside the lead time — at 5pm Monday
+      // it offered Wednesday, and Wednesday 9am is 40 hours away, not 48. The
+      // earliest bookable day is therefore the first day whose FIRST offered
+      // pickup time (09:00, see the time list) is a clear 48 hours out.
+      // Costs up to a day of availability against the theoretical minimum, and
+      // buys a form that never rejects what it just offered.
+      var FIRST_PICKUP_HOUR = 9;
       var minAllowed = new Date(now.getTime() + 48 * 60 * 60 * 1000);
       var minDate    = new Date(minAllowed.getFullYear(), minAllowed.getMonth(), minAllowed.getDate());
+      if (new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate(), FIRST_PICKUP_HOUR) < minAllowed) {
+        minDate.setDate(minDate.getDate() + 1);
+      }
       var today      = new Date(); today.setHours(0,0,0,0);
       var viewYear   = minDate.getFullYear();
       var viewMonth  = minDate.getMonth();
@@ -1770,15 +1761,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var defaultLoc = document.getElementById('loc-harris');
         if (defaultLoc) { defaultLoc.checked = true; defaultLoc.dispatchEvent(new Event('change', { bubbles: true })); }
 
+        // ── Remember the name ────────────────────────────────────────────
+        // A returning customer should not retype it. Same private-mode-safe
+        // shape promo.js uses: the accessor itself throws in a private window,
+        // so both directions are wrapped.
+        var NAME_KEY = 'nn_customer_name_v1';
+        var nameEl = document.getElementById('cake-name');
+        if (nameEl) {
+          try {
+            var saved = localStorage.getItem(NAME_KEY);
+            if (saved && !nameEl.value) nameEl.value = saved;
+          } catch (e) { /* private mode */ }
+          nameEl.addEventListener('change', function() {
+            try { localStorage.setItem(NAME_KEY, nameEl.value.trim()); } catch (e) { /* private mode */ }
+          });
+        }
+
+        // ── Validate as they go, not only on submit ──────────────────────
+        // A missed field used to surface only after pressing Send, which meant
+        // scrolling back up through the form to find it. Flagging on blur puts
+        // the error where the customer already is. Deliberately only on blur
+        // and only once a field has been touched — validating an untouched
+        // field as they arrive is scolding somebody for nothing.
+        ['cake-name', 'cake-flavour', 'cake-size'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          var evt = el.tagName === 'SELECT' ? 'change' : 'blur';
+          el.addEventListener(evt, function() {
+            var wrap = el.closest('div');
+            var err = wrap && wrap.parentElement
+              ? wrap.parentElement.querySelector('.form-field-error') : null;
+            if (!err) return;
+            err.style.display = String(el.value).trim() ? 'none' : 'block';
+          });
+        });
+        document.querySelectorAll('[name="pickup-location"]').forEach(function(r) {
+          r.addEventListener('change', function() {
+            var locErr = document.getElementById('location-error');
+            if (locErr) locErr.style.display = 'none';
+          });
+        });
+
         // Goal-gradient progress bar — starts at 20%, fills as fields complete.
         function updateOrderProgress() {
-          var done = 0;
-          if (selDate) done++;
-          if (document.getElementById('cake-flavour').value) done++;
-          if (document.getElementById('cake-occasion').value) done++;
-          if (document.getElementById('cake-size').value) done++;
+          // Name is counted now that Occasion is gone, so the bar still tracks
+          // every required field. Read defensively: a field removed from the
+          // markup used to take this whole function down with a TypeError, and
+          // the progress bar failing silently takes the submit handler's
+          // listener chain with it.
+          var REQUIRED = ['cake-name', 'cake-flavour', 'cake-size'];
+          var done = selDate ? 1 : 0;
+          REQUIRED.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el && String(el.value).trim()) done++;
+          });
           if (document.querySelector('[name="pickup-location"]:checked')) done++;
-          var pct = Math.round(20 + (done / 5) * 80);
+          var pct = Math.round(20 + (done / (REQUIRED.length + 2)) * 80);
           var label = pct >= 100 ? 'Ready to send' : (pct >= 60 ? "You're almost there" : "You're on your way");
           [
             ['order-progress-bar', 'order-progress-pct', 'order-progress-label'],
@@ -1829,19 +1867,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           dtHint.style.display = 'none';
           if (!selDate) { dtErr.textContent='Please select a pickup date.'; dtErr.style.display='block'; ok=false; } else { dtErr.style.display='none'; }
 
-          if (selDate) {
-            var hr24   = parseInt(document.getElementById('ord-hour').value, 10) % 12
-                         + (document.getElementById('ord-ampm').value === 'PM' ? 12 : 0);
-            var selDT  = new Date(selDate.getFullYear(), selDate.getMonth(), selDate.getDate(),
-                                  hr24, parseInt(document.getElementById('ord-min').value, 10));
-            var cutoff = new Date(Date.now() + 48 * 60 * 60 * 1000);
-            if (selDT < cutoff) {
-              dtErr.textContent = 'Most orders need 48 hours notice — please choose a later time.';
-              dtErr.style.display = 'block';
-              dtHint.style.display = 'block';
-              ok = false;
-            }
-          }
+          // The 48-hour rule is enforced ONCE, by which days the calendar
+          // offers at all (see minDate). The instant re-check that used to sit
+          // here contradicted it: at 5pm Monday the calendar enabled Wednesday,
+          // and the default 10:00 AM was 7 hours inside the cutoff, so pressing
+          // Send on the first available date was rejected. A rule enforced in
+          // two places is a rule that can disagree with itself, and the person
+          // it disagreed with was always the one in a hurry.
 
           function chk(id) {
             var el  = document.getElementById(id);
@@ -1851,18 +1883,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           }
           chk('cake-name');
           chk('cake-flavour');
-          chk('cake-occasion');
           chk('cake-size');
           var locEl  = document.querySelector('[name="pickup-location"]:checked');
           var locErr = document.getElementById('location-error');
           if (!locEl) { if(locErr) locErr.style.display='block'; ok=false; } else { if(locErr) locErr.style.display='none'; }
           if (!ok) return;
 
-          var hour    = document.getElementById('ord-hour').value;
-          var min     = document.getElementById('ord-min').value;
-          var ampm    = document.getElementById('ord-ampm').value;
+          var pickupTime = document.getElementById('ord-time').value;
           var flavour = document.getElementById('cake-flavour').value;
-          var occasion= document.getElementById('cake-occasion').value;
           var size    = document.getElementById('cake-size').value;
           var estEl   = document.getElementById('price-hint-amt');
           var est     = estEl ? (estEl.textContent||'').trim() : '';
@@ -1872,13 +1900,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var msg = "Hi! I'd like to order a custom cake from Num Num's Bakery. Here are my details:\n" +
             'Name: '             + custName                       + '\n' +
             'Flavour: '          + flavour                        + '\n' +
-            'Occasion: '         + occasion                       + '\n' +
             'Wording on cake: '  + (wording||'None')              + '\n' +
             'Size: '             + size                           + '\n' +
             (est ? 'Starting price shown on site: ' + est + '\n' : '') +
             'Pickup location: '  + locEl.value                    + '\n' +
             'Date needed: '      + fmtDate(selDate)               + '\n' +
-            'Pickup time: '      + hour + ':' + min + ' ' + ampm  + '\n' +
+            'Pickup time: '      + pickupTime                     + '\n' +
             'Notes: '            + (notes||'None')                + '\n' +
             'If you have a reference image for your desired design, please attach it to this message.\n' +
             'Custom cake pricing: the price above is the starting price for this size — your final quote depends on the design and will be confirmed here on WhatsApp before payment.';

@@ -579,6 +579,38 @@ const FACTS = {
   notes.push(`overlay: ${withOverlay} pages reveal at DOM readiness, none wait for window 'load'`);
 }
 
+// ---------- The custom-cake form ----------
+// The form is the conversion event on /order. It used to sit 8,426px down a
+// 20,989px page — ten phone screens, behind twelve gallery photos and a pricing
+// widget — with no link anywhere on the site pointing at it. Every one of the
+// ~1,000 /order links across 240 pages landed on the top of the page instead,
+// so moving the form up is what makes all of them work.
+{
+  const src = read('order.html');
+  const form = src.indexOf('<section id="custom-form"');
+  const gallery = src.indexOf('<div id="gallery"');
+  if (form < 0) fail('order.html has no #custom-form section');
+  if (gallery > -1 && form > gallery) {
+    fail('order.html: the gallery is above the form again — the form is the conversion event, not the proof');
+  }
+  // One time control, not three. Hour + minute + AM/PM was six taps, and its
+  // 10:00 AM default is what made the 48-hour rule contradict itself.
+  for (const dead of ['ord-hour', 'ord-min', 'ord-ampm']) {
+    if (src.includes(`id="${dead}"`)) fail(`order.html: ${dead} is back — pickup time is one list`);
+  }
+  if (!src.includes('id="ord-time"')) fail('order.html: the single #ord-time control is missing');
+  // The whole-day lead rule. Without the FIRST_PICKUP_HOUR roll-forward the
+  // calendar offers a day whose early times are inside the 48 hours, and the
+  // form rejects the first date it just offered.
+  if (!/FIRST_PICKUP_HOUR/.test(src)) {
+    fail('order.html: the whole-day lead rule is gone — the calendar can offer a date the form then refuses');
+  }
+  if (/Most orders need 48 hours notice/.test(src)) {
+    fail('order.html: the instant 48h re-check is back, and it contradicts the calendar');
+  }
+  notes.push('order form: above the gallery, one time control, one place enforcing the 48-hour rule');
+}
+
 // ---------- Navigation ----------
 // The site is shop-first: every page's nav opens with Shop, and /order is
 // labelled for what it is. That shape lives in 242 hand-written files with a
