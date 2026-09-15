@@ -11,6 +11,7 @@
  */
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { requireEnv } from '../lib/shared.mjs';
 
 const DUPLICATE = '23505';
 
@@ -22,6 +23,19 @@ function rawBody(event) {
 const code = () => 'NN-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
 export const handler = async (event) => {
+  // Before the signature check, because a deploy missing these cannot fulfil
+  // an order no matter how valid the event is — and ONLINE_ORDERS_USER_ID in
+  // particular fails in a way that looks like anything but a config problem.
+  try {
+    requireEnv(['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SUPABASE_URL',
+                'SUPABASE_SERVICE_ROLE_KEY', 'ONLINE_ORDERS_USER_ID']);
+  } catch (e) {
+    console.error('stripe-webhook is misconfigured:', e.message);
+    // 500 so Stripe keeps retrying: once the variable is set, the queued
+    // events replay and the orders land. A 200 here would discard them.
+    return { statusCode: 500, body: 'server misconfigured' };
+  }
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   let evt;

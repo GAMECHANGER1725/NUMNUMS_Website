@@ -9,7 +9,7 @@
  */
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { BadRequest, couponFor, json, priceCart, splitDiscount, dueDayKey } from '../lib/shared.mjs';
+import { BadRequest, couponFor, json, priceCart, requireEnv, splitDiscount, dueDayKey } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
 
@@ -29,6 +29,17 @@ async function capReached(db, dueAt, store) {
 
 export default async (req) => {
   if (req.method !== 'POST') return json(405, { error: 'POST only' });
+
+  // Checked here too, not just in the webhook. Taking a payment this function
+  // knows the webhook cannot turn into an order is the worst of both: the
+  // customer is charged and nothing is baked. Better to refuse the checkout.
+  try {
+    requireEnv(['STRIPE_SECRET_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
+                'ONLINE_ORDERS_USER_ID']);
+  } catch (e) {
+    console.error('create-checkout is misconfigured:', e.message);
+    return json(500, { error: 'Online ordering is briefly unavailable. Please call us on 0425 697 725.' });
+  }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
