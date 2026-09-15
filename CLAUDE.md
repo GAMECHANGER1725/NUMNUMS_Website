@@ -528,7 +528,30 @@ main site.
   sign in twice. ⚠️ **This needs the Supabase "Confirm signup" email template
   to contain `{{ .Token }}`** — the default only has `{{ .ConfirmationURL }}`,
   and with that template the email carries a link and no code, which makes the
-  box unanswerable. There is no way to detect it from the client.
+  box unanswerable. There is no way to detect it from the client. Done
+  2026-09-15: the template now carries the code and **no link at all**, because
+  a link left in beside it reintroduces the very stuck-tab bug the code exists
+  to avoid.
+- **Editing that template at all requires custom SMTP.** Since 3 June 2026 a
+  free-tier project on Supabase's built-in email provider cannot edit its auth
+  email templates — the Source button and Save are simply disabled, and the
+  default link-only template is what sends. So the code flow was unreachable
+  until SMTP existed; it was never a setting someone forgot to change. Mail now
+  goes through **Resend** (free tier, 3,000/month and 100/day) as
+  `orders@numnumsbakery.com.au`, DKIM/SPF/DMARC on Netlify DNS, SMTP host
+  `smtp.resend.com:465`, username `resend`, password a **sending-only** API key.
+  Turning custom SMTP on also lifted the auth email rate limit from **2/hour to
+  30/hour** — the built-in provider's 2/hour is not a shop, it is a demo.
+- **"Email OTP length" in Supabase must stay 6, and it was 8.** The box is
+  `CODE_LEN = 6` in `shop-app/components/ui/verify-email.tsx`, with
+  `maxLength`, a `.slice(0, CODE_LEN)` on input, and an auto-submit the moment
+  six digits are typed. With the project issuing eight, a customer read
+  `18924560` off the email, the field silently kept `189245`, submitted it
+  itself, and answered *"That code doesn't match"* — forever, with nothing in
+  the UI naming the cause. Verified end to end on 2026-09-15 after setting it
+  to 6: signup → delivered → six-digit code → `verifyOtp` → session with
+  `email_confirmed_at` stamped, no second sign-in. **Changing either number
+  alone breaks the box**, and it breaks silently in exactly this way.
 - **The account menu is two states and no dead ends.** Signed out it offers
   sign in / create an account; signed in it names the address and offers the
   way out. It deliberately has **no "My orders"** — there is no order-history
