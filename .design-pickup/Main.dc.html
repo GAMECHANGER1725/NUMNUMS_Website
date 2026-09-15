@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Jost:wght@300;400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Jost', system-ui, sans-serif; }
+    a { color: #E8A4B5; } a:hover { color: #fff; }
+    /* Lifted verbatim from order.html:75-86 — same radii, same shadow, same
+       hover curve. New UI here extends the existing vocabulary, it does not
+       introduce a second one. */
+    .btn-cta { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px;
+      border-radius: 9999px; font-family: 'Jost', sans-serif; font-weight: 600; font-size: 0.875rem;
+      color: #fff; background: #C85478; text-decoration: none; border: none; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(200,84,120,0.28); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 6px; padding: 10px 26px;
+      border-radius: 9999px; border: 2px solid rgba(255,255,255,0.4); color: #fff;
+      font-family: 'Jost', sans-serif; font-weight: 600; font-size: 0.875rem; text-decoration: none; }
+    .hero-proof { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 6px 10px; padding: 0.6rem 1rem; border-radius: 12px;
+      border: 1px solid rgba(232,164,181,0.35); background: rgba(20,8,2,0.30);
+      box-shadow: 0 0 18px rgba(200,84,120,0.18), inset 0 1px 0 rgba(255,255,255,0.06); }
+  </style>
+</helmet>
+
+<div style="width: 390px; min-height: 760px; box-sizing: border-box; padding: 28px 22px 34px;
+            background:
+              radial-gradient(120% 70% at 50% 0%, rgba(90,44,24,0.55), transparent 60%),
+              linear-gradient(180deg, #3A2113 0%, #23120A 55%, #1B0F07 100%);
+            display: flex; flex-direction: column; justify-content: center; text-align: center;">
+
+  <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 14px;">
+    <span style="background: rgba(232,164,181,0.8); height: 2px; width: 28px; border-radius: 2px; display: block;"></span>
+    <span style="font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(232,164,181,0.9);">Order</span>
+  </div>
+
+  <h1 style="font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 600;
+             letter-spacing: -0.03em; color: #fff; margin: 0 0 10px; line-height: 1.05;">
+    Your Exact Cake, Made Eggless &mdash; Ready in 48 Hours
+  </h1>
+
+  <p style="font-family: 'Jost', sans-serif; font-weight: 300; font-size: 1rem;
+            color: rgba(255,255,255,0.7); margin: 0 0 22px; line-height: 1.55;">
+    Send us any design &mdash; any size, any occasion. Give us 48 hours and a photo if you have one.
+  </p>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+    <a href="#custom-form" class="btn-cta">Tell us about your cake</a>
+    <a href="#gallery" class="btn-ghost">See what we&rsquo;ve made</a>
+  </div>
+
+  <!-- THE CHANGE. A qualifier, not a warning: the site's own .hero-proof
+       surface, the same pin the location cards use, no red, no alert icon.
+       It sits directly under the CTA because that is where somebody decides,
+       and it is the one fact that decides it for a Blacktown parent. -->
+  <div style="display: flex; justify-content: center; margin-top: 14px;">
+    <span class="hero-proof" style="gap: 7px; padding: 0.5rem 0.85rem;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E8A4B5" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 auto;">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+      <span style="font-family: 'Jost', sans-serif; font-size: 0.76rem; font-weight: 600; color: #fff;">Pickup only</span>
+      <span style="color: rgba(255,255,255,0.3);">&middot;</span>
+      <span style="font-family: 'Jost', sans-serif; font-size: 0.76rem; font-weight: 400; color: rgba(255,255,255,0.72);">Harris Park &amp; Riverstone</span>
+    </span>
+  </div>
+
+  <!-- A text link, never a button. A 25-35% commission channel does not get a
+       filled CTA on our own page — it gets to catch the delivery-only visitor
+       who would otherwise bounce, and nothing more. -->
+  <p style="margin: 12px 0 0; font-family: 'Jost', sans-serif; font-size: 0.76rem; font-weight: 400;
+            color: rgba(255,255,255,0.45);">
+    Need delivery?
+    <a href="#" style="color: rgba(232,164,181,0.9); text-decoration: underline; text-underline-offset: 2px; font-weight: 500;">Order on Uber&nbsp;Eats</a>
+  </p>
+
+  <div style="margin-top: 26px; display: flex; justify-content: center;">
+    <span class="hero-proof">
+      <span style="color: #F4B400; font-size: 0.82rem; letter-spacing: 1px;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <span style="font-family: 'Jost', sans-serif; font-size: 0.74rem; font-weight: 600; color: #fff;">4.6 &middot; 50+ Google reviews</span>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <span style="font-family: 'Jost', sans-serif; font-size: 0.74rem; font-weight: 400; color: rgba(255,255,255,0.7);">100% eggless</span>
+    </span>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

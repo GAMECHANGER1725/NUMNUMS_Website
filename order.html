@@ -571,6 +571,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a href="#custom-form" class="btn-cta">Tell us about your cake</a>
         <a href="#gallery" style="display:inline-flex; align-items:center; gap:6px; padding:10px 26px; border-radius:9999px; border:2px solid rgba(255,255,255,0.4); color:#fff; font-family:'Jost',sans-serif; font-weight:600; font-size:0.875rem; letter-spacing:0.02em; text-decoration:none; transition:border-color .2s ease, background-color .2s ease;" onmouseenter="this.style.borderColor='#fff'; this.style.backgroundColor='rgba(255,255,255,0.08)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.4)'; this.style.backgroundColor='transparent'">See what we&rsquo;ve made</a>
       </div>
+      <!-- Pickup-only, stated where somebody decides.
+           A qualifier, not a warning: the site's own .hero-proof surface, the
+           same pin the location cards use, no red and no alert icon. It filters
+           out a visitor who needs delivery in the first ten seconds instead of
+           after they have spent four minutes picturing their cake — and the
+           marketplace link catches the ones it filters.
+           Uber Eats is a TEXT LINK, never a button: it is a 25-35% commission
+           channel and does not get a filled CTA on our own page. -->
+      <div style="display:flex; justify-content:center; margin-top:0.9rem;">
+        <span class="hero-proof" style="gap:7px; padding:0.5rem 0.85rem;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E8A4B5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 auto;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span style="font-family:'Jost',sans-serif; font-size:0.76rem; font-weight:600; color:#fff;">Pickup only</span>
+          <span class="hp-sep">&middot;</span>
+          <span style="font-family:'Jost',sans-serif; font-size:0.76rem; font-weight:400; color:rgba(255,255,255,0.72);">Harris Park &amp; Riverstone</span>
+        </span>
+      </div>
+      <p style="margin:0.7rem 0 0; font-family:'Jost',sans-serif; font-size:0.76rem; font-weight:400; color:rgba(255,255,255,0.45); text-align:center;">
+        Need delivery? <a href="https://www.ubereats.com/au/store/numnums-bakery/VptZyAwNTOKHCIDHgVGAlA" target="_blank" rel="noopener" data-marketplace="ubereats" style="color:rgba(232,164,181,0.9); text-decoration:underline; text-underline-offset:2px; font-weight:500;">Order on Uber&nbsp;Eats</a>
+      </p>
       <div class="hero-proof">
         <span class="hp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
         <span class="hp-rating">4.6 &middot; 50+ Google reviews</span>
@@ -2160,6 +2179,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var a = e.target.closest('a[href]');
       if (!a) return;
       var href = a.getAttribute('href') || '';
+      if (href.indexOf('ubereats.com') !== -1) {
+        try {
+          if (typeof gtag === 'function') gtag('event', 'marketplace_click', { marketplace: 'ubereats', transport: 'beacon' });
+          if (window.dataLayer) window.dataLayer.push({ event: 'marketplace_click', marketplace: 'ubereats' });
+        } catch (e) { /* analytics never blocks a click */ }
+        return;
+      }
       if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
         fireEnquiry('whatsapp');
       } else if (href.indexOf('tel:') === 0) {

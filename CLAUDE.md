@@ -841,6 +841,96 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   of the policy, which is a false pass). `coupons` is the one exception: read-own via
   `lower(email) = lower(auth.jwt() ->> 'email')`, and no write policy at all.
 
+## Conversion work — what is measured, and what must not come back
+
+Acting on a Perplexity CRO evidence report (2026-09-15) plus two things it
+could not see from outside the repo. The research and the parked items are in
+`plans/Shop-First Restructure — parked 2026-09-14.md`.
+
+- **Nothing may gate on `window.load` again.** The full-screen skeleton used to
+  clear on it, and `load` fires at **22-31 seconds** on this site because it
+  waits for the hero video, GTM and the Meta pixel — so the 3000ms fallback was
+  doing 100% of the work and every visitor waited 3s to see a page that had
+  already painted at 240-1168ms. Now it clears at DOM readiness plus a frame,
+  with a 1200ms cap as a safety net rather than the normal path. Measured
+  after: `/order` 3475ms → 754ms on fast 4G, `/` 4369ms → 2126ms on slow 4G.
+  `verify-blog.mjs` fails the deploy on any page that reintroduces it.
+- **The shop fires the GA4 funnel now.** It fired *nothing* before — no
+  container, no events — so the only part of the site that can take money was
+  the only part reporting nothing. `shop-app/lib/analytics.ts` owns
+  `view_item` / `add_to_cart` / `begin_checkout` / `purchase`. Two rules in
+  there: analytics is never allowed to throw into a conversion path, and
+  `purchase` fires only once `order-status` confirms payment, guarded by
+  **localStorage** — `sessionStorage` would let a reopened thank-you link bank
+  the same order twice, and GA4 does not reliably dedupe a repeated
+  `transaction_id`. It defaults to NOT-banked when storage throws: losing every
+  private-mode purchase is worse than a rare duplicate.
+- **`ONLINE_ORDERS_USER_ID` is not optional.** `orders.created_by` is
+  `uuid NOT NULL DEFAULT auth.uid()` and the webhook writes with the SERVICE
+  ROLE, where `auth.uid()` is null — verified against the live schema. Unset, it
+  does not degrade: every paid order fails its insert, Stripe retries for three
+  days, and a customer has paid for a cake the kitchen never sees. `requireEnv`
+  in `netlify/lib/shared.mjs` now stops both money functions at the door;
+  the webhook answers **500, not 200**, so Stripe keeps the events queued to
+  replay once the variable is set.
+- **RLS is verified by `ops/supabase/verify-rls.sql`, not by looking.** Run it
+  after any policy change. It carries the two false passes that were hit
+  writing it: a type or NOT NULL error in FRONT of the policy looks exactly
+  like a refusal (two `orders` inserts were rejected by an enum and a missing
+  column before either reached RLS), and a storage policy matching
+  `owner = auth.uid()` looks perfect to whoever uploaded the file — section 4
+  must be run as a second user, with a **valid** mime type.
+- **`public.customers` must stay `security_invoker`.** It reads `orders`. A
+  view that is not an invoker view runs as its owner and bypasses RLS, handing
+  the whole customer directory to anyone signed in.
+
+### `/order` — the form is the page
+
+- **The form sits above the gallery, and that is load-bearing.** It used to
+  start at **8,426px** on a 390px phone — ten screens, behind twelve gallery
+  photos and a pricing widget — and **no link anywhere on the site pointed at
+  `#custom-form`**: all ~1,000 `/order` links across 240 pages landed on the top
+  of the page. Moving the form up is what makes every one of those links work,
+  with no edits to those files. It now starts at 781px. The gate fails the
+  deploy if the gallery goes back above it.
+- **The 48-hour rule is enforced in ONE place: which days the calendar offers.**
+  `minDate` used to truncate `now + 48h` to midnight, so it enabled a day whose
+  early times were still inside the lead time — at 5:04pm Monday it offered
+  Wed 16 Sep, and the default 10:00 AM was 7.1 hours short, so pressing Send on
+  the first available date was rejected. The person it refused was always the
+  one in a hurry. The earliest day is now the first whose FIRST offered pickup
+  time (`FIRST_PICKUP_HOUR`, 9am) is a clear 48 hours out, and the instant
+  re-check at submit is **deleted**, not adjusted — a rule enforced twice is a
+  rule that can disagree with itself. Proven across all 24 order hours.
+- **Pickup time is one list.** Hour + minute + AM/PM was six taps and it is what
+  made the rule contradict itself. Occasion is gone entirely (6 required fields
+  → 5). The name is remembered in `localStorage`. Fields flag on blur, not only
+  after Send.
+- **The progress bar reads its required fields defensively.** Removing a field
+  from the markup otherwise takes the whole function down with a TypeError on a
+  null `.value`, and that function's failure takes the submit listener with it.
+- **Nothing on `/order` may route away from its own form.** Six links did: the
+  nav pill's "Order Now" (to the Signature shop), its mobile twin, three gallery
+  CTAs that reloaded the page to the top, and the pricing widget's green
+  "WhatsApp to Order". The nav pill needs fixing in **`promo.js`** as well as
+  the markup — `paintCart` overwrites that href on every load.
+- **The offer popup does not open on `/order`.** It locks body scroll and fires
+  at 50% scroll depth, which a half-filled form reaches easily, so it was
+  covering somebody mid-order to sell them a discount on a later one.
+
+### Pickup-only, and the marketplace link
+
+- **Pickup-only is stated in the hero on `/` and `/order`**, as a qualifier and
+  not a warning — the site's own `.hero-proof` surface on `/order`, the
+  homepage's own trust-row voice on `/`. It filters a delivery-only visitor in
+  ten seconds instead of after four minutes of built intent.
+- **Uber Eats is a text link, never a button.** It is a 25-35% commission
+  channel and does not get a filled CTA on our own page; it exists to catch the
+  visitor pickup-only just filtered out. It fires its own `marketplace_click`
+  event because the report rated it the **thinnest-evidence** item of the seven
+  — no isolated link-vs-no-link study exists for local food sites — so it gets
+  judged on incremental gross profit, not on clicks.
+
 ## Anti-Repetition (blog + GBP)
 Repetition is the #1 recurring failure on this project. Before writing anything:
 - **Blog:** `ls blog/` first. Never write a post for a suburb that already has one. Read `blog/topic-ledger.md` before picking a topic — it replaces the old "check the last 10 posts" grep as of 2026-09-01, after the prior calendar-driven process produced 359 posts with no demand validation and real cannibalization (see `blog-cluster-report.md` / `blog-gsc-per-page.md` in the repo root). Topic selection rules live in `skills/blog-write/SKILL.md`'s "Topic selection" checklist item — a topic must come from an open ledger gap or a GSC-validated query, never a fixed calendar.

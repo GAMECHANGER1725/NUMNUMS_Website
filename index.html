@@ -989,6 +989,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </a>
       </div>
 
+      <!-- Pickup-only, in the homepage's own trust-row vocabulary.
+           The hero subline already names the two shops; what it never said is
+           that collecting is the ONLY option. A visitor who needs delivery
+           should learn that in the first ten seconds, not after building
+           intent — and the marketplace link catches the ones it filters out.
+           Uber Eats is a TEXT LINK, never a button: a 25-35% commission
+           channel does not get a filled CTA on our own homepage. -->
+      <p style="margin:0.8rem 0 0; font-family:'Jost',sans-serif; font-size:0.76rem; font-weight:400; color:rgba(255,255,255,0.55); text-align:center;">
+        <span style="font-weight:600; color:rgba(255,255,255,0.8);">Pickup only</span> &mdash; collect from Harris Park or Riverstone.
+        Need delivery? <a href="https://www.ubereats.com/au/store/numnums-bakery/VptZyAwNTOKHCIDHgVGAlA" target="_blank" rel="noopener" data-marketplace="ubereats" style="color:rgba(232,164,181,0.92); text-decoration:underline; text-underline-offset:2px; font-weight:500;">Order on Uber&nbsp;Eats</a>
+      </p>
       <!-- Trust badges + risk reversal (directly under CTA) -->
       <div class="cta-badges">
         <span>100% Eggless, every cake</span>
@@ -2092,6 +2103,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var a = e.target.closest('a[href]');
       if (!a) return;
       var href = a.getAttribute('href') || '';
+      if (href.indexOf('ubereats.com') !== -1) {
+        try {
+          if (typeof gtag === 'function') gtag('event', 'marketplace_click', { marketplace: 'ubereats', transport: 'beacon' });
+          if (window.dataLayer) window.dataLayer.push({ event: 'marketplace_click', marketplace: 'ubereats' });
+        } catch (e) { /* analytics never blocks a click */ }
+        return;
+      }
       if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
         fireEnquiry('whatsapp');
       } else if (href.indexOf('tel:') === 0) {
