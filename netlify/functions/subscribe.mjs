@@ -29,6 +29,54 @@ const CONSENT_WORDING =
 
 const newCode = () => 'NN-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
+const esc = (s) => String(s).replace(/[<>&"]/g, (c) =>
+  ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+
+/**
+ * Send the code to the address it is bound to.
+ *
+ * Resend over HTTP rather than SMTP: a function has no business opening an SMTP
+ * connection, and this needs no dependency. The same verified domain the auth
+ * emails use, so there is one sending reputation to look after, not two.
+ *
+ * Returns false rather than throwing — the caller has already written the
+ * contact and the coupon, and needs to answer the customer either way.
+ */
+async function emailCode({ email, name, coupon }) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) { console.error('RESEND_API_KEY is not set — cannot send the coupon'); return false; }
+
+  const hi = name ? `Hi ${esc(name)},` : 'Hi,';
+  const html =
+    `<p>${hi}</p>` +
+    `<p>Thanks for joining the list. Here is your <b>${coupon.percent}% off</b> code:</p>` +
+    `<p style="font-size:28px;font-weight:700;letter-spacing:4px;margin:24px 0;">${esc(coupon.code)}</p>` +
+    // Say the rule here, because this is where they read it. A code that is
+    // silently refused at checkout reads as a broken shop, not as a condition.
+    `<p>It applies to your <b>next order</b>, so it unlocks once you have ordered ` +
+    `with us. Enter it at checkout with this same email address &mdash; the code ` +
+    `is issued to one address.</p>` +
+    `<p>Num Num&#39;s Bakery &mdash; 100% eggless cakes<br />Harris Park &amp; Riverstone</p>`;
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        from: "Num Num's Bakery <orders@numnumsbakery.com.au>",
+        to: [email],
+        subject: `Your ${coupon.percent}% off code`,
+        html,
+      }),
+    });
+    if (!res.ok) { console.error('resend refused', res.status, await res.text()); return false; }
+    return true;
+  } catch (e) {
+    console.error('resend send failed', e);
+    return false;
+  }
+}
+
 export default async (req) => {
   if (req.method !== 'POST') return json(405, { error: 'POST only' });
 
@@ -83,8 +131,22 @@ export default async (req) => {
       coupon = row;
     }
 
-    // Best effort — a failed notification must not cost the subscriber their
-    // code, which they are shown on screen regardless.
+    // The code is EMAILED, never returned to the browser. Printing it on screen
+    // made the whole offer free to mint: type any address, read the code off the
+    // page, repeat. Sending it means you have to hold the inbox it was issued
+    // to, which is the same address the code is bound to at checkout.
+    const sent = await emailCode({ email, name, coupon });
+    if (!sent) {
+      // They are subscribed and the coupon exists, so say so honestly rather
+      // than inventing a success. Submitting again returns the same live
+      // coupon and retries the send — that is the recovery path.
+      return json(502, {
+        error: "You're subscribed, but we couldn't email your code just then. Try again in a moment.",
+      });
+    }
+
+    // Best effort, and deliberately after the email: Make is a notification, not
+    // the delivery mechanism.
     const hook = process.env.MAKE_ORDER_HOOK_URL;
     if (hook) {
       await fetch(hook, {
@@ -97,7 +159,8 @@ export default async (req) => {
       }).catch((e) => console.error('make hook failed', e));
     }
 
-    return json(200, { code: coupon.code, percent: coupon.percent, expires_at: coupon.expires_at });
+    // No code in the response. The browser has nothing to leak.
+    return json(200, { sent: true, percent: coupon.percent });
   } catch (e) {
     console.error('subscribe failed', e);
     return json(500, { error: 'Could not sign you up just then. Please try again.' });

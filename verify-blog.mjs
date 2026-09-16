@@ -440,6 +440,15 @@ const FACTS = {
     fail(`function response-shape tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
+  // The 10% offer is "your next order", and that word is the only thing standing
+  // between the discount and an unlimited one: a new email is a new code.
+  try {
+    const out = execFileSync(process.execPath, ['tests/coupon.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`coupon eligibility tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
   // catalog.mjs is imported by the shop and by the Netlify functions, so a
   // drifted price here reaches a card before anyone reads a report.
   const cat = await import('./ops/catalog.mjs');

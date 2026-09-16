@@ -361,9 +361,10 @@
         '<div class="nnp-grid">' +
           '<div class="nnp-left">' +
             '<div class="nnp-form-wrap">' +
-              '<h2 class="nnp-h" id="nnp-h">Receive 10% off your first order</h2>' +
+              '<h2 class="nnp-h" id="nnp-h">Receive 10% off your next order</h2>' +
               '<p class="nnp-sub">Join us for new flavours, seasonal specials and ' +
-                'festival pre-order dates &mdash; plus 10% off your first order.</p>' +
+                'festival pre-order dates &mdash; plus 10% off your next order. ' +
+                'We&rsquo;ll email your code.</p>' +
               '<form novalidate>' +
                 '<div class="nnp-field">' +
                   '<label class="nnp-sr" for="nnp-name" hidden>First name</label>' +
@@ -458,12 +459,14 @@
     }
     email.addEventListener('input', validate);
 
-    function done(code) {
+    // The code is emailed, never shown here — printing it on screen is what made
+    // the offer free to mint with a throwaway address.
+    function done() {
       root.querySelector('.nnp-form-wrap').innerHTML =
-        '<h2 class="nnp-h">You’re on the list</h2>' +
-        '<p class="nnp-sub">Here’s your 10% off. Use it at checkout on your next cake — ' +
-          'it’s saved to your email address, so just enter the same one.</p>' +
-        '<strong class="nnp-code">' + code.replace(/[<>&"]/g, '') + '</strong>' +
+        '<h2 class="nnp-h">Check your email</h2>' +
+        '<p class="nnp-sub">Your 10% code is on its way. It applies to your next ' +
+          'order, so it unlocks once you’ve ordered with us — enter it at checkout ' +
+          'with this same email address.</p>' +
         '<button type="button" class="nnp-btn">Browse the cakes</button>';
       root.querySelector('.nnp-form-wrap .nnp-btn')
         .addEventListener('click', function () { location.href = '/shop'; });
@@ -487,7 +490,7 @@
           return body;
         });
       }).then(function (body) {
-        done(body.code);
+        done();
       }).catch(function (e2) {
         err.textContent = (e2 && e2.message) || 'Could not sign you up just then. Try again.';
         err.hidden = false;
