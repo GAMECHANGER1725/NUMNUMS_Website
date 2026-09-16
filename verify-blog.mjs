@@ -429,6 +429,17 @@ const FACTS = {
     fail(`webhook signature tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
+  // A v2 function that returns the v1 `{ statusCode, body }` shape is answered
+  // with a 502 before its own code runs. Nothing else catches it: the other
+  // suites test pure helpers and the one genuinely-v1 function, and the browser
+  // only shows a generic "try again" because a 502 body carries no `error`.
+  try {
+    const out = execFileSync(process.execPath, ['tests/response-shape.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`function response-shape tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
   // catalog.mjs is imported by the shop and by the Netlify functions, so a
   // drifted price here reaches a card before anyone reads a report.
   const cat = await import('./ops/catalog.mjs');
