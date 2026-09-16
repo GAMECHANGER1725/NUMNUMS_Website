@@ -714,6 +714,22 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   `netlify.toml`, never in a `config.path` export as well.
   Reproduce a deploy's bundling locally with
   `npx @netlify/zip-it-and-ship-it netlify/functions /tmp/out` before pushing function changes.
+- **The two function generations do not share a return shape, and mixing them is a
+  silent 502.** `subscribe`, `check-coupon`, `create-checkout` and `order-status` are
+  **v2** (`export default async (req)`) and must return a **`Response`** or `undefined`;
+  `stripe-webhook.mjs` and `submit-review.js` are **v1**
+  (`export const handler = async (event)`) and must return `{ statusCode, body }`.
+  Hand v2 the v1 object and Netlify answers **502 "Function returned an unsupported
+  value"** *before the handler's own code runs* — so the failure looks like whatever the
+  caller does with an unparseable error, not like a bug in the function. `json()` in
+  `netlify/lib/shared.mjs` shipped returning the v1 shape and every one of the four money
+  functions was dead in production while all tests were green: `checkout.test.mjs` imports
+  pure helpers and never invokes a handler, `webhook.test.mjs` covers the one function
+  that is legitimately v1, and the popup only ever showed its own generic "try again"
+  because a 502 body carries no `error` field. `tests/response-shape.test.mjs` now calls
+  every v2 handler and asserts it returns a `Response`; `verify-blog.mjs` gates on it.
+  **Adding a function means picking a generation and matching its shape** — do not
+  "tidy" the two styles into one.
 - **Files**: `shop-app/` is a Next.js app (`output: "export"`, `basePath: "/shop"`) whose
   export is committed as `shop/`. Rebuild it with `cd shop-app && npm run build`, then
   `rm -rf shop && cp -R shop-app/out shop`. The Netlify Functions are
