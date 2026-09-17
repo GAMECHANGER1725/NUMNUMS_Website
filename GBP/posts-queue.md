@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-17
+
+```yaml
+id: post-rs-2026-09-17
+status: published
+published_at: 2026-09-17
+location: riverstone
+post_type: "Call to action"
+title: "Saturday morning cake pickup for Stanhope Gardens and Riverstone parties"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0423.jpeg"
+keywords_baited:
+  - Saturday morning custom eggless cake pickup
+  - Stanhope Gardens Riverstone Schofields
+  - bakery not open before 9am on Saturday
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-09-17
 
 ```yaml
