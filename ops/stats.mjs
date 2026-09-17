@@ -209,26 +209,43 @@ export function repeatCustomers(orders) {
   };
 }
 
-/** Group orders into the baker's day sections, custom cakes first. */
+/**
+ * Group orders into the baker's day sections, custom cakes first.
+ *
+ * Anything already baked is filed under one trailing heading rather than a day
+ * of its own. Marking a cake baked used to be the one action in this app with
+ * no way back: the cake left the queue the instant it was tapped, so a mistap
+ * could only be undone by someone with an admin account and the order log open.
+ * These sit at the bottom, out of the way of the work, and open like any other.
+ */
 export function bakerSections(orders, now = new Date()) {
   const sections = new Map();
+  const baked = [];
   const sorted = [...orders].sort((a, b) => {
     if (a.kind !== b.kind) return a.kind === 'custom' ? -1 : 1;
     return new Date(a.due_at) - new Date(b.due_at);
   });
   for (const o of sorted) {
+    if (o.status === 'baked') { baked.push(o); continue; }
     const label = dayBucket(o.due_at, now);
     if (!sections.has(label)) sections.set(label, []);
     sections.get(label).push(o);
   }
-  // Overdue first, then chronologically by how far out the day is.
+  // Overdue first, then chronologically by how far out the day is. Only day
+  // labels reach this, which is what lets it read the number out of one.
   const rank = (label) => {
     if (label === 'Overdue') return -1;
     if (label === 'Today') return 0;
     if (label === 'Tomorrow') return 1;
     return Number(label.match(/\d+/)[0]);
   };
-  return [...sections.entries()].sort((a, b) => rank(a[0]) - rank(b[0]));
+  const out = [...sections.entries()].sort((a, b) => rank(a[0]) - rank(b[0]));
+  if (baked.length) {
+    // Most recently baked first: a mistap is undone seconds later, not tomorrow.
+    baked.sort((a, b) => new Date(b.baked_at || 0) - new Date(a.baked_at || 0));
+    out.push(['Just baked', baked]);
+  }
+  return out;
 }
 
 /**
@@ -666,8 +683,19 @@ export function toCsv(headers, rows) {
  */
 export function dailyTakings(orders, days = 30, now = new Date()) {
   const todayKey = sydneyParts(now).dayKey;
+  return dailyTakingsBetween(orders, addDayKey(todayKey, -(days - 1)), todayKey);
+}
+
+/**
+ * The same series over an arbitrary pair of Sydney days, inclusive.
+ *
+ * The finance panel can be pointed at a window that does not end today — a
+ * custom range, or last month — so the window cannot be expressed as "N days
+ * back from now" any more.
+ */
+export function dailyTakingsBetween(orders, fromKey, toKey) {
   const buckets = new Map();
-  for (let i = days - 1; i >= 0; i--) buckets.set(addDayKey(todayKey, -i), { revenue: 0, count: 0, discount: 0 });
+  for (let k = fromKey; k <= toKey; k = addDayKey(k, 1)) buckets.set(k, { revenue: 0, count: 0, discount: 0 });
 
   for (const o of orders) {
     if (o.status === 'cancelled') continue;

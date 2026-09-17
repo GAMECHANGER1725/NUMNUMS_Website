@@ -2,9 +2,18 @@
 // markup and rendering.
 //
 // The key below is the *publishable* key and is meant to be public. What
-// actually guards the data is row-level security in Postgres plus signups
-// being disabled — never assume hiding something in the UI is enough, because
-// anyone holding this key can call the REST API directly.
+// actually guards the data is row-level security in Postgres — never assume
+// hiding something in the UI is enough, because anyone holding this key can
+// call the REST API directly.
+//
+// RLS is the ONLY guard. This comment used to say "plus signups being
+// disabled"; that was checked on 2026-09-12 and was false — the signup
+// endpoint accepts new accounts, and this key sits in a public GitHub repo.
+// So `authenticated` does not mean `staff`. Any policy written `to
+// authenticated` without a `my_role() is not null` test is open to anyone with
+// an email address. Two were, and were fixed that day
+// (ops/supabase/2026-09-12-restrict-writes-to-staff.sql). Check any new one
+// the same way, and test it as a second user rather than as yourself.
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.114.0/+esm';
 
@@ -286,9 +295,20 @@ export async function searchOrdersRemote({ term, store, withCosts = false, limit
 
 /** Everything the baker still has to make. Walk-ins never appear: they are
  *  created already picked up, so they are excluded by the status filter. */
+/**
+ * The baking queue: everything still to make, plus anything baked in the last
+ * day so a mistap can be taken back.
+ *
+ * Without the second half, marking a cake baked was a one-way door — the cake
+ * left the queue on the tap, and the baker has no order log to go and find it
+ * in. A day is long enough to cover a night shift and short enough that the
+ * list is still the work rather than a history.
+ */
 export async function listToBake() {
+  const since = new Date(Date.now() - 86400000).toISOString();
   const { data, error } = await sb.from('orders').select('*')
-    .eq('status', 'placed').order('due_at', { ascending: true });
+    .or(`status.eq.placed,and(status.eq.baked,baked_at.gte.${since})`)
+    .order('due_at', { ascending: true });
   if (error) throw error;
   return data;
 }
@@ -373,6 +393,23 @@ export async function orderEvents(orderId) {
     .select('at,actor,kind,detail')
     .eq('order_id', orderId)
     .order('at', { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * The same trail across the whole book rather than one order — every order
+ * logged, every status moved, every field corrected, newest first.
+ *
+ * The order is embedded so a row can say which cake it was without a lookup per
+ * event; the embed runs under the caller's own policy on `orders`, so there is
+ * no second scoping rule to keep in step. Admin only, by RLS.
+ */
+export async function recentEdits(limit = 300) {
+  const { data, error } = await sb.from('order_events')
+    .select('at,actor,kind,detail,order_id,orders(order_no,customer_name,store)')
+    .order('at', { ascending: false })
+    .limit(limit);
   if (error) throw error;
   return data || [];
 }
@@ -651,7 +688,7 @@ export async function listPrintJobs() {
  * entire orders table pulled twice on every trip to the log.
  */
 export async function listPrintFlags() {
-  return pageAll(() => sb.from('print_jobs').select('order_id,kind,status'), 'listPrintFlags');
+  return pageAll(() => sb.from('print_jobs').select('order_id,kind,status,created_at'), 'listPrintFlags');
 }
 
 /** Orders still in play, for the "which cake is this for" picker. */

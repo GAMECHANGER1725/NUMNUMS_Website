@@ -303,10 +303,12 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       <span style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#2C1A0E;letter-spacing:-0.01em;">Num Num's</span>
     </a>
     <div style="display:flex;align-items:center;gap:0.25rem;">
-      <a href="/cakes" class="nav-link">Cakes</a>
-      <a href="/order" class="nav-link">Order</a>
+      <a href="/shop" class="nav-link" data-page="shop">Signature Cakes</a>
+          <a href="/order" class="nav-link">Cakes</a>
+      <a href="/order" class="nav-link">Custom Cakes</a>
       <a href="/locations" class="nav-link">Locations</a>
       <a href="/blog/" class="nav-link nav-active" aria-current="page">Blog</a>
+          <a href="/shop" id="nav-cart" style="display:inline-flex;align-items:center;margin-left:10px;padding:7px 18px;border-radius:9999px;border:2px solid #C85478;color:#C85478;font-family:Jost,sans-serif;font-weight:600;font-size:0.78rem;letter-spacing:0.02em;text-decoration:none;white-space:nowrap;">Order Now</a>
       <a href="https://wa.me/61425697725?text=Hi%2C+I'd+like+to+order+an+eggless+cake+for+a+school+celebration" class="nav-link" style="background:#C85478;color:#fff;padding:7px 18px;border-radius:9999px;margin-left:0.5rem;font-weight:600;" target="_blank" rel="noopener noreferrer">Order Now</a>
     </div>
   </div>
@@ -387,7 +389,7 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         <div class="ig-marker">[ORIGINAL DATA]</div>
         <p>Egg is the most prevalent food allergen in Australian children. <a href="https://www.allergyfacts.org.au/allergy/egg/" target="_blank" rel="noopener noreferrer nofollow">Allergy &amp; Anaphylaxis Australia</a> reports that egg allergy affects approximately <strong>8.9% of infants and 3% of children</strong> up to school age. That figure translates to real classroom arithmetic: in a class of 28 students, you can statistically expect 1–2 students with some form of egg sensitivity, and during peak prevalence ages (3–5), the number may be higher.</p>
 
-        <p>Most commercially baked celebration cakes use eggs as a primary structural ingredient — they provide lift, moisture, and binding. Removing them is not simply a matter of leaving them out; it requires a completely different formulation. At Num Num's, that reformulation has been refined over years: <a href="/cakes">every one of our 15 flavours</a> is built on an egg-free base that delivers the same moist crumb, clean rise, and flavour depth that any celebration-worthy cake demands.</p>
+        <p>Most commercially baked celebration cakes use eggs as a primary structural ingredient — they provide lift, moisture, and binding. Removing them is not simply a matter of leaving them out; it requires a completely different formulation. At Num Num's, that reformulation has been refined over years: <a href="/order">every one of our 15 flavours</a> is built on an egg-free base that delivers the same moist crumb, clean rise, and flavour depth that any celebration-worthy cake demands.</p>
 
         <!-- SVG Chart 1: Egg allergy prevalence by age group -->
         <div class="chart-wrap reveal">
@@ -585,7 +587,7 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
             <span class="faq-icon" aria-hidden="true">+</span>
           </div>
           <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Vanilla and Chocolate are the top two for school events. Strawberry and Red Velvet are popular for end-of-year parties. Butterscotch and Mango suit older students. <a href="/cakes">See all 15 flavours</a> at numnumsbakery.com.au/cakes.</p>
+            <p itemprop="text">Vanilla and Chocolate are the top two for school events. Strawberry and Red Velvet are popular for end-of-year parties. Butterscotch and Mango suit older students. <a href="/order">See all 15 flavours</a> at numnumsbakery.com.au/cakes.</p>
           </div>
         </div>
 
@@ -676,10 +678,11 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
     </div>
     <div>
       <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin-bottom:0.85rem;">Quick Links</div>
-      <a href="/cakes" class="footer-nav-link">Our Cakes</a>
+      <a href="/order" class="footer-nav-link">Our Cakes</a>
       <a href="/order" class="footer-nav-link">How to Order</a>
       <a href="/locations" class="footer-nav-link">Locations</a>
-      <a href="/about" class="footer-nav-link">About Us</a>
+      <a href="/shop" class="footer-nav-link">Signature Cakes</a>
+            <a href="/about" class="footer-nav-link">About Us</a>
       <a href="/blog/" class="footer-nav-link">Blog</a>
       <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" class="footer-nav-link" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
     </div>
@@ -692,7 +695,7 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
 
 <script>
   // Skeleton dismiss
-  window.addEventListener('load', function(){
+  function nnReveal(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(f);});else requestAnimationFrame(f);}nnReveal(function(){
     var o = document.getElementById('sk-overlay');
     var b = document.getElementById('sk-bar');
     if(b) b.style.width = '100%';
@@ -776,5 +779,6 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
   })();
 </script>
 
+  <script src="/promo.js" defer></script>
 </body>
 </html>

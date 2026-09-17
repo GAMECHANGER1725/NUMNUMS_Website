@@ -288,8 +288,16 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         el.style.opacity = '0';
         setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 580);
       }
-      window.addEventListener('load', hideSkeleton);
-      setTimeout(hideSkeleton, 3000);
+      // Cleared at DOM readiness plus one frame — NEVER on window 'load'.
+      // 'load' waits for the hero video, GTM and the Meta pixel, which on
+      // this site settle at 22-31s, so the old 3000ms fallback was doing
+      // 100% of the work: every visitor waited 3s to see a page that had
+      // already painted at ~250-1200ms. The cap below is a safety net for
+      // a parse failure, not the normal path.
+      function revealPage(){ requestAnimationFrame(hideSkeleton); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', revealPage);
+      else revealPage();
+      setTimeout(hideSkeleton, 1200);
     })();
   </script>
 </div>
@@ -307,13 +315,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="56" height="56" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
         </a>
         <div id="nav-pill" style="display:flex;align-items:center;gap:0;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:9999px;padding:4px;position:relative;">
-          <a href="/cakes"        class="nav-link">Our Cakes</a>
+          <a href="/shop"        class="nav-link" data-page="shop">Signature Cakes</a>
           <a href="/indian-sweet" class="nav-link" data-page="indian-sweet">Indian Sweets</a>
-          <a href="/about"        class="nav-link">About</a>
-          <a href="/order"        class="nav-link">Order Online</a>
+          <a href="/order"        class="nav-link">Custom Cakes</a>
           <a href="/locations"    class="nav-link">Locations</a>
           <a href="/blog/"        class="nav-link nav-active">Blog</a>
-          <a href="/order" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
+          <a href="/shop" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
             <span class="bhi-text">Order Now</span>
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
@@ -328,13 +335,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- MOBILE MENU -->
   <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:80px;left:12px;right:12px;z-index:90;background:rgba(255,248,242,0.50);border-radius:1.5rem;overflow:hidden;padding:0 1.75rem 1.75rem;flex-direction:column;gap:0;opacity:0;transform:translateY(-12px) scaleY(0.97);transform-origin:top center;transition:opacity 0.32s cubic-bezier(0.4,0,0.2,1),transform 0.38s cubic-bezier(0.34,1.3,0.64,1);box-shadow:0 20px 60px rgba(44,26,14,0.20),0 6px 20px rgba(44,26,14,0.10),inset 0 1px 0 rgba(255,255,255,0.40);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);">
-    <a href="/cakes">Our Cakes</a>
+    <a href="/shop">Signature Cakes</a>
     <a href="/indian-sweet">Indian Sweets</a>
-    <a href="/about">About</a>
-    <a href="/order">Order Online</a>
+    <a href="/order">Custom Cakes</a>
     <a href="/locations">Locations</a>
     <a href="/blog/">Blog</a>
-    <div><a href="/order">Order Now</a></div>
+    <div><a href="/shop" id="nav-cart-m">Order Now</a></div>
   </div>
 
   <!-- PAGE HERO -->
@@ -427,7 +433,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <p>Yes — minimalist textured buttercream is the most-requested style in our 2025–26 order data, leading the field by a clear margin. Think clean sides, a single soft colour, subtle comb or palette-knife texture, and a small, considered detail like a name in elegant script or a cluster of fresh berries. It's the look that reads as modern and tasteful in every photo.</p>
 
-        <p>From our experience, minimalist works because it flatters the cake rather than hiding it under heavy fondant, and it suits everything from a 21st to an engagement. It also pairs beautifully with our eggless flavours — a clean Vanilla or Red Velvet under soft buttercream is hard to beat. See finished examples on our <a href="/cakes">Our Cakes page</a>.</p>
+        <p>From our experience, minimalist works because it flatters the cake rather than hiding it under heavy fondant, and it suits everything from a 21st to an engagement. It also pairs beautifully with our eggless flavours — a clean Vanilla or Red Velvet under soft buttercream is hard to beat. See finished examples on our <a href="/order">Our Cakes page</a>.</p>
 
         <img
           src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?fm=webp&q=80&w=1200&auto=format&fit=crop"
@@ -509,7 +515,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <p>Yes — vintage "lambeth" piping is one of 2026's clearest revivals, and it's climbing in our order data after years of ultra-minimal looks. Think heritage-style buttercream scrollwork, ruffles, pearls and pastel ribbons, usually on a single tier. It's nostalgic, hand-piped and unmistakably personal, which is exactly why younger Sydney customers have embraced it.</p>
 
-        <p>From our experience, vintage piping suits engagements, bridal showers and milestone birthdays where the host wants character over minimalism. It pairs beautifully with classic flavours like Vanilla and Red Velvet, and because it's all buttercream, it stays fully eggless without compromise. Browse design ideas on our <a href="/cakes">Our Cakes page</a>.</p>
+        <p>From our experience, vintage piping suits engagements, bridal showers and milestone birthdays where the host wants character over minimalism. It pairs beautifully with classic flavours like Vanilla and Red Velvet, and because it's all buttercream, it stays fully eggless without compromise. Browse design ideas on our <a href="/order">Our Cakes page</a>.</p>
 
         <h2>What Wedding Cake Trends Are Big in Sydney for 2026?</h2>
 
@@ -537,7 +543,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><strong>Cookies &amp; Cream</strong> — a fun base for sculpted and kids' cakes</li>
         </ul>
 
-        <p>See the full range with photos on the <a href="/cakes">Our Cakes page</a>, and read why a soft, moist crumb matters for tiered designs in our guide on <a href="/blog/eggless-cakes-soft-moist-myths-vs-facts">eggless cake texture</a>.</p>
+        <p>See the full range with photos on the <a href="/order">Our Cakes page</a>, and read why a soft, moist crumb matters for tiered designs in our guide on <a href="/blog/eggless-cakes-soft-moist-myths-vs-facts">eggless cake texture</a>.</p>
 
         <p>If you're unsure, our team will suggest a flavour that complements your chosen design and guest list when you send your brief. From our experience, a safe crowd-pleaser like Chocolate or Vanilla never disappoints, while a fusion flavour such as Rasmalai adds a memorable talking point for cultural celebrations.</p>
 
@@ -546,7 +552,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>Num Num's designs custom cakes from two Sydney shops — Harris Park, near Parramatta, and Riverstone in the north-west — and ordering takes one WhatsApp conversation. From our order data, the smoothest briefs include a reference photo, so we can match the trend you're after exactly.</p>
 
         <ol>
-          <li><strong>Gather a reference:</strong> Save a photo of the style you love, or browse the <a href="/cakes">Our Cakes page</a> for ideas.</li>
+          <li><strong>Gather a reference:</strong> Save a photo of the style you love, or browse the <a href="/order">Our Cakes page</a> for ideas.</li>
           <li><strong>Message us on WhatsApp:</strong> Send <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener">+61 425 697 725</a> the photo, your flavour, size, colour brief, preferred shop and date.</li>
           <li><strong>Allow enough notice:</strong> 48 hours for most cakes; 4 to 5 days for tiered, sculpted or festival-period designs.</li>
           <li><strong>Confirm and collect:</strong> We confirm the design and price by WhatsApp, then you collect from Harris Park or Riverstone via the <a href="/order">Order Online page</a>.</li>
@@ -559,7 +565,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div style="margin-top:1.5rem;">
           <div class="faq-item">
             <p class="faq-q">What are the biggest cake design trends in Sydney for 2026?</p>
-            <p class="faq-a">The leading styles are minimalist textured buttercream, bold colour and fault-line designs, fresh floral finishes, sculpted and number cakes, vintage piping, and cultural fusion cakes. From our 2025–26 order data, minimalist buttercream leads, followed by bold-colour and fusion designs. Every style is available 100% eggless — see the <a href="/cakes">Our Cakes page</a>.</p>
+            <p class="faq-a">The leading styles are minimalist textured buttercream, bold colour and fault-line designs, fresh floral finishes, sculpted and number cakes, vintage piping, and cultural fusion cakes. From our 2025–26 order data, minimalist buttercream leads, followed by bold-colour and fusion designs. Every style is available 100% eggless — see the <a href="/order">Our Cakes page</a>.</p>
           </div>
           <div class="faq-item">
             <p class="faq-q">Are eggless cakes part of the 2026 cake trend?</p>
@@ -654,10 +660,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div>
           <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin-bottom:1.25rem;">Menu</div>
           <div style="display:flex;flex-direction:column;gap:0.6rem;">
-            <a href="/cakes" class="footer-nav-link">Our Cakes</a>
+            <a href="/order" class="footer-nav-link">Our Cakes</a>
             <a href="/indian-sweet" class="footer-nav-link">Indian Sweets</a>
+            <a href="/shop" class="footer-nav-link">Signature Cakes</a>
             <a href="/about" class="footer-nav-link">About Us</a>
-            <a href="/order" class="footer-nav-link">Order Online</a>
+            <a href="/order" class="footer-nav-link">Custom Cakes</a>
             <a href="/locations" class="footer-nav-link">Locations</a>
             <a href="/blog/" class="footer-nav-link">Blog</a>
           </div>
@@ -678,7 +685,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1.75rem;flex-wrap:wrap;gap:1rem;">
         <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.3);margin:0;">&copy; 2026 Num Num's Bakery. All rights reserved.</p>
-        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Privacy Policy</a>
+        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Privacy Policy</a><a href="/terms" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Terms &amp; Conditions</a>
       </div>
     </div>
   </footer>
@@ -765,5 +772,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   })();
 </script>
 
+  <script src="/promo.js" defer></script>
 </body>
 </html>

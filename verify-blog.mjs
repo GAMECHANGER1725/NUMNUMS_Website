@@ -202,11 +202,18 @@ if (!declared.size) {
 // URLs in llms.txt, a Harris Park entity split across two @ids.
 //
 // FACTS is the single source of truth. If the business changes a price or a
-// flavour, change it HERE and on /cakes and /order — nowhere else.
+// flavour, change it HERE and on /order — nowhere else.
 const FACTS = {
-  // size -> [serves, price] — canonical chart on /order and /cakes
+  // size -> [serves, price] — canonical chart on /order
   sizes: { 6: ['6-8', '39.99'], 8: ['12-14', '49.99'], 10: ['20-22', '74.99'],
            12: ['25-30', '89.99'], 14: ['40-45', '114.99'], 16: ['50-55', '134.99'] },
+  // premium flavour -> size -> surcharge in CENTS. Lived only in order.html's
+  // inline script until 2026-09-13, gated by nothing; the web checkout charges
+  // off it now, so it is canonical here like every other price.
+  surcharge: {
+    'Rasmalai':       { 6: 1000, 8: 2000, 10: 2500, 12: 3500, 14: 4000, 16: 4500 },
+    'Ferrero Rocher': { 6:  500, 8: 1500, 10: 1500, 12: 2500, 14: 3000, 16: 3500 },
+  },
   // the 15 orderable flavours, from the /order dropdown
   flavours: ['Vanilla', 'Chocolate', 'Red Velvet', 'Butterscotch', 'Black Forest',
              'White Forest', 'Strawberry', 'Mango', 'Cookies & Cream', 'Lychee',
@@ -259,7 +266,7 @@ const FACTS = {
     }
     for (const m of h.matchAll(priceRe)) {
       const want = FACTS.sizes[m[1]]?.[1];
-      if (want && m[3] !== want) priceBad.push(`${f}: ${m[1]}" priced $${m[3]} but /cakes says $${want}`);
+      if (want && m[3] !== want) priceBad.push(`${f}: ${m[1]}" priced $${m[3]} but FACTS says $${want}`);
     }
     for (const fl of FACTS.offMenu) {
       const n = (h.match(new RegExp(`\\b${fl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi')) || []).length;
@@ -272,7 +279,7 @@ const FACTS = {
   }
 
   if (serveBad.length) fail(`serving sizes: ${serveBad.length} assertion(s) contradict the canonical chart on /order → ${serveBad.slice(0, 5).join(' | ')}`);
-  if (priceBad.length) fail(`prices: ${priceBad.length} assertion(s) contradict /cakes → ${priceBad.slice(0, 5).join(' | ')}`);
+  if (priceBad.length) fail(`prices: ${priceBad.length} assertion(s) contradict FACTS → ${priceBad.slice(0, 5).join(' | ')}`);
 
   // HARD FAILURE as of 2026-09-02: the owner confirmed these flavours are not sold.
   // The site previously advertised nine of them with invented supporting detail
@@ -316,7 +323,13 @@ const FACTS = {
       if (clean.endsWith('.html')) { linkBad.htmlHop++; linkEx.push(`${f} → ${raw} (.html costs a 301 hop)`); continue; }
       const key = clean.replace(/\/$/, '');
       if (key.startsWith('/blog/') && key !== '/blog' && !liveSlugs.has(slug)) { linkBad.retired++; linkEx.push(`${f} → ${raw} (no such post)`); continue; }
-      if (key && !key.startsWith('/blog/') && !topSlugs.has(slug) && !['blog', 'review', ''].includes(slug)) { linkBad.broken++; linkEx.push(`${f} → ${raw} (no such page)`); }
+      // A sub-app (review/, shop/) is a real directory of exported pages, so
+      // resolve against disk rather than hardcoding its name — that way a dead
+      // /shop/whatever is caught too, which an allow-list can never do.
+      const subApp = key.split('/')[1];
+      const inSubApp = subApp && subApp !== 'blog' && existsSync(join(ROOT, subApp))
+        && (existsSync(join(ROOT, `${key.slice(1)}.html`)) || existsSync(join(ROOT, key.slice(1), 'index.html')));
+      if (key && !key.startsWith('/blog/') && !topSlugs.has(slug) && !inSubApp && !['blog', ''].includes(slug)) { linkBad.broken++; linkEx.push(`${f} → ${raw} (no such page)`); }
     }
   }
   const linkTotal = Object.values(linkBad).reduce((a, b) => a + b, 0);
@@ -378,6 +391,292 @@ const FACTS = {
   }
 
   notes.push(`facts: ${pages.length} pages · ${ldTotal} JSON-LD blocks (${ldBad} invalid) · serving sizes, prices, NAP, entity @ids and internal links all checked`);
+}
+
+// ---------- The money path ----------
+// The public shop charges cards off ops/catalog.mjs, a file only the OPS build
+// watches — and the two sites deploy independently. So this build gate runs the
+// checkout's own tests and re-checks the catalogue against FACTS itself, or a
+// price could drift here and be discovered by a customer.
+{
+  try {
+    execFileSync(process.execPath, ['tests/checkout.test.mjs'], { cwd: ROOT, stdio: 'pipe' });
+    notes.push('checkout: price table, discount splitting and the next-day/DST boundary all hold');
+  } catch (e) {
+    fail(`checkout tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
+  // Netlify bundles EVERY file in netlify/functions as a deployable function.
+  // A test file there is not a mistake you find locally — it fails the deploy,
+  // which is exactly how it was found. So the directory holds deployable
+  // functions and nothing else; helpers live in netlify/lib/.
+  {
+    const dir = join(ROOT, 'netlify', 'functions');
+    for (const f of readdirSync(dir).filter((n) => /\.m?js$/.test(n))) {
+      const src = readFileSync(join(dir, f), 'utf8');
+      if (/\.test\.m?js$/.test(f)) {
+        fail(`netlify/functions/${f} is a test — Netlify deploys it as a function and the dot in its name fails the build. Move it to tests/.`);
+      } else if (!/export\s+(default|const handler|async function handler)|exports\.handler/.test(src)) {
+        fail(`netlify/functions/${f} exports no handler, so it would deploy as a broken endpoint. Move helpers to netlify/lib/.`);
+      }
+    }
+  }
+
+  try {
+    const out = execFileSync(process.execPath, ['tests/webhook.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`webhook signature tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
+  // A v2 function that returns the v1 `{ statusCode, body }` shape is answered
+  // with a 502 before its own code runs. Nothing else catches it: the other
+  // suites test pure helpers and the one genuinely-v1 function, and the browser
+  // only shows a generic "try again" because a 502 body carries no `error`.
+  try {
+    const out = execFileSync(process.execPath, ['tests/response-shape.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`function response-shape tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
+  // The 10% offer is "your next order", and that word is the only thing standing
+  // between the discount and an unlimited one: a new email is a new code.
+  try {
+    const out = execFileSync(process.execPath, ['tests/coupon.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`coupon eligibility tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
+  // catalog.mjs is imported by the shop and by the Netlify functions, so a
+  // drifted price here reaches a card before anyone reads a report.
+  const cat = await import('./ops/catalog.mjs');
+  for (const [size, [, price]] of Object.entries(FACTS.sizes)) {
+    const got = cat.basePrice(`${size} inch`);
+    if (String(got) !== price) fail(`catalog.mjs: ${size}" is ${got}, FACTS says ${price}`);
+  }
+  const catFlavours = cat.FLAVOURS.map((f) => f.name);
+  if (catFlavours.join('|') !== FACTS.flavours.join('|')) {
+    fail(`catalog.mjs flavours differ from FACTS:\n      ${catFlavours.join(', ')}`);
+  }
+  for (const [flavour, sizes] of Object.entries(FACTS.surcharge)) {
+    for (const [size, cents] of Object.entries(sizes)) {
+      const got = cat.SURCHARGE[flavour]?.[`${size} inch`];
+      if (got !== cents) fail(`catalog.mjs: ${flavour} ${size}" surcharge is ${got}c, FACTS says ${cents}c`);
+    }
+  }
+  // shop-app cannot import across its Turbopack root, so it carries a generated
+  // byte-for-byte copy. That copy is what the checkout page prices off, so it
+  // has to be the same file — not merely a file that once was.
+  const generated = 'shop-app/lib/catalog.generated.mjs';
+  if (!existsSync(join(ROOT, generated))) {
+    fail(`${generated} is missing — run: cd shop-app && node scripts/sync-catalog.mjs`);
+  } else {
+    const want = read('ops/catalog.mjs');
+    const got = read(generated).replace(/^\/\/ GENERATED[^\n]*\n/, '');
+    if (got !== want) fail(`${generated} has drifted from ops/catalog.mjs — run: cd shop-app && node scripts/sync-catalog.mjs`);
+  }
+
+  // The one number a customer is actually charged, end to end.
+  if (cat.listPriceCents('16 inch', 'Rasmalai') !== 17999) fail('listPriceCents drifted: 16" Rasmalai should be 17999c');
+  if (cat.listPriceCents('Slice', 'Vanilla') !== null) fail('listPriceCents must return null for a Slice, never NaN');
+}
+
+// ---------- No OS controls ----------
+// A native <select> or <input type="date"> hands its list to the operating
+// system: a grey iOS wheel, an Android system sheet, in somebody else's
+// typeface. On a site this deliberately styled it is the one control that
+// looks like another app, which is why order.html replaced its own and why
+// the shop now does too. This is the gate that stops one creeping back —
+// it is a two-line change to make and invisible until somebody taps it.
+{
+  const NATIVE = [
+    [/<select[\s>]/i, '<select> — use NnSelect (shop) or the .nd-* enhancer (static)'],
+    [/<input[^>]*type=["']?date["']?/i, 'type="date" — use NnDateField'],
+    [/<input[^>]*type=["']?time["']?/i, 'type="time" — use NnSelect for the hour'],
+  ];
+
+  // The shop's own source, where the message can name the component.
+  const srcDir = join(ROOT, 'shop-app');
+  if (existsSync(srcDir)) {
+    const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => {
+      if (e.name === 'node_modules' || e.name === 'out' || e.name === '.next') return [];
+      const full = join(d, e.name);
+      return e.isDirectory() ? walk(full) : /\.tsx$/.test(e.name) ? [full] : [];
+    });
+    for (const f of [...walk(join(srcDir, 'app')), ...walk(join(srcDir, 'components'))]) {
+      // Block comments only. These components' own doc comments name the
+      // control they replace, and stripping quoted strings instead would trip
+      // over an apostrophe inside a template literal — the same trap ops/
+      // verify.mjs documents.
+      const src = readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+      for (const [re, why] of NATIVE) {
+        if (re.test(src)) fail(`${f.replace(ROOT + '/', '')} uses a native ${why}`);
+      }
+    }
+  }
+
+  // Every static page that offers a choice must ship the enhancer that dresses
+  // it. A <select> with no .nd-btn on the page is a native one in production.
+  const statics = readdirSync(ROOT).filter((f) => f.endsWith('.html'));
+  for (const f of statics) {
+    const src = read(f);
+    if (/<select[\s>]/i.test(src) && !src.includes('.nd-btn')) {
+      fail(`${f} has a <select> but no .nd-* enhancer, so it renders the OS control`);
+    }
+    // A dropdown that cannot see the viewport opens off the bottom of a phone.
+    if (src.includes('.nd-btn') && !/function fit\(/.test(src)) {
+      fail(`${f}'s dropdowns have no fit() — the menu will open off-screen near the bottom of the page`);
+    }
+  }
+  notes.push('controls: no native select/date/time anywhere; static menus clamp to the viewport');
+}
+
+// ---------- Shop claims ----------
+// Urgency and scarcity claims have to be true at the moment a customer sees
+// them. The ACCC fined three retailers in June 2025 over misleading sale
+// representations and the ceiling is $50m per breach, so a countdown or a
+// "selling fast" on a static page — which cannot know either — is not a growth
+// tactic, it is an exposure. Badges are in shop-app/lib/badges.ts and every one
+// of them is a fact from the order book or an opinion marked as ours.
+{
+  const BANNED = [
+    /selling fast/i, /only \d+ left/i, /\bhurry\b/i, /ends in \d/i,
+    /limited time/i, /\d+ (?:people|others) (?:are )?viewing/i, /almost gone/i,
+    /last chance/i, /\bwas \$\d/i,
+  ];
+  const shopDir = join(ROOT, 'shop');
+  if (existsSync(shopDir)) {
+    const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(join(d, e.name)) : e.name.endsWith('.html') ? [join(d, e.name)] : []);
+    const pages = walk(shopDir);
+    for (const f of pages) {
+      const src = readFileSync(f, 'utf8');
+      for (const re of BANNED) {
+        if (re.test(src)) {
+          fail(`${f.replace(ROOT + '/', '')} contains an urgency claim (${re}) a static page cannot know is true`);
+        }
+      }
+    }
+    const board = readFileSync(join(shopDir, 'index.html'), 'utf8');
+    // `class="` and not `className\":\"` — the export inlines the RSC payload
+    // beside the markup, so every badge otherwise counts twice.
+    const claims = (board.match(/class="badge-claim /g) || []).length;
+    if (claims === 0) fail('the shop board carries no claim badge at all — see shop-app/lib/badges.ts');
+    if (claims > 3) fail(`the shop board carries ${claims} claim badges; badge everything and you have labelled nothing`);
+    notes.push(`shop: ${pages.length} pages carry no unprovable urgency claim, board has ${claims} badges`);
+  }
+}
+
+// ---------- The loading overlay ----------
+// Every page carries a full-screen skeleton. It used to clear on window
+// 'load', which waits for the hero video, GTM and the Meta pixel — and those
+// settle at 22-31s on this site, so the 3000ms fallback was doing 100% of the
+// work: every visitor waited 3s to see a page that had already painted at
+// 240-1168ms. Measured before the fix: overlay cleared at 3475-4369ms against
+// an FCP of 240-1168ms.
+//
+// The rule is simply that no page may gate anything on window 'load' again.
+// It is a one-word edit to reintroduce and invisible until somebody profiles
+// the site on a phone.
+{
+  const pages = [...readdirSync(ROOT).filter((f) => f.endsWith('.html')),
+    ...readdirSync(join(ROOT, 'blog')).filter((f) => f.endsWith('.html')).map((f) => `blog/${f}`)];
+  const OVERLAY = /id="(?:sk-overlay|page-skeleton|skeleton-overlay)"/;
+  const LOAD = /window\.addEventListener\(\s*['"]load['"]/;
+  const late = [];
+  let withOverlay = 0;
+  for (const f of pages) {
+    const src = read(f);
+    if (!OVERLAY.test(src)) continue;
+    withOverlay++;
+    if (LOAD.test(src)) late.push(f);
+  }
+  if (late.length) {
+    fail(`${late.length} page(s) gate on window 'load' again, which hides an already-painted page for seconds → ${late.slice(0, 5).join(', ')}`);
+  }
+  notes.push(`overlay: ${withOverlay} pages reveal at DOM readiness, none wait for window 'load'`);
+}
+
+// ---------- The custom-cake form ----------
+// The form is the conversion event on /order. It used to sit 8,426px down a
+// 20,989px page — ten phone screens, behind twelve gallery photos and a pricing
+// widget — with no link anywhere on the site pointing at it. Every one of the
+// ~1,000 /order links across 240 pages landed on the top of the page instead,
+// so moving the form up is what makes all of them work.
+{
+  const src = read('order.html');
+  const form = src.indexOf('<section id="custom-form"');
+  const gallery = src.indexOf('<div id="gallery"');
+  if (form < 0) fail('order.html has no #custom-form section');
+  if (gallery > -1 && form > gallery) {
+    fail('order.html: the gallery is above the form again — the form is the conversion event, not the proof');
+  }
+  // One time control, not three. Hour + minute + AM/PM was six taps, and its
+  // 10:00 AM default is what made the 48-hour rule contradict itself.
+  for (const dead of ['ord-hour', 'ord-min', 'ord-ampm']) {
+    if (src.includes(`id="${dead}"`)) fail(`order.html: ${dead} is back — pickup time is one list`);
+  }
+  if (!src.includes('id="ord-time"')) fail('order.html: the single #ord-time control is missing');
+  // The whole-day lead rule. Without the FIRST_PICKUP_HOUR roll-forward the
+  // calendar offers a day whose early times are inside the 48 hours, and the
+  // form rejects the first date it just offered.
+  if (!/FIRST_PICKUP_HOUR/.test(src)) {
+    fail('order.html: the whole-day lead rule is gone — the calendar can offer a date the form then refuses');
+  }
+  if (/Most orders need 48 hours notice/.test(src)) {
+    fail('order.html: the instant 48h re-check is back, and it contradicts the calendar');
+  }
+  notes.push('order form: above the gallery, one time control, one place enforcing the 48-hour rule');
+}
+
+// ---------- Navigation ----------
+// The site is shop-first: every page's nav opens with Shop, and /order is
+// labelled for what it is. That shape lives in 242 hand-written files with a
+// dozen whitespace variants, so a page that misses an edit looks completely
+// normal — it just quietly keeps sending people to the old door. The pill's
+// id is what promo.js paints the cart onto; without it the cart is invisible
+// off /shop, which is the whole point of putting it there.
+{
+  const navPages = [...readdirSync(ROOT).filter((f) => f.endsWith('.html')),
+    ...posts.map((s) => `blog/${s}.html`), 'blog/index.html']
+    // Detected by the nav itself. This used to look for ">Our Cakes<", which
+    // after that entry was removed only matched a FOOTER heading — the check
+    // went on passing while measuring the wrong thing.
+    .filter((f) => /<a href="\/shop"[^>]*class="nav-link/.test(read(f)));
+  if (navPages.length < 230) fail(`only ${navPages.length} pages carry the nav — expected every static page`);
+  // /cakes was folded into /order. An internal link to it costs a redirect hop
+  // on every page load, so none should remain.
+  for (const f of navPages) {
+    if (/href="\/cakes(?:["#/])/.test(read(f))) fail(`${f}: links to /cakes, which now 301s to /order`);
+  }
+  for (const f of navPages) {
+    const src = read(f);
+    if (!/href="\/shop"/.test(src)) fail(`${f}: nav has no link to /shop`);
+    // The category has a name now. "Shop" was a placeholder that said nothing
+    // about what is behind it, and it has to pair with "Custom Cakes".
+    if (/<a href="\/shop"[^>]*class="nav-link[^>]*>Shop</.test(src)) {
+      fail(`${f}: nav still says "Shop" — the category is Signature Cakes`);
+    }
+    if (/<a href="\/order"[^>]*>Order(?: Online)?<\/a>/.test(src)) {
+      fail(`${f}: nav still calls /order "Order Online" — it is the custom-cake quote form, not the shop`);
+    }
+    if (/<a href="\/about"[^>]*class="nav-link/.test(src)) {
+      fail(`${f}: About is back in the nav — it belongs in the footer`);
+    }
+  }
+  const pills = navPages.filter((f) => read(f).includes('id="nav-cart"'));
+  if (pills.length !== navPages.length) {
+    fail(`only ${pills.length}/${navPages.length} pages carry id="nav-cart", so the cart is invisible on the rest`);
+  }
+  // The account menu is injected by promo.js rather than written into 243
+  // files, so the check is that the code is still there to do it.
+  const promo = read('promo.js');
+  for (const fn of ['mountAccount', 'paintCart', 'navBreakpointCss']) {
+    if (!promo.includes(fn)) fail(`promo.js has lost ${fn}() — every static page loses that behaviour at once`);
+  }
+  notes.push(`nav: ${navPages.length} pages are shop-first, ${pills.length} carry the cart pill`);
 }
 
 // ---------- Report ----------

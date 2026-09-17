@@ -283,8 +283,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         el.style.opacity = '0';
         setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 580);
       }
-      window.addEventListener('load', hideSkeleton);
-      setTimeout(hideSkeleton, 3000);
+      // Cleared at DOM readiness plus one frame — NEVER on window 'load'.
+      // 'load' waits for the hero video, GTM and the Meta pixel, which on
+      // this site settle at 22-31s, so the old 3000ms fallback was doing
+      // 100% of the work: every visitor waited 3s to see a page that had
+      // already painted at ~250-1200ms. The cap below is a safety net for
+      // a parse failure, not the normal path.
+      function revealPage(){ requestAnimationFrame(hideSkeleton); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', revealPage);
+      else revealPage();
+      setTimeout(hideSkeleton, 1200);
     })();
   </script>
 </div>
@@ -302,13 +310,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="56" height="56" loading="lazy" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
         </a>
         <div id="nav-pill" style="display:flex;align-items:center;gap:0;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:9999px;padding:4px;position:relative;">
-          <a href="/cakes"        class="nav-link">Our Cakes</a>
+          <a href="/shop"        class="nav-link" data-page="shop">Signature Cakes</a>
           <a href="/indian-sweet" class="nav-link" data-page="indian-sweet">Indian Sweets</a>
-          <a href="/about"        class="nav-link">About</a>
-          <a href="/order"        class="nav-link">Order Online</a>
+          <a href="/order"        class="nav-link">Custom Cakes</a>
           <a href="/locations"    class="nav-link">Locations</a>
           <a href="/blog/"        class="nav-link nav-active">Blog</a>
-          <a href="/order" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
+          <a href="/shop" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
             <span class="bhi-text">Order Now</span>
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
@@ -323,13 +330,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- MOBILE MENU -->
   <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:80px;left:12px;right:12px;z-index:90;background:rgba(255,248,242,0.50);border-radius:1.5rem;overflow:hidden;padding:0 1.75rem 1.75rem;flex-direction:column;gap:0;opacity:0;transform:translateY(-12px) scaleY(0.97);transform-origin:top center;transition:opacity 0.32s cubic-bezier(0.4,0,0.2,1),transform 0.38s cubic-bezier(0.34,1.3,0.64,1);box-shadow:0 20px 60px rgba(44,26,14,0.20),0 6px 20px rgba(44,26,14,0.10),inset 0 1px 0 rgba(255,255,255,0.40);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);">
-    <a href="/cakes">Our Cakes</a>
+    <a href="/shop">Signature Cakes</a>
     <a href="/indian-sweet">Indian Sweets</a>
-    <a href="/about">About</a>
-    <a href="/order">Order Online</a>
+    <a href="/order">Custom Cakes</a>
     <a href="/locations">Locations</a>
     <a href="/blog/">Blog</a>
-    <div><a href="/order">Order Now</a></div>
+    <div><a href="/shop" id="nav-cart-m">Order Now</a></div>
   </div>
 
   <!-- PAGE HERO -->
@@ -493,7 +499,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- [UNIQUE INSIGHT] -->
         <p>Across Harris Park's catchment area — which includes Ermington, Rydalmere, <a href="/blog/eggless-cakes-rosehill">Rosehill</a>, <a href="/blog/eggless-cakes-westmead">Westmead</a>, and North Parramatta — certain flavour patterns emerge consistently. Chocolate remains the single most ordered flavour across all demographics and all occasions: it's a universal crowd-pleaser that works whether you're serving 8-year-olds at a birthday party or adults at a corporate milestone celebration. Rasmalai and Butterscotch are the second and third most common choices for customers identifying as South Asian Hindu or Sikh — they carry cultural familiarity and a warmth of flavour that resonates particularly at Diwali, Navratri, and family milestone events. For Ermington customers ordering for mixed gatherings — parties where guests range from long-established Australian neighbours to first-generation Indian and Sri Lankan families — Ferrero Rocher and Tiramisu have emerged as the "bridge" flavours: sophisticated, premium, and universally appealing regardless of cultural background.</p>
 
-        <p>The full 15-flavour menu gives you genuine flexibility — not just between classic and adventurous, but between the familiar and the festival-special. Here is every eggless flavour available from <a href="/cakes">the Num Num's Bakery cake menu</a>:</p>
+        <p>The full 15-flavour menu gives you genuine flexibility — not just between classic and adventurous, but between the familiar and the festival-special. Here is every eggless flavour available from <a href="/order">the Num Num's Bakery cake menu</a>:</p>
 
         <h3>All 15 Flavours — 100% Eggless, Every One</h3>
         <ul>
@@ -514,7 +520,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><strong>Rasmalai</strong> — South Asian-inspired, fragrant with cardamom and rose. The signature flavour for cultural milestones and festival celebrations</li>
         </ul>
 
-        <p>See photos of every flavour and full sizing information on the <a href="/cakes">Our Cakes page</a>. Every single cake displayed there is eggless — there's no separate section because the entire menu qualifies. If you're unsure which flavour suits your occasion, message us on WhatsApp and we'll help you choose.</p>
+        <p>See photos of every flavour and full sizing information on the <a href="/order">Our Cakes page</a>. Every single cake displayed there is eggless — there's no separate section because the entire menu qualifies. If you're unsure which flavour suits your occasion, message us on WhatsApp and we'll help you choose.</p>
 
         <!-- CHART 2: Flavour popularity (illustrative) -->
         <figure style="margin:2rem 0;background:#fff;border-radius:1rem;padding:1.5rem;border:1px solid rgba(200,84,120,0.08);">
@@ -593,7 +599,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>The ordering process at Num Num's Bakery is designed to be simple, personal, and clear. There's no online checkout system with a complicated filter for dietary requirements — you message us on WhatsApp, we confirm your order in writing, and you collect at Harris Park at the agreed time. The whole process typically takes fewer than five minutes and removes any ambiguity about ingredients or substitutions.</p>
 
         <ol>
-          <li><strong>Browse the flavours first:</strong> Visit the <a href="/cakes">Our Cakes page</a> to see photos of every flavour and size combination. Shortlist two or three options — if you're unsure, message us and we'll help you narrow it down based on your occasion and guest list.</li>
+          <li><strong>Browse the flavours first:</strong> Visit the <a href="/order">Our Cakes page</a> to see photos of every flavour and size combination. Shortlist two or three options — if you're unsure, message us and we'll help you narrow it down based on your occasion and guest list.</li>
           <li><strong>Message us on WhatsApp:</strong> Send your order to <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener">+61 425 697 725</a> with your chosen flavour, size (6", 8", or 10"), any custom design notes or photo references, and your preferred pick-up date and time.</li>
           <li><strong>Give at least 48 hours notice:</strong> Every cake is made fresh to order. For custom designs, tiered arrangements, or orders during busy periods — Diwali, Eid, Christmas, NSW school holidays — we recommend 4–5 days notice. Check our <a href="/order">Order Online page</a> for full ordering guidance.</li>
           <li><strong>Collect from Harris Park daily 11 am – 10 pm:</strong> We'll confirm your order with a WhatsApp message. Pick up from Shop 1, 96–98 Wigram Street, Harris Park NSW 2150. Street parking is available on Wigram Street. The drive from Ermington takes approximately 10 minutes.</li>
@@ -649,7 +655,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><strong>Tiered cakes</strong> — available on request with additional lead time. Popular for weddings, engagement celebrations, and significant milestone events where the cake is a centrepiece rather than just a dessert</li>
         </ul>
 
-        <p>For celebrations where you're uncertain about final numbers, we generally recommend sizing up — an extra slice or two is far better than running short at the table. If you're hosting a gathering of mixed ages where cake is one of several desserts, sizing down is also reasonable. We're happy to advise when you message us — just tell us your guest count and occasion and we'll help you choose the right format. Check the <a href="/cakes">Our Cakes page</a> for photos that show each size in context.</p>
+        <p>For celebrations where you're uncertain about final numbers, we generally recommend sizing up — an extra slice or two is far better than running short at the table. If you're hosting a gathering of mixed ages where cake is one of several desserts, sizing down is also reasonable. We're happy to advise when you message us — just tell us your guest count and occasion and we'll help you choose the right format. Check the <a href="/order">Our Cakes page</a> for photos that show each size in context.</p>
 
         <p>One sizing note for Ermington families ordering for cultural festivals like Diwali or Navratri: these events often combine cake with mithai, kheer, and other sweets — meaning cake portions tend to be smaller per person than at a Western birthday party. For a Diwali gathering of 30 guests where Num Num's cake is one of several desserts, an 8-inch is often sufficient. For events where the cake is the primary dessert, go to 10-inch for 30+ guests.</p>
 
@@ -674,7 +680,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div class="faq-item">
             <p class="faq-q">What eggless cake flavours are available for Ermington customers?</p>
-            <p class="faq-a">15 eggless flavours are available: Chocolate, Vanilla, Red Velvet, Butterscotch, Black Forest, White Forest, Strawberry, Blueberry, Mango, Lychee, Pineapple, Ferrero Rocher, Tiramisu, Cookies &amp; Cream, and Rasmalai. All 100% eggless as standard. Browse the full <a href="/cakes">Our Cakes page</a> for photos and sizing. Pick up from Harris Park daily 11 am – 10 pm.</p>
+            <p class="faq-a">15 eggless flavours are available: Chocolate, Vanilla, Red Velvet, Butterscotch, Black Forest, White Forest, Strawberry, Blueberry, Mango, Lychee, Pineapple, Ferrero Rocher, Tiramisu, Cookies &amp; Cream, and Rasmalai. All 100% eggless as standard. Browse the full <a href="/order">Our Cakes page</a> for photos and sizing. Pick up from Harris Park daily 11 am – 10 pm.</p>
           </div>
         </div>
 
@@ -784,10 +790,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div>
           <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin-bottom:1.25rem;">Menu</div>
           <div style="display:flex;flex-direction:column;gap:0.6rem;">
-            <a href="/cakes" class="footer-nav-link">Our Cakes</a>
+            <a href="/order" class="footer-nav-link">Our Cakes</a>
             <a href="/indian-sweet" class="footer-nav-link">Indian Sweets</a>
+            <a href="/shop" class="footer-nav-link">Signature Cakes</a>
             <a href="/about" class="footer-nav-link">About Us</a>
-            <a href="/order" class="footer-nav-link">Order Online</a>
+            <a href="/order" class="footer-nav-link">Custom Cakes</a>
             <a href="/locations" class="footer-nav-link">Locations</a>
             <a href="/blog/" class="footer-nav-link">Blog</a>
           </div>
@@ -808,7 +815,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1.75rem;flex-wrap:wrap;gap:1rem;">
         <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.3);margin:0;">&copy; 2026 Num Num's Bakery. All rights reserved.</p>
-        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Privacy Policy</a>
+        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Privacy Policy</a><a href="/terms" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Terms &amp; Conditions</a>
       </div>
     </div>
   </footer>
@@ -910,5 +917,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   })();
 </script>
 
+  <script src="/promo.js" defer></script>
 </body>
 </html>

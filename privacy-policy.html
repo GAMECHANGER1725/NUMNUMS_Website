@@ -144,13 +144,12 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
           <picture><source srcset="brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="56" height="56" style="border-radius:50%;overflow:hidden;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
         </a>
         <div id="nav-pill" style="display:flex;align-items:center;gap:0;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);border-radius:9999px;padding:4px;">
-          <a href="/cakes" class="nav-link">Our Cakes</a>
+          <a href="/shop" class="nav-link" data-page="shop">Signature Cakes</a>
           <a href="/indian-sweet" class="nav-link" data-page="indian-sweet">Indian Sweets</a>
-          <a href="/about" class="nav-link">About</a>
-          <a href="/order" class="nav-link">Order Online</a>
+          <a href="/order" class="nav-link">Custom Cakes</a>
           <a href="/locations" class="nav-link">Locations</a>
           <a href="/blog/" class="nav-link">Blog</a>
-          <a href="/order" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
+          <a href="/shop" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
             <span class="bhi-text">Order Now</span>
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
@@ -179,14 +178,31 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
 
     <h2>1. Information We Collect</h2>
     <h3>Information you provide to us</h3>
-    <p>When you place a cake order or enquire via WhatsApp or phone, we may collect:</p>
+    <p>When you place a cake order, create an account, or enquire via WhatsApp or phone, we may collect:</p>
     <ul>
       <li>Your name</li>
-      <li>Phone number (WhatsApp / mobile)</li>
-      <li>Email address (if provided)</li>
+      <li>Phone number (WhatsApp / mobile) &mdash; optional, used to text you when your cake is ready</li>
+      <li>Email address</li>
       <li>Order details (cake type, size, flavour, pickup date, design brief)</li>
+      <li>Your marketing preferences, and the date and time you gave them</li>
     </ul>
-    <p>We do not collect credit card details or payment information directly — payments are handled in-store at pick-up.</p>
+    <p><strong>We never see or store your card details.</strong> Online payments are taken on
+      <a href="https://stripe.com/au/privacy" rel="noopener" target="_blank">Stripe</a>&rsquo;s own secure
+      checkout page, so your card number is entered on Stripe&rsquo;s systems and never on ours. Stripe tells
+      us only that a payment succeeded, and for how much. Payments made in store at pick-up are handled at
+      the counter.</p>
+
+    <h3>Marketing messages</h3>
+    <p>We only send marketing emails or texts if you have ticked the box asking us to. Those boxes are never
+      pre-ticked, and we do not treat placing an order &mdash; or giving us a phone number so we can tell you
+      your cake is ready &mdash; as permission to market to you. Every marketing message carries a way to
+      unsubscribe, and we act on it. Messages about an order you have actually placed (a receipt, a
+      &ldquo;your cake is ready&rdquo; text) are not marketing and are sent regardless.</p>
+
+    <h3>Who we share it with</h3>
+    <p>We do not sell your details, and we do not share them for anyone else&rsquo;s marketing. We use a small
+      number of providers to run the shop &mdash; Stripe for payments, Supabase for our order records, and our
+      email and SMS senders &mdash; and they may only use your details to provide that service to us.</p>
 
     <h3>Information collected automatically</h3>
     <p>When you visit our website, we automatically collect certain technical information through cookies and analytics tools, including:</p>
@@ -276,10 +292,10 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         <div>
           <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Our Cakes</h4>
           <div style="display:flex;flex-direction:column;gap:10px;">
-            <a href="/cakes" class="footer-nav-link">Wedding Cakes</a>
-            <a href="/cakes" class="footer-nav-link">Kids Cakes</a>
-            <a href="/cakes" class="footer-nav-link">Baby Shower</a>
-            <a href="/cakes" class="footer-nav-link">Birthday Cakes</a>
+            <a href="/order" class="footer-nav-link">Wedding Cakes</a>
+            <a href="/order" class="footer-nav-link">Kids Cakes</a>
+            <a href="/order" class="footer-nav-link">Baby Shower</a>
+            <a href="/order" class="footer-nav-link">Birthday Cakes</a>
           </div>
         </div>
         <div>
@@ -293,17 +309,19 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         <div>
           <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Company</h4>
           <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="/shop" class="footer-nav-link">Signature Cakes</a>
             <a href="/about" class="footer-nav-link">About Us</a>
             <a href="/locations" class="footer-nav-link">Locations</a>
-            <a href="/order" class="footer-nav-link">Order Online</a>
+            <a href="/order" class="footer-nav-link">Custom Cakes</a>
             <a href="/blog/" class="footer-nav-link">Blog</a>
             <a href="/privacy-policy" class="footer-nav-link">Privacy Policy</a>
+            <a href="/terms" class="footer-nav-link">Terms &amp; Conditions</a>
           </div>
         </div>
       </div>
       <div style="border-top:1px solid rgba(255,248,242,0.08);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
         <span style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);">© 2026 GNT Ventures Pty Ltd · ABN 39 634 402 412. All rights reserved.</span>
-        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#E8A4B5'" onmouseleave="this.style.color='rgba(255,248,242,0.3)'">Privacy Policy</a>
+        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#E8A4B5'" onmouseleave="this.style.color='rgba(255,248,242,0.3)'">Privacy Policy</a><a href="/terms" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;transition:color 0.2s ease;" onmouseenter="this.style.color='#E8A4B5'" onmouseleave="this.style.color='rgba(255,248,242,0.3)'">Terms &amp; Conditions</a>
         <span style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);">100% Eggless · Made with Love · Sydney, Australia</span>
       </div>
     </div>
@@ -316,7 +334,8 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       if (!root) return;
       root.innerHTML = '<button id="ham-btn" style="width:40px;height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;" aria-label="Open menu" aria-expanded="false"><span class="ham-bar" style="display:block;width:22px;height:2px;background:#2C1A0E;border-radius:9999px;transition:transform 0.3s,opacity 0.2s;"></span><span class="ham-bar" style="display:block;width:22px;height:2px;background:#2C1A0E;border-radius:9999px;transition:transform 0.3s,opacity 0.2s;"></span><span class="ham-bar" style="display:block;width:22px;height:2px;background:#2C1A0E;border-radius:9999px;transition:transform 0.3s,opacity 0.2s;"></span></button>';
       var portal = document.getElementById('mobile-menu-portal');
-      portal.innerHTML = '<div id="mobile-menu" style="display:none;position:fixed;inset:0;z-index:9999;background:#FFF8F2;padding:5rem 1.75rem 2rem;overflow-y:auto;"><a href="/cakes">Our Cakes</a><a href="/indian-sweet">Indian Sweets</a><a href="/about">About</a><a href="/order">Order Online</a><a href="/locations">Locations</a><a href="/blog/">Blog</a><a href="/order" class="btn-cta">Order Now</a></div>';
+      portal.innerHTML = '<div id="mobile-menu" style="display:none;position:fixed;inset:0;z-index:9999;background:#FFF8F2;padding:5rem 1.75rem 2rem;overflow-y:auto;"><a href="/shop">Signature Cakes</a>
+<a href="/indian-sweet">Indian Sweets</a><a href="/order">Custom Cakes</a><a href="/locations">Locations</a><a href="/blog/">Blog</a><a href="/shop" id="nav-cart-m" class="btn-cta">Order Now</a></div>';
       var btn = document.getElementById('ham-btn');
       var menu = document.getElementById('mobile-menu');
       var bars = btn.querySelectorAll('.ham-bar');
@@ -331,5 +350,6 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       });
     })();
   </script>
+  <script src="/promo.js" defer></script>
 </body>
 </html>

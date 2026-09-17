@@ -339,8 +339,16 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         el.style.opacity = '0';
         setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 580);
       }
-      window.addEventListener('load', hideSkeleton);
-      setTimeout(hideSkeleton, 3000);
+      // Cleared at DOM readiness plus one frame — NEVER on window 'load'.
+      // 'load' waits for the hero video, GTM and the Meta pixel, which on
+      // this site settle at 22-31s, so the old 3000ms fallback was doing
+      // 100% of the work: every visitor waited 3s to see a page that had
+      // already painted at ~250-1200ms. The cap below is a safety net for
+      // a parse failure, not the normal path.
+      function revealPage(){ requestAnimationFrame(hideSkeleton); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', revealPage);
+      else revealPage();
+      setTimeout(hideSkeleton, 1200);
     })();
   </script>
 </div>
@@ -358,13 +366,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="56" height="56" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
         </a>
         <div id="nav-pill" style="display:flex;align-items:center;gap:0;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:9999px;padding:4px;position:relative;">
-          <a href="/cakes"        class="nav-link">Our Cakes</a>
+          <a href="/shop"        class="nav-link" data-page="shop">Signature Cakes</a>
           <a href="/indian-sweet" class="nav-link">Indian Sweets</a>
-          <a href="/about"        class="nav-link">About</a>
-          <a href="/order"        class="nav-link">Order Online</a>
+          <a href="/order"        class="nav-link">Custom Cakes</a>
           <a href="/locations"    class="nav-link">Locations</a>
           <a href="/blog/"        class="nav-link nav-active">Blog</a>
-          <a href="/order" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
+          <a href="/shop" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
             <span class="bhi-text">Order Now</span>
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
@@ -379,13 +386,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- MOBILE MENU -->
   <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:80px;left:12px;right:12px;z-index:90;background:rgba(255,248,242,0.50);border-radius:1.5rem;overflow:hidden;padding:0 1.75rem 1.75rem;flex-direction:column;gap:0;opacity:0;transform:translateY(-12px) scaleY(0.97);transform-origin:top center;transition:opacity 0.32s cubic-bezier(0.4,0,0.2,1),transform 0.38s cubic-bezier(0.34,1.3,0.64,1);box-shadow:0 20px 60px rgba(44,26,14,0.20),0 6px 20px rgba(44,26,14,0.10),inset 0 1px 0 rgba(255,255,255,0.40);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);">
-    <a href="/cakes">Our Cakes</a>
+    <a href="/shop">Signature Cakes</a>
     <a href="/indian-sweet">Indian Sweets</a>
-    <a href="/about">About</a>
-    <a href="/order">Order Online</a>
+    <a href="/order">Custom Cakes</a>
     <a href="/locations">Locations</a>
     <a href="/blog/">Blog</a>
-    <div><a href="/order">Order Now</a></div>
+    <div><a href="/shop" id="nav-cart-m">Order Now</a></div>
   </div>
 
   <!-- PAGE HERO -->
@@ -496,7 +502,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <p>For a toddler with a mild sensitivity, that distinction might not matter. For a child with a genuine egg allergy, it can be the difference between a happy birthday and a medical emergency. This is the gap that a dedicated eggless bakery closes. At Num Num's, eggs have never been part of the kitchen at all — not because we swap them out, but because the entire operation was designed without them from day one. There's no egg-contaminated spatula hiding in the drawer. There are no egg whites being whipped on the next bench. The risk pathway doesn't exist.</p>
 
-        <p>For parents navigating their child's first birthday, this matters on a practical level too. The first birthday cake is often the child's first-ever experience of cake — and therefore their first meaningful exposure to everything in it. Getting the allergen question right at the start means parents can see how their child responds without the confounding variable of accidental egg exposure. Browse all our available options on the <a href="/cakes">Our Cakes page</a> to find a flavour that works for your family.</p>
+        <p>For parents navigating their child's first birthday, this matters on a practical level too. The first birthday cake is often the child's first-ever experience of cake — and therefore their first meaningful exposure to everything in it. Getting the allergen question right at the start means parents can see how their child responds without the confounding variable of accidental egg exposure. Browse all our available options on the <a href="/order">Our Cakes page</a> to find a flavour that works for your family.</p>
 
         <p>The <a href="https://www.allergy.org.au/patients/food-allergy/egg-allergy" target="_blank" rel="noopener noreferrer">Australasian Society of Clinical Immunology and Allergy (ASCIA)</a> advises that children with egg allergy should avoid foods containing egg and those prepared in kitchens where cross-contamination may occur. A dedicated eggless bakery directly addresses both concerns in a way that a "we can make an egg-free version" promise cannot.</p>
 
@@ -530,7 +536,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><strong>Rasmalai</strong> — a rich, dairy-heavy South Asian-inspired flavour. Delicious, but very sweet and quite dense for a first birthday; better suited to older children and adult celebrations.</li>
         </ul>
 
-        <p>All 15 flavours are 100% egg-free — the guidance above is purely about taste profile and ingredient suitability for young children, not allergy risk. See the full range with photos on the <a href="/cakes">Our Cakes page</a>.</p>
+        <p>All 15 flavours are 100% egg-free — the guidance above is purely about taste profile and ingredient suitability for young children, not allergy risk. See the full range with photos on the <a href="/order">Our Cakes page</a>.</p>
 
         <!-- CHART 2: Popularity of toddler cake flavours -->
         <figure style="margin:2rem 0;background:#fff;border-radius:1rem;padding:1.5rem;border:1px solid rgba(200,84,120,0.08);">
@@ -620,7 +626,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>Ordering is simple, and everything is confirmed in writing through WhatsApp, which is exactly the kind of paper trail you want when allergens are involved. Here's the process, step by step.</p>
 
         <ol>
-          <li><strong>Browse the full range:</strong> Visit the <a href="/cakes">Our Cakes page</a> to see all 15 eggless flavours with photos. Every single one is egg-free — no asterisks.</li>
+          <li><strong>Browse the full range:</strong> Visit the <a href="/order">Our Cakes page</a> to see all 15 eggless flavours with photos. Every single one is egg-free — no asterisks.</li>
           <li><strong>Choose your size:</strong> We offer multiple sizes from a small 4-inch cake up to larger tiered options. For toddler parties, a 6-inch or 8-inch round cake generally serves a small group comfortably.</li>
           <li><strong>Message us on WhatsApp:</strong> Send your order details to <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener noreferrer">+61 425 697 725</a>. Include: your chosen flavour, size, preferred pick-up date, your name, and any allergy or dietary information about your child or guests.</li>
           <li><strong>Allow at least 48 hours notice:</strong> All cakes are made fresh to order. For busier periods — school holidays, festival dates, December — we recommend 4–5 days notice. Custom designs and smash cake combinations may require additional lead time.</li>
@@ -772,10 +778,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div>
           <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin-bottom:1.25rem;">Menu</div>
           <div style="display:flex;flex-direction:column;gap:0.6rem;">
-            <a href="/cakes" class="footer-nav-link">Our Cakes</a>
+            <a href="/order" class="footer-nav-link">Our Cakes</a>
             <a href="/indian-sweet" class="footer-nav-link">Indian Sweets</a>
+            <a href="/shop" class="footer-nav-link">Signature Cakes</a>
             <a href="/about" class="footer-nav-link">About Us</a>
-            <a href="/order" class="footer-nav-link">Order Online</a>
+            <a href="/order" class="footer-nav-link">Custom Cakes</a>
             <a href="/locations" class="footer-nav-link">Locations</a>
             <a href="/blog/" class="footer-nav-link">Blog</a>
           </div>
@@ -796,7 +803,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1.75rem;flex-wrap:wrap;gap:1rem;">
         <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.3);margin:0;">&copy; 2026 Num Num's Bakery. All rights reserved.</p>
-        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Privacy Policy</a>
+        <a href="/privacy-policy" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Privacy Policy</a><a href="/terms" style="font-family:'Jost',sans-serif;font-size:0.78rem;color:rgba(255,248,242,0.3);text-decoration:none;">Terms &amp; Conditions</a>
       </div>
     </div>
   </footer>
@@ -883,5 +890,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   })();
 </script>
 
+  <script src="/promo.js" defer></script>
 </body>
 </html>

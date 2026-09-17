@@ -43,8 +43,15 @@ createServer((req, res) => {
   if (urlPath === '/') {
     filePath = join(ROOT, 'index.html');
   }
-  // Directory → serve index.html
-  else if (existsSync(filePath) && statSync(filePath).isDirectory()) {
+  // Directory → serve its index.html, but only if one actually lives there.
+  // Newer Next.js static exports (shop-app) write BOTH `<route>.html` (the
+  // real page) and a same-named `<route>/` directory holding only RSC
+  // prefetch payloads (__next.*.txt, no index.html) — so a route can have a
+  // directory that shadows its own working .html file. Checking for the
+  // index.html before committing to the directory branch lets it fall
+  // through to the `<path>.html` case below instead of 404ing.
+  else if (existsSync(filePath) && statSync(filePath).isDirectory()
+           && existsSync(join(filePath, 'index.html'))) {
     filePath = join(filePath, 'index.html');
   }
   // Clean URL → <path>.html on disk

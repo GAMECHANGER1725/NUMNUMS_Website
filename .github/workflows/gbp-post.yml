@@ -33,6 +33,20 @@ jobs:
               sys.exit(0)
 
           posted = 0
+          # Collected so the ledger can be re-applied to main below, rather than
+          # only to whatever branch this workflow happened to run on.
+          ledger_blocks, ledger_images, processed = [], [], []
+
+          # The posting routine appends its chosen image to used-images.txt in the
+          # same commit that carries the outbox file, so the working copy ALWAYS
+          # already contains it. Checking reuse against that file therefore warns
+          # on every single post and means nothing. Compare against the state one
+          # commit earlier — that is the only list that answers "was this photo on
+          # an EARLIER post".
+          _prev = subprocess.run(['git', 'show', f'HEAD~1:{used_path}'],
+                                 capture_output=True, text=True)
+          prior_used = {ln.strip() for ln in _prev.stdout.splitlines()
+                        if ln.strip()} if _prev.returncode == 0 else set()
           for fname in files:
               fpath = os.path.join(outbox_dir, fname)
               print(f'\n--- Processing {fname} ---')
@@ -122,6 +136,8 @@ jobs:
               with open(queue_path, 'w') as f:
                   f.write(content)
 
+              ledger_blocks.append(new_block)
+
               # Persist the image so the next run cannot pick it again.
               if image_url:
                   try:
@@ -133,19 +149,81 @@ jobs:
                       used.append(image_url)
                       with open(used_path, 'w') as f:
                           f.write('\n'.join(used) + '\n')
-                      print(f'Recorded image as used: {image_url}')
+                  if image_url in prior_used:
+                      print(f'WARNING — {image_url} was already used on an earlier post. '
+                            f'The random pick should make this rare; if it repeats, the '
+                            f'ledger on main has stopped growing.')
                   else:
-                      print(f'WARNING — image was already in {used_path}, so this post reused it: {image_url}')
+                      print(f'Recorded image as used: {image_url}')
+                  ledger_images.append(image_url)
 
               os.remove(fpath)
+              processed.append(fname)
               posted += 1
               print(f'Published {post_id} ({location})')
 
           if posted:
               subprocess.run(['git', 'config', 'user.name', 'GBP Bot'], check=True)
               subprocess.run(['git', 'config', 'user.email', 'noreply@numnumsbakery.com.au'], check=True)
-              subprocess.run(['git', 'add', 'GBP/outbox/', 'GBP/posts-queue.md', 'GBP/used-images.txt'], check=True)
-              subprocess.run(['git', 'commit', '-m', f'GBP: {posted} post(s) published via Make.com'], check=True)
-              subprocess.run(['git', 'push'], check=True)
-              print(f'\nDone — {posted} post(s) published.')
+
+              # The ledger MUST land on main, not on the scratch branch this run
+              # happened to fire from. The posting routine clones main every time,
+              # so a ledger that only ever grows on branches never grows at all,
+              # and the used-image set stays frozen forever. That is precisely how
+              # IMG_0920.jpg shipped on 21 of 41 posts while used-images.txt on
+              # main still read two entries. Re-apply the deltas onto a fresh main
+              # rather than pushing this branch's copies over it, so two locations
+              # publishing minutes apart cannot clobber each other.
+              pushed = False
+              for attempt in range(1, 4):
+                  subprocess.run(['git', 'reset', '--hard'], check=True)
+                  subprocess.run(['git', 'fetch', 'origin', 'main'], check=True)
+                  subprocess.run(['git', 'checkout', '-B', 'gbp-ledger', 'origin/main'], check=True)
+
+                  with open(queue_path) as f:
+                      qc = f.read()
+                  hm = re.search(r'^## Published.*$', qc, re.M)
+                  if not hm:
+                      print('ERROR — no "## Published" heading on main; ledger not recorded.')
+                      sys.exit(1)
+                  at = hm.end()
+                  sp = re.match(r'\n+---\n+', qc[at:])
+                  if sp:
+                      at += sp.end()
+                      qc = qc[:at] + ''.join(ledger_blocks) + qc[at:]
+                  else:
+                      qc = qc[:at] + '\n\n' + ''.join(ledger_blocks) + qc[at:]
+                  with open(queue_path, 'w') as f:
+                      f.write(qc)
+
+                  try:
+                      with open(used_path) as f:
+                          used = [ln.strip() for ln in f if ln.strip()]
+                  except FileNotFoundError:
+                      used = []
+                  for u in ledger_images:
+                      if u not in used:
+                          used.append(u)
+                  with open(used_path, 'w') as f:
+                      f.write('\n'.join(used) + '\n')
+
+                  # Only matters if an outbox file was ever pushed straight to main.
+                  for fn in processed:
+                      p = os.path.join(outbox_dir, fn)
+                      if os.path.exists(p):
+                          os.remove(p)
+
+                  subprocess.run(['git', 'add', '-A', outbox_dir, queue_path, used_path], check=True)
+                  subprocess.run(['git', 'commit', '-m', f'GBP: {posted} post(s) published via Make.com'], check=True)
+                  if subprocess.run(['git', 'push', 'origin', 'HEAD:main']).returncode == 0:
+                      pushed = True
+                      print(f'\nDone — {posted} post(s) published; ledger pushed to main ({len(used)} images used).')
+                      break
+                  print(f'Ledger push rejected (attempt {attempt}/3) — refetching main and retrying.')
+
+              if not pushed:
+                  # The posts already went out; only the bookkeeping failed. Fail
+                  # loudly, because a silent miss here is what caused the drift.
+                  print('ERROR — published, but could not push the ledger to main after 3 attempts.')
+                  sys.exit(1)
           PYEOF

@@ -883,8 +883,16 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         el.style.opacity = '0';
         setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 580);
       }
-      window.addEventListener('load', hideSkeleton);
-      setTimeout(hideSkeleton, 3000);
+      // Cleared at DOM readiness plus one frame — NEVER on window 'load'.
+      // 'load' waits for the hero video, GTM and the Meta pixel, which on
+      // this site settle at 22-31s, so the old 3000ms fallback was doing
+      // 100% of the work: every visitor waited 3s to see a page that had
+      // already painted at ~250-1200ms. The cap below is a safety net for
+      // a parse failure, not the normal path.
+      function revealPage(){ requestAnimationFrame(hideSkeleton); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', revealPage);
+      else revealPage();
+      setTimeout(hideSkeleton, 1200);
     })();
   </script>
 </div>
@@ -912,13 +920,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div style="position:absolute; width:16px; height:16px; background:rgba(200,84,120,0.20); border-radius:50%; filter:blur(4px); top:0; left:8px; pointer-events:none;"></div>
             </div>
           </div>
-          <a href="/cakes"     class="nav-link" data-page="cakes">Our Cakes</a>
+          <a href="/shop"     class="nav-link" data-page="shop">Signature Cakes</a>
           <a href="/indian-sweet" class="nav-link" data-page="indian-sweet">Indian Sweets</a>
-          <a href="/about"     class="nav-link" data-page="about">About</a>
-          <a href="/order"     class="nav-link" data-page="order">Order Online</a>
+          <a href="/order"     class="nav-link" data-page="order">Custom Cakes</a>
           <a href="/locations" class="nav-link" data-page="locations">Locations</a>
           <a href="/blog/" class="nav-link" data-page="blog">Blog</a>
-          <a href="/order" class="btn-hover-interactive" style="margin-left:8px; padding:8px 20px; font-size:0.8rem; position:relative; z-index:1; min-width:auto;">
+          <a href="/shop" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px; padding:8px 20px; font-size:0.8rem; position:relative; z-index:1; min-width:auto;">
             <span class="bhi-text">Order Now</span>
             <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
             <span class="bhi-bg"></span>
@@ -933,13 +940,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </nav>
   <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:80px;left:12px;right:12px;z-index:90;background:rgba(255,248,242,0.50);border-radius:1.5rem;overflow:hidden;padding:0 1.75rem 1.75rem;flex-direction:column;gap:0;opacity:0;transform:translateY(-12px) scaleY(0.97);transform-origin:top center;transition:opacity 0.32s cubic-bezier(0.4,0,0.2,1),transform 0.38s cubic-bezier(0.34,1.3,0.64,1);box-shadow:0 20px 60px rgba(44,26,14,0.20),0 6px 20px rgba(44,26,14,0.10),inset 0 1px 0 rgba(255,255,255,0.40);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);">
-    <a href="/cakes">Our Cakes</a>
+    <a href="/shop">Signature Cakes</a>
     <a href="/indian-sweet">Indian Sweets</a>
-    <a href="/about">About</a>
-    <a href="/order">Order Online</a>
+    <a href="/order">Custom Cakes</a>
     <a href="/locations">Locations</a>
     <a href="/blog/">Blog</a>
-    <div><a href="/order">Order Now</a></div>
+    <div><a href="/shop" id="nav-cart-m">Order Now</a></div>
   </div>
 
   <!-- ═══════════════════════════════════════════ HERO ═══ -->
@@ -983,6 +989,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </a>
       </div>
 
+      <!-- Pickup-only, in the homepage's own trust-row vocabulary.
+           The hero subline already names the two shops; what it never said is
+           that collecting is the ONLY option. A visitor who needs delivery
+           should learn that in the first ten seconds, not after building
+           intent — and the marketplace link catches the ones it filters out.
+           Uber Eats is a TEXT LINK, never a button: a 25-35% commission
+           channel does not get a filled CTA on our own homepage. -->
+      <p style="margin:0.8rem 0 0; font-family:'Jost',sans-serif; font-size:0.76rem; font-weight:400; color:rgba(255,255,255,0.55); text-align:center;">
+        <span style="font-weight:600; color:rgba(255,255,255,0.8);">Pickup only</span> &mdash; collect from Harris Park or Riverstone.
+        Need delivery? <a href="https://www.ubereats.com/au/store/numnums-bakery/VptZyAwNTOKHCIDHgVGAlA" target="_blank" rel="noopener" data-marketplace="ubereats" style="color:rgba(232,164,181,0.92); text-decoration:underline; text-underline-offset:2px; font-weight:500;">Order on Uber&nbsp;Eats</a>
+      </p>
       <!-- Trust badges + risk reversal (directly under CTA) -->
       <div class="cta-badges">
         <span>100% Eggless, every cake</span>
@@ -1125,7 +1142,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.875rem; color:#5C3A22; margin:0 0 1rem; line-height:1.5;">
               Multi-tier eggless wedding cakes designed around your vision. Share a photo or describe what you want and we will build it from scratch.
             </p>
-            <a href="/cakes" class="view-link" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:4px; transition:gap 0.2s ease;"
+            <a href="/order" class="view-link" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:4px; transition:gap 0.2s ease;"
                onmouseenter="this.style.gap='8px'" onmouseleave="this.style.gap='4px'">
               View Collection
             </a>
@@ -1147,7 +1164,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.875rem; color:#5C3A22; margin:0 0 1rem; line-height:1.5;">
               Any character, any theme, any colour. Eggless birthday cakes that look exactly like the one your child has been pointing at on Pinterest.
             </p>
-            <a href="/cakes" class="view-link" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:4px; transition:gap 0.2s ease;"
+            <a href="/order" class="view-link" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:4px; transition:gap 0.2s ease;"
                onmouseenter="this.style.gap='8px'" onmouseleave="this.style.gap='4px'">
               View Collection
             </a>
@@ -1169,7 +1186,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.875rem; color:#5C3A22; margin:0 0 1rem; line-height:1.5;">
               Soft, detailed, and made without eggs. Custom baby shower cakes for families who want something beautiful and inclusive.
             </p>
-            <a href="/cakes" class="view-link" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:4px; transition:gap 0.2s ease;"
+            <a href="/order" class="view-link" style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:4px; transition:gap 0.2s ease;"
                onmouseenter="this.style.gap='8px'" onmouseleave="this.style.gap='4px'">
               View Collection
             </a>
@@ -1676,10 +1693,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div>
           <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Our Cakes</h4>
           <div style="display:flex;flex-direction:column;gap:10px;">
-            <a href="/cakes" class="footer-nav-link">Wedding Cakes</a>
-            <a href="/cakes" class="footer-nav-link">Kids Cakes</a>
-            <a href="/cakes" class="footer-nav-link">Baby Shower</a>
-            <a href="/cakes" class="footer-nav-link">Birthday Cakes</a>
+            <a href="/order" class="footer-nav-link">Wedding Cakes</a>
+            <a href="/order" class="footer-nav-link">Kids Cakes</a>
+            <a href="/order" class="footer-nav-link">Baby Shower</a>
+            <a href="/order" class="footer-nav-link">Birthday Cakes</a>
           </div>
         </div>
         <div>
@@ -1693,11 +1710,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div>
           <h4 style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin:0 0 1.25rem;">Company</h4>
           <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="/shop" class="footer-nav-link">Signature Cakes</a>
             <a href="/about" class="footer-nav-link">About Us</a>
             <a href="/locations" class="footer-nav-link">Locations</a>
-            <a href="/order" class="footer-nav-link">Order Online</a>
+            <a href="/order" class="footer-nav-link">Custom Cakes</a>
             <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener" class="footer-nav-link">WhatsApp Order</a>
             <a href="/privacy-policy" class="footer-nav-link">Privacy Policy</a>
+            <a href="/terms" class="footer-nav-link">Terms &amp; Conditions</a>
           </div>
         </div>
       </div>
@@ -2084,6 +2103,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var a = e.target.closest('a[href]');
       if (!a) return;
       var href = a.getAttribute('href') || '';
+      if (href.indexOf('ubereats.com') !== -1) {
+        try {
+          if (typeof gtag === 'function') gtag('event', 'marketplace_click', { marketplace: 'ubereats', transport: 'beacon' });
+          if (window.dataLayer) window.dataLayer.push({ event: 'marketplace_click', marketplace: 'ubereats' });
+        } catch (e) { /* analytics never blocks a click */ }
+        return;
+      }
       if (href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1) {
         fireEnquiry('whatsapp');
       } else if (href.indexOf('tel:') === 0) {
@@ -2093,5 +2119,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   })();
 </script>
 
+  <script src="/promo.js" defer></script>
 </body>
 </html>

@@ -79,6 +79,88 @@ export const FLAVOURS = [
   { name: 'Ferrero Rocher', premium: true },
 ];
 
+/**
+ * The picture of the cake itself, for a **normal** cake — one we sell off the
+ * board, where the flavour is the whole description of what it looks like.
+ *
+ * Derived from the flavour rather than kept in a lookup, so a new flavour needs
+ * nothing but its entry above and a file dropped into `ops/cakes/`; `verify.mjs`
+ * fails the deploy if those two ever disagree. Returns null for anything not on
+ * the list, including a blank flavour, so the caller falls back to a placeholder
+ * rather than a broken image.
+ */
+export const flavourSlug = (name) => String(name || '')
+  .replace(/&/g, 'and').trim().replace(/[^A-Za-z0-9]+/g, '-');
+
+export const cakeImage = (name) =>
+  (FLAVOURS.some((f) => f.name === name) ? `./cakes/${flavourSlug(name)}.webp` : null);
+
 export const sizeByCode   = (code) => SIZES.find((s) => s.code === code) || null;
 export const isPremium    = (name) => Boolean(FLAVOURS.find((f) => f.name === name)?.premium);
 export const basePrice    = (code) => sizeByCode(code)?.price ?? null;
+
+/**
+ * A normal cake's price always ends in .99 — psychological pricing, and what
+ * every SIZES entry already reads. This is the safety net, not the source: it
+ * guards the one moment a normal cake's price is set without a human looking
+ * at it (the size autofill), so a future catalogue edit that lands on a round
+ * number ($50 instead of $49.99) still shows the shop's actual pricing rather
+ * than silently breaking it. Rounds *down* — $50.00 becomes $49.99, never
+ * $50.99 — and does nothing to a price that is already .99, or to anything a
+ * person typed by hand (custom-cake quotes are real numbers, not this rule).
+ */
+export const toNinetyNine = (price) => {
+  if (price == null) return price;
+  const cents = Math.round(price * 100);
+  if (cents % 100 === 99) return price;
+  // The whole dollar just below, minus a cent — never up. $50.00 -> $49.99,
+  // and $50.50 also lands on $49.99: "round down" means the .99 at or below
+  // the price, the same rule as tax rounding, not "shift by exactly 1c".
+  const dollars = Math.floor(cents / 100);
+  return dollars > 0 ? (dollars * 100 - 1) / 100 : price;
+};
+
+
+/**
+ * Pavlova, sold over the counter by the pack. It has no size and no flavour —
+ * the only thing that varies is how many packs, so the quantity goes into the
+ * same `size` column every screen, the export and the invoice already print.
+ *
+ * Kept as a keyed object, not `{ name: … }`: verify.mjs check 7 greps this file
+ * unscoped for `name:` and would read it as a 16th cake flavour.
+ */
+export const PAV = { label: '6 Pack Pav', price: 3 };
+
+export const pavSize = (qty) => `${qty} × ${PAV.label}`;
+
+/**
+ * What a premium flavour adds, in **cents**, per size.
+ *
+ * Until now this lived only in `order.html`'s inline script and was gated by
+ * nothing, which meant the one number a customer is charged extra could drift
+ * from the one the shop quotes. It is here so the web checkout, the ops form
+ * and the public page all read one table; `verify-blog.mjs` FACTS and
+ * `ops/verify.mjs` check 7 both diff it.
+ *
+ * Deliberately a keyed object and NOT an array of `{ name: … }`: check 7 runs
+ * `/\{\s*name:\s*'([^']+)'/g` unscoped over this whole file, so an array here
+ * would be read as a 16th flavour and fail the build.
+ */
+export const SURCHARGE = {
+  'Rasmalai':       { '6 inch': 1000, '8 inch': 2000, '10 inch': 2500, '12 inch': 3500, '14 inch': 4000, '16 inch': 4500 },
+  'Ferrero Rocher': { '6 inch':  500, '8 inch': 1500, '10 inch': 1500, '12 inch': 2500, '14 inch': 3000, '16 inch': 3500 },
+};
+
+/**
+ * The full list price of one normal cake, in cents.
+ *
+ * Returns **null**, never NaN, for anything that has no list price — 'Slice' is
+ * sold by the piece and 'tiered' is quoted per build. A caller that treats null
+ * as 0 would sell a stacked cake for nothing, so the checkout rejects it rather
+ * than pricing it.
+ */
+export const listPriceCents = (code, flavour) => {
+  const base = basePrice(code);
+  if (base == null) return null;
+  return Math.round(base * 100) + (SURCHARGE[flavour]?.[code] ?? 0);
+};

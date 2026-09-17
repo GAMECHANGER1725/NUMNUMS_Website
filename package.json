@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
     "motion": "^12.39.0",
     "puppeteer": "^24.40.0",
     "stripe": "^17.7.0"

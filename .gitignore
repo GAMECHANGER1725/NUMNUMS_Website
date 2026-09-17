@@ -27,3 +27,8 @@ __pycache__/
 
 # Local-only credentials — never commit. This repo is public on GitHub.
 ops/OPS-LOGINS.md
+
+# Claude Design working files: the .dc.html artboards and canvas.json are the
+# source and are kept, the seeded canvas is a ~2MB build artifact and is not.
+.design-pickup/*.html
+!.design-pickup/*.dc.html

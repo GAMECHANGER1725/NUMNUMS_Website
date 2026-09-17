@@ -12,11 +12,12 @@ import {
   missingPrice, searchOrders, phoneKey,
   byWeekday, leadTimes, missingPhone, weekdayIndex, WEEKDAYS, printSections,
   storeBreakdown, exportRanges, csvCell, toCsv,
-  dailyTakings, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
+  dailyTakings, dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
   productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats, pricingGaps,
   netPrice, discountOn,
 } from './stats.mjs';
 import { receiptSource } from './receipt.mjs';
+import { toNinetyNine } from './catalog.mjs';
 
 let passed = 0;
 const test = (name, fn) => {
@@ -139,6 +140,33 @@ test('repeat customers are found across phone formats', () => {
   assert.equal(r.top[0].spend, 150);
 });
 
+// ── Catalogue pricing ────────────────────────────────────────────────────────
+// A normal cake's price always ends in .99. This is the safety net behind the
+// size autofill, not the source of truth (SIZES already reads .99) — it exists
+// so a future catalogue edit that lands on a round number still shows the
+// shop's real pricing instead of a $50.00 sticking out on a docket.
+test('a round-dollar price rounds down to the .99 below it', () => {
+  assert.equal(toNinetyNine(50), 49.99);
+  assert.equal(toNinetyNine(100), 99.99);
+});
+
+test('a price already ending in .99 is left alone', () => {
+  assert.equal(toNinetyNine(49.99), 49.99);
+  assert.equal(toNinetyNine(39.99), 39.99);
+});
+
+test('rounding down means the .99 at or below, not up', () => {
+  // The bug this guards: floor(cents/100) on an exact whole dollar is that
+  // same dollar, so adding 99 back on lands one dollar too high ($50.00 ->
+  // $50.99) unless the dollar is stepped down first.
+  assert.equal(toNinetyNine(50.5), 49.99);
+});
+
+test('null and undefined prices pass through unchanged', () => {
+  assert.equal(toNinetyNine(null), null);
+  assert.equal(toNinetyNine(undefined), undefined);
+});
+
 // ── Baker view ──────────────────────────────────────────────────────────────
 test('custom cakes come before normal ones within the queue', () => {
   const sections = bakerSections(sample.filter((o) => o.status === 'placed'),
@@ -155,6 +183,35 @@ test('overdue cakes sort to the top of the baker list', () => {
   ];
   const labels = bakerSections(orders, '2026-09-02T04:00:00Z').map(([l]) => l);
   assert.equal(labels[0], 'Overdue');
+});
+
+// Marking a cake baked used to take it off the board for good: the baker has no
+// order log to go and find it in, so a mistap needed an admin. Baked cakes now
+// stay in one heading at the bottom, where they can be opened and put back.
+test('baked cakes are filed under one trailing heading, not a day', () => {
+  const orders = [
+    { kind: 'normal', status: 'placed', due_at: '2026-09-03T06:00:00Z' },
+    { kind: 'normal', status: 'baked', due_at: '2026-09-03T06:00:00Z', baked_at: '2026-09-02T01:00:00Z' },
+    { kind: 'normal', status: 'baked', due_at: '2026-08-30T06:00:00Z', baked_at: '2026-09-02T03:00:00Z' },
+  ];
+  const sections = bakerSections(orders, '2026-09-02T04:00:00Z');
+  const labels = sections.map(([l]) => l);
+  assert.deepEqual(labels, ['Tomorrow', 'Just baked']);
+  // Both baked cakes land in the one heading even though their pickup days
+  // differ — an overdue one must not reappear at the top as work to do.
+  assert.equal(sections[1][1].length, 2);
+  // Most recently baked first: a mistap is undone seconds later, not tomorrow.
+  assert.equal(sections[1][1][0].baked_at, '2026-09-02T03:00:00Z');
+});
+
+test('a queue of nothing but baked cakes still ranks without crashing', () => {
+  // rank() reads a number out of the day label, so a non-day label reaching it
+  // would throw on `null[0]` and take the whole view down.
+  const sections = bakerSections(
+    [{ kind: 'normal', status: 'baked', due_at: '2026-09-03T06:00:00Z', baked_at: '2026-09-02T03:00:00Z' }],
+    '2026-09-02T04:00:00Z',
+  );
+  assert.deepEqual(sections.map(([l]) => l), ['Just baked']);
 });
 
 test('pickup hours histogram uses Sydney time', () => {
@@ -634,6 +691,22 @@ test('the takings tiles compare a period with the one before it', () => {
   assert.equal(m.was.revenue, 50);
   assert.equal(Math.round(m.change.revenue), 300);
   assert.equal(Math.round(m.change.count), 100);
+});
+
+// A custom window does not have to end today, and the comparison period behind
+// it is built the same way — so the series has to be expressible as two dates.
+test('a takings window in the past compares against the days before it', () => {
+  const orders = [
+    { status: 'picked_up', created_at: '2026-08-12T01:00:00Z', price: 100 },   // in
+    { status: 'picked_up', created_at: '2026-08-11T01:00:00Z', price: 60 },    // in
+    { status: 'picked_up', created_at: '2026-08-09T01:00:00Z', price: 40 },    // comparison
+    { status: 'picked_up', created_at: '2026-09-04T01:00:00Z', price: 999 },   // after the window
+  ];
+  const series = dailyTakingsBetween(orders, '2026-08-09', '2026-08-12');
+  const m = takingsMetrics(series, 2);
+  assert.deepEqual(m.rows.map((r) => r.dayKey), ['2026-08-11', '2026-08-12']);
+  assert.equal(m.now.revenue, 160);
+  assert.equal(m.was.revenue, 40, 'the two days before the window, and nothing after it');
 });
 
 test('the average is the period average, not the average of the days', () => {

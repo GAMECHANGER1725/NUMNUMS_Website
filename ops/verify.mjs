@@ -8,7 +8,7 @@
 //
 //   node ops/verify.mjs        (and it is the ops site's Netlify build command)
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -30,7 +30,7 @@ try {
 
 // ── 2. every module parses ──────────────────────────────────────────────────
 // db.mjs imports from a CDN so it cannot be executed here, but it can be parsed.
-for (const f of ['app.mjs', 'db.mjs', 'stats.mjs', 'catalog.mjs', 'receipt.mjs']) {
+for (const f of ['app.mjs', 'db.mjs', 'stats.mjs', 'catalog.mjs', 'receipt.mjs', 'help.mjs']) {
   try {
     execFileSync(process.execPath, ['--input-type=module', '--check'], { input: read(f), stdio: 'pipe' });
     pass(`${f} parses`);
@@ -50,7 +50,7 @@ const app = read('app.mjs');
 // way: the order log was fine on an empty store and blew up the moment a real
 // order appeared, so the failure looked like bad data rather than bad code.
 {
-  const EXPORTERS = ['stats.mjs', 'db.mjs', 'catalog.mjs', 'receipt.mjs'];
+  const EXPORTERS = ['stats.mjs', 'db.mjs', 'catalog.mjs', 'receipt.mjs', 'help.mjs'];
   const exported = new Map();                       // name -> module that exports it
   for (const f of EXPORTERS) {
     const src = read(f);
@@ -151,6 +151,62 @@ else if (gallery.capture) fail('#f-photo has capture — Android will skip the p
 else if (!camera.capture) fail('#f-photo-cam has lost capture — the camera button will open the file picker instead');
 else pass('photo inputs: picker without capture, camera with it');
 
+// ── 6b. the tour still points at something ──────────────────────────────────
+//
+// A tour step whose target has been renamed does not throw — it is dropped, so
+// the tour silently gets shorter and the thing it was there to explain is never
+// shown. That is the same failure mode as check 4, one step further out.
+{
+  const help = read('help.mjs');
+  const ids = [...help.matchAll(/sel:\s*'#([\w-]+)'/g)].map((m) => m[1]);
+  const gone = ids.filter((id) => !declared.has(id));
+  if (!ids.length) fail('no id-based tour steps found in help.mjs — has TOUR moved?');
+  else if (gone.length) fail(`tour steps point at ids that no longer exist: ${gone.join(', ')}`);
+  else pass(`tour targets all exist (${ids.length} by id)`);
+
+  // A section's Show me button names a tour by string. A typo there is silent:
+  // tourFor returns nothing and the button simply never renders.
+  const tourKeys = new Set([...help.matchAll(/^  '?([\w-]+)'?:\s*\{$/gm)].map((m) => m[1]));
+  const referenced = [...help.matchAll(/tour:\s*'([^']+)'/g)].map((m) => m[1]);
+  const unknown = referenced.filter((k) => !tourKeys.has(k));
+  if (!referenced.length) fail('no help section references a walkthrough — has `tour:` moved?');
+  else if (unknown.length) fail(`help sections name walkthroughs that do not exist: ${unknown.join(', ')}`);
+  else pass(`every Show me button names a real walkthrough (${referenced.length})`);
+
+  // Every `do:` on a step is handed to tourAct in app.mjs, which only knows a
+  // fixed set. An unknown one is navigation that quietly does nothing, and the
+  // step it was meant to open is then dropped for having no target.
+  const dos = [...new Set([...help.matchAll(/do:\s*'([^']+)'/g)].map((m) => m[1]))];
+  const views = dos.filter((d) => d.startsWith('view:')).map((d) => d.slice(5));
+  const plain = dos.filter((d) => !d.startsWith('view:'));
+  if (!dos.length) fail('no walkthrough navigates anywhere — has `do:` moved?');
+  const badDo = plain.filter((d) => !app.includes(`what === '${d}'`));
+  if (badDo.length) fail(`help.mjs asks tourAct to do things it cannot: ${badDo.join(', ')}`);
+  else pass(`tourAct handles every step action (${plain.join(', ')})`);
+
+  const badView = views.filter((v) => v !== 'home' && !declared.has(`view-${v}`));
+  if (badView.length) fail(`walkthroughs navigate to views that do not exist: ${badView.join(', ')}`);
+  else pass(`walkthrough views all exist (${views.join(', ')})`);
+
+  // Navigation is the point: a walkthrough that does not tap its way in drops
+  // the reader into a screen with no idea how they got there. Only the intro is
+  // exempt, because it is the one that shows where things live.
+  const bodies = help.split(/^  '?[\w-]+'?:\s*\{$/m);
+  const noNav = [...help.matchAll(/^  '?([\w-]+)'?:\s*\{$/gm)].map((m) => m[1])
+    .filter((k, n) => k !== 'intro' && !(bodies[n + 1] || '').includes("do: '"));
+  if (noNav.length) fail(`walkthroughs that never navigate: ${noNav.join(', ')}`);
+  else pass('every walkthrough taps its way in');
+
+  // Role lists are typed by hand in both files and nothing else compares them.
+  const roles = new Set([...help.matchAll(/'(admin|staff|baker|[a-z]+)'/g)]
+    .map((m) => m[1]).filter((r) => /^(admin|staff|baker)$/.test(r)));
+  const bad = [...help.matchAll(/roles:\s*\[([^\]]*)\]/g)]
+    .flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]))
+    .filter((r) => !['admin', 'staff', 'baker'].includes(r));
+  if (bad.length) fail(`help.mjs has unknown roles: ${[...new Set(bad)].join(', ')}`);
+  else pass(`help sections use real roles (${[...roles].sort().join(', ')})`);
+}
+
 // ── 7. the catalogue has not drifted from the build gate ────────────────────
 // catalog.mjs mirrors FACTS in verify-blog.mjs. Nothing enforced that, so the
 // ops app could quote a price the public site had already moved on from.
@@ -179,6 +235,44 @@ const catFlavours = [...catalog.matchAll(/\{\s*name:\s*'([^']+)'/g)].map((m) => 
 if (factFlavours.length && factFlavours.join('|') !== catFlavours.join('|')) {
   fail(`flavours differ from FACTS\n      FACTS:   ${factFlavours.join(', ')}\n      catalog: ${catFlavours.join(', ')}`);
 } else pass(`catalogue matches FACTS (${catFlavours.length} flavours)`);
+
+// The premium surcharge is charged by the web checkout, so it gets the same
+// treatment as the base prices: one table, diffed against the build gate.
+// Read as text on both sides rather than imported, because a drifted FACTS
+// block must fail here rather than quietly agreeing with itself.
+{
+  const factBlock = facts.slice(facts.indexOf('surcharge: {'), facts.indexOf('// the 15 orderable'));
+  const catBlock = catalog.slice(catalog.indexOf('export const SURCHARGE'), catalog.indexOf('export const listPriceCents'));
+  const rows = (text, sizeRe) => {
+    const out = new Map();
+    for (const m of text.matchAll(/'([^']+)':\s*\{([^}]*)\}/g)) {
+      for (const n of m[2].matchAll(sizeRe)) out.set(`${m[1]}/${n[1]}`, n[2]);
+    }
+    return out;
+  };
+  const wanted = rows(factBlock, /(\d+):\s*(\d+)/g);
+  const got = rows(catBlock, /'(\d+) inch':\s*(\d+)/g);
+  if (!wanted.size) fail('could not read FACTS.surcharge out of verify-blog.mjs');
+  else {
+    const drift = [...wanted].filter(([k, v]) => got.get(k) !== v)
+      .map(([k, v]) => `${k} is ${v}c in FACTS but ${got.get(k) ?? 'missing'} in catalog.mjs`);
+    const extra = [...got.keys()].filter((k) => !wanted.has(k));
+    if (drift.length || extra.length) {
+      fail(['surcharge drift:', ...drift, ...extra.map((k) => `${k} is in catalog.mjs but not FACTS`)].join('\n      '));
+    } else pass(`surcharge matches FACTS (${wanted.size} entries)`);
+  }
+}
+
+// ── 8. every flavour has its picture ────────────────────────────────────────
+// A normal cake has no design photo, so the card shows the cake we sell. The
+// filename is derived from the flavour, which means a new flavour silently
+// draws a broken image unless its file lands too.
+const slug = (name) => name.replace(/&/g, 'and').trim().replace(/[^A-Za-z0-9]+/g, '-');
+const missingShots = catFlavours.filter((f) => !existsSync(join(here, 'cakes', `${slug(f)}.webp`)));
+if (!catFlavours.length) fail('could not read the flavour list out of catalog.mjs');
+else if (missingShots.length) {
+  fail(`no cake photo for: ${missingShots.map((f) => `${f} (expected cakes/${slug(f)}.webp)`).join(', ')}`);
+} else pass(`every flavour has a cake photo (${catFlavours.length})`);
 
 console.log(failed ? `\n${failed} check(s) FAILED` : '\nops checks pass');
 process.exit(failed ? 1 : 0);

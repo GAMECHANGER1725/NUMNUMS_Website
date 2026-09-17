@@ -14,6 +14,15 @@
   command = "node verify-blog.mjs"
   publish = "."
 
+# ── Functions ────────────────────────────────────────────────────────────────
+# The checkout functions import ops/catalog.mjs and ops/stats.mjs from OUTSIDE
+# the functions directory — one price list and one DST-safe date parser, shared
+# with the ops app. esbuild follows those; the default bundler does not.
+# `included_files` makes sure the sources are actually shipped.
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["ops/catalog.mjs", "ops/stats.mjs"]
+
 # ── Redirects ────────────────────────────────────────────────────────────────
 
 # Canonical host: force www → non-www and http → https onto the single
@@ -32,6 +41,50 @@
   to = "https://numnumsbakery.com.au/:splat"
   status = 301
   force = true
+
+# The shop is a Next.js static export committed to shop/. Clean URLs, same as
+# the rest of the site.
+# /cakes was a second custom-cake page — its own H1 read "100% Eggless Custom
+# Cakes in Sydney" — competing with /order for the same queries on a site that
+# has already paid once for cannibalising itself. Its galleries, flavours and
+# eggless section now live on /order, so this sends the page, and every link
+# anyone ever built to it, where its content actually went.
+[[redirects]]
+  from = "/cakes"
+  to = "/order"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cakes/*"
+  to = "/order"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/api/subscribe"
+  to = "/.netlify/functions/subscribe"
+  status = 200
+
+[[redirects]]
+  from = "/api/check-coupon"
+  to = "/.netlify/functions/check-coupon"
+  status = 200
+
+[[redirects]]
+  from = "/api/create-checkout"
+  to = "/.netlify/functions/create-checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/order-status"
+  to = "/.netlify/functions/order-status"
+  status = 200
+
+[[redirects]]
+  from = "/shop"
+  to = "/shop/index.html"
+  status = 200
 
 # Sitemap variant crawlers expect
 [[redirects]]
@@ -77,12 +130,12 @@
 
 [[redirects]]
   from = "/services"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/services/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -92,22 +145,22 @@
 
 [[redirects]]
   from = "/gallery"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/gallery/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/kids-cake"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/kids-cake/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -138,7 +191,7 @@
 
 [[redirects]]
   from = "/soft-sponge-cake-with-dark-chocolate-topping-and-nuts/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -160,7 +213,7 @@
 
 [[redirects]]
   from = "/cakes.html"
-  to = "/cakes"
+  to = "/order"
   status = 301
   force = true
 
@@ -2305,12 +2358,12 @@
 
 [[redirects]]
   from = "/portfolio/*"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/portfolio_group/*"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -2330,32 +2383,32 @@
 
 [[redirects]]
   from = "/23-tier-cake/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/23-tier-cake"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/pastry/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/pastry"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/services/birthday-cakes/"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
   from = "/services/birthday-cakes"
-  to = "/cakes"
+  to = "/order"
   status = 301
 
 [[redirects]]
@@ -3193,6 +3246,12 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
+  for = "/shop/*"
+  [headers.values]
+    Cache-Control = "no-store"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
   for = "/brand_assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
@@ -3246,4 +3305,4 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.tailwindcss.com https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://interfaces.zapier.com https://storage.googleapis.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://hook.eu1.make.com https://www.facebook.com https://connect.facebook.net; frame-src https://js.stripe.com https://hooks.stripe.com https://interfaces.zapier.com https://www.google.com https://www.googletagmanager.com; worker-src 'none';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://js.stripe.com https://cdn.tailwindcss.com https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://interfaces.zapier.com https://storage.googleapis.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://accounts.google.com https://stnmoxsojqbbtgjwkzrc.supabase.co https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://hook.eu1.make.com https://www.facebook.com https://connect.facebook.net; frame-src https://accounts.google.com https://js.stripe.com https://hooks.stripe.com https://interfaces.zapier.com https://www.google.com https://www.googletagmanager.com; worker-src 'none'; form-action 'self' https://checkout.stripe.com; base-uri 'self';"

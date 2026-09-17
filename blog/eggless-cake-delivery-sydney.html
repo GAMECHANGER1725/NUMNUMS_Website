@@ -321,14 +321,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <picture><source srcset="/brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="/brand_assets/Logo_TParent.png" alt="Num Num's Bakery" style="height:44px;width:auto;display:block;"></picture>
       </a>
       <div id="nav-pill" style="display:flex;align-items:center;gap:2px;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);border-radius:9999px;padding:4px;">
-        <a href="/cakes" class="nav-link">Our Cakes</a>
+        <a href="/shop" class="nav-link" data-page="shop">Signature Cakes</a>
         <a href="/indian-sweet" class="nav-link">Indian Sweets</a>
-        <a href="/about" class="nav-link">About</a>
-        <a href="/order" class="nav-link">Order Online</a>
+        <a href="/order" class="nav-link">Custom Cakes</a>
         <a href="/locations" class="nav-link">Locations</a>
         <a href="/blog/" class="nav-link nav-active">Blog</a>
       </div>
-      <a href="/order" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
+      <a href="/shop" id="nav-cart" class="btn-hover-interactive" style="margin-left:8px;padding:8px 20px;font-size:0.8rem;position:relative;z-index:1;min-width:auto;">
         <span class="bhi-text">Order Now</span>
         <span class="bhi-hover">Order Now <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
         <span class="bhi-bg"></span>
@@ -342,10 +341,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <!-- MOBILE MENU -->
 <div id="mobile-menu" aria-hidden="true" style="display:none;position:fixed;top:80px;left:12px;right:12px;z-index:90;background:rgba(255,248,242,0.95);border-radius:1.5rem;overflow:hidden;padding:1.5rem 1.75rem;flex-direction:column;gap:0.5rem;box-shadow:0 20px 60px rgba(44,26,14,0.20);backdrop-filter:blur(24px);">
-  <a href="/cakes" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:0.6rem 0;border-bottom:1px solid rgba(44,26,14,0.06);display:block;">Our Cakes</a>
+  <a href="/order" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:0.6rem 0;border-bottom:1px solid rgba(44,26,14,0.06);display:block;">Our Cakes</a>
   <a href="/indian-sweet" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:0.6rem 0;border-bottom:1px solid rgba(44,26,14,0.06);display:block;">Indian Sweets</a>
-  <a href="/about" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:0.6rem 0;border-bottom:1px solid rgba(44,26,14,0.06);display:block;">About</a>
-  <a href="/order" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:0.6rem 0;border-bottom:1px solid rgba(44,26,14,0.06);display:block;">Order Online</a>
+  <a href="/order" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:0.6rem 0;border-bottom:1px solid rgba(44,26,14,0.06);display:block;">Custom Cakes</a>
   <a href="/locations" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#2C1A0E;text-decoration:none;padding:0.6rem 0;border-bottom:1px solid rgba(44,26,14,0.06);display:block;">Locations</a>
   <a href="/blog/" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;color:#C85478;text-decoration:none;padding:0.6rem 0;display:block;">Blog</a>
 </div>
@@ -753,10 +751,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div>
         <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.30);margin-bottom:1rem;">Quick Links</div>
         <div style="display:flex;flex-direction:column;gap:0.6rem;">
-          <a href="/cakes" class="footer-nav-link">Our Cakes</a>
+          <a href="/order" class="footer-nav-link">Our Cakes</a>
           <a href="/indian-sweet" class="footer-nav-link">Indian Sweets</a>
-          <a href="/about" class="footer-nav-link">About Us</a>
-          <a href="/order" class="footer-nav-link">Order Online</a>
+          <a href="/shop" class="footer-nav-link">Signature Cakes</a>
+            <a href="/about" class="footer-nav-link">About Us</a>
+          <a href="/order" class="footer-nav-link">Custom Cakes</a>
           <a href="/locations" class="footer-nav-link">Locations</a>
           <a href="/blog/" class="footer-nav-link">Blog</a>
         </div>
@@ -780,7 +779,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script>
 (function() {
   // Skeleton
-  window.addEventListener('load', function() {
+  function nnReveal(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(f);});else requestAnimationFrame(f);}nnReveal(function() {
     var sk = document.getElementById('sk-overlay');
     if (sk) sk.classList.add('sk-done');
   });
@@ -859,5 +858,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   })();
 </script>
 
+  <script src="/promo.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,629 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-jost);
+  --font-display: var(--font-cormorant);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-gold: var(--gold);
+  --color-espresso: var(--espresso);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+/* Brand tokens — the exact hex values used across the static site, so the shop
+   is the same bakery and not a second product. Source: order.html inline style. */
+:root {
+  --background: #FFF8F2;          /* cream page */
+  --foreground: #2C1A0E;          /* espresso text */
+  --espresso: #2C1A0E;
+  --card: #FFFFFF;
+  --card-foreground: #2C1A0E;
+  --popover: #FFFFFF;
+  --popover-foreground: #2C1A0E;
+  --primary: #C85478;             /* brand rose */
+  --primary-foreground: #FFFFFF;
+  --secondary: #F8EEE6;           /* cream variant */
+  --secondary-foreground: #2C1A0E;
+  --muted: #F8EEE6;
+  --muted-foreground: #5C3A22;    /* mid brown */
+  --accent: #E8A4B5;              /* light pink */
+  --accent-foreground: #2C1A0E;
+  --gold: #E3B664;                /* premium gold */
+  --destructive: #B3261E;
+  --border: #EDE0D6;
+  --input: #EDE0D6;
+  --ring: #C85478;
+  --radius: 0.625rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-jost), sans-serif;
+    line-height: 1.7;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  .font-display {
+    font-family: var(--font-cormorant), serif;
+  }
+}
+
+@layer components {
+  /* The site's canonical button — order.html:75-78, reproduced exactly so the
+     shop's primary action is the same object the rest of the site uses. */
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-family: var(--font-jost), sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #fff;
+    background: #C85478;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgba(200, 84, 120, 0.28);
+  }
+  .btn-cta:hover:not(:disabled) {
+    background: #A03D5E;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 84, 120, 0.35);
+  }
+  .btn-cta:focus-visible {
+    outline: 2px solid #C85478;
+    outline-offset: 3px;
+  }
+  .btn-cta:active:not(:disabled) { transform: scale(0.97); }
+  .btn-cta:disabled {
+    background: #EADFD6;
+    color: #A08E80;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* Uppercase eyebrow with a leading rule — order.html:90 */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #C85478;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: #C85478;
+    border-radius: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  /* The voucher silhouette. The notches are cut with a mask rather than filled
+     circles, because the card sits on a photo and a filled notch would need to
+     know the colour behind it. Shadow is drop-shadow, not box-shadow: a mask
+     clips box-shadow, but drop-shadow follows the cut shape. */
+  .coupon {
+    --notch: 13px;
+    font-variant-numeric: lining-nums;
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    background:
+      linear-gradient(115deg, #96355A 0%, #C85478 34%, #DB5F7C 58%, #E89A72 84%, #E3B664 104%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    filter: drop-shadow(0 10px 22px rgba(44, 26, 14, 0.38));
+    -webkit-mask:
+      radial-gradient(circle var(--notch) at 0 50%, transparent 98%, #000 100%),
+      radial-gradient(circle var(--notch) at 100% 50%, transparent 98%, #000 100%);
+    -webkit-mask-composite: source-in;
+    mask:
+      radial-gradient(circle var(--notch) at 0 50%, transparent 98%, #000 100%),
+      radial-gradient(circle var(--notch) at 100% 50%, transparent 98%, #000 100%);
+    mask-composite: intersect;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon { transform: none !important; }
+}
+
+@layer components {
+  /* The site's dark surface, reused verbatim from order.html:113-114 so the
+     panel is the same object as every other hero on the site. Deliberately not
+     a cake photo: every product shot is on a white background and goes muddy
+     under a dark overlay. */
+  .panel-dark {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2C1A0E 0%, #5C3A22 60%, #2C1A0E 100%);
+  }
+  .panel-dark::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 22% 42%, rgba(200, 84, 120, 0.30) 0%, transparent 62%),
+      radial-gradient(ellipse at 82% 88%, rgba(227, 182, 100, 0.16) 0%, transparent 58%);
+    pointer-events: none;
+  }
+  /* Vertical light ribs — the one nod to the reference artwork, kept faint so the
+     coupon stays the thing you look at. */
+  .panel-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 248, 242, 0.085) 0 1px,
+      transparent 1px 34px
+    );
+    -webkit-mask-image: linear-gradient(105deg, #000 0%, rgba(0,0,0,0.35) 45%, transparent 78%);
+    mask-image: linear-gradient(105deg, #000 0%, rgba(0,0,0,0.35) 45%, transparent 78%);
+    pointer-events: none;
+  }
+
+  .field-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+    color: var(--foreground);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field-input::placeholder { color: #A89384; }
+  .field-input:focus {
+    outline: none;
+    border-color: #C85478;
+    box-shadow: 0 0 0 3px rgba(200, 84, 120, 0.15);
+  }
+  .field-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+  }
+}
+
+/* ── The cake board ──────────────────────────────────────────────────────── */
+
+@layer components {
+  /*
+   * A flavour card. The photo does the selling — research is blunt that imagery
+   * is the highest-impact investment for food — so the card is mostly photo and
+   * the chrome stays out of its way.
+   */
+  .cake-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    text-align: left;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.22s ease, border-color 0.18s ease;
+  }
+  .cake-card:hover {
+    transform: translateY(-3px);
+    border-color: #E8A4B5;
+    box-shadow: 0 12px 28px -10px rgba(44, 26, 14, 0.28);
+  }
+  .cake-card:focus-visible {
+    outline: 2px solid #C85478;
+    outline-offset: 3px;
+  }
+  .cake-card[aria-pressed='true'] {
+    border-color: #C85478;
+    box-shadow: 0 0 0 2px #C85478, 0 12px 28px -10px rgba(44, 26, 14, 0.3);
+  }
+
+  /*
+   * The cakes are cut-outs on white, which is why they read as pasted on:
+   * nothing is holding them down. This is the contact shadow the photographer
+   * did not have — an ellipse just under the baseline that every photo now
+   * shares (see lib/cake-framing.ts), so it lands in the same place on all
+   * fifteen. Drawn over the photo rather than behind it, because the white in
+   * the file is opaque and would cover anything underneath.
+   */
+  .cake-photo { position: relative; background: #fff; }
+  .cake-photo img {
+    filter: contrast(1.04) saturate(1.06);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: 51% 93%;   /* the baseline, so a zoom grows off the plate */
+  }
+  .cake-card:hover .cake-photo img { transform: scale(1.045); }
+
+  .cake-ground {
+    position: absolute;
+    left: 51%;
+    /* Overlapping the plate on purpose. Six of the cakes sit on a white board
+       whose lower half is white-on-white, so a shadow placed neatly *below*
+       the measured edge floats free of anything the eye can see and reads as
+       a smudge. A contact shadow darkens under the object, not after it. */
+    top: 91.5%;
+    width: 66%;
+    height: 12%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(closest-side,
+      rgba(44, 26, 14, 0.17), rgba(44, 26, 14, 0.10) 38%,
+      rgba(44, 26, 14, 0.03) 70%, rgba(44, 26, 14, 0) 100%);
+    pointer-events: none;
+  }
+
+  /* Gold, because the surcharge is a tier worth wanting, not a penalty. */
+  .badge-premium {
+    background: linear-gradient(105deg, #E3B664, #C9973F);
+    color: #2C1A0E;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 9999px;
+  }
+
+  /*
+   * The conversion badge, opposite corner to Premium so the two can never
+   * collide or read as one strip. Rose for a fact about what other customers
+   * ordered; outlined for an opinion of ours, because those are different
+   * kinds of claim and should not look identical.
+   */
+  .badge-claim {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+  .badge-claim-fact { background: #C85478; color: #FFF8F2; }
+  .badge-claim-ours {
+    background: rgba(255, 248, 242, 0.92);
+    color: #96355A;
+    border: 1px solid rgba(200, 84, 120, 0.45);
+  }
+
+  /*
+   * Piped writing. Not photoreal — it is a legible promise of what will be on
+   * the cake, which is the anxiety it exists to settle. The shadow reads as
+   * buttercream sitting proud of the surface rather than text lying on glass.
+   */
+  .icing {
+    font-family: var(--font-icing), 'Segoe Script', cursive;
+    color: #FFFDF8;
+    text-shadow:
+      0 1px 0 rgba(140, 100, 62, 0.65),
+      0 2px 4px rgba(44, 26, 14, 0.5),
+      0 0 2px rgba(44, 26, 14, 0.35);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  /* Size chips carry serves + price so the whole ladder anchors at a glance. */
+  .size-chip {
+    /* Equal height, top-aligned: one chip carries an extra line, and a button's
+       default centring would then push every size label off a common baseline. */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  }
+  .size-chip:hover { border-color: #E8A4B5; }
+  .size-chip:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+  .size-chip[aria-pressed='true'] {
+    border-color: #C85478;
+    background: #FDF3F6;
+    box-shadow: inset 0 0 0 1px #C85478;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cake-card, .size-chip, .cake-photo img { transition: none; }
+    .cake-card:hover { transform: none; }
+    .cake-card:hover .cake-photo img { transform: none; }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   The site header, inside the shop.
+
+   Ported value-for-value from the navbar in `index.html` so the shop is not
+   a second-looking website. It renders in the static site's *scrolled* state
+   — cream, espresso links — because the shop has no dark hero to sit over.
+   If those tokens change there, change them here.
+   ───────────────────────────────────────────────────────────────────────── */
+.nn-nav {
+  position: sticky; top: 0; z-index: 50;
+  background-color: rgba(255, 248, 242, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 2px 20px rgba(44, 26, 14, 0.10);
+}
+.nn-nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;
+  height: 68px; display: flex; align-items: center; justify-content: space-between;
+}
+.nn-logo { display: flex; align-items: center; flex-shrink: 0; }
+.nn-logo img {
+  width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
+}
+.nn-pill {
+  display: flex; align-items: center;
+  background: rgba(255, 248, 242, 0.15);
+  border: 1px solid rgba(200, 84, 120, 0.25);
+  border-radius: 9999px; padding: 4px;
+}
+.nn-nav-link {
+  font-family: var(--font-jost), sans-serif;
+  font-weight: 500; font-size: 0.875rem; letter-spacing: 0.02em;
+  color: rgba(44, 26, 14, 0.75);
+  text-decoration: none; padding: 8px 20px; border-radius: 9999px;
+  white-space: nowrap; transition: color 0.2s ease;
+}
+.nn-nav-link:hover, .nn-nav-active { color: #C85478; }
+.nn-nav-link:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+
+/* The static pill's hover-swap needs three nested spans and a sliding dot.
+   Here the label changes with the cart, so the swap would fight it — this is
+   the same shape and colour, with a plain hover fill. */
+.nn-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  margin-left: 8px; padding: 8px 20px; border-radius: 9999px;
+  border: 2px solid #C85478; background: transparent; color: #C85478;
+  font-family: var(--font-jost), sans-serif;
+  font-weight: 600; font-size: 0.8rem; letter-spacing: 0.02em;
+  text-decoration: none; white-space: nowrap;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.nn-cta:hover { background: #C85478; color: #fff; }
+.nn-cta:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
+
+.nn-ham {
+  display: none; flex-direction: column; justify-content: center; align-items: center;
+  gap: 6px; width: 40px; height: 40px; margin-left: 8px;
+  background: transparent; border: none; cursor: pointer; padding: 0;
+}
+.nn-ham span {
+  display: block; width: 22px; height: 2px; background: #2C1A0E;
+  border-radius: 9999px; transform-origin: center;
+  transition: transform 0.38s cubic-bezier(.5, .85, .25, 1.1), opacity 0.22s ease;
+}
+.nn-ham.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nn-ham.open span:nth-child(2) { opacity: 0; transform: scaleX(0.4); }
+.nn-ham.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+#nn-mobile-menu {
+  position: fixed; top: 80px; left: 12px; right: 12px; z-index: 90;
+  display: flex; flex-direction: column;
+  background: rgba(255, 248, 242, 0.94);
+  border-radius: 1.5rem; padding: 0 1.75rem 1.75rem;
+  box-shadow: 0 20px 60px rgba(44, 26, 14, 0.20), 0 6px 20px rgba(44, 26, 14, 0.10);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+}
+#nn-mobile-menu > a {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 1.35rem; font-weight: 500; color: #2C1A0E; text-decoration: none;
+  padding: 1.05rem 0; border-bottom: 1px solid rgba(44, 26, 14, 0.35);
+}
+#nn-mobile-menu > a:last-of-type { border-bottom: none; }
+#nn-mobile-menu > div { margin-top: 1.6rem; }
+#nn-mobile-menu > div > a {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0.85rem 1.75rem; border-radius: 9999px;
+  background: #C85478; color: #FFF8F2; text-decoration: none;
+  font-family: var(--font-jost), sans-serif; font-weight: 600; font-size: 0.95rem;
+}
+
+/* 1024px, not 640: six labels plus the cart pill need ~950px, and "Signature
+   Cakes" is what tipped a tablet into a horizontal scroll. */
+@media (max-width: 1024px) {
+  .nn-nav-link { display: none; }
+  .nn-pill { background: transparent; border: none; backdrop-filter: none; padding: 0; }
+  .nn-ham { display: flex; }
+  /* Unlike the static site's CTA, the cart stays put on a phone — it is the
+     only running total of what you have chosen. */
+  .nn-cta { padding: 7px 14px; font-size: 0.75rem; }
+}
+@media (min-width: 1025px) {
+  #nn-mobile-menu { display: none; }
+}
+
+/* A cart with something in it is filled, the way the static site's chip is —
+   an outline reads as "available", a fill reads as "you have one going". */
+.nn-cta-full { background: #C85478; color: #FFF8F2; }
+.nn-cta-full:hover { background: #A03D5E; border-color: #A03D5E; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Dropdowns and the calendar.
+
+   Ported from `order.html`'s `.nd-*` block, deliberately keeping the class
+   names, so the custom-cake form and the shop are one design and a reviewer
+   can diff the two. A native <select> or <input type="date"> hands its list
+   to the OS, and on a page this styled it is the one control that looks like
+   somebody else's app.
+
+   The popup is positioned by Base UI, which flips it above the field when
+   there is no room below and publishes `--available-height` — that is what
+   the max-height in select.tsx and date-field.tsx read. Nothing here may set
+   a fixed height on a popup: a long list near the bottom of a phone is the
+   exact case this has to survive.
+   ───────────────────────────────────────────────────────────────────────── */
+@layer components {
+  .nd-btn {
+    width: 100%; display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px; text-align: left; cursor: pointer;
+    border: 1px solid rgba(200, 84, 120, 0.18); border-radius: 0.6rem;
+    background: #fff;
+    font-family: var(--font-jost), sans-serif; font-size: 0.86rem; color: #2C1A0E;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+  .nd-btn:hover { border-color: rgba(200, 84, 120, 0.42); }
+  .nd-btn:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+  .nd-btn[data-popup-open] {
+    border-color: #C85478; box-shadow: 0 0 0 3px rgba(200, 84, 120, 0.13);
+  }
+
+  .nd-val { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nd-val.is-empty { color: rgba(44, 26, 14, 0.42); }
+
+  .nd-caret {
+    flex: none; width: 14px; height: 14px; color: rgba(92, 58, 34, 0.4);
+    transition: transform 0.18s ease;
+  }
+  .nd-btn[data-popup-open] .nd-caret { transform: rotate(180deg); color: #C85478; }
+
+  .nd-menu {
+    min-width: var(--anchor-width);
+    /* Base UI publishes both. Reading only the height is how the calendar came
+       to hang 12px off the right edge of a 320px screen: tall enough to fit,
+       too wide to sit. min-width must yield to it, or a wide anchor drags the
+       popup back off-screen. */
+    max-width: var(--available-width);
+    box-sizing: border-box;
+    padding: 4px; margin: 0;
+    background: #FFF8F2;
+    border: 1px solid rgba(200, 84, 120, 0.18); border-radius: 0.7rem;
+    box-shadow: 0 2px 6px rgba(44, 26, 14, 0.06), 0 18px 38px -14px rgba(44, 26, 14, 0.28);
+    transform-origin: var(--transform-origin);
+    transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.16s ease;
+  }
+  .nd-menu[data-starting-style], .nd-menu[data-ending-style] {
+    transform: scale(0.97); opacity: 0;
+  }
+
+  .nd-opt {
+    position: relative; width: 100%;
+    display: flex; align-items: center; gap: 8px;
+    min-height: 40px; padding: 8px 10px 8px 12px;
+    border: 0; background: none; cursor: pointer; text-align: left;
+    border-radius: 0.5rem;
+    font-family: var(--font-jost), sans-serif; font-size: 0.84rem; color: #2C1A0E;
+    transition: background-color 0.13s ease;
+  }
+  .nd-opt[data-highlighted], .nd-opt:hover { background: rgba(200, 84, 120, 0.07); }
+  .nd-opt:focus-visible { outline: 2px solid #C85478; outline-offset: -2px; }
+  /* The chosen option keeps a rose tab down its edge rather than a tick — it
+     reads as the pulled card in a drawer, which is how the shop's own order
+     slips are marked. */
+  .nd-opt[data-selected] { color: #A03D5E; font-weight: 500; }
+  .nd-opt[data-selected]::before {
+    content: ''; position: absolute; left: 3px; top: 8px; bottom: 8px;
+    width: 3px; border-radius: 2px; background: #C85478;
+  }
+  .nd-opt-label { flex: 1; min-width: 0; }
+  /* A note (guests for a size, an address for a shop) sits in its own column
+     so the thing being scanned for lines up instead of trailing the label. */
+  .nd-opt-note {
+    flex: none; font-size: 0.72rem; color: rgba(92, 58, 34, 0.55);
+    font-variant-numeric: tabular-nums;
+  }
+  .nd-opt[data-selected] .nd-opt-note { color: rgba(160, 61, 94, 0.7); }
+  .nd-opt-tag {
+    flex: none; font-size: 0.6rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 5px; border-radius: 3px;
+    background: rgba(200, 84, 120, 0.13); color: #A03D5E;
+  }
+
+  .nd-cal-nav {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 34px; width: 34px; border-radius: 9999px; color: #2C1A0E;
+    transition: background-color 0.13s ease;
+  }
+  .nd-cal-nav:hover:not(:disabled) { background: rgba(200, 84, 120, 0.09); }
+  .nd-cal-nav:disabled { color: rgba(44, 26, 14, 0.22); cursor: not-allowed; }
+  .nd-cal-nav:focus-visible { outline: 2px solid #C85478; outline-offset: 1px; }
+
+  .nd-cal-day {
+    display: flex; align-items: center; justify-content: center;
+    /* No min-width: seven of these have to divide whatever the popup gets,
+       and on the narrowest phone that is less than seven comfortable cells. */
+    height: 36px; width: 100%; min-width: 0; border-radius: 0.5rem;
+    font-size: 0.82rem; font-variant-numeric: tabular-nums; color: #2C1A0E;
+    transition: background-color 0.13s ease, color 0.13s ease;
+  }
+  .nd-cal-day:hover:not(:disabled) { background: rgba(200, 84, 120, 0.1); }
+  .nd-cal-day:disabled { color: rgba(44, 26, 14, 0.25); cursor: not-allowed; }
+  .nd-cal-day:focus-visible { outline: 2px solid #C85478; outline-offset: -2px; }
+  .nd-cal-day.is-on { background: #C85478; color: #FFF8F2; font-weight: 600; }
+  .nd-cal-day.is-on:hover { background: #A03D5E; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nd-menu, .nd-caret, .nd-opt, .nd-cal-day, .nd-cal-nav { transition: none; }
+}
+
+/* The account icon in the header, and the dot that says you are signed in. */
+.nn-icon-btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 38px; width: 38px; margin-left: 4px;
+  border-radius: 9999px; color: #2C1A0E;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+.nn-icon-btn:hover { background: rgba(200, 84, 120, 0.1); color: #C85478; }
+.nn-icon-btn:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+.nn-icon-btn[data-popup-open] { background: rgba(200, 84, 120, 0.13); color: #C85478; }
+.nn-icon-dot {
+  position: absolute; right: 6px; top: 6px;
+  height: 8px; width: 8px; border-radius: 9999px;
+  background: #C85478; box-shadow: 0 0 0 2px #FFF8F2;
+}

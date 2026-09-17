@@ -1,0 +1,11 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",      "x": 0,   "y": 0, "w": 390, "h": 760, "title": "Option A — quiet chip (recommended)" },
+    { "file": "Prominent.dc.html", "x": 510, "y": 0, "w": 390, "h": 760, "title": "Option B — stated in the subline" }
+  ],
+  "annotations": [
+    { "id": "brief", "x": 0, "y": -150, "w": 900,
+      "text": "Pickup-only disclosure + Uber Eats link, /order hero.\n\nBoth use the site's real tokens: Cormorant Garamond + Jost, rose #C85478, blush #E8A4B5, and the existing .hero-proof chip surface. Nothing new invented.\n\nA keeps the selling subline and states the constraint as a qualifier under the buttons. B moves it into the subline where it is read first, and costs that line of copy.\n\nUber Eats is a text link in both, never a button — it is a 25-35% commission channel." }
+  ],
+  "launch": { "view": "canvas" }
+}
