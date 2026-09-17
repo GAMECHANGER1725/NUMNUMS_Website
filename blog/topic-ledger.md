@@ -74,7 +74,7 @@ it, per the report's cluster-owner rule. No new URL.
 
 | Theme | Owner page | 90d impr | Clicks | % impr on owner | Action |
 |---|---|---:|---:|---:|---|
-| Dairy-free cakes | `dairy-free-vs-eggless-cakes` | 517 | 0 | **0%** | Owner earns nothing; `best-eggless-cake-shops-sydney-2026` absorbs 351. Retitle owner to target "dairy free cakes sydney", add FAQ, link from the pillar with exact anchor. |
+| Dairy-free cakes | `dairy-free-vs-eggless-cakes` | 517 | 0 | **0%** | **DONE 2026-09-17** — verified live via GSC (90d query+page pull) that the owner still earned literally 0 impressions for any dairy-free query while `best-eggless-cake-shops-sydney-2026` absorbed 122 impr/pos 17.7 on "dairy free cakes sydney" alone; defect was real, not stale. Retitled `<title>`/meta/OG/JSON-LD headline to "Dairy-Free Cakes Sydney" framing, updated H1, added a new FAQ item (+ matching FAQPage JSON-LD) answering "Where can I find dairy-free cakes in Sydney?", and changed the pillar's internal link anchor from "dairy-free vs eggless cakes" to "dairy-free cakes in Sydney". Also fixed a factual inconsistency found in passing: the pillar's FAQ claimed Num Num's "can make dairy-free to order" while the owner page's own FAQ said "we are not a dairy-free or vegan bakery" — corrected the pillar (HTML + JSON-LD) to match the owner's honest claim so the two pages don't contradict each other. |
 | Halal cakes | `halal-friendly-cakes-eggless-sydney` | 481 | 2 | 25% | Homepage outranks the owner (352 impr). Strengthen owner, add FAQ + internal links. |
 | Number cakes | `number-cakes-sydney` | 281 | 1 | **2%** | Homepage/`/cakes` absorb it at pos 64–66. Owner is effectively invisible — check indexation first, then strengthen. |
 | Nut-free cakes | `eggless-cake-nut-free-sydney` | 260 | 1 | 30% | Pillar outranks owner. Link pillar → owner on the exact phrase. |
@@ -84,7 +84,7 @@ it, per the report's cluster-owner rule. No new URL.
 
 | Theme | Page | 90d impr | Clicks | Position | Action |
 |---|---|---:|---:|---:|---|
-| Indian sweets / barfi | `/indian-sweet` | 1,106 | **3** | 7.9 on "barfi near me" (677 impr, **0 clicks**) | Ranks well, converts nothing. Page is only **528 words**, has **no FAQ section and no FAQPage schema**. Rewrite title/meta for the click, expand to answer real questions, add FAQ + schema. This is the largest single untapped query on the site. |
+| Indian sweets / barfi | `/indian-sweet` | 1,106 | **3** | 7.9 on "barfi near me" (677 impr, **0 clicks**) | **DONE — verified already fixed 2026-09-17.** Checked live: page is now ~1,981 words with FAQPage schema present, title/meta already target barfi ("Fresh Barfi, Kaju, Laddoo"). The defect this row describes (528 words, no FAQ) no longer exists — it was fixed in the 2026-09-07 rewrite. Current live GSC (28d) still shows "barfi near me" at 332 impr/pos 8.1/**0 clicks**, but this is a **local-intent "near me" query** — a Google Maps pack above the organic results plausibly takes every click regardless of page quality. Recording as a GBP/local-pack problem, not a content problem; do not keep rewriting this page on this evidence alone. |
 
 The report flags this product line directly: one page carries the entire Indian
 sweets range against ~150 cake pages. The GSC data confirms real demand
