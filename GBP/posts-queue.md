@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-17
+
+```yaml
+id: post-hp-2026-09-17
+status: published
+published_at: 2026-09-17
+location: harris-park
+post_type: "Call to action"
+title: "Custom eggless graduation and office cakes for Parramatta and Granville teams"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1845.jpg"
+keywords_baited:
+  - custom eggless graduation cake
+  - Parramatta CBD Granville office cake
+  - cake that works for vegetarian Jain and egg allergy colleagues
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-09-12
 
 ```yaml
