@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-19
+
+```yaml
+id: post-hp-2026-09-19
+status: published
+published_at: 2026-09-19
+location: harris-park
+post_type: "Call to action"
+title: "Rasmalai and Ferrero Rocher custom cakes for Granville and Westmead families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1615.jpg"
+keywords_baited:
+  - Rasmalai and Ferrero Rocher custom eggless cake
+  - Granville Westmead Harris Park
+  - wanting a cake flavour besides vanilla or chocolate for a family celebration
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-09-18
 
 ```yaml
