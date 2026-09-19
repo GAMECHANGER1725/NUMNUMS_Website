@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-19
+
+```yaml
+id: post-rs-2026-09-19
+status: published
+published_at: 2026-09-19
+location: riverstone
+post_type: "Call to action"
+title: "15 eggless flavours beyond vanilla for Rouse Hill and Riverstone birthdays"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1875%202.jpg"
+keywords_baited:
+  - Rasmalai and Ferrero Rocher eggless cake
+  - Rouse Hill Riverstone Schofields
+  - wanting a cake flavour besides vanilla or chocolate for a birthday
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-09-19
 
 ```yaml
