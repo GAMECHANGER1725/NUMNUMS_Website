@@ -24,10 +24,11 @@ const FUTURE = new Date(Date.now() + 30 * 86_400_000).toISOString();
 const PAST = new Date(Date.now() - 86_400_000).toISOString();
 
 /**
- * A stand-in for PostgREST: one coupon row, and a count of that email's
- * non-cancelled orders. `orderError` forces the lookup to fail.
+ * A stand-in for PostgREST: one coupon row, plus what
+ * `coupon_person_status()` would say about the person asking.
+ * `rpcError` forces that lookup to fail.
  */
-function fakeDb({ coupon = null, orders = 0, orderError = null }) {
+function fakeDb({ coupon = null, orders = 0, redeemed = false, rpcError = null }) {
   return {
     from(table) {
       if (table === 'coupons') {
@@ -37,17 +38,18 @@ function fakeDb({ coupon = null, orders = 0, orderError = null }) {
           }),
         };
       }
-      if (table === 'orders') {
-        const chain = {
-          eq: () => chain,
-          neq: async () => ({ count: orders, error: orderError }),
-        };
-        return { select: () => chain };
-      }
       throw new Error(`unexpected table ${table}`);
+    },
+    async rpc(fn, args) {
+      if (fn !== 'coupon_person_status') throw new Error(`unexpected rpc ${fn}`);
+      lastRpcArgs = args;
+      if (rpcError) return { data: null, error: rpcError };
+      return { data: [{ has_ordered: orders > 0, has_redeemed: redeemed }], error: null };
     },
   };
 }
+
+let lastRpcArgs = null;
 
 const LIVE = { code: 'NN-ABC123', email: 'buyer@example.com', percent: 10, expires_at: FUTURE, redeemed_at: null };
 
@@ -95,7 +97,7 @@ const LIVE = { code: 'NN-ABC123', email: 'buyer@example.com', percent: 10, expir
 // A broken lookup must cost the discount, not hand it out.
 {
   const r = await couponFor(
-    fakeDb({ coupon: LIVE, orders: 0, orderError: { message: 'connection reset' } }),
+    fakeDb({ coupon: LIVE, orders: 0, rpcError: { message: 'connection reset' } }),
     'NN-ABC123', 'buyer@example.com',
   );
   check('a failed order lookup refuses rather than assuming', r.coupon === null);
@@ -107,6 +109,51 @@ const LIVE = { code: 'NN-ABC123', email: 'buyer@example.com', percent: 10, expir
   check('an empty code asks for one', /enter a code/i.test(noCode.problem ?? ''));
   const noEmail = await couponFor(fakeDb({ coupon: LIVE }), 'NN-ABC123', '');
   check('an empty email asks for one', /email/i.test(noEmail.problem ?? ''));
+}
+
+// ---- one discount per PERSON, for life -------------------------------------
+
+// The abuse this closes: a new email address is free, so "one code per email"
+// only ever stopped the same ADDRESS getting two. A person is a mobile.
+{
+  const r = await couponFor(
+    fakeDb({ coupon: LIVE, orders: 3, redeemed: true }),
+    'NN-ABC123', 'buyer@example.com', '0412 345 678',
+  );
+  check('a person who already used a discount is refused', r.coupon === null);
+  check('the refusal is gentle, not an accusation',
+    /one-time treat/i.test(r.problem) && !/fraud|abuse|denied|not allowed/i.test(r.problem));
+  check('and it thanks them for coming back', /thank you/i.test(r.problem));
+}
+
+// The mobile has to reach the lookup normalised, or an in-store customer —
+// who has a phone on their order and NO email — is never recognised.
+{
+  await couponFor(fakeDb({ coupon: LIVE, orders: 1 }), 'NN-ABC123', 'buyer@example.com', '+61 412 345 678');
+  check('phone is normalised to the last 9 digits for the lookup',
+    lastRpcArgs && lastRpcArgs.p_phone_key === '412345678');
+  await couponFor(fakeDb({ coupon: LIVE, orders: 1 }), 'NN-ABC123', 'buyer@example.com', '0412345678');
+  check('local and +61 forms produce the same key', lastRpcArgs.p_phone_key === '412345678');
+  await couponFor(fakeDb({ coupon: LIVE, orders: 1 }), 'NN-ABC123', 'buyer@example.com', '');
+  check('a missing phone is sent as null, not an empty string', lastRpcArgs.p_phone_key === null);
+}
+
+// A lookup failure must not hand out money, and must not blame the customer.
+{
+  const r = await couponFor(
+    fakeDb({ coupon: LIVE, orders: 3, rpcError: new Error('boom') }),
+    'NN-ABC123', 'buyer@example.com', '0412345678',
+  );
+  check('a failed person lookup refuses the discount', r.coupon === null);
+  check('and blames the system, not the shopper',
+    /try again|ring us|give us a ring/i.test(r.problem) && !/already/i.test(r.problem));
+}
+
+// The "not yet" message should read as an invitation, not a rejection.
+{
+  const r = await couponFor(fakeDb({ coupon: LIVE, orders: 0 }), 'NN-ABC123', 'buyer@example.com', '0412345678');
+  check('first-timer is told when it unlocks', /next order/i.test(r.problem));
+  check('and it is worded warmly', /enjoy|waiting/i.test(r.problem));
 }
 
 console.error = realError;

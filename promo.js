@@ -342,7 +342,19 @@
     '@media(min-width:768px){.nnp-pic{order:0;height:auto;padding:36px 28px}}',
     '.nnp-pic::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 22% 42%,rgba(200,84,120,.30) 0%,transparent 62%),radial-gradient(ellipse at 82% 88%,rgba(227,182,100,.16) 0%,transparent 58%)}',
     '.nnp-pic::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,248,242,.085) 0 1px,transparent 1px 34px);-webkit-mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%);mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%)}',
-    '.nnp-tilt{position:relative;z-index:1;width:min(330px,100%);perspective:900px}',
+    '.nnp-offer{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}',
+    '.nnp-tilt{position:relative;width:min(330px,100%);perspective:900px}',
+    /* Eyebrow and perks are DESKTOP ONLY. On mobile the panel is a ~164px band
+       stacked above the form, and anything more than the coupon pushes the
+       email field off the first screen. */
+    '.nnp-eyebrow,.nnp-perks{display:none}',
+    '@media(min-width:768px){',
+      '.nnp-eyebrow{display:block;margin:0 0 20px;font-size:.62rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#E8A4B5}',
+      '.nnp-perks{display:block;margin:26px 0 0;padding:0;list-style:none;width:min(330px,100%)}',
+      '.nnp-perks li{position:relative;margin:0 0 9px;padding-left:22px;font-size:.8rem;font-weight:300;line-height:1.5;color:rgba(255,248,242,.78)}',
+      '.nnp-perks li:last-child{margin-bottom:0}',
+      '.nnp-perks li::before{content:"";position:absolute;left:0;top:.42em;width:11px;height:6px;border-left:1.5px solid #E8A4B5;border-bottom:1.5px solid #E8A4B5;transform:rotate(-45deg)}',
+    '}',
     '.nnp-coupon{--notch:13px;position:relative;overflow:hidden;border-radius:14px;color:#fff;font-variant-numeric:lining-nums;-webkit-user-select:none;user-select:none;background:linear-gradient(115deg,#96355A 0%,#C85478 34%,#DB5F7C 58%,#E89A72 84%,#E3B664 104%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);filter:drop-shadow(0 10px 22px rgba(44,26,14,.38));transform-style:preserve-3d;transition:transform 220ms cubic-bezier(.34,1.56,.64,1);'
       + '-webkit-mask:radial-gradient(circle var(--notch) at 0 50%,transparent 98%,#000 100%),radial-gradient(circle var(--notch) at 100% 50%,transparent 98%,#000 100%);-webkit-mask-composite:source-in;'
       + 'mask:radial-gradient(circle var(--notch) at 0 50%,transparent 98%,#000 100%),radial-gradient(circle var(--notch) at 100% 50%,transparent 98%,#000 100%);mask-composite:intersect}',
@@ -360,8 +372,11 @@
     '@media(min-width:768px){.nnp-c-code{font-size:1rem;letter-spacing:.2em}}',
     '.nnp-c-sheen{pointer-events:none;position:absolute;inset:0;opacity:0;transition:opacity .3s ease}',
     '@media(prefers-reduced-motion:reduce){.nnp-coupon{transform:none!important;transition:none}}',
-    '.nnp-x{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;border-radius:9999px;background:rgba(255,255,255,.92);color:#2C1A0E;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(44,26,14,.18);transition:background .2s ease}',
-    '.nnp-x:hover{background:#fff}',
+    /* A 40px opaque white disc was the heaviest thing on a dark panel and
+       outweighed the coupon it sits beside. Translucent and smaller: still a
+       32px tap target with a hairline to hold its edge. */
+    '.nnp-x{position:absolute;top:14px;right:14px;z-index:3;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1px solid rgba(255,248,242,.28);border-radius:9999px;background:rgba(255,248,242,.14);color:#FFF8F2;font-size:16px;line-height:1;cursor:pointer;transition:background .2s ease,border-color .2s ease}',
+    '.nnp-x:hover{background:rgba(255,248,242,.26);border-color:rgba(255,248,242,.45)}',
     '.nnp-btn:focus-visible,.nnp-x:focus-visible,.nnp-alt a:focus-visible,.nnp-note a:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
     /* success */
     '.nnp-code{display:block;margin:20px auto 0;padding:16px 20px;max-width:280px;border:2px dashed #C85478;border-radius:.75rem;background:#FDF3F6;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.5rem;font-weight:700;letter-spacing:.12em;color:#96355A;text-align:center;font-variant-numeric:lining-nums}',
@@ -411,7 +426,9 @@
             '<button type="button" class="nnp-x" aria-label="Close">&times;</button>' +
             // Decorative: the heading beside it already states the offer, so a
             // screen reader hearing this twice would just be noise.
-            '<div class="nnp-tilt" aria-hidden="true">' +
+            '<div class="nnp-offer">' +
+              '<span class="nnp-eyebrow">Your welcome gift</span>' +
+              '<div class="nnp-tilt" aria-hidden="true">' +
               '<div class="nnp-coupon">' +
                 '<div class="nnp-c-row">' +
                   '<div class="nnp-c-amt">' +
@@ -426,6 +443,12 @@
                 '</div>' +
                 '<span class="nnp-c-sheen"></span>' +
               '</div>' +
+              '</div>' +
+              '<ul class="nnp-perks">' +
+                '<li>100% eggless &mdash; every cake, every time</li>' +
+                '<li>Collect from Harris Park or Riverstone</li>' +
+                '<li>Rated 4.6 on Google</li>' +
+              '</ul>' +
             '</div>' +
           '</div>' +
         '</div>' +

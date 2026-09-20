@@ -24,7 +24,9 @@ export default async (req) => {
 
   try {
     // 200 either way — "that code has expired" is an answer, not a failure.
-    return json(200, await couponFor(db, body?.code, body?.email));
+    // The phone matters: most of this shop's customers have ordered in
+    // store, where the order carries a mobile and no email at all.
+    return json(200, await couponFor(db, body?.code, body?.email, body?.phone));
   } catch (e) {
     console.error('check-coupon failed', e);
     return json(500, { coupon: null, problem: "We couldn't check that code just then." });

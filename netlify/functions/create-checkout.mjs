@@ -70,7 +70,7 @@ export default async (req) => {
 
     // The problem is deliberately dropped: a mistyped code quotes no discount
     // and still sells the cake. The checkout box already told them why.
-    const { coupon } = await couponFor(db, body?.coupon, email);
+    const { coupon } = await couponFor(db, body?.coupon, email, phone);
     const discountTotal = coupon?.percent
       ? Math.round((cart.subtotalCents * coupon.percent) / 100)
       : 0;
