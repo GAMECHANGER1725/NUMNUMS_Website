@@ -74,6 +74,57 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
   or PR descriptions). See **Business plans** under Deployment Workflow below for where these live
   and how they're kept in sync.
 
+## Everything is branded. No exceptions.
+
+**Whatever we make, it must be branded for Num Num's Bakery** — every email,
+every page, every landing page, every PDF, every internal tool screen. There is
+no such thing as a "quick unstyled version": the plain four-`<p>` coupon email
+shipped that way and read like a generic store. `brand_assets/num_nums_brand_guidelines.html`
+is the binding source — read it before designing anything.
+
+- **Rose Petal `#C85478`** (primary/CTA), **Dark Espresso `#2C1A0E`** (text),
+  **Warm Chestnut `#5C3A22`** (body), **Vanilla Cream `#FFF8F2`** (background),
+  **Soft Dough `#F5EBE0`** (sections), **Bitter Cocoa `#4A2518`**.
+- **Riverstone Teal `#4EC4D8` is Riverstone-only.** Never in global material —
+  not on the main site, not in an email, not on Harris Park content.
+- **Cormorant Garamond** for display, **Jost** for everything else. Two fonts,
+  never substituted. **Jost is never set above weight 500** — that is why the
+  coupon code is tracked rather than bolded.
+- **Prioritise `brand_assets/Logo_TParent.png` whenever you need the logo.** It
+  has real alpha, so it sits on any background with no white plate to hide and
+  no badge to wrap it in. `Logo_wName.png` is RGB with a baked-in near-white
+  plate and is 1.27MB — only reach for it on a white surface, and resize it.
+  `brand_assets/email-logo.png` is the 13KB email-sized cut of TParent; it
+  carries no wordmark, so set the name beside it as **live text**.
+- Voice: warm not gushing, premium not pretentious, confident not pushy. Always
+  say **100% eggless**. Never "Adult Cakes".
+
+### Email
+There are three, and they all share **one** shell — `netlify/lib/email-shell.mjs`.
+Restyle there, never in one message.
+1. **Coupon code** — `netlify/lib/coupon-email.mjs`, sent by `subscribe.mjs` via Resend.
+2. **Confirm signup** and 3. **Reset password** — Supabase templates, which are
+   *not* sent by our code. Generate them with `node scripts/build-auth-emails.mjs`
+   into `supabase-email-templates/`, then **paste each into the Supabase
+   dashboard** (Authentication → Emails). `verify-blog.mjs` fails the build if
+   the checked-in files drift from the generator, but nothing can detect that
+   the dashboard is stale — re-paste after any change.
+
+Email is not the web, and these differences are load-bearing:
+- **Tables, never flex/grid** (Outlook renders through Word).
+- **Inline styles.** The `<style>` block may only carry media queries and dark
+  mode; the mail must still be correct with the whole block dropped.
+- **Anything that must be read is live text, never an image** — most inboxes
+  block images by default, so a code baked into a picture is a dead end.
+- **Always send a plain-text part** alongside the HTML.
+- **An email cannot run JavaScript.** Every client strips `<script>`, so a
+  "copy to clipboard" button has to be a link to a page that can — `/coupon`.
+- **Never hardcode the production host.** Links go through `siteFor(req)`, which
+  allowlists the request origin, so a preview send is actually testable. A raw
+  `Host` echoed into a link is a phishing vector.
+- **Marketing mail needs a working unsubscribe** (Spam Act 2003) — `/unsubscribe`,
+  signed. Transactional mail must **not** have one.
+
 ## Always Do First
 - **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
 - **Invoke the `blog-write` skill** before writing any blog post, every session, no exceptions — including scheduled/cloud routine runs. Never hand-write a post by copying an existing one from `blog/`.

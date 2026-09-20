@@ -331,36 +331,35 @@
     '.nnp-alt{margin:18px 0 0;text-align:center;font-size:.8rem;color:#7A5A44}',
     '.nnp-alt a{display:inline-flex;align-items:center;min-height:32px;margin:-8px;padding:8px;color:#C85478;font-weight:600;text-decoration:none}',
     '.nnp-alt a:hover{text-decoration:underline}',
-    /* voucher side — drawn in CSS, not a photo.
-       A cake picture sells the cake; this panel's job is to sell the OFFER,
-       and the offer is a coupon. It is also ~0 bytes on all 243 pages, where
-       the photo was a real request. The panel colour must stay FLAT: the
-       notches are circles painted in that exact colour to fake a die-cut, so
-       a gradient behind them shows the seam. */
-    '.nnp-pic{position:relative;overflow:hidden;order:-1;min-height:158px;display:flex;align-items:center;justify-content:center;padding:16px;background:#F5EBE0}',
-    '@media(min-width:768px){.nnp-pic{order:0;height:auto;padding:32px}}',
-    /* Narrow on mobile so the close button keeps its corner: the band is only
-       ~158px tall there and a wide voucher slides straight under the X. */
-    '.nnp-v{position:relative;width:min(224px,70%);background:#fff;border-radius:12px;text-align:center;transform:rotate(-1.6deg);box-shadow:0 1px 2px rgba(44,26,14,.05),0 16px 34px -14px rgba(44,26,14,.38)}',
-    '@media(min-width:768px){.nnp-v{width:min(318px,92%)}}',
-    '.nnp-v-top{padding:14px 16px 10px}',
-    '@media(min-width:768px){.nnp-v-top{padding:26px 20px 18px}}',
-    '.nnp-v-brand{display:block;font-size:.56rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#C85478}',
-    '.nnp-v-amt{display:block;margin:4px 0 0;font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:2.6rem;line-height:.92;letter-spacing:-.03em;color:#2C1A0E;font-variant-numeric:lining-nums}',
-    '@media(min-width:768px){.nnp-v-amt{margin:6px 0 0;font-size:4rem}}',
-    '.nnp-v-pc{font-size:.46em;vertical-align:.52em;margin-left:.04em;color:#C85478}',
-    '.nnp-v-off{display:block;margin:6px 0 0;font-size:.62rem;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:#5C3A22}',
-    '@media(min-width:768px){.nnp-v-off{font-size:.7rem}}',
-    /* the perforation, with a die-cut notch bitten out of each edge */
-    '.nnp-v-perf{position:relative;height:0;border-top:1px dashed #E3CAD3}',
-    '.nnp-v-perf::before,.nnp-v-perf::after{content:"";position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:#F5EBE0}',
-    '.nnp-v-perf::before{left:-9px}',
-    '.nnp-v-perf::after{right:-9px}',
-    '.nnp-v-bot{padding:9px 16px 12px}',
-    '@media(min-width:768px){.nnp-v-bot{padding:15px 20px 19px}}',
-    '.nnp-v-code{display:block;font-size:.92rem;font-weight:500;letter-spacing:.26em;color:#C85478}',
-    '.nnp-v-note{display:block;margin:5px 0 0;font-size:.62rem;font-weight:300;letter-spacing:.04em;color:#8A6B55}',
-    '@media(prefers-reduced-motion:reduce){.nnp-v{transform:none}}',
+    /* Offer side — the sign-up page's own coupon, not a second design.
+       `.panel-dark` and `.coupon` are ported verbatim from
+       shop-app/app/globals.css so the popup and /shop/sign-up show the same
+       object; if you restyle one, restyle both. The notches are a MASK, not
+       filled circles, because this card sits on a gradient and a filled notch
+       would have to know the colour behind it — which is also why the shadow
+       is drop-shadow: a mask clips box-shadow, drop-shadow follows the cut. */
+    '.nnp-pic{position:relative;overflow:hidden;order:-1;min-height:164px;display:flex;align-items:center;justify-content:center;padding:22px 18px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
+    '@media(min-width:768px){.nnp-pic{order:0;height:auto;padding:36px 28px}}',
+    '.nnp-pic::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 22% 42%,rgba(200,84,120,.30) 0%,transparent 62%),radial-gradient(ellipse at 82% 88%,rgba(227,182,100,.16) 0%,transparent 58%)}',
+    '.nnp-pic::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,248,242,.085) 0 1px,transparent 1px 34px);-webkit-mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%);mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%)}',
+    '.nnp-tilt{position:relative;z-index:1;width:min(330px,100%);perspective:900px}',
+    '.nnp-coupon{--notch:13px;position:relative;overflow:hidden;border-radius:14px;color:#fff;font-variant-numeric:lining-nums;-webkit-user-select:none;user-select:none;background:linear-gradient(115deg,#96355A 0%,#C85478 34%,#DB5F7C 58%,#E89A72 84%,#E3B664 104%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);filter:drop-shadow(0 10px 22px rgba(44,26,14,.38));transform-style:preserve-3d;transition:transform 220ms cubic-bezier(.34,1.56,.64,1);'
+      + '-webkit-mask:radial-gradient(circle var(--notch) at 0 50%,transparent 98%,#000 100%),radial-gradient(circle var(--notch) at 100% 50%,transparent 98%,#000 100%);-webkit-mask-composite:source-in;'
+      + 'mask:radial-gradient(circle var(--notch) at 0 50%,transparent 98%,#000 100%),radial-gradient(circle var(--notch) at 100% 50%,transparent 98%,#000 100%);mask-composite:intersect}',
+    '.nnp-c-row{position:relative;display:flex;align-items:stretch;gap:14px;padding:16px}',
+    '@media(min-width:768px){.nnp-c-row{gap:20px;padding:20px 24px}}',
+    '.nnp-c-amt{display:flex;flex-direction:column;justify-content:center;padding-right:14px}',
+    '@media(min-width:768px){.nnp-c-amt{padding-right:20px}}',
+    '.nnp-c-big{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:2.9rem;line-height:.82;letter-spacing:-.02em}',
+    '@media(min-width:768px){.nnp-c-big{font-size:3.75rem}}',
+    '.nnp-c-off{margin-top:4px;font-size:.7rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.9)}',
+    '.nnp-c-perf{width:1px;flex-shrink:0;align-self:stretch;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.9) 0 6px,transparent 6px 12px)}',
+    '.nnp-c-for{display:flex;flex-direction:column;justify-content:center;gap:6px}',
+    '.nnp-c-lbl{font-size:.66rem;font-weight:600;line-height:1.2;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9)}',
+    '.nnp-c-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem;font-weight:600;letter-spacing:.16em;color:#fff}',
+    '@media(min-width:768px){.nnp-c-code{font-size:1rem;letter-spacing:.2em}}',
+    '.nnp-c-sheen{pointer-events:none;position:absolute;inset:0;opacity:0;transition:opacity .3s ease}',
+    '@media(prefers-reduced-motion:reduce){.nnp-coupon{transform:none!important;transition:none}}',
     '.nnp-x{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;border-radius:9999px;background:rgba(255,255,255,.92);color:#2C1A0E;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(44,26,14,.18);transition:background .2s ease}',
     '.nnp-x:hover{background:#fff}',
     '.nnp-btn:focus-visible,.nnp-x:focus-visible,.nnp-alt a:focus-visible,.nnp-note a:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
@@ -412,23 +411,74 @@
             '<button type="button" class="nnp-x" aria-label="Close">&times;</button>' +
             // Decorative: the heading beside it already states the offer, so a
             // screen reader hearing this twice would just be noise.
-            '<div class="nnp-v" aria-hidden="true">' +
-              '<div class="nnp-v-top">' +
-                '<span class="nnp-v-brand">Num Num&rsquo;s Bakery</span>' +
-                '<span class="nnp-v-amt">10<span class="nnp-v-pc">%</span></span>' +
-                '<span class="nnp-v-off">off your next order</span>' +
-              '</div>' +
-              '<div class="nnp-v-perf"></div>' +
-              '<div class="nnp-v-bot">' +
-                '<span class="nnp-v-code">NN-••••••</span>' +
-                '<span class="nnp-v-note">Sent to your inbox</span>' +
+            '<div class="nnp-tilt" aria-hidden="true">' +
+              '<div class="nnp-coupon">' +
+                '<div class="nnp-c-row">' +
+                  '<div class="nnp-c-amt">' +
+                    '<span class="nnp-c-big">10%</span>' +
+                    '<span class="nnp-c-off">off</span>' +
+                  '</div>' +
+                  '<div class="nnp-c-perf"></div>' +
+                  '<div class="nnp-c-for">' +
+                    '<span class="nnp-c-lbl">Your next order</span>' +
+                    '<span class="nnp-c-code">NN-\u2022\u2022\u2022\u2022\u2022\u2022</span>' +
+                  '</div>' +
+                '</div>' +
+                '<span class="nnp-c-sheen"></span>' +
               '</div>' +
             '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
     document.body.appendChild(back);
+    wireCoupon(back);
     return back;
+  }
+
+  /**
+   * The coupon's tilt and cursor sheen, ported from `CouponCard` in the shop
+   * app so both surfaces behave identically.
+   *
+   * Mouse only: touch has no hover, so a tilt with nothing to reset it just
+   * looks broken. rAF-throttled because pointermove fires far faster than the
+   * screen refreshes, and reduced-motion drops the tilt but keeps the sheen —
+   * it is an opacity fade, not movement.
+   */
+  function wireCoupon(back) {
+    var tiltBox = back.querySelector('.nnp-tilt');
+    var card = back.querySelector('.nnp-coupon');
+    var sheen = back.querySelector('.nnp-c-sheen');
+    if (!tiltBox || !card || !sheen) return;
+
+    var MAX_TILT = 8;   // past ~10deg the notches read as a folded ticket
+    var frame = 0;
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    tiltBox.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      cancelAnimationFrame(frame);
+      var r = card.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width;
+      var py = (e.clientY - r.top) / r.height;
+      frame = requestAnimationFrame(function () {
+        if (!still) {
+          card.style.transform =
+            'rotateX(' + ((0.5 - py) * 2 * MAX_TILT).toFixed(2) + 'deg) ' +
+            'rotateY(' + ((px - 0.5) * 2 * MAX_TILT).toFixed(2) + 'deg)';
+        }
+        sheen.style.background =
+          'radial-gradient(circle 180px at ' + (px * 100).toFixed(1) + '% ' +
+          (py * 100).toFixed(1) + '%, rgba(255,255,255,0.28) 0%, ' +
+          'rgba(255,255,255,0.10) 40%, transparent 70%)';
+        sheen.style.opacity = '1';
+      });
+    });
+
+    tiltBox.addEventListener('pointerleave', function () {
+      cancelAnimationFrame(frame);
+      card.style.transform = '';
+      sheen.style.opacity = '0';
+    });
   }
 
   /* ------------------------------------------------------------- behaviour */

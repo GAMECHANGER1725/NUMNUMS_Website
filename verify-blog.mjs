@@ -459,6 +459,26 @@ const FACTS = {
     fail(`coupon email tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
+  // The Supabase auth templates are generated from the same shell as the
+  // coupon email, so restyling the shell silently leaves them behind. This
+  // catches the checked-in copies drifting; nothing can detect that the
+  // Supabase DASHBOARD is stale, so re-paste after any change.
+  try {
+    const before = ['confirm-signup.html', 'reset-password.html']
+      .map((f) => readFileSync(join(ROOT, 'supabase-email-templates', f), 'utf8'));
+    execFileSync(process.execPath, ['scripts/build-auth-emails.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    const after = ['confirm-signup.html', 'reset-password.html']
+      .map((f) => readFileSync(join(ROOT, 'supabase-email-templates', f), 'utf8'));
+    if (before[0] !== after[0] || before[1] !== after[1]) {
+      fail('supabase-email-templates/ is stale — run `node scripts/build-auth-emails.mjs`, '
+         + 'commit the result, and re-paste both into the Supabase dashboard.');
+    } else {
+      notes.push('auth emails: Supabase templates match the shared email shell');
+    }
+  } catch (e) {
+    fail(`auth email templates failed to build:\n${(e.stdout || '') + (e.stderr || e.message || '')}`.trim());
+  }
+
   // catalog.mjs is imported by the shop and by the Netlify functions, so a
   // drifted price here reaches a card before anyone reads a report.
   const cat = await import('./ops/catalog.mjs');

@@ -37,7 +37,7 @@ ok(text.length > 200, 'plain-text part is a real alternative, not a stub');
 // blocks images by default, which is most of them.
 const imgs = html.match(/<img\b/g) || [];
 ok(imgs.length <= 1, `at most the logo is an image (found ${imgs.length})`);
-ok(/alt="Num Num&#39;s Bakery"/.test(html), 'the one image names the brand when blocked');
+ok(/Num Num&#39;s Bakery<\/div>/.test(html), 'the wordmark is live text, so a blocked image still leaves a masthead');
 
 ok(html.includes(UNSUB) && text.includes(UNSUB), 'unsubscribe link is in both parts');
 ok(html.includes('/coupon?c=NN-YLHB30'), 'the Copy button links to the copy page');
