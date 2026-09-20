@@ -124,9 +124,12 @@ body {
 }
 
 .question {
-  font-family: var(--font-cormorant), Georgia, serif;
+  /* Jost, not Cormorant — Vaidik 2026-09-20. This is the page's main heading.
+     `.answer` below keeps the serif on purpose: that is the customer's own
+     words being echoed back, a flourish rather than a heading. */
+  font-family: var(--font-jost), 'Helvetica Neue', Arial, sans-serif;
   font-weight: 300;
-  font-style: italic;
+  font-style: normal;
   font-size: clamp(30px, 8vw, 40px);
   line-height: 1.12;
   letter-spacing: -0.02em;
