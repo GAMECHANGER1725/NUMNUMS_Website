@@ -351,15 +351,82 @@
    * the cake, which is the anxiety it exists to settle. The shadow reads as
    * buttercream sitting proud of the surface rather than text lying on glass.
    */
-  .icing {
+  /* The writing, quoted back under the cake.
+     Reads as a little enamel plaque rather than a form field echo: the words
+     are the thing being confirmed, so they get the script face and the room,
+     and everything around them stays quiet. */
+  .cake-plaque {
+    position: relative;
+    border-radius: 0.9rem;
+    /* Soft Dough over Vanilla Cream, warmed diagonally so the card has a
+       direction to it and does not read as a flat grey well. */
+    background:
+      radial-gradient(120% 140% at 12% 0%, rgba(232, 164, 181, 0.16) 0%, transparent 58%),
+      linear-gradient(168deg, #FBF3EA 0%, #F5EBE0 100%);
+    border: 1px solid #EBD9C8;
+    padding: 1rem 1.35rem 0.85rem;
+    text-align: center;
+    /* Tinted, layered — never a flat grey shadow. */
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 1px 2px rgba(44, 26, 14, 0.04),
+      0 10px 22px -16px rgba(44, 26, 14, 0.30);
+  }
+
+  /* A single rose hairline across the top: the brand stated once, not a
+     border all the way round shouting it. */
+  .cake-plaque::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44%;
+    height: 2px;
+    border-radius: 0 0 2px 2px;
+    background: linear-gradient(90deg, transparent, #C85478 22%, #E3B664 78%, transparent);
+  }
+
+  .cake-plaque-eyebrow {
+    font-family: var(--font-jost), sans-serif;
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #B08A6A;
+  }
+
+  .cake-plaque-words {
+    margin: 0.4rem 0 0;
     font-family: var(--font-icing), 'Segoe Script', cursive;
-    color: #FFFDF8;
-    text-shadow:
-      0 1px 0 rgba(140, 100, 62, 0.65),
-      0 2px 4px rgba(44, 26, 14, 0.5),
-      0 0 2px rgba(44, 26, 14, 0.35);
-    line-height: 1.15;
+    /* Fluid, because 60 characters of script at a fixed size either overflows
+       a 320px phone or looks lost on a desktop column. */
+    font-size: clamp(1.35rem, 1.05rem + 2.2vw, 2.1rem);
+    line-height: 1.25;
+    color: #2C1A0E;
     text-wrap: balance;
+    /* A customer can type one unbroken 60-character word. */
+    overflow-wrap: anywhere;
+  }
+
+  /* Real typographic quotes, sized as ornament and set back from the words so
+     they frame rather than crowd. */
+  .cake-plaque-mark {
+    font-family: var(--font-cormorant), Georgia, serif;
+    color: #C85478;
+    opacity: 0.55;
+    font-size: 1.15em;
+    line-height: 0;
+    vertical-align: -0.12em;
+  }
+  .cake-plaque-mark:first-child { margin-right: 0.06em; }
+  .cake-plaque-mark:last-child  { margin-left: 0.06em; }
+
+  .cake-plaque-note {
+    margin: 0.55rem 0 0;
+    font-family: var(--font-jost), sans-serif;
+    font-size: 0.7rem;
+    color: #8A6B55;
   }
 
   /* Size chips carry serves + price so the whole ladder anchors at a glance. */

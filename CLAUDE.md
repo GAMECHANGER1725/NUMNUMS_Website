@@ -983,6 +983,15 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   to Australian Stripe merchants at all** (EU except Hungary, UK, CH, NO, LI) — so it
   is a second full integration with its own SDK, webhook, payouts and disputes at
   2.9% + 30c, not a line in that array. Checked 2026-09-21.
+- **PayPal is not being added. Vaidik's call, 2026-09-21**, after seeing that it
+  cannot ride the Stripe integration and costs 48c more per cake. Do not propose
+  it again as a quick win — it is a second checkout to build and reconcile.
+- **The writing preview goes UNDER the cake, never on it.** It was drawn over the
+  photo in a script face at a fixed size and position, which is a promise the
+  kitchen cannot keep: the cake is piped by hand, so every order would arrive
+  "wrong" against a mockup we drew ourselves. `.cake-plaque` quotes the words back
+  beneath the photo for checking instead. Keep the quotation marks — they are what
+  makes it read as *your words, confirmed* rather than as a picture of the cake.
 - **RLS is the only guard** and it is verified by signing up a throwaway customer and
   curling PostgREST with **only** its token — the UI proves nothing. A customer must read
   `[]` from every table, be refused every write, and be refused a `cake-photos` upload

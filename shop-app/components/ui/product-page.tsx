@@ -77,14 +77,6 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               style={{ objectPosition: cakeFraming(flavourSlug(flavour)) }}
             />
             <span className="cake-ground" aria-hidden />
-            {wording.trim() && (
-              <span
-                aria-hidden
-                className="icing pointer-events-none absolute left-1/2 top-[31%] w-[74%] -translate-x-1/2 -translate-y-1/2 text-center text-[1.5rem] sm:text-[1.9rem]"
-              >
-                {wording}
-              </span>
-            )}
             {premium && <span className="badge-premium absolute left-3 top-3">Premium</span>}
             {badge && (
               <span className={`badge-claim badge-claim-${badge.kind} absolute right-3 top-3`}>
@@ -92,11 +84,28 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               </span>
             )}
           </div>
-          <p className="mt-2 text-center text-[0.72rem] text-muted-foreground">
-            {wording.trim()
-              ? "Your writing, piped by hand on the day."
-              : "Add writing below and you'll see it on the cake."}
-          </p>
+
+          {/* The writing sits UNDER the cake, not on it.
+              Laid over the photo it was a promise we cannot keep: the preview
+              picked its own font, size and position, and the real cake is
+              piped by hand — so every order arrived looking "wrong" against a
+              mockup we drew ourselves. Under the photo, in quotes, it reads as
+              what it is: the words being quoted back for checking. */}
+          {wording.trim() ? (
+            <figure className="cake-plaque mt-3" aria-live="polite">
+              <figcaption className="cake-plaque-eyebrow">Piped on the cake</figcaption>
+              <blockquote className="cake-plaque-words">
+                <span className="cake-plaque-mark" aria-hidden>&ldquo;</span>
+                {wording}
+                <span className="cake-plaque-mark" aria-hidden>&rdquo;</span>
+              </blockquote>
+              <p className="cake-plaque-note">Piped by hand on the day — check your spelling.</p>
+            </figure>
+          ) : (
+            <p className="mt-3 text-center text-[0.74rem] text-muted-foreground">
+              Add writing below and we&rsquo;ll pipe it on by hand.
+            </p>
+          )}
         </div>
 
         {/* ── The decision ── */}
