@@ -27,6 +27,12 @@ export default function ForgotPasswordPage() {
     if (e2) return setError(e2.message);
     // Shown whether or not the address exists: saying "no such account" turns
     // this form into a way to test which emails are customers.
+    //
+    // ⚠️ The consequence, and it WILL be reported as a bug: typing an address
+    // with no account sends NOTHING and still says this. Supabase returns 200
+    // and never stamps `recovery_sent_at`. That is correct and deliberate — but
+    // it is why the copy below says "If ... has an account" rather than "we've
+    // sent you a link". Do not "improve" that wording into a promise.
     setSent(true);
   }
 
