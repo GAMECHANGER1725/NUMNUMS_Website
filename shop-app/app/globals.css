@@ -6,7 +6,11 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-jost);
-  --font-display: var(--font-cormorant);
+  /* Jost, not Cormorant. Vaidik's call 2026-09-20: the serif reads
+     decorative rather than modern at heading sizes. Cormorant stays
+     available for ornamental one-liners via --font-ornament. */
+  --font-display: var(--font-jost);
+  --font-ornament: var(--font-cormorant);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -71,7 +75,13 @@
     text-size-adjust: 100%;
   }
   .font-display {
-    font-family: var(--font-cormorant), serif;
+    font-family: var(--font-jost), 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  /* Kept for the rare ornamental line; never for a page or section heading. */
+  .font-ornament {
+    font-family: var(--font-cormorant), Georgia, serif;
   }
 }
 

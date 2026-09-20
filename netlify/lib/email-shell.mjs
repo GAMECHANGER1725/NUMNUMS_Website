@@ -9,8 +9,9 @@
  *
  * Built to `brand_assets/num_nums_brand_guidelines.html`: Rose Petal #C85478,
  * Vanilla Cream #FFF8F2, Soft Dough #F5EBE0, Dark Espresso #2C1A0E, Warm
- * Chestnut #5C3A22, Cormorant Garamond for display and Jost for everything
- * else, Jost never above weight 500. **No Riverstone Teal (#4EC4D8)** — it is
+ * Chestnut #5C3A22. **Jost for headings AND body** (see DISPLAY below —
+ * this deliberately overrides the guide's Cormorant-for-display line), Jost
+ * never above weight 500. **No Riverstone Teal (#4EC4D8)** — it is
  * location-specific and every one of these is a global send.
  *
  * Email is not the web:
@@ -28,7 +29,21 @@
 
 export const PROD = 'https://numnumsbakery.com.au';
 
-export const DISPLAY = "'Cormorant Garamond', Georgia, 'Times New Roman', serif";
+/**
+ * Headings are **Jost**, not Cormorant.
+ *
+ * Vaidik's call, 2026-09-20: the serif reads decorative rather than modern at
+ * heading sizes. This overrides the "Cormorant for display" line in
+ * `brand_assets/num_nums_brand_guidelines.html` — the guide is older than the
+ * decision. Cormorant is kept as ORNAMENT for the occasional one-line flourish
+ * (the footer's "100% eggless. Made fresh daily."), never for a heading.
+ *
+ * Jost is set at 300 here because the guide's "never above 500" rule is about
+ * weight, and a 38px heading at 300 is what makes a geometric sans read as
+ * considered rather than shouty.
+ */
+export const DISPLAY = "'Jost', 'Helvetica Neue', Helvetica, Arial, sans-serif";
+export const ORNAMENT = "'Cormorant Garamond', Georgia, 'Times New Roman', serif";
 export const BODY = "'Jost', 'Helvetica Neue', Helvetica, Arial, sans-serif";
 
 export const esc = (s) => String(s).replace(/[<>&"']/g, (c) =>
@@ -168,7 +183,7 @@ export function shell({ title, preheader, site = PROD, rows, unsubscribe = null 
           </a>
         </td></tr>
         <tr><td align="center" style="padding:10px 24px 0 24px;">
-          <div class="ink" style="font-family:${DISPLAY};font-size:23px;line-height:28px;font-weight:600;letter-spacing:.01em;color:#2C1A0E;">Num Num&#39;s Bakery</div>
+          <div class="ink" style="font-family:${ORNAMENT};font-size:23px;line-height:28px;font-weight:600;letter-spacing:.01em;color:#2C1A0E;">Num Num&#39;s Bakery</div>
           <div style="margin-top:5px;font-family:${BODY};font-size:9px;line-height:11px;font-weight:500;letter-spacing:2.6px;text-transform:uppercase;color:#C85478;">100% Eggless</div>
         </td></tr>
 ${rows}
@@ -181,7 +196,7 @@ ${rows}
     <tr><td style="padding:36px 8px 0 8px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr><td align="center" class="pad foot" style="padding:0 24px;">
-          <p class="foot-display" style="margin:0 0 4px 0;font-family:${DISPLAY};font-size:19px;line-height:26px;color:#2C1A0E;font-style:italic;">100% eggless. Made fresh daily.</p>
+          <p class="foot-display" style="margin:0 0 4px 0;font-family:${ORNAMENT};font-size:19px;line-height:26px;color:#2C1A0E;font-style:italic;">100% eggless. Made fresh daily.</p>
           <p class="foot" style="margin:0 0 16px 0;font-family:${BODY};font-size:13px;line-height:21px;color:#5C3A22;font-weight:300;">
             Harris Park &middot; Shop 1, 96&ndash;98 Wigram Street<br>
             Riverstone &middot; Shop 8, Riverstone Shopping Centre

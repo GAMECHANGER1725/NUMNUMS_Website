@@ -87,9 +87,15 @@ is the binding source — read it before designing anything.
   **Soft Dough `#F5EBE0`** (sections), **Bitter Cocoa `#4A2518`**.
 - **Riverstone Teal `#4EC4D8` is Riverstone-only.** Never in global material —
   not on the main site, not in an email, not on Harris Park content.
-- **Cormorant Garamond** for display, **Jost** for everything else. Two fonts,
-  never substituted. **Jost is never set above weight 500** — that is why the
-  coupon code is tracked rather than bolded.
+- **Jost for headings and everything else.** ⚠️ This **overrides** the brand
+  guide's "Cormorant Garamond for display" line — Vaidik's call 2026-09-20:
+  the serif reads decorative, not modern, at heading sizes. Headings are Jost
+  **300** with tight tracking (`-0.02em`); the light weight is what stops a
+  geometric sans looking shouty. **Jost is never set above weight 500.**
+- **Cormorant Garamond is ornament only** — a one-line flourish such as the
+  email footer's *"100% eggless. Made fresh daily."* or the email masthead
+  wordmark. **Never a page, section or hero heading.** In the shop app it is
+  `--font-ornament` / `.font-ornament`; `--font-display` is Jost.
 - **Prioritise `brand_assets/Logo_TParent.png` whenever you need the logo.** It
   has real alpha, so it sits on any background with no white plate to hide and
   no badge to wrap it in. `Logo_wName.png` is RGB with a baked-in near-white

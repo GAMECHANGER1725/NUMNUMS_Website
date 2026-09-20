@@ -32,8 +32,8 @@ const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'supabase-email-
 
 const heading = (line1, line2) => `
         <tr><td class="pad" style="padding:26px 56px 0 56px;">
-          <h1 class="h1 ink" style="margin:0;font-family:${DISPLAY};font-size:38px;line-height:44px;font-weight:400;color:#2C1A0E;letter-spacing:-.4px;mso-line-height-rule:exactly;">
-            ${line1}<br><em style="font-style:italic;color:#C85478;">${line2}</em>
+          <h1 class="h1 ink" style="margin:0;font-family:${DISPLAY};font-size:36px;line-height:42px;font-weight:300;color:#2C1A0E;letter-spacing:-1px;mso-line-height-rule:exactly;">
+            ${line1}<br><span style="color:#C85478;">${line2}</span>
           </h1>
         </td></tr>`;
 

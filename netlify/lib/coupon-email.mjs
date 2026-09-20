@@ -41,8 +41,8 @@ export function couponEmail({ name, coupon, unsubscribeUrl, site = PROD }) {
   const rows = `
         <tr><td class="pad" style="padding:26px 56px 0 56px;">
           <p class="muted" style="margin:0 0 20px 0;font-family:${BODY};font-size:15px;line-height:22px;color:#5C3A22;">${hi}</p>
-          <h1 class="h1 ink" style="margin:0;font-family:${DISPLAY};font-size:38px;line-height:44px;font-weight:400;color:#2C1A0E;letter-spacing:-.4px;mso-line-height-rule:exactly;">
-            ${pct}% off,<br><em style="font-style:italic;color:#C85478;">whenever you&#39;re ready.</em>
+          <h1 class="h1 ink" style="margin:0;font-family:${DISPLAY};font-size:36px;line-height:42px;font-weight:300;color:#2C1A0E;letter-spacing:-1px;mso-line-height-rule:exactly;">
+            ${pct}% off,<br><span style="color:#C85478;">whenever you&#39;re ready.</span>
           </h1>
         </td></tr>
 ${fine('Thanks for joining the list. Your code is below &mdash; it keeps, so there&#39;s no rush.', 18)}
