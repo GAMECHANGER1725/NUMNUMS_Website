@@ -66,11 +66,17 @@
   to = "/.netlify/functions/subscribe"
   status = 200
 
-# Not under /api/ because this one is a link a person clicks out of an email,
-# and it renders a page. Gmail's one-click unsubscribe POSTs to the same URL.
+# Not under /api/ because these are links a person clicks out of an email, and
+# they render pages. Gmail's one-click unsubscribe POSTs to /unsubscribe.
 [[redirects]]
   from = "/unsubscribe"
   to = "/.netlify/functions/unsubscribe"
+  status = 200
+
+# An email cannot run script, so "Copy code" has to land somewhere that can.
+[[redirects]]
+  from = "/coupon"
+  to = "/.netlify/functions/coupon"
   status = 200
 
 [[redirects]]

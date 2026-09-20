@@ -47,6 +47,7 @@ const CASES = [
   // Reached by a person clicking an email footer link, so a 502 here is a
   // customer who cannot get off the list — a Spam Act problem, not a glitch.
   ['unsubscribe', '../netlify/functions/unsubscribe.mjs', 'https://x.test/unsubscribe?t=bogus'],
+  ['coupon', '../netlify/functions/coupon.mjs', 'https://x.test/coupon?c=NN-ABC123'],
 ];
 
 for (const [name, path, url] of CASES) {

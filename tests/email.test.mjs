@@ -40,6 +40,20 @@ ok(imgs.length <= 1, `at most the logo is an image (found ${imgs.length})`);
 ok(/alt="Num Num&#39;s Bakery"/.test(html), 'the one image names the brand when blocked');
 
 ok(html.includes(UNSUB) && text.includes(UNSUB), 'unsubscribe link is in both parts');
+ok(html.includes('/coupon?c=NN-YLHB30'), 'the Copy button links to the copy page');
+ok(/user-select:all/.test(html), 'the code is one-tap selectable');
+
+// The copy page is the only reason that button works, so it has to agree with
+// the code format. A mismatch shows up as "we couldn't read that code".
+const { default: couponPage } = await import('../netlify/functions/coupon.mjs');
+const good = await couponPage(new Request('https://x.test/coupon?c=NN-YLHB30'));
+ok(good.status === 200, 'copy page accepts a real code');
+ok((await good.text()).includes('NN-YLHB30'), 'copy page shows the code');
+const bad1 = await couponPage(new Request('https://x.test/coupon?c=%3Cscript%3E'));
+ok(bad1.status === 404, 'copy page refuses a code-shaped injection');
+ok(!(await bad1.text()).includes('<script>alert'), 'copy page does not echo input');
+const bad2 = await couponPage(new Request('https://x.test/coupon'));
+ok(bad2.status === 404, 'copy page handles a missing code');
 ok(/19 December 2026/.test(html), 'expiry is formatted in Sydney, not raw ISO');
 ok(html.includes('Hi Vaidik,'), 'greets by first name');
 

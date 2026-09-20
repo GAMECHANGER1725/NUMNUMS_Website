@@ -167,8 +167,30 @@ export function couponEmail({ name, coupon, unsubscribeUrl }) {
         <tr><td class="pad" align="center" style="padding:22px 56px 22px 56px;">
           <!-- Live text, selectable and copyable. Jost at 500, tracked wide —
                the guide forbids bold on Jost, and tracking reads better on a
-               string somebody has to transcribe anyway. -->
-          <div class="code" style="font-family:${BODY};font-size:34px;line-height:40px;font-weight:500;letter-spacing:7px;color:#C85478;mso-line-height-rule:exactly;">${code}</div>
+               string somebody has to transcribe anyway.
+
+               user-select:all is what makes it one tap to select the WHOLE
+               code instead of a drag that catches half of it. An email cannot
+               copy anything on its own — every client strips script tags — so
+               the button beside it is a link to /coupon, which does the real
+               clipboard write on tap.
+
+               No backticks in this comment: it lives inside a template
+               literal, and a stray one ends the string. -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+            <tr>
+              <td class="code" align="center" style="font-family:${BODY};font-size:34px;line-height:40px;font-weight:500;letter-spacing:7px;color:#C85478;mso-line-height-rule:exactly;-webkit-user-select:all;-moz-user-select:all;-ms-user-select:all;user-select:all;white-space:nowrap;">${code}</td>
+              <td width="14" style="font-size:0;line-height:0;">&nbsp;</td>
+              <td valign="middle">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                  <tr><td align="center" style="border:1px solid #E6C3CE;border-radius:3px;">
+                    <a href="${SITE}/coupon?c=${encodeURIComponent(coupon.code)}"
+                       style="display:inline-block;padding:9px 14px;font-family:${BODY};font-size:11px;line-height:13px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:#C85478;text-decoration:none;white-space:nowrap;">Copy</a>
+                  </td></tr>
+                </table>
+              </td>
+            </tr>
+          </table>
         </td></tr>
 
         <tr><td class="pad" style="padding:0 56px;">
@@ -256,6 +278,7 @@ export function couponEmail({ name, coupon, unsubscribeUrl }) {
     '',
     `Your code: ${coupon.code}`,
     expires ? `Valid until ${expires}` : null,
+    `Copy it: ${SITE}/coupon?c=${encodeURIComponent(coupon.code)}`,
     '',
     `First, order a cake at the usual price. Then your ${pct}% comes off the next one.`,
     'Check out with this same email address - the code is issued to you, not to the browser.',
