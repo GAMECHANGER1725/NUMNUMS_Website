@@ -30,8 +30,12 @@ export const unsubscribeToken = (email) => {
   return `${p}.${sign(p)}`;
 };
 
-export const unsubscribeUrl = (email) =>
-  `https://numnumsbakery.com.au/unsubscribe?t=${encodeURIComponent(unsubscribeToken(email))}`;
+/**
+ * `site` is resolved by `siteFor()` in coupon-email.mjs, which allowlists it —
+ * never pass a raw request host in here.
+ */
+export const unsubscribeUrl = (email, site = 'https://numnumsbakery.com.au') =>
+  `${site}/unsubscribe?t=${encodeURIComponent(unsubscribeToken(email))}`;
 
 /**
  * Returns the address, or null. Compared in constant time — a fast reject on

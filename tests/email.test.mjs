@@ -14,7 +14,7 @@
  */
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'service_role_fake_for_tests';
 
-const { couponEmail } = await import('../netlify/lib/coupon-email.mjs');
+const { couponEmail, siteFor } = await import('../netlify/lib/coupon-email.mjs');
 const { unsubscribeToken, unsubscribeUrl, emailFromToken } =
   await import('../netlify/lib/unsubscribe.mjs');
 
@@ -96,6 +96,26 @@ ok(emailFromToken(null) === null, 'missing token is refused');
 ok(emailFromToken('nodot') === null, 'malformed token is refused');
 ok(emailFromToken(`${Buffer.from('not-an-address').toString('base64url')}.x`) === null,
   'a payload that is not an address is refused');
+
+// ---- which host the links point at ----------------------------------------
+
+const at = (u) => siteFor(new Request(u));
+ok(at('https://numnumsbakery.com.au/api/subscribe') === 'https://numnumsbakery.com.au', 'production maps to production');
+ok(at('https://abc123--numnumstest.netlify.app/api/subscribe') === 'https://abc123--numnumstest.netlify.app',
+  'a deploy preview links to itself, so the email can be tested before publishing');
+ok(at('http://localhost:4000/api/subscribe') === 'http://localhost:4000', 'localhost links to localhost');
+// The host is attacker-controlled; echoing it into an email we send is a
+// phishing vector, so anything unrecognised must fall back to production.
+ok(at('https://numnumsbakery.com.au.evil.test/api/subscribe') === 'https://numnumsbakery.com.au', 'suffix lookalike is refused');
+ok(at('https://evil--numnumstest.netlify.app.evil.test/x') === 'https://numnumsbakery.com.au', 'preview lookalike is refused');
+ok(at('https://attacker.test/api/subscribe') === 'https://numnumsbakery.com.au', 'unknown host falls back to production');
+
+const onPreview = couponEmail({
+  name: 'A', coupon: COUPON, site: 'https://abc123--numnumstest.netlify.app',
+  unsubscribeUrl: 'https://abc123--numnumstest.netlify.app/unsubscribe?t=a.b',
+});
+ok(!onPreview.html.includes('numnumsbakery.com.au/brand_assets'),
+  'a preview email does not point its logo at production, where it would 404');
 
 ok(unsubscribeUrl(EMAIL).startsWith('https://numnumsbakery.com.au/unsubscribe?t='),
   'the link points at the route netlify.toml declares');

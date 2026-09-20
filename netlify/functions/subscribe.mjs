@@ -16,7 +16,7 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import { json } from '../lib/shared.mjs';
-import { couponEmail } from '../lib/coupon-email.mjs';
+import { couponEmail, siteFor } from '../lib/coupon-email.mjs';
 import { unsubscribeUrl } from '../lib/unsubscribe.mjs';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,12 +45,12 @@ const newCode = () => 'NN-' + Math.random().toString(36).slice(2, 8).toUpperCase
  * Returns false rather than throwing — the caller has already written the
  * contact and the coupon, and needs to answer the customer either way.
  */
-async function emailCode({ email, name, coupon }) {
+async function emailCode({ email, name, coupon, site }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) { console.error('RESEND_API_KEY is not set — cannot send the coupon'); return false; }
 
   const { subject, html, text } = couponEmail({
-    name, coupon, unsubscribeUrl: unsubscribeUrl(email),
+    name, coupon, site, unsubscribeUrl: unsubscribeUrl(email, site),
   });
 
   try {
@@ -67,7 +67,7 @@ async function emailCode({ email, name, coupon }) {
         // of the footer link. Gmail wants this on bulk mail and it is part of
         // why a new sending domain stays out of the spam folder.
         headers: {
-          'List-Unsubscribe': `<${unsubscribeUrl(email)}>`,
+          'List-Unsubscribe': `<${unsubscribeUrl(email, site)}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         },
       }),
@@ -138,7 +138,7 @@ export default async (req) => {
     // made the whole offer free to mint: type any address, read the code off the
     // page, repeat. Sending it means you have to hold the inbox it was issued
     // to, which is the same address the code is bound to at checkout.
-    const sent = await emailCode({ email, name, coupon });
+    const sent = await emailCode({ email, name, coupon, site: siteFor(req) });
     if (!sent) {
       // They are subscribed and the coupon exists, so say so honestly rather
       // than inventing a success. Submitting again returns the same live

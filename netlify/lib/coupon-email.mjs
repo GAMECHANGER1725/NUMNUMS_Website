@@ -27,7 +27,31 @@
 const esc = (s) => String(s).replace(/[<>&"']/g, (c) =>
   ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
 
-const SITE = 'https://numnumsbakery.com.au';
+const PROD = 'https://numnumsbakery.com.au';
+
+/**
+ * Which host the email's links should point at.
+ *
+ * Hardcoding production meant every email sent from a deploy preview carried a
+ * broken logo and three dead links, because those routes only exist on the
+ * deploy being tested — so the one thing you cannot check before publishing is
+ * whether the email works. Following the request's own origin fixes that: a
+ * subscribe on production links to production, on a preview to that preview.
+ *
+ * **Allowlisted, because this is attacker-controlled.** `Host` comes from the
+ * request, and echoing it into a link in an email we send is how you get a
+ * phishing page with our name on it. Anything unrecognised falls back to
+ * production rather than being trusted.
+ */
+export function siteFor(req) {
+  let host;
+  try { host = new URL(req.url).host; } catch { return PROD; }
+  if (host === 'numnumsbakery.com.au' || host === 'www.numnumsbakery.com.au') return PROD;
+  if (/^[a-z0-9-]+--numnumstest\.netlify\.app$/.test(host)) return `https://${host}`;
+  if (host === 'numnumstest.netlify.app') return `https://${host}`;
+  if (/^localhost(:\d+)?$/.test(host)) return `http://${host}`;
+  return PROD;
+}
 
 // Sydney, because an expiry read in UTC can name the wrong day to a customer
 // standing in the shop.
@@ -51,7 +75,8 @@ const BODY = "'Jost', 'Helvetica Neue', Helvetica, Arial, sans-serif";
  * without a working unsubscribe facility. Making it a parameter with no
  * default means a future caller cannot forget it by omission.
  */
-export function couponEmail({ name, coupon, unsubscribeUrl }) {
+export function couponEmail({ name, coupon, unsubscribeUrl, site = PROD }) {
+  const SITE = site;
   const hi = name ? `Hi ${esc(String(name).trim().split(/\s+/)[0])},` : 'Hi there,';
   const code = esc(coupon.code);
   const pct = Number(coupon.percent);

@@ -29,7 +29,6 @@
   var DELAY_MS = 5000;
   var SCROLL_FRACTION = 0.5;
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  var CAKE_IMG = '/brand_assets/popup-cake.webp';
 
   // Private mode throws on storage access, so never let it take the page down.
   function safeGet(store, key) {
@@ -332,10 +331,36 @@
     '.nnp-alt{margin:18px 0 0;text-align:center;font-size:.8rem;color:#7A5A44}',
     '.nnp-alt a{display:inline-flex;align-items:center;min-height:32px;margin:-8px;padding:8px;color:#C85478;font-weight:600;text-decoration:none}',
     '.nnp-alt a:hover{text-decoration:underline}',
-    /* photo side */
-    '.nnp-pic{position:relative;overflow:hidden;order:-1;height:150px;background:#F8EEE6}',
-    '@media(min-width:768px){.nnp-pic{order:0;height:auto}}',
-    '.nnp-pic img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.28);transform-origin:center 46%}',
+    /* voucher side — drawn in CSS, not a photo.
+       A cake picture sells the cake; this panel's job is to sell the OFFER,
+       and the offer is a coupon. It is also ~0 bytes on all 243 pages, where
+       the photo was a real request. The panel colour must stay FLAT: the
+       notches are circles painted in that exact colour to fake a die-cut, so
+       a gradient behind them shows the seam. */
+    '.nnp-pic{position:relative;overflow:hidden;order:-1;min-height:158px;display:flex;align-items:center;justify-content:center;padding:16px;background:#F5EBE0}',
+    '@media(min-width:768px){.nnp-pic{order:0;height:auto;padding:32px}}',
+    /* Narrow on mobile so the close button keeps its corner: the band is only
+       ~158px tall there and a wide voucher slides straight under the X. */
+    '.nnp-v{position:relative;width:min(224px,70%);background:#fff;border-radius:12px;text-align:center;transform:rotate(-1.6deg);box-shadow:0 1px 2px rgba(44,26,14,.05),0 16px 34px -14px rgba(44,26,14,.38)}',
+    '@media(min-width:768px){.nnp-v{width:min(318px,92%)}}',
+    '.nnp-v-top{padding:14px 16px 10px}',
+    '@media(min-width:768px){.nnp-v-top{padding:26px 20px 18px}}',
+    '.nnp-v-brand{display:block;font-size:.56rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#C85478}',
+    '.nnp-v-amt{display:block;margin:4px 0 0;font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:2.6rem;line-height:.92;letter-spacing:-.03em;color:#2C1A0E;font-variant-numeric:lining-nums}',
+    '@media(min-width:768px){.nnp-v-amt{margin:6px 0 0;font-size:4rem}}',
+    '.nnp-v-pc{font-size:.46em;vertical-align:.52em;margin-left:.04em;color:#C85478}',
+    '.nnp-v-off{display:block;margin:6px 0 0;font-size:.62rem;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:#5C3A22}',
+    '@media(min-width:768px){.nnp-v-off{font-size:.7rem}}',
+    /* the perforation, with a die-cut notch bitten out of each edge */
+    '.nnp-v-perf{position:relative;height:0;border-top:1px dashed #E3CAD3}',
+    '.nnp-v-perf::before,.nnp-v-perf::after{content:"";position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:#F5EBE0}',
+    '.nnp-v-perf::before{left:-9px}',
+    '.nnp-v-perf::after{right:-9px}',
+    '.nnp-v-bot{padding:9px 16px 12px}',
+    '@media(min-width:768px){.nnp-v-bot{padding:15px 20px 19px}}',
+    '.nnp-v-code{display:block;font-size:.92rem;font-weight:500;letter-spacing:.26em;color:#C85478}',
+    '.nnp-v-note{display:block;margin:5px 0 0;font-size:.62rem;font-weight:300;letter-spacing:.04em;color:#8A6B55}',
+    '@media(prefers-reduced-motion:reduce){.nnp-v{transform:none}}',
     '.nnp-x{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;border-radius:9999px;background:rgba(255,255,255,.92);color:#2C1A0E;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(44,26,14,.18);transition:background .2s ease}',
     '.nnp-x:hover{background:#fff}',
     '.nnp-btn:focus-visible,.nnp-x:focus-visible,.nnp-alt a:focus-visible,.nnp-note a:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
@@ -385,7 +410,20 @@
           '</div>' +
           '<div class="nnp-pic">' +
             '<button type="button" class="nnp-x" aria-label="Close">&times;</button>' +
-            '<img src="' + CAKE_IMG + '" alt="" aria-hidden="true">' +
+            // Decorative: the heading beside it already states the offer, so a
+            // screen reader hearing this twice would just be noise.
+            '<div class="nnp-v" aria-hidden="true">' +
+              '<div class="nnp-v-top">' +
+                '<span class="nnp-v-brand">Num Num&rsquo;s Bakery</span>' +
+                '<span class="nnp-v-amt">10<span class="nnp-v-pc">%</span></span>' +
+                '<span class="nnp-v-off">off your next order</span>' +
+              '</div>' +
+              '<div class="nnp-v-perf"></div>' +
+              '<div class="nnp-v-bot">' +
+                '<span class="nnp-v-code">NN-••••••</span>' +
+                '<span class="nnp-v-note">Sent to your inbox</span>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
