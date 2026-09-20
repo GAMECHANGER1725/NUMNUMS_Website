@@ -16,6 +16,8 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import { json } from '../lib/shared.mjs';
+import { couponEmail } from '../lib/coupon-email.mjs';
+import { unsubscribeUrl } from '../lib/unsubscribe.mjs';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PERCENT = 10;
@@ -29,15 +31,16 @@ const CONSENT_WORDING =
 
 const newCode = () => 'NN-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
-const esc = (s) => String(s).replace(/[<>&"]/g, (c) =>
-  ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
-
 /**
  * Send the code to the address it is bound to.
  *
  * Resend over HTTP rather than SMTP: a function has no business opening an SMTP
  * connection, and this needs no dependency. The same verified domain the auth
  * emails use, so there is one sending reputation to look after, not two.
+ *
+ * The message itself is in `../lib/coupon-email.mjs` — it is a hundred lines of
+ * table markup and it is previewable on its own, which is the only way to
+ * actually look at an email before sending it.
  *
  * Returns false rather than throwing — the caller has already written the
  * contact and the coupon, and needs to answer the customer either way.
@@ -46,17 +49,9 @@ async function emailCode({ email, name, coupon }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) { console.error('RESEND_API_KEY is not set — cannot send the coupon'); return false; }
 
-  const hi = name ? `Hi ${esc(name)},` : 'Hi,';
-  const html =
-    `<p>${hi}</p>` +
-    `<p>Thanks for joining the list. Here is your <b>${coupon.percent}% off</b> code:</p>` +
-    `<p style="font-size:28px;font-weight:700;letter-spacing:4px;margin:24px 0;">${esc(coupon.code)}</p>` +
-    // Say the rule here, because this is where they read it. A code that is
-    // silently refused at checkout reads as a broken shop, not as a condition.
-    `<p>It applies to your <b>next order</b>, so it unlocks once you have ordered ` +
-    `with us. Enter it at checkout with this same email address &mdash; the code ` +
-    `is issued to one address.</p>` +
-    `<p>Num Num&#39;s Bakery &mdash; 100% eggless cakes<br />Harris Park &amp; Riverstone</p>`;
+  const { subject, html, text } = couponEmail({
+    name, coupon, unsubscribeUrl: unsubscribeUrl(email),
+  });
 
   try {
     const res = await fetch('https://api.resend.com/emails', {
@@ -65,8 +60,16 @@ async function emailCode({ email, name, coupon }) {
       body: JSON.stringify({
         from: "Num Num's Bakery <orders@numnumsbakery.com.au>",
         to: [email],
-        subject: `Your ${coupon.percent}% off code`,
+        subject,
         html,
+        text,
+        // One-click unsubscribe in Gmail and Apple Mail's own chrome, on top
+        // of the footer link. Gmail wants this on bulk mail and it is part of
+        // why a new sending domain stays out of the spam folder.
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl(email)}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       }),
     });
     if (!res.ok) { console.error('resend refused', res.status, await res.text()); return false; }

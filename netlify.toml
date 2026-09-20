@@ -66,6 +66,13 @@
   to = "/.netlify/functions/subscribe"
   status = 200
 
+# Not under /api/ because this one is a link a person clicks out of an email,
+# and it renders a page. Gmail's one-click unsubscribe POSTs to the same URL.
+[[redirects]]
+  from = "/unsubscribe"
+  to = "/.netlify/functions/unsubscribe"
+  status = 200
+
 [[redirects]]
   from = "/api/check-coupon"
   to = "/.netlify/functions/check-coupon"

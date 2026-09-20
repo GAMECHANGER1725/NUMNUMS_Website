@@ -449,6 +449,16 @@ const FACTS = {
     fail(`coupon eligibility tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
+  // The coupon email is the only place the code ever appears, so an email that
+  // goes out without it is a dead end for the customer — and the unsubscribe
+  // signature is what stops one person taking another off the list.
+  try {
+    const out = execFileSync(process.execPath, ['tests/email.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`coupon email tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
   // catalog.mjs is imported by the shop and by the Netlify functions, so a
   // drifted price here reaches a card before anyone reads a report.
   const cat = await import('./ops/catalog.mjs');
