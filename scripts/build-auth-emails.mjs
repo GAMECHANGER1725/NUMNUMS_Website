@@ -72,8 +72,11 @@ const reset = shell({
 ${heading('Let&#39;s get you', 'back in.')}
 ${para('Choose a new password and you&#39;re back to ordering cake.', 18)}
 ${button('{{ .ConfirmationURL }}', 'Choose a new password')}
-${fine('The link expires in an hour and works once. If you didn&#39;t ask to reset your password, ignore this &mdash; your account is unchanged and your current password still works.', 28)}
-${fine('Button not working? Paste this into your browser:<br><span style="word-break:break-all;color:#C85478;">{{ .ConfirmationURL }}</span>')}`,
+${fine('The link expires in an hour and works once. If you didn&#39;t ask to reset your password, ignore this &mdash; your account is unchanged and your current password still works.', 28)}`,
+  // No "paste this URL" fallback. It prints a raw supabase.co link carrying a
+  // live one-time token — which reads as phishing, wraps badly, and is the one
+  // thing in the message a customer could hand to somebody else by accident.
+  // The button is the link; a client that cannot render it is not one we send to.
   // Transactional. There is nothing to unsubscribe from, and offering it here
   // teaches people the link is meaningless.
 });
