@@ -9,9 +9,32 @@
  */
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { BadRequest, couponFor, json, priceCart, requireEnv, splitDiscount, dueDayKey } from '../lib/shared.mjs';
+import { BadRequest, couponFor, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
+
+/** Cents to "$24.99", for the wording on Stripe's own page. */
+const aud = (c) => `$${(c / 100).toFixed(2)}`;
+
+/**
+ * Which rails the hosted checkout offers.
+ *
+ * `card` always, because it is what Apple Pay, Google Pay and Link ride on —
+ * those three are toggles in the Stripe dashboard at the same 1.7% + 30c, not
+ * separate integrations and not a subscription.
+ *
+ * PayTo is added only when `STRIPE_ENABLE_PAYTO` is set, because naming a
+ * payment method the account has not been approved for makes Stripe reject
+ * the whole session — which would take the checkout down rather than quietly
+ * hiding one button. PayPal is deliberately absent: Stripe does not offer it
+ * to Australian merchants at all (EU, UK, CH, NO, LI only), so it is its own
+ * integration, not a line in this array.
+ */
+const payMethods = () => {
+  const m = ['card'];
+  if (String(process.env.STRIPE_ENABLE_PAYTO ?? '').trim()) m.push('payto');
+  return m;
+};
 
 /** The kill switch for the morning somebody buys twenty Saturday cakes. */
 async function capReached(db, dueAt, store) {
@@ -74,19 +97,34 @@ export default async (req) => {
     const discountTotal = coupon?.percent
       ? Math.round((cart.subtotalCents * coupon.percent) / 100)
       : 0;
-    const shares = splitDiscount(cart.lines.map((l) => l.cents), discountTotal);
+    const shares = splitCents(cart.lines.map((l) => l.cents), discountTotal);
 
-    // One Stripe line item per cake, already net of its share of the coupon, so
-    // the amount Stripe charges and the sum of the rows we later insert are the
-    // same number by construction rather than by a second calculation.
+    // What each cake actually costs, after its share of the coupon.
+    const netPerLine = cart.lines.map((l, i) => l.cents - shares[i]);
+    const netTotal = netPerLine.reduce((a, b) => a + b, 0);
+
+    // Half today, half at the counter. The deposit is worked on the CART total
+    // and then split back over the lines, never halved line by line: halving
+    // each of three odd-cent lines loses cents, and the sum has to equal the
+    // charge exactly or the books never reconcile again.
+    const depositTotal = depositCents(netTotal);
+    const deposits = splitCents(netPerLine, depositTotal);
+
+    // One Stripe line item per cake, showing the deposit as the amount and the
+    // full price in the description — a customer looking at Stripe's page must
+    // be able to see what the cake costs and what they are paying now, or the
+    // balance at pickup arrives as a surprise.
     const line_items = cart.lines.map((l, i) => ({
       quantity: 1,
       price_data: {
         currency: 'aud',
-        unit_amount: l.cents - shares[i],
+        unit_amount: deposits[i],
         product_data: {
-          name: `${l.size} ${l.flavour} cake`,
-          description: l.wording ? `Writing: ${l.wording}` : undefined,
+          name: `${l.size} ${l.flavour} cake — 50% deposit`,
+          description: [
+            `Full price ${aud(netPerLine[i])}, balance ${aud(netPerLine[i] - deposits[i])} on collection`,
+            l.wording ? `Writing: ${l.wording}` : null,
+          ].filter(Boolean).join('. '),
         },
       },
     }));
@@ -101,19 +139,39 @@ export default async (req) => {
       lines: String(cart.lines.length),
     };
     cart.lines.forEach((l, i) => {
-      metadata[`l${i}`] = JSON.stringify({ s: l.size, f: l.flavour, w: l.wording, c: l.cents, d: shares[i] })
-        .slice(0, 500);
+      // `p` is what was actually charged for this cake today. The webhook must
+      // never recompute it: a rounding rule that changes between deploy and
+      // payment would write a deposit that disagrees with the card, and the
+      // difference would surface months later as an unexplained balance.
+      metadata[`l${i}`] = JSON.stringify({
+        s: l.size, f: l.flavour, w: l.wording, c: l.cents, d: shares[i], p: deposits[i],
+      }).slice(0, 500);
     });
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      payment_method_types: ['card'],   // Apple/Google Pay ride on this
+      // Cards carry Apple Pay, Google Pay and Link at the same rate and need no
+      // extra integration. PayTo is a separate rail (1% capped at $3.50, so it
+      // pays for itself on a tiered cake) and must be activated on the Stripe
+      // account first — Stripe rejects the session if it is not, which is why
+      // it is opt-in through an env var rather than simply listed here.
+      payment_method_types: payMethods(),
       customer_email: email,
       line_items,
       metadata,
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
       success_url: `${SITE}/shop/thank-you?s={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE}/shop/cart`,
+      // The one place the customer is told, on Stripe's own page, that this is
+      // not the whole price. Required by the deposit terms, not decoration.
+      payment_intent_data: {
+        description: `50% deposit — balance ${aud(netTotal - depositTotal)} payable on collection`,
+      },
+      custom_text: {
+        submit: {
+          message: `This is a ${Math.round(DEPOSIT_RATE * 100)}% deposit. The remaining ${aud(netTotal - depositTotal)} is payable when you collect your cake.`,
+        },
+      },
     });
 
     return json(200, { url: session.url });

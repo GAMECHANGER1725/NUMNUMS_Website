@@ -676,7 +676,18 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   a static page cannot know is true — *selling fast*, *only N left*, *ends in*,
   *N people viewing* — and fails the deploy on any of it. That is not caution
   for its own sake: the ACCC fined three retailers in June 2025 over misleading
-  sale claims and the ceiling is $50m per breach.
+  sale claims and the ceiling is **$100m** per breach — doubled from $50m by the
+  Treasury Laws Amendment (Doubling Penalties for ACCC Enforcement) Act 2026, and
+  "fake pricing" is a named ACCC enforcement priority for 2026-27.
+- **No was/now strikethrough on any cake. Checked 2026-09-21 and refused.**
+  Vaidik asked for "6 inch from $50 to $39.99". The catalogue has been $39.99
+  since it was written — `git log -S` over the whole history finds no $50 or
+  $65 price for any size, and `toNinetyNine` makes a round-dollar price
+  impossible anyway. A reference price is lawful only where the item was
+  actually offered at it for a reasonable period, so "was $50" would be
+  fabricated. If a genuine price cut ever happens, the "was" figure has to be
+  a price that was really charged, for a real period, and that period has to
+  be documented somewhere durable before the badge goes up.
 - **At most one claim badge per card, and at most three on the board.** Neither
   The Cheesecake Shop nor Bannos badges individual products on a collection page
   at all — both put the claim in a section heading instead. Baymard's list-item
@@ -811,8 +822,35 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   catalogue and re-priced in `create-checkout`. `'Slice'` and `'tiered'` have no list
   price and are **refused**, not sold for $0.
 - **`walk_in` is never true on a web order** — `set_order_defaults()` would force it to
-  `picked_up` and it would never be baked. `deposit = price − discount` is what makes
-  `paidOn()` report it fully paid, so ops stamps **PAID IN FULL** with no ops changes.
+  `picked_up` and it would never be baked.
+- **A web order is a 50% deposit, not a sale.** `DEPOSIT_RATE` and `depositCents`
+  in `netlify/lib/shared.mjs` are the only place the rule is written; the copy in
+  `shop-app/lib/cart.ts` is **display only** and must round the same way (floor),
+  or the cart quotes a figure Stripe then contradicts — the one number every
+  customer checks. Four things follow and each is tested:
+  - The deposit is worked on the **cart** total and split back over the lines with
+    `splitCents`, never halved line by line: halving three odd-cent lines loses
+    cents and `sum(deposit)` stops equalling the charge, which is unrecoverable.
+    `splitDiscount` is now an alias of `splitCents` — one implementation, so the
+    coupon split and the deposit split cannot disagree about the odd cent.
+  - It is **floored**, so the balance is always the larger half ($49.99 → $24.99
+    now, $25.00 later) and is clamped to `[1, total−1]` — a customer is never
+    asked for more up front than they owe at the counter, and never handed a
+    "$0.00 on collection" that is a lie.
+  - The charged amount rides in the Stripe metadata as `p` and the webhook writes
+    **that**, never a recomputed figure. A rounding rule that changed between
+    session creation and payment would write a deposit disagreeing with the card.
+    `l.p ?? (l.c − l.d)` covers sessions created before deposits existed — those
+    were quoted at full price and must be recorded as paid in full.
+  - `paidOn()` and `receipt.mjs` **already** handled partial payment: the invoice
+    computes `owingC` and stamps **DEPOSIT PAID** with the balance. Nothing in ops
+    needed changing — only the one webhook line that used to write the full net.
+- **Refund window: cancel more than 24h before collection and the deposit is
+  returned in full.** Stated in the cart, on Stripe's own submit button and in the
+  terms. Non-refundable after that, because a made-to-order cake cannot be resold —
+  which is what makes it a genuine pre-estimate of loss rather than a penalty, the
+  test a non-refundable deposit has to pass under the ACL. **Refunding is manual in
+  Stripe**; ops cannot do it.
 - **A quantity is expanded once, server-side, in `priceCart`.** A line of three
   becomes three priced lines at the door, so the discount split, the Stripe line
   items, the metadata keys, the webhook's rows and `cart_line` all keep working
@@ -932,7 +970,19 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **Env vars (public site only, never on the ops site, never in a file)**:
   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_URL`,
   `SUPABASE_SERVICE_ROLE_KEY`, `ONLINE_ORDERS_USER_ID`, `MAKE_ORDER_HOOK_URL`, and the
-  optional kill switches `BLOCKED_DATES` and `MAX_WEB_ORDERS_PER_DAY`.
+  optional kill switches `BLOCKED_DATES`, `MAX_WEB_ORDERS_PER_DAY` and
+  `STRIPE_ENABLE_PAYTO`.
+- **Payment rails, and why the array in `create-checkout` is short.** `card` covers
+  Visa/Mastercard/Amex/eftpos **and** Apple Pay, Google Pay and Stripe Link — those
+  three are dashboard toggles riding the card rails at the same 1.7% + A$0.30, not
+  separate integrations and not a subscription. Do not add them to
+  `payment_method_types`. **PayTo** (1% + 30c, capped A$3.50 — cheaper than cards on
+  anything over ~$200) is gated behind `STRIPE_ENABLE_PAYTO` because naming a method
+  the Stripe account is not approved for makes Stripe reject the **whole session**,
+  taking the checkout down rather than hiding one button. **PayPal is not available
+  to Australian Stripe merchants at all** (EU except Hungary, UK, CH, NO, LI) — so it
+  is a second full integration with its own SDK, webhook, payouts and disputes at
+  2.9% + 30c, not a line in that array. Checked 2026-09-21.
 - **RLS is the only guard** and it is verified by signing up a throwaway customer and
   curling PostgREST with **only** its token — the UI proves nothing. A customer must read
   `[]` from every table, be refused every write, and be refused a `cake-photos` upload

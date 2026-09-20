@@ -84,10 +84,19 @@ export const handler = async (event) => {
         ordered_at: new Date(session.created * 1000).toISOString(),
         price: l.c / 100,
         discount: l.d / 100,
-        // deposit == price - discount is what makes paidOn() report it fully
-        // paid, so ops stamps PAID IN FULL with no changes at all.
-        deposit: (l.c - l.d) / 100,
-        notes: 'Paid online via website.',
+        // What the card was actually charged for this cake, carried through
+        // from create-checkout rather than recomputed — see the note on `p`
+        // there. `paidOn()` reads this until the cake is collected, so ops
+        // stamps DEPOSIT PAID and the invoice prints the real balance owing,
+        // both with no further changes.
+        //
+        // `?? (l.c - l.d)` is for sessions created before deposits existed:
+        // one could still be sitting unpaid in a customer's tab, and it was
+        // quoted at the full price, so it must be recorded as paid in full.
+        deposit: (l.p ?? (l.c - l.d)) / 100,
+        notes: l.p == null
+          ? 'Paid online via website.'
+          : `Paid online via website — 50% deposit. Balance $${((l.c - l.d - l.p) / 100).toFixed(2)} due on collection.`,
         stripe_session_id: session.id,
         order_group_id: groupId,
         cart_line: i,

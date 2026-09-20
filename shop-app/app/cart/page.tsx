@@ -11,7 +11,7 @@ import { NnSelect } from "@/components/ui/select";
 import { NnDateField } from "@/components/ui/date-field";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
-  availableHours, money, MAX_CAKES, STORES, type Cart,
+  availableHours, money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
 } from "@/lib/cart";
 import { listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { cakeFraming } from "@/lib/cake-framing";
@@ -40,6 +40,8 @@ export default function CartPage() {
   const subtotal = lineTotal.reduce((a, b) => a + b, 0);
   const count = cartCount(cart);
   const discount = cart.coupon ? Math.round((subtotal * cart.coupon.percent) / 100) : 0;
+  const total = subtotal - discount;
+  const deposit = depositCents(total);
 
   const hours = availableHours(cart.dueDate);
   const ready = count > 0 && cart.store !== "" && cart.dueDate !== "" && hours.includes(cart.dueHour);
@@ -278,13 +280,35 @@ export default function CartPage() {
                   <dt className="text-muted-foreground">Collection</dt>
                   <dd className="text-muted-foreground">Free</dd>
                 </div>
+                {/* The full price stays, quietly, above. Hiding it and
+                    showing only the deposit is how a customer discovers at
+                    the counter that they owe another $25 — which is both a
+                    bad morning for the shop and a misleading-price problem. */}
                 <div className="mt-1 flex items-baseline justify-between border-t border-border pt-3">
-                  <dt className="text-[1rem] font-semibold">Total</dt>
-                  <dd className="font-display text-[1.7rem] font-light tabular-nums">
-                    {money(subtotal - discount)}
+                  <dt className="text-[0.88rem] text-muted-foreground">Total</dt>
+                  <dd className="tabular-nums text-[0.95rem] text-muted-foreground">
+                    {money(total)}
                   </dd>
                 </div>
+                {/* Below the total and larger than it: the deposit is the
+                    number this page is actually asking for. */}
+                <div className="flex items-baseline justify-between">
+                  <dt className="text-[1rem] font-semibold">Pay today</dt>
+                  <dd className="font-display text-[1.9rem] font-light tabular-nums text-[#C85478]">
+                    {money(deposit)}
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Balance on collection</dt>
+                  <dd className="tabular-nums text-muted-foreground">{money(total - deposit)}</dd>
+                </div>
               </dl>
+
+              <p className="mt-3 rounded-lg bg-[#F5EBE0] px-3 py-2 text-[0.78rem] leading-relaxed text-[#5C3A22]">
+                Secure your cake with a {Math.round(DEPOSIT_RATE * 100)}% deposit and pay the rest
+                when you pick it up. Cancel more than 24 hours before collection and the deposit is
+                refunded in full.
+              </p>
 
               <Link
                 href="/checkout"

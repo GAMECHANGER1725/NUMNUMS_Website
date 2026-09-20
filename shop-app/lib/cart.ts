@@ -223,6 +223,24 @@ export const STORES = [
 export const money = (cents: number) =>
   `$${(cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+/**
+ * Half now, half at the counter.
+ *
+ * DISPLAY ONLY. `depositCents` in `netlify/lib/shared.mjs` is the real rule
+ * and the one the card is charged against; this mirrors it so the summary can
+ * show the number before the server has seen the cart. The two must round the
+ * same way — floor — or the cart quotes a figure Stripe then contradicts,
+ * which is the one number a customer will always check.
+ */
+export const DEPOSIT_RATE = 0.5;
+
+export function depositCents(netCents: number): number {
+  const total = Math.max(0, Math.round(netCents));
+  if (total === 0) return 0;
+  const half = Math.floor(total * DEPOSIT_RATE);
+  return Math.min(Math.max(half, 1), total - 1) || total;
+}
+
 /* ── reading the cart from React ─────────────────────────────────────────── */
 
 const EMPTY = emptyCart();

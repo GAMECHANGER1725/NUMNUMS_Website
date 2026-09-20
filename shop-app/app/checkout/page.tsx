@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Loader2, Lock } from "lucide-react";
 import { CouponField } from "@/components/ui/coupon-field";
-import { cartStore, writeCart, cartCount, money, STORES } from "@/lib/cart";
+import { cartStore, writeCart, cartCount, money, depositCents, STORES } from "@/lib/cart";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { listPriceCents } from "@/lib/catalog";
 import { supabase } from "@/lib/supabase";
@@ -41,6 +41,11 @@ export default function CheckoutPage() {
   // Indicative only: create-checkout re-prices every line and re-validates the
   // coupon server-side, so this number can never decide what is charged.
   const discount = coupon ? Math.round((subtotal * coupon.percent) / 100) : 0;
+  const total = subtotal - discount;
+  // Indicative too, and rounded the same way as depositCents on the server —
+  // a cart that quotes $25.00 and a Stripe page that charges $24.99 is the
+  // one discrepancy every customer notices.
+  const deposit = depositCents(total);
   // Required, same as the sign-up form and same as create-checkout. It is how
   // the shop says a cake is ready, and the only way to reach somebody about
   // their own order.
@@ -182,16 +187,28 @@ export default function CheckoutPage() {
               <dd className="tabular-nums">−{money(discount)}</dd>
             </div>
           )}
-          <div className="mt-1 flex justify-between border-t border-border pt-2 text-lg font-semibold">
-            <dt>Total</dt>
-            <dd className="tabular-nums">{money(subtotal - discount)}</dd>
+          <div className="mt-1 flex justify-between border-t border-border pt-2">
+            <dt className="text-muted-foreground">Total</dt>
+            <dd className="tabular-nums text-muted-foreground">{money(total)}</dd>
+          </div>
+          {/* Below the total, and larger: this is the figure the button
+              charges, so it is the figure that has to be unmissable. */}
+          <div className="flex items-baseline justify-between">
+            <dt className="text-[1rem] font-semibold">Pay today</dt>
+            <dd className="font-display text-[1.9rem] font-light tabular-nums text-[#C85478]">
+              {money(deposit)}
+            </dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">Balance on collection</dt>
+            <dd className="tabular-nums text-muted-foreground">{money(total - deposit)}</dd>
           </div>
         </dl>
 
         {error && <p role="alert" className="mt-3 text-[0.82rem] font-medium text-destructive">{error}</p>}
 
         <button type="button" onClick={pay} disabled={!canPay} className="btn-cta mt-5 w-full py-3">
-          {busy ? <><Loader2 className="h-4 w-4 animate-spin" />Opening secure checkout</> : <><Lock className="h-4 w-4" />Pay {money(subtotal - discount)}</>}
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin" />Opening secure checkout</> : <><Lock className="h-4 w-4" />Pay deposit {money(deposit)}</>}
         </button>
         <p className="mt-2 text-center text-[0.72rem] leading-relaxed text-muted-foreground">
           Card details are entered on Stripe&rsquo;s secure page — they never touch this site.
