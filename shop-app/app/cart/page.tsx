@@ -11,13 +11,32 @@ import { NnSelect } from "@/components/ui/select";
 import { NnDateField } from "@/components/ui/date-field";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
-  availableHours, money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
+  availableSlots, money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
 } from "@/lib/cart";
-import { listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
+import {
+  listPriceCents, flavourSlug, urlSlug, COLLECTION, collectionSlots, slotLabel,
+} from "@/lib/catalog";
+import { NnTimePicker } from "@/components/ui/time-picker";
+
+/** "11:00 AM – 10:00 PM", read straight off the one window definition. */
+const storeHours = (code: string) => {
+  const w = COLLECTION[code as keyof typeof COLLECTION];
+  return w ? `${slotLabel(w.open)} – ${slotLabel(w.close)}` : "";
+};
 import { cakeFraming } from "@/lib/cake-framing";
 import { supabase } from "@/lib/supabase";
 
-const hourLabel = (h: number) => (h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`);
+/**
+ * Changing shop can invalidate the time already chosen — Riverstone has no
+ * 9pm and Harris Park has no 9am. Left alone the cart would carry a slot the
+ * new shop does not offer, `ready` would go false, and the Checkout button
+ * would grey out with nothing on screen explaining why.
+ */
+function pickStore(cart: Cart, store: string): Cart {
+  const slots = collectionSlots(store);
+  const keep = slots.includes(cart.dueMin) ? cart.dueMin : 0;
+  return { ...cart, store, dueMin: keep };
+}
 const prettyDate = (d: string) =>
   new Date(`${d}T12:00:00`).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" });
 
@@ -43,8 +62,8 @@ export default function CartPage() {
   const total = subtotal - discount;
   const deposit = depositCents(total);
 
-  const hours = availableHours(cart.dueDate);
-  const ready = count > 0 && cart.store !== "" && cart.dueDate !== "" && hours.includes(cart.dueHour);
+  const slots = availableSlots(cart.store, cart.dueDate);
+  const ready = count > 0 && cart.store !== "" && cart.dueDate !== "" && slots.includes(cart.dueMin);
   const allPicked = picked.length > 0 && picked.length === cart.lines.length;
 
   const setQty = (i: number, qty: number) =>
@@ -205,11 +224,15 @@ export default function CartPage() {
                   <NnSelect
                     id="c-store"
                     value={cart.store}
-                    onChange={(v) => update({ ...cart, store: v })}
+                    onChange={(v) => update(pickStore(cart, v))}
                     placeholder="Choose a shop…"
                     ariaLabel="Shop to collect from"
                     options={STORES.map((st) => ({
-                      value: st.code, label: st.label, note: st.address,
+                      value: st.code,
+                      label: st.label,
+                      // The hours belong on the shop, not buried in the time
+                      // control: which shop you pick IS the hours decision.
+                      note: `${st.address} · ${storeHours(st.code)}`,
                     }))}
                   />
                 </div>
@@ -224,14 +247,25 @@ export default function CartPage() {
                     onChange={(v) => update({ ...cart, dueDate: v })}
                   />
                 </div>
-                <div>
-                  <label htmlFor="c-hour" className="field-label">Time</label>
-                  <NnSelect
-                    id="c-hour"
-                    value={String(cart.dueHour)}
-                    onChange={(v) => update({ ...cart, dueHour: Number(v) })}
-                    ariaLabel="Collection time"
-                    options={hours.map((h) => ({ value: String(h), label: hourLabel(h) }))}
+                <div className="sm:col-span-2">
+                  <label htmlFor="c-time" className="field-label">
+                    Collection time
+                    {cart.store && (
+                      <span className="ml-1 font-normal text-muted-foreground">
+                        ({storeHours(cart.store)})
+                      </span>
+                    )}
+                  </label>
+                  <NnTimePicker
+                    id="c-time"
+                    slots={slots}
+                    value={cart.dueMin}
+                    onChange={(m) => update({ ...cart, dueMin: m })}
+                    disabledHint={
+                      cart.store && cart.dueDate
+                        ? "That date is too soon — pick a later one."
+                        : "Pick a shop first. Our two shops keep different hours."
+                    }
                   />
                 </div>
               </div>

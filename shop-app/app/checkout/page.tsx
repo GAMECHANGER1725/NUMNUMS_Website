@@ -6,7 +6,7 @@ import { Loader2, Lock } from "lucide-react";
 import { CouponField } from "@/components/ui/coupon-field";
 import { cartStore, writeCart, cartCount, money, depositCents, STORES } from "@/lib/cart";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
-import { listPriceCents } from "@/lib/catalog";
+import { listPriceCents, slotLabel } from "@/lib/catalog";
 import { supabase } from "@/lib/supabase";
 import { beginCheckout } from "@/lib/analytics";
 
@@ -159,7 +159,10 @@ export default function CheckoutPage() {
         </ul>
         <p className="mt-3 text-[0.82rem] text-muted-foreground">
           Collect from <b className="font-semibold text-foreground">{store?.label ?? "—"}</b> on{" "}
-          <b className="font-semibold text-foreground">{cart.dueDate}</b>.
+          <b className="font-semibold text-foreground">{cart.dueDate}</b>
+          {cart.dueMin > 0 && (
+            <> at <b className="font-semibold text-foreground">{slotLabel(cart.dueMin)}</b></>
+          )}.
         </p>
       </section>
 

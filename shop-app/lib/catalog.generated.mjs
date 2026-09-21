@@ -130,6 +130,51 @@ export const toNinetyNine = (price) => {
  * Kept as a keyed object, not `{ name: … }`: verify.mjs check 7 greps this file
  * unscoped for `name:` and would read it as a 16th cake flavour.
  */
+/**
+ * When each shop can hand a cake over, as **minutes from midnight**, Sydney.
+ *
+ * Minutes, not hours, because Riverstone closes at 6:30pm and an integer-hour
+ * model cannot say that — it either loses the half hour or offers a slot
+ * nobody is there for. The two shops keep genuinely different hours, so this
+ * is per store and never a site-wide OPEN_HOUR/CLOSE_HOUR pair.
+ *
+ * Deliberately a keyed object and NOT an array of `{ name: … }`: `verify.mjs`
+ * check 7 greps this whole file with /\{\s*name:\s*'([^']+)'/g and would read
+ * an array here as extra cake flavours. Same trap as SURCHARGE.
+ *
+ * `close` is the last slot that can be BOOKED, not the moment the door locks —
+ * somebody has to still be there to hand the box over.
+ */
+export const COLLECTION = {
+  'harris-park': { open: 11 * 60, close: 22 * 60 },          // 11:00am – 10:00pm
+  'riverstone':  { open:  9 * 60, close: 18 * 60 + 30 },     //  9:00am –  6:30pm
+};
+
+/** Collection is offered on the half hour. */
+export const SLOT_STEP = 30;
+
+/** Every bookable minute-of-day for a store, earliest first. [] if unknown. */
+export function collectionSlots(store) {
+  const win = COLLECTION[store];
+  if (!win) return [];
+  const out = [];
+  for (let m = win.open; m <= win.close; m += SLOT_STEP) out.push(m);
+  return out;
+}
+
+/** 690 -> "11:30 AM". The one place a slot is turned into words. */
+export function slotLabel(min) {
+  const h24 = Math.floor(min / 60);
+  const mm = min % 60;
+  const ampm = h24 >= 12 ? 'PM' : 'AM';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(mm).padStart(2, '0')} ${ampm}`;
+}
+
+/** Is this minute-of-day a slot the store actually offers? */
+export const isCollectionSlot = (store, min) =>
+  Number.isInteger(min) && collectionSlots(store).includes(min);
+
 export const PAV = { label: '6 Pack Pav', price: 3 };
 
 export const pavSize = (qty) => `${qty} × ${PAV.label}`;

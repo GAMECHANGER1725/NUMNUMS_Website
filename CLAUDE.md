@@ -983,6 +983,37 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   to Australian Stripe merchants at all** (EU except Hungary, UK, CH, NO, LI) — so it
   is a second full integration with its own SDK, webhook, payouts and disputes at
   2.9% + 30c, not a line in that array. Checked 2026-09-21.
+- **The two shops keep different collection hours, and that is per store, in
+  minutes.** Harris Park **11:00am–10:00pm**, Riverstone **9:00am–6:30pm**
+  (Vaidik, 2026-09-21). `COLLECTION` in `ops/catalog.mjs` is the only place
+  they are written down — it reaches the shop through `catalog.generated.mjs`
+  and the functions through `shared.mjs`, so there is no second copy.
+  - **Minutes from midnight, never an hour**, because Riverstone's 6:30 close
+    cannot be expressed as an integer hour. There is no site-wide
+    `OPEN_HOUR`/`CLOSE_HOUR` any more: one pair either offered Riverstone 9pm
+    with nobody there, or cost Harris Park the evening that is most of its day.
+  - `resolveDueAt(store, dueDate, dueMin)` takes the **store first** and
+    validates against that store's slot list, not a range — so a time between
+    the half hours is refused rather than silently rounded by whatever reads
+    it next.
+  - **The cart's `dueHour` became `dueMin` and old carts must be converted.**
+    A cart sitting in somebody's localStorage holds `dueHour: 12`; read as
+    minutes that is 00:12 — a plausible-looking number that is silently the
+    wrong time. `readCart` and `priceCart` both convert. Do not drop those.
+  - Changing shop clears a slot the new shop does not offer (`pickStore`),
+    or Checkout greys out with nothing on screen saying why.
+  - `order.html` (custom cakes) filters the same windows off the
+    `pickup-location` radio. Its `.nd-*` enhancer builds its menu once and has
+    **no rebuild hook**, so the rows are hidden and the native options disabled
+    in step — the rows are what a person clicks, the disabled options are what
+    keyboard and form behaviour read. Change one and you must change both.
+- **The collection time is chips, not a dropdown** (`NnTimePicker`). A dropdown
+  hides the shape of the day behind a tap: you cannot see that one shop does
+  evenings until you open it and count. Built on real radio inputs, so arrow
+  keys, Home/End and roving focus come from the browser — this is not an OS
+  control in the sense the repo bans, because `appearance: none` leaves nothing
+  of the native widget on screen. Focus is drawn by the label via `:has()`,
+  since the focused element is the hidden input.
 - **PayPal is not being added. Vaidik's call, 2026-09-21**, after seeing that it
   cannot ride the Stripe integration and costs 48c more per cake. Do not propose
   it again as a quick win — it is a second checkout to build and reconcile.

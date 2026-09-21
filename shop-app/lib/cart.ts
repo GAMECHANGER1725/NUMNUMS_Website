@@ -9,6 +9,8 @@
  * somebody's browser is a crash on first load, and the cheapest fix is for the
  * old key to simply stop being read.
  */
+import { collectionSlots } from "./catalog";
+
 export const CART_KEY = "nn_cart_v1";
 
 /**
@@ -31,14 +33,18 @@ export type Cart = {
   store: string;
   /** Sydney wall-clock date, YYYY-MM-DD. The server resolves the real instant. */
   dueDate: string;
-  /** Sydney wall-clock hour, 9–18. */
-  dueHour: number;
+  /**
+   * Sydney wall-clock collection time as **minutes from midnight**, on the
+   * half hour. Minutes because Riverstone closes at 6:30pm, which an hour
+   * cannot express. 0 means "not chosen yet" — no shop opens at midnight.
+   */
+  dueMin: number;
   lines: CartLine[];
   coupon: CartCoupon | null;
 };
 
 export const emptyCart = (): Cart =>
-  ({ store: "", dueDate: "", dueHour: 12, lines: [], coupon: null });
+  ({ store: "", dueDate: "", dueMin: 0, lines: [], coupon: null });
 
 /** Cakes in the cart, which is not the same as rows in the cart. */
 export const cartCount = (cart: Cart) => cart.lines.reduce((n, l) => n + l.qty, 0);
@@ -111,14 +117,21 @@ export function readCart(): Cart {
   }
   if (!raw) return emptyCart();
   try {
-    const c = JSON.parse(raw) as Partial<Cart>;
+    const c = JSON.parse(raw) as Partial<Cart> & { dueHour?: number };
     // Anything unexpected is treated as no cart rather than crashing the page.
     if (!Array.isArray(c.lines)) return emptyCart();
     const coupon = c.coupon;
+    // Carts written before 2026-09-21 hold `dueHour` (an integer hour, when
+    // both shops shared one 9–18 window). Read as minutes, `dueHour: 12`
+    // would mean 00:12 — a valid-looking number that is silently the wrong
+    // time, which is the worst kind of migration bug. Convert it.
+    const dueMin = Number.isInteger(c.dueMin) ? (c.dueMin as number)
+      : Number.isInteger(c.dueHour) ? (c.dueHour as number) * 60
+        : 0;
     return {
       store: typeof c.store === "string" ? c.store : "",
       dueDate: typeof c.dueDate === "string" ? c.dueDate : "",
-      dueHour: Number.isInteger(c.dueHour) ? (c.dueHour as number) : 12,
+      dueMin,
       // A cart written before quantities existed has no qty; it means one cake.
       lines: capLines(
         mergeLines(c.lines
@@ -166,8 +179,6 @@ export function clearCart() {
 export const LEAD_DAYS = 1;
 /** Sydney hour at or after which an order rolls to the day after. 24 = none. */
 export const CUTOFF_HOUR = 24;
-export const OPEN_HOUR = 9;
-export const CLOSE_HOUR = 18;
 
 const sydneyParts = (d: Date) => {
   const p: Record<string, string> = {};
@@ -196,16 +207,18 @@ export function minDueDate(now = new Date()): string {
 }
 
 /**
- * The hours bookable on `date`.
+ * The collection slots bookable at `store` on `date`, in minutes from midnight.
  *
  * A whole day, or none — which is the simplification a calendar rule buys.
  * Under the old 48-hour rule the first bookable date was a partial day and the
  * early slots had to be filtered off it, and rounding that wrong offered a
  * 47.5-hour slot the server then refused.
+ *
+ * Empty until a shop is picked, because the two keep different hours and
+ * showing one shop's times before you know which shop is a guess.
  */
-export function availableHours(date: string, now = new Date()): number[] {
-  const all: number[] = [];
-  for (let h = OPEN_HOUR; h <= CLOSE_HOUR; h++) all.push(h);
+export function availableSlots(store: string, date: string, now = new Date()): number[] {
+  const all = collectionSlots(store);
   if (!date) return all;
   return date < minDueDate(now) ? [] : all;
 }
