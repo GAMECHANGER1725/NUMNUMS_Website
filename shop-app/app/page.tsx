@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Star } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
+import { CakeRow } from "@/components/ui/cake-row";
 import { SELLABLE_FLAVOURS, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { money } from "@/lib/cart";
 import { cakeFraming } from "@/lib/cake-framing";
@@ -23,31 +24,82 @@ const BY_POPULARITY = [
 ];
 
 /**
- * The board is merchandised, not just sorted.
+ * The board is three named rows, not one wall of fifteen.
  *
- * The first row is what most people will ever look at, so it holds the three
- * most-ordered flavours **and both premiums**. Rasmalai and Ferrero Rocher are
- * the two highest-value cakes on the list and the two the chain bakeries cannot
- * sell, and Ferrero was buried at position 15 where nobody scrolls.
+ * A single grid made a $49.99 Rasmalai and a $39.99 Vanilla look like the same
+ * kind of thing, and left the customer to infer the range's shape from the
+ * prices. The rows answer "what kind of cake am I after" before "which
+ * flavour", which is the order people actually decide in.
  *
- * The flavour carrying "Our pick" is pulled up behind them, because a
- * recommendation nobody sees recommends nothing.
+ * Premium leads because those two are the highest-value cakes and the two a
+ * chain bakery cannot sell — the same reason the old merchandised first row
+ * pulled them up out of positions 5 and 15.
  *
- * Everything after that is plain popularity order. Only the first eight or so
- * positions are worth arguing about; below that it decides nothing.
+ * Within a row it is popularity order, which below the first couple of
+ * positions decides nothing.
  */
-const HERO = ["Chocolate", "Butterscotch", "Pineapple", "Rasmalai", "Ferrero Rocher"];
+const SPECIALTY = [
+  "Butterscotch", "Cookies & Cream", "Tiramisu", "Red Velvet", "Mango", "Lychee",
+];
 
-const rank = (name: string) => {
-  const hero = HERO.indexOf(name);
-  if (hero !== -1) return hero;
-  if (badgeFor(name)?.kind === "ours") return HERO.length;
-  return HERO.length + 1 + BY_POPULARITY.indexOf(name);
-};
+const byPopularity = (a: { name: string }, b: { name: string }) =>
+  BY_POPULARITY.indexOf(a.name) - BY_POPULARITY.indexOf(b.name);
 
-const flavours = [...SELLABLE_FLAVOURS].sort((a, b) => rank(a.name) - rank(b.name));
+const premium = SELLABLE_FLAVOURS.filter((f) => f.premium).sort(byPopularity);
+const specialty = SELLABLE_FLAVOURS
+  .filter((f) => !f.premium && SPECIALTY.includes(f.name)).sort(byPopularity);
+const classics = SELLABLE_FLAVOURS
+  .filter((f) => !f.premium && !SPECIALTY.includes(f.name)).sort(byPopularity);
 
 assertPickIsNotPremium(SELLABLE_FLAVOURS.filter((f) => f.premium).map((f) => f.name));
+
+/*
+ * A flavour that matches no row would simply not render, and a board quietly
+ * missing a cake looks exactly like a board that is complete. `classics` is the
+ * catch-all so that cannot happen to a NEW flavour — but a rename would strand
+ * an entry in SPECIALTY, moving that cake into Classics with no error, so the
+ * names are checked against the catalogue too.
+ */
+if (premium.length + specialty.length + classics.length !== SELLABLE_FLAVOURS.length) {
+  throw new Error("shop board: a flavour landed in no row, or in more than one");
+}
+for (const name of SPECIALTY) {
+  if (!SELLABLE_FLAVOURS.some((f) => f.name === name)) {
+    throw new Error(`shop board: SPECIALTY lists "${name}", which is not a sellable flavour`);
+  }
+}
+
+/*
+ * Row names and their one line.
+ *
+ * Each blurb says something checkable. "Premium" explains the higher price
+ * rather than just asserting importance, and Classics says what the row is
+ * instead of calling it "other", which reads as leftovers. Nothing here claims
+ * popularity, scarcity or a comparison with another bakery — the same rule the
+ * badges are held to, and the reason the urgency-language gate exists.
+ */
+const ROWS = [
+  {
+    id: "row-premium",
+    title: "Premium",
+    eyebrow: "The finest two",
+    premium: true,
+    blurb: "More goes into these than any other cake we make, and they are priced that way.",
+    items: premium,
+  },
+  {
+    id: "row-specialty",
+    title: "Specialty flavours",
+    blurb: "Something other than the usual, without going custom.",
+    items: specialty,
+  },
+  {
+    id: "row-classics",
+    title: "Classics",
+    blurb: "The flavours everyone knows — every one of them 100% eggless.",
+    items: classics,
+  },
+];
 
 export default function ShopPage() {
   return (
@@ -79,40 +131,48 @@ export default function ShopPage() {
           </div>
         </header>
 
-        <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {flavours.map((f) => {
-            const badge = badgeFor(f.name);
-            return (
-            <li key={f.name}>
-              <Link href={`/cakes/${urlSlug(f.name)}`} className="cake-card block">
-                <span className="cake-photo block aspect-square overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/shop/cakes/${flavourSlug(f.name)}.webp`}
-                    alt={`${f.name} eggless cake`}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                    style={{ objectPosition: cakeFraming(flavourSlug(f.name)) }}
-                  />
-                  <span className="cake-ground" aria-hidden />
-                  {f.premium && <span className="badge-premium absolute left-2 top-2">Premium</span>}
-                  {badge && (
-                    <span className={`badge-claim badge-claim-${badge.kind} absolute right-2 top-2`}>
-                      {badge.label}
-                    </span>
-                  )}
-                </span>
-                <span className="block px-3 py-2.5">
-                  <span className="block text-[0.86rem] font-medium leading-tight">{f.name}</span>
-                  <span className="block text-[0.74rem] text-muted-foreground">
-                    from {money(listPriceCents("6 inch", f.name) ?? 0)}
+        {ROWS.map((row) => (
+          <CakeRow
+            key={row.id} id={row.id} title={row.title} blurb={row.blurb}
+            eyebrow={row.eyebrow} premium={row.premium}
+          >
+            {row.items.map((f) => (
+              <li key={f.name}>
+                <Link href={`/cakes/${urlSlug(f.name)}`} className="cake-card block">
+                  <span className="cake-photo block aspect-square overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/shop/cakes/${flavourSlug(f.name)}.webp`}
+                      alt={`${f.name} eggless cake`}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                      style={{ objectPosition: cakeFraming(flavourSlug(f.name)) }}
+                    />
+                    <span className="cake-ground" aria-hidden />
+                    {/* No Premium chip inside the Premium row — the heading
+                        above it already says so, and a badge repeating its own
+                        section is the clutter the one-badge rule exists to
+                        stop. It still appears anywhere else a card is shown. */}
+                    {f.premium && row.id !== "row-premium" && (
+                      <span className="badge-premium absolute left-2 top-2">Premium</span>
+                    )}
+                    {badgeFor(f.name) && (
+                      <span className={`badge-claim badge-claim-${badgeFor(f.name)!.kind} absolute right-2 top-2`}>
+                        {badgeFor(f.name)!.label}
+                      </span>
+                    )}
                   </span>
-                </span>
-              </Link>
-            </li>
-            );
-          })}
-        </ul>
+                  <span className="block px-3 py-2.5">
+                    <span className="block text-[0.86rem] font-medium leading-tight">{f.name}</span>
+                    <span className="block text-[0.74rem] text-muted-foreground">
+                      from {money(listPriceCents("6 inch", f.name) ?? 0)}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </CakeRow>
+        ))}
 
         {/* What the OTHER kind looks like, directly under the board of cakes
             you can buy — the comparison is the point, so it has to be within

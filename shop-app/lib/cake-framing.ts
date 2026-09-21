@@ -17,10 +17,22 @@
  *
  * Baselines matter more than centres here because the eye reads a row of
  * cakes as a shelf, and a cake floating half a centimetre high is the thing
- * you notice. The tightest headroom that leaves is Pineapple at 1.5%, so
- * nothing is clipped — but re-run the measurement before adding a photo
- * rather than guessing a number, and re-run it if one is replaced.
+ * you notice. The tightest headroom that leaves is 5.4%, so nothing is
+ * clipped — but re-run the measurement before adding a photo rather than
+ * guessing a number, and re-run it if one is replaced.
  * The script is `tools/measure-cake-framing.mjs`.
+ *
+ * ⚠️ A shared baseline is not the whole job, and this is the trap: every base
+ * can sit on the line while one cake still looks wrong, because a photo
+ * framed tighter than its neighbours fills more of the tile and reads as
+ * riding up against the top edge. Pineapple did exactly that — base dead on
+ * 92.5% with the rest, but filling 90.8% of the tile against ~83% for
+ * Chocolate beside it and 1.7% headroom against a ~15% median. Nudging its
+ * object-position down would have clipped the plate and broken the baseline.
+ * The fix was the PHOTO: padded 9.4% in a 3:4 frame so the cake occupies the
+ * same share as its neighbours, then re-measured (62 → 50). If a cake looks
+ * misaligned and its base already matches, measure the FILL before touching
+ * a number here.
  */
 const FRAMING: Record<string, number> = {
   "Black-Forest": 36,
@@ -31,7 +43,7 @@ const FRAMING: Record<string, number> = {
   "Ferrero-Rocher": 35,
   Lychee: 41,
   Mango: 56,
-  Pineapple: 62,
+  Pineapple: 50,
   Rasmalai: 28,
   "Red-Velvet": 56,
   Strawberry: 26,

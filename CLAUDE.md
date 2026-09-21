@@ -753,13 +753,42 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   `assertPickIsNotPremium` throws during `next build` if "Our pick" is moved
   onto a premium flavour. The two badges live in different files, so the
   mistake is otherwise invisible.
-- **The board's first row is merchandised, not sorted.** It holds the three
-  most-ordered flavours **and both premiums** — Rasmalai and Ferrero Rocher are
-  the highest-value cakes and the two a chain bakery cannot sell, and Ferrero
-  was sitting at position 15 where nobody scrolls. The flavour carrying "Our
-  pick" follows them, because a recommendation nobody sees recommends nothing.
-  Everything after is popularity order, where it decides nothing. `HERO` in
-  `shop-app/app/page.tsx`.
+- **The board is three named rows, not one wall of fifteen** (2026-09-21).
+  **Premium** (Rasmalai, Ferrero Rocher) → **Specialty flavours** (Butterscotch,
+  Cookies & Cream, Tiramisu, Red Velvet, Mango, Lychee) → **Classics** (the
+  rest). Rows answer "what kind of cake am I after" before "which flavour",
+  which is the order people decide in; one grid made a $49.99 Rasmalai and a
+  $39.99 Vanilla look like the same kind of thing. Within a row it is
+  popularity order, which below the first position or two decides nothing.
+  This replaced the old merchandised `HERO` first row — it existed to drag
+  both premiums up out of positions 5 and 15, which a Premium row now does by
+  construction.
+  - **Membership is derived, not listed twice.** Premium comes from the
+    `premium` flag in `ops/catalog.mjs`; Classics is the catch-all, so a NEW
+    flavour lands somewhere rather than vanishing. Only `SPECIALTY` is written
+    out, and `page.tsx` **throws at build** if it names a flavour that is not
+    sellable, or if the three rows do not sum to the catalogue — a renamed
+    flavour would otherwise slide silently into Classics.
+  - **No Premium chip inside the Premium row.** The heading says it; a badge
+    repeating its own section is the clutter the one-badge-per-card rule
+    exists to stop. It still shows anywhere else a card appears.
+  - The rows are `CakeRow` (`components/ui/cake-row.tsx`) — native
+    overflow-scroll with snap, **not** a transform carousel, so a phone gets
+    the OS's own inertia and a trackpad works. Arrows are frosted glass, hide
+    entirely when the row already fits (Premium on desktop), disable at the
+    ends off real scroll position, and honour `prefers-reduced-motion`.
+    ⚠️ Declare `backdrop-filter` **unprefixed only**: writing both made
+    lightningcss emit the `-webkit-` form and drop the standard one, which is
+    backwards for Firefox, where the glass then silently degraded to a flat
+    pill.
+  - **Premium gets its own shelf** — warm panel, gold hairline, gold eyebrow,
+    wider cards. Gold (`#E3B664`), never rose: rose is the action colour and a
+    premium row is a place, not a call to action. Its cards are wider because
+    two standard tiles left a half-empty shelf that read as a row which had
+    failed to load; capped at 33% on desktop, because 46% turned two cakes
+    into a full screen and pushed the most-ordered flavour two rows down.
+    The heading stays **Jost** — Cormorant is ornament only and is never a
+    section heading, however much a serif suits the word "premium".
 - **The cakes are cut-outs on white and need a shadow we add ourselves.**
   `.cake-ground` is an ellipse that deliberately **overlaps** the plate rather
   than sitting under it: six of the fifteen stand on a white board whose lower

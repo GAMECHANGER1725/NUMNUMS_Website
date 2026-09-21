@@ -279,6 +279,160 @@
   }
 
   /*
+   * A scrolling row of cards.
+   *
+   * Native overflow scrolling with snap, not a transform track: a phone gets
+   * the OS's own inertia and a trackpad works, neither of which is worth
+   * reimplementing. The scrollbar is hidden because the arrows and the
+   * half-visible next card are the affordance.
+   *
+   * The card width is a viewport fraction with a min, so the row always ends
+   * mid-card — a row that happens to end flush looks like it has nothing
+   * further and nobody swipes it.
+   */
+  .cake-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(9.5rem, 44%);
+    gap: 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0.125rem;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .cake-rail::-webkit-scrollbar { display: none; }
+  .cake-rail > * { scroll-snap-align: start; }
+  .cake-rail:focus-visible {
+    outline: 2px solid #C85478;
+    outline-offset: 4px;
+    border-radius: 1rem;
+  }
+  @media (min-width: 640px) { .cake-rail { grid-auto-columns: minmax(10rem, 30%); } }
+  @media (min-width: 1024px) { .cake-rail { grid-auto-columns: minmax(11rem, 19.2%); } }
+
+  /*
+   * The lead row holds two cakes, and at the standard card width that is two
+   * tiles against a half-empty shelf — which reads as a row that failed to
+   * load rather than as a short one. They take the space instead: these are
+   * the two highest-value cakes on the board, so size is doing merchandising
+   * work, not just filling a gap. Only needed above 640px; on a phone two
+   * cards already fill the rail.
+   */
+  @media (min-width: 640px) { .cake-rail--lead { grid-auto-columns: minmax(10rem, 46%); } }
+  /* Wide screens: 46% each turned two cakes into a full screen of cake and
+     pushed the most-ordered flavour two rows down. A third of the shelf still
+     reads as bigger than everything else, which is the whole job. The space
+     to their right is a shelf with two things on it, not a hole — the panel
+     is what makes that legible. */
+  @media (min-width: 1024px) { .cake-rail--lead { grid-auto-columns: minmax(11rem, 33%); } }
+
+  /*
+   * The premium shelf.
+   *
+   * Rasmalai and Ferrero Rocher cost more because more goes into them, and a
+   * row that only SAYS "Premium" in the same type as every other heading asks
+   * the customer to take that on trust. The shelf itself carries it: a warm
+   * panel lifted off the page background, a gold hairline, and a gold eyebrow.
+   *
+   * Gold (#E3B664) not rose, because rose is the action colour on this site
+   * and a premium row is not a call to action — it is a place. Restraint is
+   * the point: one accent, one rule, one warmer ground. Metallic gradients and
+   * heavy shadow read as costume jewellery, which is the opposite of the claim.
+   *
+   * NOTE: the heading stays Jost. Cormorant is ornament only on this site and
+   * is never a section heading, however tempting a serif is for "premium".
+   */
+  .premium-shelf {
+    position: relative;
+    border-radius: 1.25rem;
+    padding: 1.35rem 1.15rem 1.5rem;
+    border: 1px solid rgba(227, 182, 100, 0.38);
+    background:
+      radial-gradient(120% 90% at 0% 0%, rgba(227, 182, 100, 0.13), transparent 60%),
+      radial-gradient(90% 80% at 100% 0%, rgba(200, 84, 120, 0.07), transparent 55%),
+      linear-gradient(180deg, #FFFBF6 0%, #FDF6EC 100%);
+    box-shadow: 0 10px 30px -22px rgba(74, 37, 24, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  @media (min-width: 640px) { .premium-shelf { padding: 1.6rem 1.5rem 1.75rem; } }
+
+  .premium-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: #A8792B;
+  }
+  .premium-eyebrow::before {
+    content: '';
+    width: 1.35rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #E3B664);
+  }
+
+  .premium-rule {
+    display: block;
+    width: 3.25rem;
+    height: 2px;
+    margin-top: 0.6rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #E3B664, rgba(227, 182, 100, 0.15));
+  }
+
+  /* The cards sit ON the shelf, so they take its warmth rather than the
+     page's flat white, or they look pasted onto it. */
+  .premium-shelf .cake-card { border-color: rgba(227, 182, 100, 0.42); }
+  .premium-shelf .cake-card:hover {
+    border-color: #E3B664;
+    box-shadow: 0 14px 30px -12px rgba(168, 121, 43, 0.35);
+  }
+  /* Glass over a tinted panel needs a touch more opacity to stay legible. */
+  .premium-shelf .rail-arrow { background: rgba(255, 252, 246, 0.62); }
+
+  /*
+   * Frosted glass, so the arrow reads as floating above the board rather than
+   * as another card.
+   *
+   * Declared UNPREFIXED only, on purpose. Writing both meant lightningcss
+   * emitted the -webkit- form and dropped the standard one — which is exactly
+   * backwards for Firefox, where only the unprefixed property exists, so the
+   * button degraded to a flat translucent pill there. Left alone, the build
+   * adds whatever prefixes its targets need.
+   */
+  .rail-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    color: #2C1A0E;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 2px 10px rgba(44, 26, 14, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(170%);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  }
+  .rail-arrow:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 6px 16px rgba(200, 84, 120, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  .rail-arrow:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
+  .rail-arrow:disabled { opacity: 0.35; cursor: default; }
+  @media (prefers-reduced-motion: reduce) {
+    .rail-arrow { transition: none; }
+    .rail-arrow:hover:not(:disabled) { transform: none; }
+  }
+
+  /*
    * The cakes are cut-outs on white, which is why they read as pasted on:
    * nothing is holding them down. This is the contact shadow the photographer
    * did not have — an ellipse just under the baseline that every photo now
