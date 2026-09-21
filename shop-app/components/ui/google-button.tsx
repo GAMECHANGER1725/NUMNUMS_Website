@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { supabase } from "@/lib/supabase";
 
 /**
@@ -67,9 +67,15 @@ export type GoogleButtonProps = {
   /** Called once Supabase has a session. */
   onSignedIn: () => void | Promise<void>;
   onError: (message: string) => void;
+  /**
+   * A same-width, always-visible sibling (the form) to measure. GIS only
+   * takes a pixel `width`, never a percentage, so without this the button
+   * renders at a fixed guess and drifts from whatever the card actually is.
+   */
+  matchWidthTo: RefObject<HTMLElement | null>;
 };
 
-export function GoogleButton({ onSignedIn, onError }: GoogleButtonProps) {
+export function GoogleButton({ onSignedIn, onError, matchWidthTo }: GoogleButtonProps) {
   const host = useRef<HTMLDivElement>(null);
   // Until Google has actually drawn its button there is nothing to show, and an
   // empty bordered box above an "OR" divider looks broken. So the whole block
@@ -102,6 +108,11 @@ export function GoogleButton({ onSignedIn, onError }: GoogleButtonProps) {
         });
 
         const el = host.current;
+        // GIS takes a pixel width, never a percentage, so the button can only
+        // match the card if we measure a same-width sibling ourselves — a
+        // guessed constant drifts the moment the card's width changes.
+        // Google clamps the option to [200, 400] regardless of what's passed.
+        const measured = Math.round(matchWidthTo.current?.getBoundingClientRect().width ?? 320);
         window.google.accounts.id.renderButton(el, {
           type: "standard",
           theme: "outline",
@@ -111,7 +122,7 @@ export function GoogleButton({ onSignedIn, onError }: GoogleButtonProps) {
           // Stretched to full width, a left-aligned logo strands itself far
           // from the label; centred keeps the mark and the words together.
           logo_alignment: "center",
-          width: 320,
+          width: Math.min(400, Math.max(200, measured)),
         });
         // renderButton returns before it has drawn, and it can draw nothing at
         // all — the script loads from cache while Google's own calls are
@@ -148,11 +159,10 @@ export function GoogleButton({ onSignedIn, onError }: GoogleButtonProps) {
         </span>
         <span className="h-px flex-1 bg-border" />
       </div>
-      {/* GIS draws a button with an inline `width: 320px` two levels below this
-          host, so stretching the direct child alone never reached it and the
-          page scrolled sideways at 320px. Capping every descendant is what
-          actually binds the inline width to the card. */}
-      <div ref={host} className="flex justify-center [&>div]:!w-full [&_div]:!max-w-full" />
+      {/* Width is measured against the form above (`matchWidthTo`), so this
+          should already match — the descendant cap is only insurance for the
+          rare case the measurement runs before layout settles. */}
+      <div ref={host} className="flex justify-center [&_div]:!max-w-full" />
       <p className="mt-2 text-center text-[0.7rem] leading-snug text-muted-foreground">
         By continuing with Google you agree to our{" "}
         <a href="/terms" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">

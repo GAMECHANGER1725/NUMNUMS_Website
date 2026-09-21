@@ -30,6 +30,7 @@ export function SignUpPanel({ className }: { className?: string }) {
     useState<"idle" | "submitting" | "verify" | "done" | "done-google">("idle");
   const [error, setError] = useState<string | null>(null);
   const confettiRef = useRef<ConfettiRef>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const emailValid = EMAIL_RE.test(email);
   const passwordValid = password.length >= MIN_PASSWORD;
@@ -150,7 +151,7 @@ export function SignUpPanel({ className }: { className?: string }) {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} noValidate className="mt-6 flex flex-col gap-3.5">
+          <form ref={formRef} onSubmit={handleSubmit} noValidate className="mt-6 flex flex-col gap-3.5">
             <div>
               <label htmlFor="su-email" className="field-label">
                 Email
@@ -294,6 +295,7 @@ export function SignUpPanel({ className }: { className?: string }) {
           {/* Carries its own "or" divider, so a Google button that never draws
               takes the divider down with it instead of stranding one. */}
           <GoogleButton
+            matchWidthTo={formRef}
             onSignedIn={async () => {
               // No redirect happens in this flow, so consent is written
               // straight onto the user rather than parked for the trip back.
