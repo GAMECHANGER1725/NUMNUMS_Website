@@ -10,7 +10,7 @@ import { CouponField } from "@/components/ui/coupon-field";
 import { NnSelect } from "@/components/ui/select";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
-  availableSlots, money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
+  money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
 } from "@/lib/cart";
 import {
   listPriceCents, flavourSlug, urlSlug, COLLECTION, collectionSlots, slotLabel,
@@ -61,8 +61,19 @@ export default function CartPage() {
   const total = subtotal - discount;
   const deposit = depositCents(total);
 
-  const slots = availableSlots(cart.store, cart.dueDate);
-  const ready = count > 0 && cart.store !== "" && cart.dueDate !== "" && slots.includes(cart.dueMin);
+  /**
+   * The picker's slot list depends on the SHOP, not on the date already
+   * saved. It used to be `availableSlots(store, cart.dueDate)`, which returns
+   * [] for a date inside the lead time — so a cart left overnight, whose
+   * saved date had since gone stale, showed an empty time list on *every*
+   * day you tapped, under a hint saying "pick a shop first" when a shop was
+   * already picked. The calendar greys unbookable days itself, so any day
+   * reachable in it is a day the whole window is valid for.
+   */
+  const slots = collectionSlots(cart.store);
+  const dateStale = cart.dueDate !== "" && cart.dueDate < minDueDate();
+  const ready = count > 0 && cart.store !== "" && cart.dueDate !== ""
+    && slots.includes(cart.dueMin) && !dateStale;
   const allPicked = picked.length > 0 && picked.length === cart.lines.length;
 
   const setQty = (i: number, qty: number) =>
@@ -349,9 +360,18 @@ export default function CartPage() {
               >
                 Go to checkout <ArrowRight className="h-4 w-4" />
               </Link>
+              {/* Name the thing that is actually missing. "Pick a shop and a
+                  collection date" was shown even when both were set and only
+                  the time was not, and even when the saved date had gone
+                  stale overnight — in which case nothing on the page looked
+                  wrong and the button simply would not work. */}
               {!ready && (
                 <p className="mt-2 text-center text-[0.76rem] text-muted-foreground">
-                  Pick a shop and a collection date first.
+                  {dateStale
+                    ? "That collection date has passed — pick a new one."
+                    : !cart.store ? "Pick a shop to collect from."
+                      : !cart.dueDate ? "Pick a collection date."
+                        : "Pick a collection time."}
                 </p>
               )}
             </section>

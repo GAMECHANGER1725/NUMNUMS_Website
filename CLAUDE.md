@@ -672,8 +672,17 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   - **Focus return is manual.** There is no `Popover.Trigger` — the anchor is
     a day button — so closing must refocus it, or a keyboard user lands back
     on `<body>` at the top of the page.
-  - The date is only committed **together with a time**, so the cart can never
-    hold a day with no time.
+  - **Tapping a day commits it immediately**, clearing the time if the day
+    changed. Deferring the date until a time was picked left the calendar
+    highlighting the old day, the popover headed with the new one and the
+    summary saying a third thing — three answers to "when" on screen at once,
+    which is what read as the picker glitching. A date with no time cannot
+    reach checkout because `ready` requires both.
+  - **The times are a scrolling list in a box, not a grid of chips.** 23
+    half-hour slots as buttons was a panel the size of the calendar it hangs
+    off. Band headings are `position: sticky`. Focus must not look like
+    selection: the chosen row is filled rose with a tick, focus is an inset
+    outline, and nothing else may imitate the filled state.
 - **A popup must fit the screen, and that is two properties, not one.** Base UI
   publishes `--available-height` *and* `--available-width`; reading only the
   height is how the calendar came to hang 12px off the right edge of a 320px

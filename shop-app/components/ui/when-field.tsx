@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { slotLabel } from "@/lib/catalog";
 
 /**
@@ -159,6 +159,15 @@ export function NnWhenField({
               ref={openDay === day ? anchorRef : undefined}
               onClick={(e) => {
                 anchorRef.current = e.currentTarget;
+                // Commit the day IMMEDIATELY, clearing the time if it is a
+                // different day. Deferring it until a time was picked meant
+                // tapping a second date left the calendar highlighting the
+                // old one while the popover was headed with the new one and
+                // the summary line said a third thing — three answers to
+                // "when" on screen at once, which is what read as the
+                // selector glitching. `ready` still requires a time, so a
+                // date on its own can never reach the checkout.
+                if (day !== date) onChange({ date: day, time: 0 });
                 setOpenDay(day);
               }}
               className={"nd-cal-day" + (on ? " is-on" : "")}
@@ -212,36 +221,47 @@ export function NnWhenField({
                   {emptyHint ?? "Pick a shop first — the two keep different hours."}
                 </p>
               ) : (
-                bands.map((band) => (
-                  <div key={band.key} className="nn-time-band">
-                    <p className="nn-time-band-label" id={`${id}-${band.key}`}>{band.label}</p>
-                    {/* One radio group across all bands: they are a visual
-                        grouping, and splitting the `name` would let someone
-                        select a morning AND an evening time. */}
-                    <div className="nn-time-grid" role="group" aria-labelledby={`${id}-${band.key}`}>
+                // A scrolling box, not a wall of chips. 23 half-hour slots as
+                // a grid of buttons is a card the size of the calendar it
+                // hangs off; as a list it is one compact control you run your
+                // eye down, and the band headings stay stuck to the top so
+                // you always know whether you are in the morning or the
+                // evening. One radio group, so the browser gives arrow keys,
+                // Home/End and roving focus.
+                <div
+                  className="nn-time-list"
+                  role="radiogroup"
+                  aria-label={`Collection time on ${openDay ? longDate(openDay) : ""}`}
+                >
+                  {bands.map((band) => (
+                    <div key={band.key}>
+                      <p className="nn-time-list-head">{band.label}</p>
                       {band.times.map((m) => {
                         const on = openDay === date && m === chosenTime;
                         return (
-                          <label key={m} className={on ? "nn-time-chip is-on" : "nn-time-chip"}>
+                          <label key={m} className={on ? "nn-time-row is-on" : "nn-time-row"}>
                             <input
                               type="radio"
                               name={`${id}-time`}
                               value={m}
                               checked={on}
+                              // Scroll the chosen time into view when the box
+                              // opens on an already-booked day, or a 9pm
+                              // pickup is off-screen and looks unset.
+                              ref={on ? (el) => el?.scrollIntoView({ block: "center" }) : undefined}
                               onChange={() => {
-                                // The day and the time land together, so the
-                                // cart never holds a date with no time.
                                 if (openDay) onChange({ date: openDay, time: m });
                                 close();
                               }}
                             />
                             <span>{slotLabel(m)}</span>
+                            {on && <Check className="h-3.5 w-3.5 flex-none" aria-hidden />}
                           </label>
                         );
                       })}
                     </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </Popover.Popup>
           </Popover.Positioner>

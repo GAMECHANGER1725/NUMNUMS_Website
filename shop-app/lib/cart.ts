@@ -206,23 +206,6 @@ export function minDueDate(now = new Date()): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
 }
 
-/**
- * The collection slots bookable at `store` on `date`, in minutes from midnight.
- *
- * A whole day, or none — which is the simplification a calendar rule buys.
- * Under the old 48-hour rule the first bookable date was a partial day and the
- * early slots had to be filtered off it, and rounding that wrong offered a
- * 47.5-hour slot the server then refused.
- *
- * Empty until a shop is picked, because the two keep different hours and
- * showing one shop's times before you know which shop is a guess.
- */
-export function availableSlots(store: string, date: string, now = new Date()): number[] {
-  const all = collectionSlots(store);
-  if (!date) return all;
-  return date < minDueDate(now) ? [] : all;
-}
-
 export function maxDueDate(now = new Date()): string {
   const d = new Date(now.getTime() + 120 * 86_400_000);
   return d.toLocaleDateString("en-CA", { timeZone: "Australia/Sydney" });

@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Loader2, Lock } from "lucide-react";
 import { CouponField } from "@/components/ui/coupon-field";
-import { cartStore, writeCart, cartCount, money, depositCents, STORES } from "@/lib/cart";
+import { cartStore, writeCart, cartCount, money, depositCents, minDueDate, STORES } from "@/lib/cart";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { listPriceCents, slotLabel } from "@/lib/catalog";
 import { supabase } from "@/lib/supabase";
@@ -12,6 +12,21 @@ import { beginCheckout } from "@/lib/analytics";
 
 const MOBILE_RE = /^(?:\+?61|0)4\d{8}$/;
 const normalisePhone = (v: string) => v.replace(/[\s()-]/g, "");
+/**
+ * Deliberately loose — this is a typo catcher, not an RFC 5322 parser, and
+ * the only authority on whether an address works is whether mail arrives.
+ * But `email.includes("@")` was the whole check, so **"a@" passed**: the
+ * button enabled, Stripe took an unreachable `customer_email`, and the
+ * receipt and the coupon binding both went nowhere.
+ */
+const EMAIL_RE = /^[^\s@]+@[^\s@.]+\.[^\s@]+$/;
+
+/** Sydney wall-clock date string to words. Never `new Date(d)` — that parses
+ *  as UTC and shows the previous day for anyone east of Greenwich. */
+const prettyDate = (d: string) =>
+  new Date(`${d}T12:00:00`).toLocaleDateString("en-AU", {
+    weekday: "long", day: "numeric", month: "long",
+  });
 
 export default function CheckoutPage() {
   const cart = useSyncExternalStore(cartStore.subscribe, cartStore.getSnapshot, cartStore.getServerSnapshot);
@@ -51,23 +66,40 @@ export default function CheckoutPage() {
   // their own order.
   const phoneValid = MOBILE_RE.test(normalisePhone(phone));
   const phoneShown = phone.trim() === "" || phoneValid;
-  const canPay = loaded && count > 0 && name.trim() !== "" && email.includes("@") && phoneValid && !busy;
+  const emailValid = EMAIL_RE.test(email.trim());
+
+  /**
+   * The collection details are part of "can this be paid for", and they were
+   * missing from this check entirely.
+   *
+   * A cart carries the shop, the date and the time, and /checkout is a real
+   * URL — a customer can arrive with any of them unset (a deep link, a cart
+   * written before they picked a shop, a date that has since gone stale).
+   * The button was enabled anyway, the summary read "Collect from — on ."
+   * and pressing Pay bounced a raw server error back on the final step.
+   *
+   * `minDueDate()` is re-evaluated on render, so a cart left overnight whose
+   * date is now inside the lead time is caught here rather than by Stripe.
+   */
+  const dateStale = cart.dueDate !== "" && cart.dueDate < minDueDate();
+  const whenOk = cart.store !== "" && cart.dueDate !== "" && cart.dueMin > 0 && !dateStale;
+  const canPay = loaded && count > 0 && name.trim() !== "" && emailValid
+    && phoneValid && whenOk && !busy;
+
+  // Said once, in order, so the customer is told the first thing to fix
+  // rather than left guessing at a greyed-out button.
+  const blocker = !loaded ? null
+    : !whenOk ? (dateStale
+        ? "That collection date has passed. Go back and pick a new one."
+        : "Go back and choose a shop, a date and a collection time.")
+      : !name.trim() ? "Add the name for the order."
+        : !emailValid ? "Add a valid email address."
+          : !phoneValid ? "Add an Australian mobile number."
+            : null;
 
   async function pay() {
     setBusy(true);
     setError(null);
-    // Fired before the redirect, not after: once window.location changes this
-    // page is gone, and an event queued on a document that is unloading is an
-    // event that may never be sent.
-    beginCheckout(
-      cart.lines.map((l) => ({
-        size: l.size,
-        flavour: l.flavour,
-        qty: l.qty ?? 1,
-        cents: listPriceCents(l.size, l.flavour) ?? 0,
-      })),
-      subtotal - discount,
-    );
     try {
       const res = await fetch("/api/create-checkout", {
         method: "POST",
@@ -77,8 +109,28 @@ export default function CheckoutPage() {
           coupon: coupon?.code ?? "", cart,
         }),
       });
-      const body = await res.json();
+      const body = await res.json().catch(() => null);
       if (!res.ok) throw new Error(body?.error ?? "Could not start checkout.");
+      // A 200 with no url would otherwise navigate to ".../undefined" and
+      // lose the cart behind a 404, which is the worst possible place to
+      // strand somebody who is trying to pay.
+      if (typeof body?.url !== "string" || !body.url) {
+        throw new Error("Could not start checkout. Please try again.");
+      }
+      // Fired here, once we know a checkout actually exists, and before the
+      // redirect — after `window.location` changes this page is gone and a
+      // queued event may never be sent. It used to fire at the top of pay(),
+      // so every failed attempt and every server refusal counted as a
+      // begin_checkout and the funnel overstated itself.
+      beginCheckout(
+        cart.lines.map((l) => ({
+          size: l.size,
+          flavour: l.flavour,
+          qty: l.qty ?? 1,
+          cents: listPriceCents(l.size, l.flavour) ?? 0,
+        })),
+        total,
+      );
       window.location.href = body.url;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Try again.");
@@ -146,8 +198,11 @@ export default function CheckoutPage() {
       <section className="mt-7">
         <h2 className="section-label">Your order</h2>
         <ul className="mt-3 flex flex-col gap-2">
+          {/* Keyed by what the cake IS, not by index — the cart folds
+              duplicates on the same three fields, so this is unique, and an
+              index key re-uses a row's DOM when the list changes. */}
           {cart.lines.map((l, i) => (
-            <li key={i} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
+            <li key={`${l.size}|${l.flavour}|${l.wording}`} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
               <span className="text-[0.92rem]">
                 {l.qty > 1 && <span className="font-semibold tabular-nums">{l.qty} × </span>}
                 {l.size} {l.flavour}
@@ -157,13 +212,26 @@ export default function CheckoutPage() {
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-[0.82rem] text-muted-foreground">
-          Collect from <b className="font-semibold text-foreground">{store?.label ?? "—"}</b> on{" "}
-          <b className="font-semibold text-foreground">{cart.dueDate}</b>
-          {cart.dueMin > 0 && (
-            <> at <b className="font-semibold text-foreground">{slotLabel(cart.dueMin)}</b></>
-          )}.
-        </p>
+        {/* Either the whole collection detail or an instruction to go and set
+            it — never the half-built sentence "Collect from — on ." that an
+            unset cart used to print, and never the raw `2026-09-26`. */}
+        {whenOk ? (
+          <p className="mt-3 text-[0.82rem] text-muted-foreground">
+            Collect from <b className="font-semibold text-foreground">{store?.label}</b> on{" "}
+            <b className="font-semibold text-foreground">{prettyDate(cart.dueDate)}</b> at{" "}
+            <b className="font-semibold text-foreground">{slotLabel(cart.dueMin)}</b>.
+          </p>
+        ) : (
+          <p className="mt-3 rounded-lg bg-[#FDF3F6] px-3 py-2 text-[0.82rem] text-[#96355A]">
+            {dateStale
+              ? "That collection date has passed."
+              : "No collection details yet."}{" "}
+            <Link href="/cart" className="font-semibold underline underline-offset-2">
+              Go back and choose
+            </Link>{" "}
+            a shop, a date and a time.
+          </p>
+        )}
       </section>
 
       <section className="mt-7">
@@ -213,14 +281,23 @@ export default function CheckoutPage() {
         <button type="button" onClick={pay} disabled={!canPay} className="btn-cta mt-5 w-full py-3">
           {busy ? <><Loader2 className="h-4 w-4 animate-spin" />Opening secure checkout</> : <><Lock className="h-4 w-4" />Pay deposit {money(deposit)}</>}
         </button>
+        {/* A disabled button with no reason is a dead end. Say the first
+            thing to fix. */}
+        {blocker && !busy && (
+          <p className="mt-2 text-center text-[0.76rem] font-medium text-[#96355A]">{blocker}</p>
+        )}
         <p className="mt-2 text-center text-[0.72rem] leading-relaxed text-muted-foreground">
           Card details are entered on Stripe&rsquo;s secure page — they never touch this site.
           <br />
+          {/* This said "the 48-hour change-of-mind window" while the cart
+              promised a refund up to 24 hours before collection. Two
+              different cancellation rules on the same purchase, and the one
+              here was the one nobody had agreed to. */}
           Paying confirms you accept our{" "}
           <a href="/terms" target="_blank" rel="noopener" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
             Terms &amp; Conditions
           </a>
-          , including the 48-hour change-of-mind window.
+          . Cancel more than 24 hours before collection and your deposit is refunded in full.
         </p>
       </section>
     </main>
