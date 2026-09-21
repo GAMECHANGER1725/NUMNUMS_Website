@@ -106,8 +106,7 @@ export function SignUpPanel({ className }: { className?: string }) {
           <p className="text-sm leading-relaxed text-muted-foreground">
             {/* Verified means signed in — verifyOtp returns a session — so
                 this never tells anybody to go and sign in again. */}
-            Your 10% code is on its way to{" "}
-            <span className="font-medium text-foreground">{email}</span>.
+            You&rsquo;re signed in and ready to order.
           </p>
           {/* The page has no close button to fall back on, so the success
               screen has to carry the way onward itself. */}
@@ -137,8 +136,12 @@ export function SignUpPanel({ className }: { className?: string }) {
               <h1 className="font-display text-[1.75rem] font-light leading-tight tracking-tight">
                 Create your account
               </h1>
+              {/* No 10% here on purpose: the coupon is minted by the newsletter
+                  popup's /api/subscribe, and nothing mints one on account
+                  creation. Promising it on this page was a discount nobody
+                  ever sent. */}
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                Get 10% off your next order.
+                Order online and collect in store.
               </p>
             </div>
             {/* Cormorant is ornament only: one line, never a heading. */}
@@ -222,8 +225,8 @@ export function SignUpPanel({ className }: { className?: string }) {
               purchase or from a phone number handed over for a receipt.
               What lifts opt-in legitimately is first-person affirmative
               phrasing and a named benefit, never a default — "Email and
-              text me" reads as an admin setting, "Yes, save me a slice"
-              reads as something you want. Trimmed to one line, but the
+              text me" reads as an admin setting, "Yes, keep me updated"
+              reads as something you chose. Trimmed to one line, but the
               channels (email & text) and the benefit (new flavours &
               offers) still have to be named — that's the legal floor.
             */}
@@ -235,7 +238,7 @@ export function SignUpPanel({ className }: { className?: string }) {
                 className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
               />
               <span>
-                <b className="font-semibold text-foreground">Yes, save me a slice</b> —
+                <b className="font-semibold text-foreground">Yes, keep me updated</b> —
                 new flavours &amp; offers by email &amp; text. Unsubscribe any time.
               </span>
             </label>

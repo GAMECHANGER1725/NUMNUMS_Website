@@ -400,10 +400,9 @@
         '<div class="nnp-grid">' +
           '<div class="nnp-left">' +
             '<div class="nnp-form-wrap">' +
-              '<h2 class="nnp-h" id="nnp-h">Receive 10% off your next order</h2>' +
+              '<h2 class="nnp-h" id="nnp-h">Subscribe and save 10% on your next order</h2>' +
               '<p class="nnp-sub">Join us for new flavours, seasonal specials and ' +
-                'festival pre-order dates &mdash; plus 10% off your next order. ' +
-                'We&rsquo;ll email your code.</p>' +
+                'festival pre-order dates. We&rsquo;ll email your code.</p>' +
               '<form novalidate>' +
                 '<div class="nnp-field">' +
                   '<label class="nnp-sr" for="nnp-name" hidden>First name</label>' +
