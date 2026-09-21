@@ -173,6 +173,19 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
                 ? `${60 - wording.length} characters left. Check your spelling — we pipe it exactly.`
                 : "We pipe it by hand, exactly as you type it."}
             </p>
+            {/* The one free-text box in the whole shop, so it is where a
+                custom order gets silently turned into a normal one: somebody
+                wanting a themed two-tier cake types the brief here, pays
+                $39.99, and the kitchen receives a plain cake with a sentence
+                piped on it. Saying what the field is NOT is worth more than
+                any banner, because this is the moment the mistake is made. */}
+            <p className="mt-1 text-[0.72rem] text-muted-foreground">
+              Words only — for a theme, a photo or tiers,{" "}
+              <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
+                that&rsquo;s a custom cake
+              </a>
+              .
+            </p>
           </div>
 
           <button

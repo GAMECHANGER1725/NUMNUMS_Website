@@ -127,15 +127,79 @@ export default function ShopPage() {
           ))}
         </section>
 
-        <p className="mt-10 rounded-xl border border-border bg-secondary/50 p-4 text-[0.86rem] leading-relaxed text-muted-foreground">
-          <b className="font-semibold text-foreground">Want something made to your own design?</b>{" "}
-          A Signature cake is ours to design and yours to collect tomorrow. Tiered
-          cakes, photo prints and 3D toppers are a custom build, quoted individually —{" "}
-          <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
-            tell us what you have in mind
-          </a>
-          .
-        </p>
+        {/* Two ways to order, side by side.
+            This replaced a paragraph that said the same thing in prose. A
+            customer who wants a themed cake does not read a notice at the
+            bottom of a board of cakes — they read the cakes. Put the two
+            paths in the same shape, at the same size, and the difference is
+            legible without being read: who designs it, what it costs, when
+            it is ready. The Signature column is deliberately the calmer of
+            the two — it is the page they are already on, so it states rather
+            than sells. */}
+        <section className="mt-12 border-t border-border pt-8">
+          <h2 className="section-label">Two ways to order</h2>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-[#C85478]/35 bg-[#FDF3F6]/60 p-4">
+              <h3 className="font-display text-[1.24rem] font-light tracking-[-0.02em]">Signature</h3>
+              <p className="mt-0.5 text-[0.8rem] font-semibold text-[#C85478]">You&rsquo;re here</p>
+              <dl className="mt-3 space-y-1.5 text-[0.84rem] leading-relaxed">
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Design</dt>
+                  <dd>Ours — 15 flavours</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Writing</dt>
+                  <dd>Your words piped on top</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Price</dt>
+                  <dd>From $39.99, shown up front</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Ready</dt>
+                  <dd>Tomorrow</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Paying</dt>
+                  <dd>50% now, the rest on collection</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="rounded-xl border border-border bg-secondary/40 p-4">
+              <h3 className="font-display text-[1.24rem] font-light tracking-[-0.02em]">Custom</h3>
+              <p className="mt-0.5 text-[0.8rem] font-semibold text-muted-foreground">A different way to order</p>
+              <dl className="mt-3 space-y-1.5 text-[0.84rem] leading-relaxed">
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Design</dt>
+                  <dd>Yours — any theme, tiers, photo prints, 3D toppers</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Writing</dt>
+                  <dd>Anything, as part of the design</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Price</dt>
+                  <dd>Quoted per cake, once we&rsquo;ve seen the brief</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Ready</dt>
+                  <dd>48 hours from the go-ahead</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-[4.6rem] flex-none text-muted-foreground">Paying</dt>
+                  <dd>Nothing online — we quote you first</dd>
+                </div>
+              </dl>
+              <a
+                href="/order"
+                className="mt-4 block rounded-full border border-[#C85478] py-2.5 text-center text-[0.88rem] font-semibold text-[#C85478] transition-colors hover:bg-[#FDF3F6]"
+              >
+                Get a custom quote
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );

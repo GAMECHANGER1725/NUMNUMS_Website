@@ -392,6 +392,20 @@ export default function CartPage() {
                 Card details never touch this site.
               </p>
             </section>
+
+            {/* The last honest place to leave. Checkout renders no nav on
+                purpose — a link out of a payment flow is an exit — so if
+                somebody has got this far wanting a cake we design to their
+                brief, this is the final screen that can say so. Stated as a
+                fact about what is in the cart, not as a warning. */}
+            <p className="text-center text-[0.78rem] leading-relaxed text-muted-foreground">
+              These are our designs, baked for tomorrow. Want one made to your
+              own brief instead?{" "}
+              <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
+                Get a custom quote
+              </a>
+              .
+            </p>
           </aside>
         </div>
       </main>
