@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
@@ -37,6 +37,41 @@ export function ShopHeader() {
   const [open, setOpen] = useState(false);
   const path = usePathname();
 
+  /*
+   * The sliding highlight, matching the static pages'. It rests behind the
+   * current page's link and follows the pointer, returning on mouse-out.
+   *
+   * Measured from live geometry rather than an index, because the labels are
+   * different widths and the pill's own padding moves with the breakpoint —
+   * a computed guess is wrong at exactly the widths nobody tests. Below
+   * 1024px the links are `display: none`, so `offsetWidth` is 0 and the
+   * indicator correctly collapses to nothing.
+   */
+  const pill = useRef<HTMLDivElement | null>(null);
+  const indicator = useRef<HTMLSpanElement | null>(null);
+
+  const placeIndicator = useCallback((el: HTMLElement | null) => {
+    const bar = indicator.current;
+    if (!bar || !el || !pill.current) return;
+    bar.style.left = `${el.offsetLeft}px`;
+    bar.style.width = `${el.offsetWidth}px`;
+  }, []);
+
+  const restIndicator = useCallback(() => {
+    placeIndicator(pill.current?.querySelector<HTMLElement>(".nn-nav-active") ?? null);
+  }, [placeIndicator]);
+
+  const moveIndicator = (e: React.MouseEvent<HTMLElement>) => placeIndicator(e.currentTarget);
+
+  useEffect(() => {
+    restIndicator();
+    // Fonts landing after first paint change every label's width, and a
+    // resize crosses the breakpoint where the links disappear entirely.
+    const ro = new ResizeObserver(restIndicator);
+    if (pill.current) ro.observe(pill.current);
+    return () => ro.disconnect();
+  }, [restIndicator]);
+
   // Same two states as the static pill (see paintCart in promo.js): an empty
   // cart is still a door into the shop, never a dead button.
   const cartLabel = n ? `Your order (${n})` : "Order Now";
@@ -65,14 +100,21 @@ export function ShopHeader() {
             </picture>
           </a>
 
-          <div className="nn-pill">
+          <div className="nn-pill" ref={pill} onMouseLeave={restIndicator}>
+            <span className="nn-indicator" ref={indicator} aria-hidden />
             {NAV.map((item) =>
               item.internal ? (
-                <Link key={item.href} href="/" className="nn-nav-link nn-nav-active">
+                <Link
+                  key={item.href} href="/" className="nn-nav-link nn-nav-active"
+                  onMouseEnter={moveIndicator}
+                >
                   {item.label}
                 </Link>
               ) : (
-                <a key={item.href} href={item.href} className="nn-nav-link">
+                <a
+                  key={item.href} href={item.href} className="nn-nav-link"
+                  onMouseEnter={moveIndicator}
+                >
                   {item.label}
                 </a>
               ),

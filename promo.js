@@ -198,19 +198,66 @@
    * Same origin, so the key the Next app writes is the key read here. See
    * shop-app/lib/cart.ts.
    */
-  // Injected rather than added to 242 inline <style> blocks, and only once
-  // somebody actually has a cake in the cart.
-  function mobileCartCss() {
+  /*
+   * The cart pill must be the SAME BUTTON as the shop's, on every page.
+   *
+   * It was not. The shop renders `.nn-cta` / `.nn-cta-full` and fills solid
+   * rose the moment the cart has something in it, at every width. The static
+   * pages render `.btn-hover-interactive`, whose resting state is an outline
+   * with a small rose dot that expands on hover — and the filled state was
+   * scoped to a `max-width:1024px` media query, so on a laptop the same cart
+   * was a filled pill on /shop and an outlined one with a dot everywhere
+   * else. Same cart, same words, two buttons.
+   *
+   * So `#nav-cart` opts out of the slide-swap and matches `.nn-cta` exactly:
+   * label plus arrow at rest, solid when it holds something, darkening on
+   * hover. Scoped to the id, so every other `.btn-hover-interactive` on the
+   * static pages keeps its animation.
+   *
+   * Injected rather than written into 242 inline <style> blocks, which is
+   * also what stops the two drifting apart again — there is one rule to edit.
+   */
+  function cartCss() {
     if (document.getElementById('nn-cart-css')) return;
     var st = document.createElement('style');
     st.id = 'nn-cart-css';
-    st.textContent = '@media (max-width:1024px){'
-      + '#nav-cart.nn-has-items{display:inline-flex!important;min-width:0!important;'
-      + 'padding:7px 14px!important;font-size:0.75rem!important;'
-      + 'background:#C85478!important;color:#fff!important;border-color:#C85478!important;}'
-      + '#nav-cart.nn-has-items .bhi-bg,#nav-cart.nn-has-items .bhi-hover{display:none!important;}'
-      + '#nav-cart.nn-has-items .bhi-text{transform:none!important;opacity:1!important;}}';
+    st.textContent =
+      // Resting state: no dot, no slide, label and arrow just sit there.
+      '#nav-cart .bhi-bg,#nav-cart .bhi-hover{display:none!important;}'
+      + '#nav-cart .bhi-text{transform:none!important;opacity:1!important;'
+      + 'display:inline-flex;align-items:center;gap:6px;}'
+      + '#nav-cart{transition:background-color .3s ease,color .3s ease,border-color .3s ease;}'
+      + '#nav-cart:hover{background:#C85478!important;color:#FFF8F2!important;}'
+      // Holding something: solid, at EVERY width — this is the bit that was
+      // hidden behind a media query. Cream, not #fff, because that is what
+      // `.nn-cta-full` uses and "almost the same white" is still a difference.
+      + '#nav-cart.nn-has-items{background:#C85478!important;color:#FFF8F2!important;'
+      + 'border-color:#C85478!important;}'
+      + '#nav-cart.nn-has-items:hover{background:#A03D5E!important;border-color:#A03D5E!important;}'
+      // The static nav hides this pill entirely under 640px, which is fine
+      // for a CTA and wrong for a cart — most of this traffic is on a phone,
+      // and a cart you cannot see is a cart you assume you lost.
+      + '@media (max-width:1024px){#nav-cart.nn-has-items{display:inline-flex!important;'
+      + 'min-width:0!important;padding:7px 14px!important;font-size:0.75rem!important;}}';
     document.head.appendChild(st);
+  }
+
+  /** The shop's pill carries an arrow at rest; this is the same one. */
+  function cartArrow() {
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', '13'); svg.setAttribute('height', '13');
+    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2.5');
+    svg.setAttribute('stroke-linecap', 'round'); svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    var line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', '5'); line.setAttribute('y1', '12');
+    line.setAttribute('x2', '19'); line.setAttribute('y2', '12');
+    var poly = document.createElementNS(NS, 'polyline');
+    poly.setAttribute('points', '12 5 19 12 12 19');
+    svg.appendChild(line); svg.appendChild(poly);
+    return svg;
   }
 
   function paintCart() {
@@ -237,18 +284,19 @@
 
     if (pill) {
       pill.setAttribute('href', href);
-      // The static nav hides this pill entirely under 640px, which is fine for
-      // a CTA and wrong for a cart — most of this traffic is on a phone, and a
-      // cart you cannot see is a cart you assume you lost. A non-empty one
-      // comes back as a compact filled chip beside the hamburger.
       pill.classList.toggle('nn-has-items', n > 0);
-      if (n > 0) mobileCartCss();
+      cartCss();
       var plain = pill.querySelector('.bhi-text');
+      var target = plain || pill;
+      // Rebuilt rather than patched, so repainting on a storage event cannot
+      // leave two arrows behind.
+      target.textContent = label;
+      target.appendChild(cartArrow());
+      // The slide-swap layer is permanently hidden for this pill now, but its
+      // leftover copy still lands in textContent — so the button reads
+      // "Your order (1) Order Now" to anything parsing the DOM. Empty it.
       var hover = pill.querySelector('.bhi-hover');
-      if (plain) plain.textContent = label;
-      // The hover copy is the words followed by an arrow. Replace the words.
-      if (hover && hover.firstChild) hover.firstChild.nodeValue = label + ' ';
-      if (!plain && !hover) pill.textContent = label;
+      if (hover) hover.textContent = '';
     }
     if (mob) { mob.setAttribute('href', href); mob.textContent = label; }
   }

@@ -828,6 +828,40 @@ in the footer only, and lead the homepage with products before any story.
   `shop/` too, and a parity check asserts `shop-header.tsx`'s `NAV` equals the
   canonical list in order. **Any new nav check must cover both surfaces**, or
   it is measuring half the site.
+- 🔒 **THE NAVBAR IS ONE NAVBAR. Vaidik's standing rule, 2026-09-22.**
+  Font, size, spacing, buttons, hover and active state are **identical on
+  every page** — the static pages, the shop, and anything added later. It is
+  the one component a visitor sees on all 243 pages, so a difference reads as
+  two different websites.
+  **Every navbar edit gets made on BOTH surfaces in the same commit** —
+  `index.html`-style static markup plus `promo.js`, *and*
+  `shop-app/components/ui/shop-header.tsx` plus `globals.css` — and is
+  verified by measuring computed styles on a static page and a shop page side
+  by side, not by looking at one.
+  What had drifted, found 2026-09-22 and fixed:
+  - **The cart pill was two different buttons.** The shop filled solid rose
+    the moment the cart had something in it; the static pages kept an outline
+    with a small rose dot, because their filled state was scoped to a
+    `max-width:1024px` media query. On a laptop the same cart was filled on
+    `/shop` and outlined everywhere else. `#nav-cart` now opts out of the
+    `.btn-hover-interactive` slide-swap and matches `.nn-cta` exactly — label
+    plus arrow at rest, solid when holding something, at every width. The
+    override is injected once by `promo.js` and **scoped to the id**, so other
+    `.btn-hover-interactive` buttons keep their animation.
+  - Fill colour was `#fff` on static and `#FFF8F2` on the shop. "Almost the
+    same white" is still a difference.
+  - The `.nn-pill` container had drifted to a cream tint with no blur against
+    the static's rose tint and `blur(14px)`.
+  - The shop had **no sliding indicator** — the static pages' chip that rests
+    behind the current page and follows the pointer. Ported as `.nn-indicator`,
+    measured from live geometry (`offsetLeft`/`offsetWidth`) rather than an
+    index, because the labels are different widths.
+  Known and accepted: the static chip sits ~3px left and 2px taller than the
+  shop's, from its own `- 4` offset arithmetic. Invisible at 8% opacity, and
+  correcting it means editing 242 inline scripts.
+  The one deliberate difference: `/shop` hides the pill entirely when the cart
+  is empty (`showCart = n > 0 || path !== "/"`), because "Order Now" on the
+  shop's own landing page points at the page you are standing on.
 - **`/cakes` no longer exists — it is a 301 to `/order`.** Its H1 was
   "100% Eggless Custom Cakes in Sydney", competing with `/order` for the same
   queries on a site that has already paid once for cannibalising itself, so
