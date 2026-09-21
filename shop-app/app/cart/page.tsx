@@ -8,7 +8,6 @@ import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { QtyStepper } from "@/components/ui/qty-stepper";
 import { CouponField } from "@/components/ui/coupon-field";
 import { NnSelect } from "@/components/ui/select";
-import { NnDateField } from "@/components/ui/date-field";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
   availableSlots, money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
@@ -16,7 +15,7 @@ import {
 import {
   listPriceCents, flavourSlug, urlSlug, COLLECTION, collectionSlots, slotLabel,
 } from "@/lib/catalog";
-import { NnTimePicker } from "@/components/ui/time-picker";
+import { NnWhenField } from "@/components/ui/when-field";
 
 /** "11:00 AM – 10:00 PM", read straight off the one window definition. */
 const storeHours = (code: string) => {
@@ -236,33 +235,32 @@ export default function CartPage() {
                     }))}
                   />
                 </div>
-                <div className="sm:col-span-2">
-                  <label htmlFor="c-date" className="field-label">Collection date</label>
-                  {/* min/max are convenience; the server rebuilds and re-checks both. */}
-                  <NnDateField
-                    id="c-date"
-                    value={cart.dueDate}
-                    min={minDueDate()}
-                    max={maxDueDate()}
-                    onChange={(v) => update({ ...cart, dueDate: v })}
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label htmlFor="c-time" className="field-label">
-                    Collection time
+                {/* One field, because it is one decision: when am I picking
+                    this up. Two controls made the customer answer half of it,
+                    look away, and answer the rest — and the times laid out in
+                    the open were six rows that pushed the summary and the
+                    checkout button below the fold. */}
+                <div className="sm:col-span-3">
+                  <label htmlFor="c-when" className="field-label">
+                    Collection
                     {cart.store && (
                       <span className="ml-1 font-normal text-muted-foreground">
                         ({storeHours(cart.store)})
                       </span>
                     )}
                   </label>
-                  <NnTimePicker
-                    id="c-time"
+                  {/* min/max are convenience; the server rebuilds and re-checks both. */}
+                  <NnWhenField
+                    id="c-when"
+                    date={cart.dueDate}
+                    min={minDueDate()}
+                    max={maxDueDate()}
+                    time={cart.dueMin}
                     slots={slots}
-                    value={cart.dueMin}
-                    onChange={(m) => update({ ...cart, dueMin: m })}
-                    disabledHint={
-                      cart.store && cart.dueDate
+                    onChange={({ date, time }) =>
+                      update({ ...cart, dueDate: date, dueMin: time })}
+                    emptyHint={
+                      cart.store
                         ? "That date is too soon — pick a later one."
                         : "Pick a shop first. Our two shops keep different hours."
                     }

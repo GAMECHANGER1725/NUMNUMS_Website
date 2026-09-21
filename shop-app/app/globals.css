@@ -356,7 +356,44 @@
      without a tap. Radios underneath: the browser gives arrow keys and
      roving focus for free, and `appearance: none` leaves nothing of the
      OS control on screen. */
-  .nn-time { display: flex; flex-direction: column; gap: 0.7rem; }
+  /* Calendar and times in one popup, sized to its content and capped by what
+     the viewport actually has — BOTH axes. Reading only the height is how a
+     popup comes to hang off the right edge of a 320px phone while passing
+     every height check. */
+  .nn-when {
+    width: max-content;
+    max-width: min(var(--available-width), 20rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .nn-when-times { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  /* Stacked, with a rule between the two halves. */
+  .nn-when-cal + .nn-when-times {
+    border-top: 1px solid rgba(200, 84, 120, 0.15);
+    padding-top: 0.75rem;
+  }
+
+  /* Side by side once there is genuinely room, so the calendar and the times
+     are one glance instead of a scroll. */
+  @media (min-width: 40rem) {
+    .nn-when {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 0.9rem;
+      max-width: min(var(--available-width), 34rem);
+    }
+    .nn-when-cal { flex: 0 0 14.5rem; }
+    .nn-when-cal + .nn-when-times {
+      flex: 1 1 auto;
+      border-top: 0;
+      padding-top: 0;
+      border-left: 1px solid rgba(200, 84, 120, 0.15);
+      padding-left: 0.9rem;
+    }
+  }
 
   .nn-time-band-label {
     margin: 0 0 0.35rem;
@@ -368,12 +405,19 @@
     color: #B08A6A;
   }
 
+  /* Fixed four columns inside the popup. `auto-fill` sizes against the
+     container, and a popup sized by its content has no width to fill yet —
+     the two resolve against each other and collapse to one column. */
   .nn-time-grid {
     display: grid;
-    /* auto-fill down to 4.6rem: 23 Harris Park slots need to reflow from four
-       columns on a phone to seven on a laptop without a media query each. */
-    grid-template-columns: repeat(auto-fill, minmax(4.6rem, 1fr));
+    grid-template-columns: repeat(4, minmax(4.3rem, 1fr));
     gap: 0.4rem;
+  }
+
+  /* Three columns on a narrow phone: four 4.3rem chips plus gaps and the
+     popup's own padding do not fit inside 320px. */
+  @media (max-width: 360px) {
+    .nn-time-grid { grid-template-columns: repeat(3, minmax(4.3rem, 1fr)); }
   }
 
   .nn-time-chip {

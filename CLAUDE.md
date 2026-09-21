@@ -637,12 +637,29 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   or `type="time"` in `shop-app/**/*.tsx`, on a static page with a `<select>`
   and no `.nd-*` enhancer, and on an enhancer with no `fit()`. All three are
   two-line mistakes that are invisible until somebody taps the control.
-- **The shop uses `NnSelect` and `NnDateField`** (`shop-app/components/ui/`),
+- **The shop uses `NnSelect` and `NnWhenField`** (`shop-app/components/ui/`),
   built on **Base UI** — already a dependency, so no new one. A listbox has to
   answer type-ahead, Home/End, PageUp/Down, Escape, focus return and
   `aria-activedescendant`; hand-rolling that is how a keyboard user ends up
   unable to buy a cake. The calendar grid *is* hand-written, because a month of
   buttons does not need a library — only its positioning does.
+  ⚠️ **Base UI is the one primitives library. Do not add Radix or a shadcn
+  block that pulls it in** — `@radix-ui/react-popover`, `-select`, `-slot` all
+  do the same jobs as things already here, and a second set means two lots of
+  positioning, portal and focus behaviour to keep in step. The project *is*
+  shadcn-shaped (`components.json`, `components/ui/`, Tailwind 4, TS 5), so a
+  pasted shadcn component looks like it will drop straight in; it will bring
+  Radix with it. Port the markup, keep Base UI.
+- **Date and time are ONE field** (`NnWhenField`), not two. They are one
+  decision — *when am I collecting this* — and splitting it made the customer
+  answer half, look away, and answer the rest. The times were also once laid
+  out in the open: 23 chips, six rows, which pushed the order summary and the
+  checkout button below the fold on a phone. Inside the popover the calendar
+  sits above the times (side by side from 40rem), picking a **day keeps it
+  open** because the time is still unanswered, and picking a **time closes
+  it** — the last thing answered is the thing that dismisses it. It replaced
+  `date-field.tsx` and a standalone `time-picker.tsx`; both are deleted, do
+  not resurrect them.
 - **A popup must fit the screen, and that is two properties, not one.** Base UI
   publishes `--available-height` *and* `--available-width`; reading only the
   height is how the calendar came to hang 12px off the right edge of a 320px
@@ -1007,13 +1024,15 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
     **no rebuild hook**, so the rows are hidden and the native options disabled
     in step — the rows are what a person clicks, the disabled options are what
     keyboard and form behaviour read. Change one and you must change both.
-- **The collection time is chips, not a dropdown** (`NnTimePicker`). A dropdown
-  hides the shape of the day behind a tap: you cannot see that one shop does
-  evenings until you open it and count. Built on real radio inputs, so arrow
-  keys, Home/End and roving focus come from the browser — this is not an OS
-  control in the sense the repo bans, because `appearance: none` leaves nothing
-  of the native widget on screen. Focus is drawn by the label via `:has()`,
-  since the focused element is the hidden input.
+- **The collection time is chips, not a dropdown.** A dropdown hides the shape
+  of the day: you cannot see that one shop trades until 10pm without opening it
+  and counting. Built on real radio inputs, so arrow keys, Home/End and roving
+  focus come from the browser — not an OS control in the sense the repo bans,
+  because `appearance: none` leaves nothing of the native widget on screen.
+  Focus is drawn by the label via `:has()`, since the focused element is the
+  hidden input. `.nn-time-grid` uses a **fixed** column count, not `auto-fill`:
+  inside a popup sized to its own content there is no width to fill, the two
+  resolve against each other and the grid collapses to one column.
 - **PayPal is not being added. Vaidik's call, 2026-09-21**, after seeing that it
   cannot ride the Stripe integration and costs 48c more per cake. Do not propose
   it again as a quick win — it is a second checkout to build and reconcile.
