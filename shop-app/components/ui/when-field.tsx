@@ -1,41 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { slotLabel } from "@/lib/catalog";
 
 /**
- * Collection date AND time, in one field.
+ * Collection date and time: the calendar is open on the page, and tapping a
+ * day pops the times out beside that day.
  *
- * They were two controls, and the time was 23 chips laid out in the open —
- * six rows on a phone that pushed the order summary and the checkout button
- * below the fold, which are the two things the page exists for. They are also
- * one decision: "when am I picking this up". Splitting a single decision
- * across two fields makes the customer answer half of it, look away, and
- * answer the other half.
+ * It is one decision — *when am I collecting this* — so it is one control.
+ * Two separate fields made the customer answer half of it, look away, and
+ * answer the rest; and a flat list of 23 times hid the fact that one shop
+ * trades until 10pm while the other stops at 6:30.
  *
- * So: one trigger reading "Sat, 26 Sept · 11:30 AM", opening a popover with
- * the calendar above and the times below. Pick a day, pick a time, it closes.
+ * The month is a grid of buttons we draw ourselves. `<input type="date">`
+ * hands the list to the operating system — a full-screen sheet in somebody
+ * else's typeface — and will happily offer days the shop cannot take. Ours
+ * greys what is inside the lead time or past the booking horizon, because a
+ * date you can pick and the server then refuses reads as a broken form
+ * rather than as a rule.
  *
- * `<input type="date">` and `<select>` are both out — they hand the list to
- * the operating system, which on a phone is a full-screen sheet in somebody
- * else's typeface, and the date picker will happily offer days the shop
- * cannot take. The grid and the chips are hand-written because a month of
- * buttons does not need a library. The *positioning* does: Base UI's
- * Positioner flips the popup above the field when there is no room below and
- * publishes `--available-height` and `--available-width`, which is what keeps
- * it on a 320px screen.
+ * **One popover, moved, not one per day.** `Positioner` takes an `anchor`, so
+ * the same popup is re-anchored to whichever day was tapped. Thirty mounted
+ * popovers to show one at a time is thirty sets of portal, focus and
+ * positioning state.
  *
- * Base UI, not Radix — this project has one primitives library, and a second
- * one for the same job means two sets of positioning, portal and focus
- * behaviour to keep in step.
- *
- * Dates are plain `YYYY-MM-DD` strings, Sydney wall-clock, and every
- * comparison is a string compare. Never build a `Date` from one and compare
- * instants: the cart works in Sydney local time and a UTC round trip moves an
- * evening pickup into the wrong day. Times are minutes from midnight, because
- * Riverstone closes at 6:30 and an integer hour cannot say that.
+ * Base UI, not Radix: `Positioner` publishes `--available-height` and
+ * `--available-width` and flips the popup to the other side of the day when
+ * there is no room, which is the whole problem on a phone. A second
+ * primitives library would mean solving it twice.
  */
 const DAY_NAMES = ["M", "T", "W", "T", "F", "S", "S"];
 const MONTHS = [
@@ -55,6 +49,11 @@ const iso = (y: number, m: number, d: number) =>
 
 /** Monday-first offset for the 1st of a month. */
 const leadingBlanks = (y: number, m: number) => (new Date(y, m, 1).getDay() + 6) % 7;
+
+const longDate = (d: string) =>
+  new Date(`${d}T12:00:00`).toLocaleDateString("en-AU", {
+    weekday: "long", day: "numeric", month: "long",
+  });
 
 export function NnWhenField({
   id,
@@ -80,7 +79,9 @@ export function NnWhenField({
 }) {
   const monthOf = (d: string) => ({ y: Number(d.slice(0, 4)), m: Number(d.slice(5, 7)) - 1 });
   const [cursor, setCursor] = useState(() => monthOf(date || min));
-  const [open, setOpen] = useState(false);
+  // The day whose popover is open, and the button it hangs off.
+  const [openDay, setOpenDay] = useState<string | null>(null);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
 
   const days = new Date(cursor.y, cursor.m + 1, 0).getDate();
   const canGoBack = iso(cursor.y, cursor.m, 1) > min;
@@ -94,104 +95,118 @@ export function NnWhenField({
 
   const chosenTime = slots.includes(time) ? time : 0;
 
-  const prettyDate = date
-    ? new Date(`${date}T12:00:00`).toLocaleDateString("en-AU", {
-        weekday: "short", day: "numeric", month: "short",
-      })
-    : "";
-  const label = date && chosenTime
-    ? `${prettyDate} · ${slotLabel(chosenTime)}`
-    : date
-      ? `${prettyDate} · pick a time`
-      : "Pick a date & time";
-
   const bands = BANDS.map((b) => ({
     ...b,
     times: slots.filter((m) => m >= b.from && m <= b.to),
   })).filter((b) => b.times.length);
 
+  // There is no Popover.Trigger — the anchor is whichever day was tapped — so
+  // focus return is ours to do. Without this, closing the popup drops focus to
+  // <body> and a keyboard user is back at the top of the page.
+  const close = () => {
+    const el = anchorRef.current;
+    setOpenDay(null);
+    requestAnimationFrame(() => el?.focus());
+  };
+
   return (
-    // The month is chosen when the popover opens, not once on mount. The cart
-    // is empty on the first paint (useSyncExternalStore's server snapshot), so
-    // a one-time init read no date at all and a customer who had already
-    // chosen 3 October reopened on September.
-    <Popover.Root
-      open={open}
-      onOpenChange={(next) => {
-        if (next) setCursor(monthOf(date || min));
-        setOpen(next);
-      }}
-    >
-      <Popover.Trigger id={id} className="nd-btn" aria-label="Collection date and time">
-        <CalendarDays className="h-4 w-4 flex-none text-[#C85478]" aria-hidden />
-        <span className={date && chosenTime ? "nd-val" : "nd-val is-empty"}>{label}</span>
-      </Popover.Trigger>
+    <div className="nn-when-card">
+      <div className="flex items-center justify-between gap-2">
+        <button
+          type="button" className="nd-cal-nav" onClick={() => step(-1)}
+          disabled={!canGoBack} aria-label="Previous month"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <p aria-live="polite" className="text-[0.92rem] font-semibold">
+          {MONTHS[cursor.m]} {cursor.y}
+        </p>
+        <button
+          type="button" className="nd-cal-nav" onClick={() => step(1)}
+          disabled={!canGoOn} aria-label="Next month"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
 
-      <Popover.Portal>
-        <Popover.Positioner className="z-50 outline-none" sideOffset={5} collisionPadding={12}>
-          <Popover.Popup className="nd-menu nn-when max-h-[var(--available-height)] max-w-[var(--available-width)] overflow-y-auto p-3">
-            {/* ── the day ── */}
-            <div className="nn-when-cal">
-              <div className="flex items-center justify-between gap-2">
-                <button
-                  type="button" className="nd-cal-nav" onClick={() => step(-1)}
-                  disabled={!canGoBack} aria-label="Previous month"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <p aria-live="polite" className="text-[0.86rem] font-semibold">
-                  {MONTHS[cursor.m]} {cursor.y}
-                </p>
-                <button
-                  type="button" className="nd-cal-nav" onClick={() => step(1)}
-                  disabled={!canGoOn} aria-label="Next month"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
+      <div className="mt-2 grid grid-cols-7 gap-1" role="grid">
+        {DAY_NAMES.map((d, i) => (
+          <span
+            key={i}
+            className="py-1 text-center text-[0.64rem] font-semibold uppercase tracking-wider text-muted-foreground"
+            aria-hidden
+          >
+            {d}
+          </span>
+        ))}
+        {Array.from({ length: leadingBlanks(cursor.y, cursor.m) }, (_, i) => (
+          <span key={`b${i}`} />
+        ))}
+        {Array.from({ length: days }, (_, i) => {
+          const d = i + 1;
+          const day = iso(cursor.y, cursor.m, d);
+          const off = day < min || day > max;
+          const on = day === date;
+          return (
+            <button
+              key={day}
+              type="button"
+              disabled={off}
+              aria-pressed={on}
+              aria-haspopup="dialog"
+              aria-expanded={openDay === day}
+              aria-label={longDate(day)}
+              ref={openDay === day ? anchorRef : undefined}
+              onClick={(e) => {
+                anchorRef.current = e.currentTarget;
+                setOpenDay(day);
+              }}
+              className={"nd-cal-day" + (on ? " is-on" : "")}
+            >
+              {d}
+              {/* The day already chosen carries a dot, so a glance at the
+                  month says which one is booked without reading the summary
+                  underneath. */}
+              {on && chosenTime > 0 && <span className="nn-day-dot" aria-hidden />}
+            </button>
+          );
+        })}
+      </div>
 
-              <div className="mt-2 grid grid-cols-7 gap-0.5" role="grid">
-                {DAY_NAMES.map((d, i) => (
-                  <span key={i} className="py-1 text-center text-[0.64rem] font-semibold uppercase tracking-wider text-muted-foreground" aria-hidden>
-                    {d}
-                  </span>
-                ))}
-                {Array.from({ length: leadingBlanks(cursor.y, cursor.m) }, (_, i) => (
-                  <span key={`b${i}`} />
-                ))}
-                {Array.from({ length: days }, (_, i) => {
-                  const d = i + 1;
-                  const day = iso(cursor.y, cursor.m, d);
-                  const off = day < min || day > max;
-                  const on = day === date;
-                  return (
-                    <button
-                      key={day}
-                      type="button"
-                      disabled={off}
-                      aria-pressed={on}
-                      aria-label={new Date(`${day}T12:00:00`).toLocaleDateString("en-AU", {
-                        weekday: "long", day: "numeric", month: "long",
-                      })}
-                      // Picking a day does NOT close: the time is still
-                      // unanswered, and closing here is what made this two
-                      // fields in the first place.
-                      onClick={() => onChange({ date: day, time: chosenTime })}
-                      className={"nd-cal-day" + (on ? " is-on" : "")}
-                    >
-                      {d}
-                    </button>
-                  );
-                })}
-              </div>
+      {/* What was actually chosen, in words, under the calendar. The grid can
+          only show WHICH day; the time has nowhere to live in a 2-digit cell. */}
+      <p className="nn-when-summary">
+        {date && chosenTime ? (
+          <>Collecting <b>{longDate(date)}</b> at <b>{slotLabel(chosenTime)}</b></>
+        ) : date ? (
+          <>Pick a time for <b>{longDate(date)}</b></>
+        ) : (
+          <>Greyed days are sooner than we can bake, or too far ahead to book online.</>
+        )}
+      </p>
 
-              <p className="mt-2 text-[0.7rem] leading-snug text-muted-foreground">
-                Greyed days are sooner than we can bake, or too far ahead to book online.
-              </p>
-            </div>
+      <Popover.Root
+        open={openDay !== null}
+        onOpenChange={(next) => { if (!next) close(); }}
+      >
+        <Popover.Portal>
+          <Popover.Positioner
+            className="z-50 outline-none"
+            anchor={anchorRef}
+            // Below the day, not beside it. Beside looks better on a wide
+            // canvas and is wrong everywhere else: on a phone there is no
+            // room either side of a 40px cell, so it flipped left into a
+            // sliver and the chip grid was clipped. Below, the popup gets
+            // the full width the viewport can give it, and Base UI flips it
+            // above for days in the last row.
+            side="bottom"
+            align="center"
+            sideOffset={8}
+            collisionPadding={12}
+          >
+            <Popover.Popup className="nd-menu nn-when-pop max-h-[var(--available-height)] max-w-[var(--available-width)] overflow-y-auto p-3">
+              <p className="nn-when-pop-head">{openDay ? longDate(openDay) : ""}</p>
 
-            {/* ── the time ── */}
-            <div className="nn-when-times">
               {!slots.length ? (
                 <p className="nn-time-empty">
                   {emptyHint ?? "Pick a shop first — the two keep different hours."}
@@ -200,13 +215,12 @@ export function NnWhenField({
                 bands.map((band) => (
                   <div key={band.key} className="nn-time-band">
                     <p className="nn-time-band-label" id={`${id}-${band.key}`}>{band.label}</p>
-                    {/* One radio group across all bands, not one per band:
-                        the bands are a visual grouping, and splitting the
-                        `name` would let someone pick a morning AND an
-                        evening time. */}
+                    {/* One radio group across all bands: they are a visual
+                        grouping, and splitting the `name` would let someone
+                        select a morning AND an evening time. */}
                     <div className="nn-time-grid" role="group" aria-labelledby={`${id}-${band.key}`}>
                       {band.times.map((m) => {
-                        const on = m === chosenTime;
+                        const on = openDay === date && m === chosenTime;
                         return (
                           <label key={m} className={on ? "nn-time-chip is-on" : "nn-time-chip"}>
                             <input
@@ -214,12 +228,11 @@ export function NnWhenField({
                               name={`${id}-time`}
                               value={m}
                               checked={on}
-                              // Closing on the time, not the day, is what
-                              // makes this one decision: the last thing you
-                              // answer is the thing that dismisses it.
                               onChange={() => {
-                                onChange({ date, time: m });
-                                if (date) setOpen(false);
+                                // The day and the time land together, so the
+                                // cart never holds a date with no time.
+                                if (openDay) onChange({ date: openDay, time: m });
+                                close();
                               }}
                             />
                             <span>{slotLabel(m)}</span>
@@ -230,10 +243,10 @@ export function NnWhenField({
                   </div>
                 ))
               )}
-            </div>
-          </Popover.Popup>
-        </Popover.Positioner>
-      </Popover.Portal>
-    </Popover.Root>
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      </Popover.Root>
+    </div>
   );
 }

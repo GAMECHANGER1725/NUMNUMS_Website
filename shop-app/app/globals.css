@@ -356,43 +356,67 @@
      without a tap. Radios underneath: the browser gives arrow keys and
      roving focus for free, and `appearance: none` leaves nothing of the
      OS control on screen. */
-  /* Calendar and times in one popup, sized to its content and capped by what
-     the viewport actually has — BOTH axes. Reading only the height is how a
-     popup comes to hang off the right edge of a 320px phone while passing
-     every height check. */
-  .nn-when {
-    width: max-content;
-    max-width: min(var(--available-width), 20rem);
+  /* The calendar sits open on the page; the times pop out of the day. */
+  .nn-when-card {
+    /* Capped, or the seven columns stretch across the whole cart column and
+       stop reading as a calendar — a month is a shape, and a 60rem-wide one
+       is just a grid of numbers. */
+    max-width: 22rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: #fff;
+    padding: 0.75rem;
+  }
+
+  /* A dot on the booked day, so the month says which one is chosen without
+     reading the summary. Inside the cell, not overlapping the number. */
+  .nd-cal-day { position: relative; }
+  .nn-day-dot {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.85;
+  }
+
+  .nn-when-summary {
+    margin: 0.6rem 0 0;
+    border-top: 1px solid rgba(200, 84, 120, 0.15);
+    padding-top: 0.55rem;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    color: #8A6B55;
+  }
+  .nn-when-summary b { color: #2C1A0E; font-weight: 600; }
+
+  /* The times popup, sized to its content and capped by what the viewport
+     actually has — BOTH axes. Reading only the height is how a popup comes to
+     hang off the right edge of a 320px phone while passing every height
+     check. */
+  /* A DEFINITE width, not max-content.
+     Sized by its content, the popup measured the chip grid's minimum and the
+     grid then tried to fill a width that did not exist yet — the two resolve
+     against each other, the grid overflowed, and `overflow-y-auto` clipped
+     the third column. Times silently went missing on a phone: 23 chips
+     rendered, 17 visible. Give the popup a width and the grid something real
+     to divide. */
+  .nn-when-pop {
+    width: min(var(--available-width), 20rem);
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
   }
 
-  .nn-when-times { display: flex; flex-direction: column; gap: 0.7rem; }
-
-  /* Stacked, with a rule between the two halves. */
-  .nn-when-cal + .nn-when-times {
-    border-top: 1px solid rgba(200, 84, 120, 0.15);
-    padding-top: 0.75rem;
-  }
-
-  /* Side by side once there is genuinely room, so the calendar and the times
-     are one glance instead of a scroll. */
-  @media (min-width: 40rem) {
-    .nn-when {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 0.9rem;
-      max-width: min(var(--available-width), 34rem);
-    }
-    .nn-when-cal { flex: 0 0 14.5rem; }
-    .nn-when-cal + .nn-when-times {
-      flex: 1 1 auto;
-      border-top: 0;
-      padding-top: 0;
-      border-left: 1px solid rgba(200, 84, 120, 0.15);
-      padding-left: 0.9rem;
-    }
+  .nn-when-pop-head {
+    margin: 0;
+    font-family: var(--font-jost), sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #2C1A0E;
   }
 
   .nn-time-band-label {
@@ -405,19 +429,14 @@
     color: #B08A6A;
   }
 
-  /* Fixed four columns inside the popup. `auto-fill` sizes against the
-     container, and a popup sized by its content has no width to fill yet —
-     the two resolve against each other and collapse to one column. */
+  /* `auto-fit`, which is safe now the popup has a definite width to divide.
+     It was a fixed column count precisely because the popup did not, and a
+     fixed count is what overflowed and clipped chips on a narrow phone.
+     4.1rem is the widest label ("10:00 PM") plus its padding. */
   .nn-time-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(4.3rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(4.1rem, 1fr));
     gap: 0.4rem;
-  }
-
-  /* Three columns on a narrow phone: four 4.3rem chips plus gaps and the
-     popup's own padding do not fit inside 320px. */
-  @media (max-width: 360px) {
-    .nn-time-grid { grid-template-columns: repeat(3, minmax(4.3rem, 1fr)); }
   }
 
   .nn-time-chip {

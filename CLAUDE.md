@@ -650,16 +650,30 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   shadcn-shaped (`components.json`, `components/ui/`, Tailwind 4, TS 5), so a
   pasted shadcn component looks like it will drop straight in; it will bring
   Radix with it. Port the markup, keep Base UI.
-- **Date and time are ONE field** (`NnWhenField`), not two. They are one
+- **Date and time are ONE control** (`NnWhenField`), not two. They are one
   decision — *when am I collecting this* — and splitting it made the customer
-  answer half, look away, and answer the rest. The times were also once laid
-  out in the open: 23 chips, six rows, which pushed the order summary and the
-  checkout button below the fold on a phone. Inside the popover the calendar
-  sits above the times (side by side from 40rem), picking a **day keeps it
-  open** because the time is still unanswered, and picking a **time closes
-  it** — the last thing answered is the thing that dismisses it. It replaced
+  answer half, look away, and answer the rest. The **calendar sits open on the
+  page** and tapping a day pops the times out of that day. It replaced
   `date-field.tsx` and a standalone `time-picker.tsx`; both are deleted, do
-  not resurrect them.
+  not resurrect them. Four things in it are load-bearing:
+  - **One popover, re-anchored** — `Positioner` takes an `anchor`, so the same
+    popup moves to whichever day was tapped. Thirty mounted popovers to show
+    one is thirty sets of portal, focus and positioning state.
+  - **`side="bottom"`, not `"right"`.** Beside the day looks better on a wide
+    canvas and is wrong everywhere else: there is no room either side of a
+    40px cell on a phone, so it flipped into a sliver and clipped the chips.
+  - **The popup needs a DEFINITE width** (`width: min(var(--available-width),
+    20rem)`), and only then can `.nn-time-grid` use `auto-fit`. Sized
+    `max-content`, the popup measured the grid's minimum while the grid tried
+    to fill a width that did not exist yet; they resolved against each other,
+    the grid overflowed and `overflow-y-auto` **clipped it horizontally** —
+    23 chips rendered, 17 visible, six collection times silently gone on a
+    phone. Count *visible* chips when testing this, not rendered ones.
+  - **Focus return is manual.** There is no `Popover.Trigger` — the anchor is
+    a day button — so closing must refocus it, or a keyboard user lands back
+    on `<body>` at the top of the page.
+  - The date is only committed **together with a time**, so the cart can never
+    hold a day with no time.
 - **A popup must fit the screen, and that is two properties, not one.** Base UI
   publishes `--available-height` *and* `--available-width`; reading only the
   height is how the calendar came to hang 12px off the right edge of a 320px

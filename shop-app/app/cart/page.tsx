@@ -226,29 +226,28 @@ export default function CartPage() {
                     onChange={(v) => update(pickStore(cart, v))}
                     placeholder="Choose a shop…"
                     ariaLabel="Shop to collect from"
+                    // The address only. The hours were appended here too and
+                    // the combined string pushed the select's caret off the
+                    // right edge of a 320px screen — they already sit beside
+                    // the Collection label, which is where they are needed.
                     options={STORES.map((st) => ({
-                      value: st.code,
-                      label: st.label,
-                      // The hours belong on the shop, not buried in the time
-                      // control: which shop you pick IS the hours decision.
-                      note: `${st.address} · ${storeHours(st.code)}`,
+                      value: st.code, label: st.label, note: st.address,
                     }))}
                   />
                 </div>
-                {/* One field, because it is one decision: when am I picking
-                    this up. Two controls made the customer answer half of it,
-                    look away, and answer the rest — and the times laid out in
-                    the open were six rows that pushed the summary and the
-                    checkout button below the fold. */}
+                {/* One control, because it is one decision: when am I picking
+                    this up. The calendar is open on the page and the times pop
+                    out of the day you tap — two separate fields made the
+                    customer answer half of it, look away, and answer the rest. */}
                 <div className="sm:col-span-3">
-                  <label htmlFor="c-when" className="field-label">
+                  <p className="field-label" id="c-when-label">
                     Collection
                     {cart.store && (
                       <span className="ml-1 font-normal text-muted-foreground">
                         ({storeHours(cart.store)})
                       </span>
                     )}
-                  </label>
+                  </p>
                   {/* min/max are convenience; the server rebuilds and re-checks both. */}
                   <NnWhenField
                     id="c-when"
