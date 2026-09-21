@@ -673,21 +673,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     revealEls.forEach(function(el){io.observe(el);});
   </script>
 
-  <!-- Lenis smooth scroll -->
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-  <script>
-    var lenis=new Lenis({duration:1.15,easing:function(t){return t<0.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1;},smooth:true});
-    var progressBar=document.createElement('div');
-    progressBar.style.cssText='position:fixed;top:0;left:0;height:2px;background:#C85478;z-index:9998;width:0%;transition:width 0.1s linear;pointer-events:none;';
-    document.body.appendChild(progressBar);
-    function raf(time){
-      lenis.raf(time);
-      var pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100;
-      progressBar.style.width=Math.min(pct,100)+'%';
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-  </script>
 
 <!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
 <script>
@@ -719,5 +704,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </script>
 
   <script src="/promo.js" defer></script>
+  <!-- Reading progress bar, native scroll. -->
+  <script>
+    (function() {
+      var bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(bar);
+      window.addEventListener('scroll', function() {
+        var total = document.body.scrollHeight - window.innerHeight;
+        if (total > 0) bar.style.width = (window.scrollY / total * 100) + '%';
+      }, { passive: true });
+    })();
+  </script>
 </body>
 </html>

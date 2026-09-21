@@ -484,7 +484,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-proof .hp-quote.hp-fade{opacity:0;}
 
     /* Photo thumbnail button */
-    .ts-thumb-btn{display:inline-block;width:72px;height:72px;border-radius:0.75rem;border:1.5px solid rgba(200,84,120,0.22);background-size:cover;background-position:center;cursor:pointer;padding:0;position:relative;overflow:hidden;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease;}
+    /* contain, not cover. These are cut-out product shots on white, and a
+       cover fill on a fixed-height box cropped them to a band of icing —
+       the butterscotch review showed about a fifth of the cake. contain on
+       the cream ground shows the whole cake, which is the entire reason a
+       customer's photo is on the card. */
+    .ts-thumb-btn{display:inline-block;width:72px;height:72px;border-radius:0.75rem;border:1.5px solid rgba(200,84,120,0.22);background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#FFF8F2;cursor:pointer;padding:0;position:relative;overflow:hidden;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease;}
     .ts-thumb-btn::after{content:'';position:absolute;inset:0;background:rgba(44,26,14,0);transition:background 0.2s ease;}
     .ts-thumb-btn:hover{transform:scale(1.06);box-shadow:0 4px 16px rgba(200,84,120,0.28);}
     .ts-thumb-btn:hover::after{background:rgba(44,26,14,0.35);}
@@ -2010,58 +2015,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </script>
 
 
-  <!-- Lenis smooth scroll -->
-  <style>
-    /* Let Lenis own all scrolling — disable CSS smooth-scroll so they don't fight */
-    html { scroll-behavior: auto !important; }
-  </style>
-  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <script>
-    (function() {
-      var progressBar = document.createElement('div');
-      progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
-      document.body.prepend(progressBar);
-
-      var isDesktop = !window.matchMedia('(max-width:767px)').matches && navigator.maxTouchPoints === 0;
-
-      var lenis = new Lenis(isDesktop ? {
-        // Desktop config
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        lerp: 0.05,
-        wheelMultiplier: 1,
-        infinite: false,
-      } : {
-        // Mobile config
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        orientation: 'vertical',
-        gestureOrientation: 'vertical',
-        smoothWheel: true,
-        smoothTouch: false,
-        touchMultiplier: 1.5,
-      });
-
-      lenis.on('scroll', function(e) {
-        progressBar.style.width = (e.progress * 100) + '%';
-      });
-
-      new MutationObserver(function() {
-        document.body.style.overflow === 'hidden' ? lenis.stop() : lenis.start();
-      }).observe(document.body, { attributes: true, attributeFilter: ['style'] });
-
-      (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
-
-      document.addEventListener('click', function(e) {
-        var a = e.target.closest('a[href^="#"]');
-        if (!a) return;
-        var id = a.getAttribute('href').slice(1);
-        var el = id ? document.getElementById(id) : null;
-        if (el) { e.preventDefault(); lenis.scrollTo(el, { offset: -80 }); }
-      });
-      window.__lenis = lenis;
-    })();
-  </script>
 <script>
 (function(){
   var cards = document.querySelectorAll('.cursor-card');
@@ -2120,5 +2073,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </script>
 
   <script src="/promo.js" defer></script>
+  <!-- Reading progress bar, native scroll. -->
+  <script>
+    (function() {
+      var bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(bar);
+      window.addEventListener('scroll', function() {
+        var total = document.body.scrollHeight - window.innerHeight;
+        if (total > 0) bar.style.width = (window.scrollY / total * 100) + '%';
+      }, { passive: true });
+    })();
+  </script>
 </body>
 </html>

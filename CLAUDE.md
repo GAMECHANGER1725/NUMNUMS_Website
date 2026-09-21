@@ -1012,9 +1012,20 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
     `updateUser`; there is no redirect to park values across any more.
   - A Google sign-in is already verified, so its success screen must not tell the customer
     to go and confirm an email that will never arrive.
-- **Lenis must not touch the popup.** `promo.js`'s card carries `data-lenis-prevent`;
-  without it Lenis preventDefaults the wheel and the dialog cannot scroll to its own
-  submit button. Any new overlay on the static site needs the same attribute.
+- **There is no smooth-scroll library. Removed site-wide 2026-09-21 (Vaidik).**
+  Lenis is gone from all 240 static pages and from `promo.js`. Scrolling is the
+  browser's, and anchor links smooth-scroll through the `scroll-smooth` class —
+  the old `html { scroll-behavior: auto !important }` override existed only so
+  the library could own scrolling, and went with it.
+  The **pink reading progress bar stays** and is not part of the library: it is
+  a `<script>` before `</body>` that builds a 3px `#C85478` bar and drives it
+  off a passive `scroll` listener. It had already worked that way on phones;
+  that path is now the only one. Four posts never had a bar and still do not.
+  ⚠️ Do not reintroduce a scroll library. It brought a CSP entry, a CDN
+  request, and a class of bug where an overlay could not scroll unless it
+  carried `data-lenis-prevent` — the popup needed exactly that hack, and it is
+  no longer necessary. Earlier notes in this file and in memory required Lenis
+  on every blog post; that requirement is withdrawn.
 - **A coupon is validated server-side, never through RLS.** `coupons` is
   read-own-by-email (`auth.jwt() ->> 'email'`), so a popup subscriber — who by
   design has no account — reads nothing and is told their own code is not

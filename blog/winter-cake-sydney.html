@@ -803,37 +803,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     })();
   </script>
 
-  <!-- Lenis smooth scroll -->
-  <style>html { scroll-behavior: auto !important; }</style>
-  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <script>
-    (function() {
-      var progressBar = document.createElement('div');
-      progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
-      document.body.prepend(progressBar);
-      if (window.matchMedia('(max-width:767px)').matches || navigator.maxTouchPoints > 0) {
-        window.addEventListener('scroll', function() {
-          var total = document.body.scrollHeight - window.innerHeight;
-          if (total > 0) progressBar.style.width = (window.scrollY / total * 100) + '%';
-        }, { passive: true });
-        return;
-      }
-      var lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1.0 });
-      lenis.on('scroll', function(e) { progressBar.style.width = (e.progress * 100) + '%'; });
-      new MutationObserver(function() {
-        document.body.style.overflow === 'hidden' ? lenis.stop() : lenis.start();
-      }).observe(document.body, { attributes: true, attributeFilter: ['style'] });
-      (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
-      document.addEventListener('click', function(e) {
-        var a = e.target.closest('a[href^="#"]');
-        if (!a) return;
-        var id = a.getAttribute('href').slice(1);
-        var el = id ? document.getElementById(id) : null;
-        if (el) { e.preventDefault(); lenis.scrollTo(el, { offset: -80 }); }
-      });
-      window.__lenis = lenis;
-    })();
-  </script>
 
 <!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
 <script>
@@ -865,5 +834,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </script>
 
   <script src="/promo.js" defer></script>
+  <!-- Reading progress bar, native scroll. -->
+  <script>
+    (function() {
+      var bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(bar);
+      window.addEventListener('scroll', function() {
+        var total = document.body.scrollHeight - window.innerHeight;
+        if (total > 0) bar.style.width = (window.scrollY / total * 100) + '%';
+      }, { passive: true });
+    })();
+  </script>
 </body>
 </html>

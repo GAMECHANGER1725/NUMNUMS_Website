@@ -753,17 +753,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   </script>
-  <!-- Lenis smooth scroll -->
-  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <script>
-    const lenis = new Lenis({ duration:1.2, easing:(t)=>Math.min(1,1.001-Math.pow(2,-10*t)), smoothWheel:true });
-    let prog = document.createElement('div');
-    prog.style.cssText='position:fixed;top:0;left:0;height:3px;background:#C85478;z-index:99999;width:0%;transition:width 0.1s linear;pointer-events:none;';
-    document.body.appendChild(prog);
-    function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
-    lenis.on('scroll',({progress})=>{ prog.style.width=(progress*100)+'%'; });
-  </script>
 
 <!-- Enquiry click tracking (WhatsApp + tap-to-call) -->
 <script>
@@ -795,5 +784,17 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
   <script src="/promo.js" defer></script>
+  <!-- Reading progress bar, native scroll. -->
+  <script>
+    (function() {
+      var bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(bar);
+      window.addEventListener('scroll', function() {
+        var total = document.body.scrollHeight - window.innerHeight;
+        if (total > 0) bar.style.width = (window.scrollY / total * 100) + '%';
+      }, { passive: true });
+    })();
+  </script>
 </body>
 </html>

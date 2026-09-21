@@ -293,10 +293,8 @@
     if (on) {
       prevOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
-      if (window.__lenis && window.__lenis.stop) window.__lenis.stop();
     } else {
       document.body.style.overflow = prevOverflow;
-      if (window.__lenis && window.__lenis.start) window.__lenis.start();
     }
   }
 
@@ -396,7 +394,7 @@
     back.setAttribute('aria-modal', 'true');
     back.setAttribute('aria-labelledby', 'nnp-h');
     back.innerHTML =
-      '<div class="nnp-card" data-lenis-prevent>' +
+      '<div class="nnp-card">' +
         '<div class="nnp-grid">' +
           '<div class="nnp-left">' +
             '<div class="nnp-form-wrap">' +

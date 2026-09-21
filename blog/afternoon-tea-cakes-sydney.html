@@ -219,7 +219,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager (noscript) -->
 
 <!-- progress bar -->
-<div id="lenis-progress" style="position:fixed;top:0;left:0;z-index:9999;height:3px;width:0%;background:#C85478;pointer-events:none;transition:width 0.1s linear;"></div>
 
 <!-- skeleton loader -->
 <div id="page-skeleton" style="position:fixed;inset:0;z-index:9000;background:#5A1A1A;display:flex;align-items:center;justify-content:center;transition:opacity 0.4s ease;">
@@ -667,17 +666,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </footer>
 
-<!-- Lenis smooth scroll v1.1.14 -->
-<script>
-(function(){
-  var Lenis=function(e){var t=this;this.options=Object.assign({duration:1.2,easing:function(e){return Math.min(1,1.001-Math.pow(2,-10*e))},direction:'vertical',gestureDirection:'vertical',smooth:true,mouseMultiplier:1,smoothTouch:false,touchMultiplier:2,infinite:false},e);this.isStopped=false;this.scrollY=window.scrollY||0;this.targetY=this.scrollY;this.velocity=0;this.progress=0;this.rafId=null;
-  var s=document.getElementById('lenis-progress');
-  this._raf=function(e){if(t.isStopped)return;var n=window.scrollY||0;var r=Math.max(document.body.scrollHeight-window.innerHeight,1);t.progress=Math.min(n/r,1);if(s)s.style.width=(t.progress*100)+'%';t.rafId=requestAnimationFrame(t._raf);};
-  this.rafId=requestAnimationFrame(this._raf);};
-  Lenis.prototype.destroy=function(){if(this.rafId)cancelAnimationFrame(this.rafId);};
-  window.__lenis=new Lenis();
-})();
-</script>
 
 <script>
   // reveal on scroll
@@ -732,5 +720,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </script>
 
   <script src="/promo.js" defer></script>
+  <!-- Reading progress bar, native scroll. -->
+  <script>
+    (function() {
+      var bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
+      document.body.prepend(bar);
+      window.addEventListener('scroll', function() {
+        var total = document.body.scrollHeight - window.innerHeight;
+        if (total > 0) bar.style.width = (window.scrollY / total * 100) + '%';
+      }, { passive: true });
+    })();
+  </script>
 </body>
 </html>
