@@ -141,7 +141,18 @@ export function GoogleButton({ onSignedIn, onError }: GoogleButtonProps) {
 
   return (
     <div hidden={!ready} className="mt-5">
-      <div ref={host} className="flex justify-center [&>div]:!w-full" />
+      <div className="mb-4 flex items-center gap-3">
+        <span className="h-px flex-1 bg-border" />
+        <span className="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          or
+        </span>
+        <span className="h-px flex-1 bg-border" />
+      </div>
+      {/* GIS draws a button with an inline `width: 320px` two levels below this
+          host, so stretching the direct child alone never reached it and the
+          page scrolled sideways at 320px. Capping every descendant is what
+          actually binds the inline width to the card. */}
+      <div ref={host} className="flex justify-center [&>div]:!w-full [&_div]:!max-w-full" />
       <p className="mt-2 text-center text-[0.7rem] leading-snug text-muted-foreground">
         By continuing with Google you agree to our{" "}
         <a href="/terms" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">
@@ -153,13 +164,6 @@ export function GoogleButton({ onSignedIn, onError }: GoogleButtonProps) {
         </a>
         .
       </p>
-      <div className="my-4 flex items-center gap-3">
-        <span className="h-px flex-1 bg-border" />
-        <span className="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          or
-        </span>
-        <span className="h-px flex-1 bg-border" />
-      </div>
     </div>
   );
 }

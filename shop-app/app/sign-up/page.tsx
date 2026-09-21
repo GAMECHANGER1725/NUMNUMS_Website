@@ -7,7 +7,7 @@ export const metadata = {
 export default function SignUpPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-10">
-      <SignUpPanel variant="page" />
+      <SignUpPanel />
     </main>
   );
 }
