@@ -1,0 +1,84 @@
+NumNums-Blog-Writer run: 2026-09-10
+Outcome: NO POST PUBLISHED — no validated topic source reachable this run.
+
+Per the TOPIC SELECTION mandatory gate (skills/blog-write/SKILL.md /
+scheduled routine prompt), a topic must come from one of, in order:
+  1. An open/unclaimed gap in blog/topic-ledger.md
+  2. Live GSC query data showing real impression volume with no matching page
+  3. Otherwise: stop, write this file, do not publish, do not fall back to
+     an arbitrary suburb/occasion calendar pick.
+
+All three were checked, in order, and none produced a usable topic:
+
+1. blog/topic-ledger.md — "Open topic gaps" section.
+   The only entry in Tier 3 ("the one justified NEW URL") is `rasmalai-cake-sydney`,
+   already marked CLAIMED and present in the Published History table
+   (published 2026-09-03). Tier 1 and Tier 2 rows are explicitly scoped as
+   "IMPROVE an existing page" work (dairy-free, halal, number cakes, nut-free,
+   gluten-free, and the indian-sweet.html barfi funnel) — the ledger itself
+   says these are not new-URL jobs. The ledger also permanently rejects
+   further per-suburb "eggless cakes <suburb>" expansion as doorway-page
+   cannibalization. No open new-URL gap exists.
+
+2. Live Google Search Console access.
+   Ran: python3 skills/seo-audit/scripts/google_auth.py --check
+   Result: Credential Tier 0 (API key only). Search Console API, Indexing
+   API v3, and GA4 Data API all report [MISSING] — "No OAuth token or
+   service account found." No service-account JSON is present in this
+   sandbox. The Windsor.ai connector is authenticated at the org level but
+   not enabled in this chat session (enabledInChat: false), and the most
+   recent GSC-Analysis run (SEO/GSC-Analysis/07-09-2026-GSC-Analysis.txt)
+   already notes Windsor.ai was retired for this routine in 2026-09 (its
+   free-plan connected-account limit silently returned zeros). No live GSC
+   pull was possible this run.
+
+3. Cached GSC analysis (fallback check, most recent available:
+   SEO/GSC-Analysis/07-09-2026-GSC-Analysis.txt, dated 2026-09-07).
+   Its own RECOMMENDATIONS #8 ("CONTENT - NEW PAGES, VALIDATED BY DEMAND")
+   names three candidate queries with real impressions and reportedly no
+   matching page: "photo cake" (162 impr), "rasmalai cake" (19+71 impr
+   across two variants), "eggless cupcakes near me" (44 impr). Re-verified
+   each against the current blog/ directory (`ls blog/`, 234 posts) before
+   accepting any of them:
+     - rasmalai cake -> blog/rasmalai-cake-sydney.html already exists
+       (published 2026-09-03, matches ledger item 1 above).
+     - photo cake -> blog/photo-cake-sydney.html already exists and is one
+       of the site's best-performing posts (46 clicks/28d per the same
+       report); a second "non-Sydney-qualified" variant would be the exact
+       near-duplicate/doorway pattern the ledger prohibits.
+     - eggless cupcakes near me -> blog/eggless-cupcakes-sydney.html,
+       blog/eggless-cupcakes-kids-birthday-party-sydney.html, and
+       blog/eggless-mini-cakes-cupcake-towers-sydney.html already exist.
+   All three candidates were already covered by existing posts. The report's
+   own headline finding is that the site's binding constraint is
+   cannibalization / underperforming existing pages, not missing content —
+   its #1-ranked recommendation is fixing the indian-sweet.html barfi
+   funnel (an existing-page job), and #6 flags that 10 suburb pages added
+   after 2026-09-01 already created new cannibalizing clusters that need a
+   human merge decision, explicitly asking the blog-write routine to take
+   this into account.
+
+Decision: stop here, per rule 3. No arbitrary suburb/occasion topic was
+substituted. No post was written or published this run. blog/index.html,
+sitemap.xml, llms.txt and netlify.toml were not touched.
+
+Also resolved this run (unrelated to topic selection, blocked Step 0):
+git fetch/merge of origin/main into blog-drafts initially failed with
+"refusing to merge unrelated histories" because this session's clone was
+shallow (git rev-parse --is-shallow-repository == true), which truncated
+blog-drafts' visible history to 6 commits with no common ancestor visible
+to origin/main's 50. `git fetch --unshallow origin` resolved it: the real
+merge-base is blog-drafts' own tip, i.e. blog-drafts was already fully
+contained in origin/main, so the sync was a clean fast-forward (no
+conflicts, nothing to resolve via the Step 5b playbook). Pushed to
+origin/blog-drafts. Future runs in a freshly-shallow-cloned sandbox should
+expect this same false "unrelated histories" symptom and unshallow before
+concluding the branches have actually diverged.
+
+Recommendation for the next run or a human: either (a) wait for a fresh
+GSC pull (needs live credentials, or the next scheduled seo-audit run) to
+surface a genuinely new query gap, or (b) redirect this routine's next run
+toward the ledger's Tier 1/Tier 2 "improve existing page" work and the
+GSC report's RECOMMENDATIONS #1 (indian-sweet.html barfi funnel) and #6
+(consolidate the Parramatta-core / Toongabbie-Blacktown / Pennant Hills
+cannibalizing clusters) instead of writing another new post.
