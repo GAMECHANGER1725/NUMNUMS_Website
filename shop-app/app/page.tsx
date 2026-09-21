@@ -114,6 +114,64 @@ export default function ShopPage() {
           })}
         </ul>
 
+        {/* What the OTHER kind looks like, directly under the board of cakes
+            you can buy — the comparison is the point, so it has to be within
+            a glance of them.
+
+            Deliberately NOT shaped like a product card. Four cakes on a shop
+            page read as four more things to add to the cart, and a customer
+            who taps one expecting a price and lands on a brief form has been
+            misled by our own layout. So: circles rather than tiles, no price,
+            no card, a muted strip, and the words "quoted, not sold online"
+            sitting in the row itself. Round is doing real work here — nothing
+            else on this page is round, so these cannot be mistaken for stock.
+
+            Real cakes we made, from the /order gallery. A stock photo of
+            somebody else's cake on a page selling ours is the same ACL
+            problem as a fake price. */}
+        <section className="mt-12 rounded-xl border border-border bg-secondary/40 p-4 sm:p-5">
+          <div className="sm:flex sm:items-center sm:justify-between sm:gap-4">
+            <div>
+              <h2 className="text-[0.95rem] font-semibold">Wanted something like this?</h2>
+              <p className="mt-0.5 text-[0.82rem] leading-relaxed text-muted-foreground">
+                Themes, tiers and 3D toppers are custom cakes &mdash; quoted, not sold online.
+              </p>
+            </div>
+            <a
+              href="/order"
+              className="mt-3 inline-block rounded-full border border-[#C85478] px-5 py-2 text-[0.84rem] font-semibold text-[#C85478] transition-colors hover:bg-[#FDF3F6] sm:mt-0 sm:flex-none"
+            >
+              Get a custom quote
+            </a>
+          </div>
+          {/* Illustration, not navigation. Four more links to /order beside a
+              button that already goes there is four redundant stops for a
+              keyboard or screen-reader user, and aria-hidden'ing them to
+              compensate throws away the alt text — the only description of
+              these cakes anyone gets. The images describe themselves; the
+              button does the going. */}
+          <ul className="mt-4 grid grid-cols-4 gap-3 sm:max-w-md">
+            {[
+              ["spiderman", "A Spider-Man birthday cake with a 3D topper"],
+              ["tiered", "A three-tier wedding cake with sugar roses"],
+              ["dinosaur", "A dinosaur scene cake with sculpted figures"],
+              ["baby-shower", "A baby shower cake with fondant bottles and bears"],
+            ].map(([slug, alt]) => (
+              <li key={slug}>
+                <img
+                  src={`/shop/custom/${slug}.webp`}
+                  alt={alt}
+                  width={420}
+                  height={420}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-square w-full rounded-full object-cover"
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="mt-12 grid gap-4 border-t border-border pt-8 sm:grid-cols-3">
           {[
             ["100% eggless", "Every cake we make, without exception. It is the whole reason the bakery exists."],
