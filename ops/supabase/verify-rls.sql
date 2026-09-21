@@ -23,7 +23,16 @@
 --      auth.uid()` looks perfect to whoever uploaded the file and is broken for
 --      everyone else. Run section 4 as a SECOND user.
 --
--- Last run: 2026-09-15 — all sections passed.
+-- Last run: 2026-09-21 — sections 1, 2, 3 and 5 passed. Section 4 confirmed by
+-- reading the policies, NOT by a live upload: `cake_photos_insert` is
+-- `my_role() IS NOT NULL`, and a customer has no profiles row. The live
+-- second-user curl is still outstanding.
+--
+-- ⚠️ When reading policies, select `qual` and `with_check` as SEPARATE columns.
+-- `coalesce(with_check, qual)` shows WITH CHECK where one exists and HIDES the
+-- USING clause — on `cake_photos_update` that renders as a bare
+-- `bucket_id = 'cake-photos'` with no owner check, which looks like a wide-open
+-- policy and is not one. That misread has now happened twice.
 -- ============================================================================
 
 -- ── 1. READS ─ a customer must see nothing, anywhere ────────────────────────
