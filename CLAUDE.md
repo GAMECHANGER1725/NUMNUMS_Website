@@ -567,12 +567,24 @@ main site.
 
 ## Accounts — the category name, the mobile, and the second sign-in
 
-- **The online range is "Signature Cakes".** Internally the DB still says
-  `kind: 'normal'` and that stays — renaming an enum across ~15 call sites and
-  the `customers` view buys nothing. The customer-facing name pairs against
-  **Custom Cakes**: Signature is ours to design, Custom is yours. "Shop" was a
-  placeholder that said nothing about what was behind it, and `verify-blog.mjs`
-  now fails the deploy if it comes back.
+- **The online range is named "Signature Cakes"; the nav link to it says
+  "Shop Cakes".** Those are two different jobs and they stopped being the same
+  word on 2026-09-21. The *name* survives where it is an asset — the `/shop`
+  `<title>`, the homepage `section-label`, and `item_category` in
+  `analytics.ts` (a data key; changing it splits the GA4 series). The *door*
+  is labelled for the action, because "Signature Cakes" named the range and
+  not the thing you could do with it: a customer who wanted to order a flavour
+  had to already know that was the page for it. `Shop Cakes` pairs against
+  `Custom Cakes` on one axis — shop from what we have, or commission
+  something — and `verify-blog.mjs` fails the deploy if the `/shop` nav link
+  is labelled anything else.
+  ⚠️ This **knowingly overrides** the earlier call that replaced a bare "Shop"
+  with the range name. That call was right that "Shop" alone said nothing
+  about what was behind it; "Shop Cakes" names the product *and* the action,
+  so it is neither the placeholder nor the jargon. Do not revert it back to
+  "Signature Cakes" on the strength of the older note.
+  Internally the DB still says `kind: 'normal'` and that stays — renaming an
+  enum across ~15 call sites and the `customers` view buys nothing.
 - **The mobile is required, at sign-up and at checkout, and on the server.**
   It is how the shop says a cake is ready and the only way to reach somebody
   about their own order, so a web order without one is one nobody can chase.
@@ -622,9 +634,12 @@ main site.
   `sb-*-auth-token`, including the newer `base64-` prefixed shape.
 - **The nav collapses to the hamburger at 1024px, not 640px.** Six labels plus
   the cart pill need ~950px; the old 640px breakpoint was already tight and
-  "Signature Cakes" tipped a 768px tablet into a horizontal scroll. The static
-  rule is injected by `promo.js` as a **separate** media query — widening the
-  existing one would drag the trust-bar and hero rules along with it.
+  the then-longer "Signature Cakes" tipped a 768px tablet into a horizontal
+  scroll. The static rule is injected by `promo.js` as a **separate** media
+  query — widening the existing one would drag the trust-bar and hero rules
+  along with it. The nav is now five labels and the longest lost five
+  characters, so the breakpoint *looks* loosenable; it has not been re-measured
+  and nothing asked for it, so leave it where it is until something does.
 
 ## No OS controls, anywhere
 
@@ -769,19 +784,29 @@ Modelled on how The Cheesecake Shop and Bannos actually lay their sites out:
 Both put every marketing page (our story, awards, franchising, store locator)
 in the footer only, and lead the homepage with products before any story.
 
-- **The nav is `Shop · Our Cakes · Indian Sweets · Custom Cakes · Locations ·
-  Blog`, plus the cart pill.** It is identical on all ~243 static pages and is
+- **The nav is `Shop Cakes · Indian Sweets · Custom Cakes · Locations · Blog`,
+  plus the cart pill.** It is identical on all ~242 static pages and is
   re-created in React by `shop-app/components/ui/shop-header.tsx`, so the shop
   is not a second-looking website. `verify-blog.mjs` fails the deploy if a page
   drifts out of that shape — the markup has a dozen whitespace variants across
   those files, so a page that misses an edit looks completely normal and just
   quietly keeps sending people to the old door.
-- **`/shop` and `/cakes` are different intents, not two doors.** `/shop` is the
-  transaction — 15 product pages, a cart, a card. `/cakes` is inspiration:
-  weddings, kids, baby showers, the flavour FAQ, the serving calculator. Its
-  URL, and every internal link to it, is untouched deliberately: it is an old
-  indexed page and this site has already paid once for cannibalising itself.
-  Do not merge them and do not point both at the same queries.
+  ⚠️ **Two lists, so compare them.** The static side is 242 hand-written files
+  and the shop side is one array, so they never drift in the same commit. The
+  shop kept an `Our Cakes → /cakes` entry for a week after the static pages
+  dropped it, shipping a dead nav item on every `/shop` page, because the gate
+  that bans `/cakes` links walked static pages only. It now walks the built
+  `shop/` too, and a parity check asserts `shop-header.tsx`'s `NAV` equals the
+  canonical list in order. **Any new nav check must cover both surfaces**, or
+  it is measuring half the site.
+- **`/cakes` no longer exists — it is a 301 to `/order`.** Its H1 was
+  "100% Eggless Custom Cakes in Sydney", competing with `/order` for the same
+  queries on a site that has already paid once for cannibalising itself, so
+  its galleries, flavours and eggless section were folded into `/order` and
+  the page deleted. The redirect stays, because old inbound links still land
+  on it. **Do not put a page back at that URL** — a chooser page there was
+  considered on 2026-09-21 and refused for exactly the original reason. An
+  internal link to `/cakes` costs a redirect hop and fails the build.
 - **`About` left the nav and lives in the footer**; the footer also leads with
   **Shop Cakes**. Nothing was deleted — an orphaned page loses the internal
   links it ranks on.

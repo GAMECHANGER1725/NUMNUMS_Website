@@ -669,6 +669,16 @@ const FACTS = {
 // id is what promo.js paints the cart onto; without it the cart is invisible
 // off /shop, which is the whole point of putting it there.
 {
+  // The canonical nav, in order. Both surfaces have to agree with this: the
+  // 242 static files by carrying the labels, and shop-header.tsx by holding
+  // exactly this list.
+  const NAV = [
+    ['/shop', 'Shop Cakes'],
+    ['/indian-sweet', 'Indian Sweets'],
+    ['/order', 'Custom Cakes'],
+    ['/locations', 'Locations'],
+    ['/blog/', 'Blog'],
+  ];
   const navPages = [...readdirSync(ROOT).filter((f) => f.endsWith('.html')),
     ...posts.map((s) => `blog/${s}.html`), 'blog/index.html']
     // Detected by the nav itself. This used to look for ">Our Cakes<", which
@@ -678,22 +688,61 @@ const FACTS = {
   if (navPages.length < 230) fail(`only ${navPages.length} pages carry the nav — expected every static page`);
   // /cakes was folded into /order. An internal link to it costs a redirect hop
   // on every page load, so none should remain.
-  for (const f of navPages) {
-    if (/href="\/cakes(?:["#/])/.test(read(f))) fail(`${f}: links to /cakes, which now 301s to /order`);
+  //
+  // The built shop is scanned too, and that is the whole point: this check used
+  // to walk static pages only, so when shop-header.tsx kept its own "Our Cakes"
+  // entry pointing at /cakes, the gate stayed green for a week while every
+  // /shop page shipped a dead nav item. A check that cannot see half the site
+  // is not a check.
+  const shopPages = (() => {
+    const d = join(ROOT, 'shop');
+    if (!existsSync(d)) return [];
+    const walk = (x) => readdirSync(x, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(join(x, e.name)) : e.name.endsWith('.html') ? [join(x, e.name)] : []);
+    return walk(d);
+  })();
+  for (const f of [...navPages, ...shopPages]) {
+    const src = f.startsWith(ROOT) ? readFileSync(f, 'utf8') : read(f);
+    const name = f.replace(ROOT + '/', '');
+    if (/href="\/cakes(?:["#/])/.test(src)) fail(`${name}: links to /cakes, which now 301s to /order`);
   }
   for (const f of navPages) {
     const src = read(f);
     if (!/href="\/shop"/.test(src)) fail(`${f}: nav has no link to /shop`);
-    // The category has a name now. "Shop" was a placeholder that said nothing
-    // about what is behind it, and it has to pair with "Custom Cakes".
-    if (/<a href="\/shop"[^>]*class="nav-link[^>]*>Shop</.test(src)) {
-      fail(`${f}: nav still says "Shop" — the category is Signature Cakes`);
+    // The door has to say you can buy through it. "Signature Cakes" named the
+    // range but not the action, so a customer who wanted to order a flavour had
+    // to already know that was the page for it — the reason /cakes and /order
+    // kept absorbing shop traffic. Knowingly overrides the earlier call that
+    // replaced a bare "Shop" with the range name; "Shop Cakes" is neither the
+    // placeholder nor the jargon. Decided 2026-09-21.
+    if (!/<a href="\/shop"[^>]*class="nav-link[^>]*>\s*Shop Cakes\s*</.test(src)) {
+      fail(`${f}: the /shop nav link is not labelled "Shop Cakes"`);
     }
     if (/<a href="\/order"[^>]*>Order(?: Online)?<\/a>/.test(src)) {
       fail(`${f}: nav still calls /order "Order Online" — it is the custom-cake quote form, not the shop`);
     }
     if (/<a href="\/about"[^>]*class="nav-link/.test(src)) {
       fail(`${f}: About is back in the nav — it belongs in the footer`);
+    }
+  }
+  // The shop re-creates the nav in React so /shop is not a second-looking
+  // website. That means two lists of the same thing, and nothing compared them
+  // — which is how the shop kept an "Our Cakes" entry the static pages had
+  // already dropped. Compare them, in order, or the next divergence is just as
+  // silent: the static side is 242 files and the shop side is one array, so
+  // they never drift in the same commit.
+  {
+    const header = read('shop-app/components/ui/shop-header.tsx');
+    const block = header.match(/const NAV = \[([\s\S]*?)\n\];/);
+    if (!block) {
+      fail('shop-app/components/ui/shop-header.tsx: cannot find the NAV array — the parity check is blind');
+    } else {
+      const got = [...block[1].matchAll(/href:\s*"([^"]+)",\s*label:\s*"([^"]+)"/g)]
+        .map((m) => `${m[1]} ${m[2]}`);
+      const want = NAV.map(([href, label]) => `${href} ${label}`);
+      if (got.join(' | ') !== want.join(' | ')) {
+        fail(`shop-header.tsx nav differs from the static nav:\n      shop:   ${got.join(', ') || '(none)'}\n      static: ${want.join(', ')}`);
+      }
     }
   }
   const pills = navPages.filter((f) => read(f).includes('id="nav-cart"'));

@@ -24,8 +24,7 @@ import { AccountMenu } from "@/components/ui/account-menu";
  * neither of the two chains we looked at puts it there either.
  */
 const NAV = [
-  { href: "/shop", label: "Signature Cakes", internal: true },
-  { href: "/cakes", label: "Our Cakes" },
+  { href: "/shop", label: "Shop Cakes", internal: true },
   { href: "/indian-sweet", label: "Indian Sweets" },
   { href: "/order", label: "Custom Cakes" },
   { href: "/locations", label: "Locations" },
