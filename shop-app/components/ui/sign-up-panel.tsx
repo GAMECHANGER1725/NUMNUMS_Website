@@ -106,13 +106,13 @@ export function SignUpPanel({ className }: { className?: string }) {
           <p className="text-sm leading-relaxed text-muted-foreground">
             {/* Verified means signed in — verifyOtp returns a session — so
                 this never tells anybody to go and sign in again. */}
-            You&rsquo;re signed in and your 10% code is on its way to{" "}
+            Your 10% code is on its way to{" "}
             <span className="font-medium text-foreground">{email}</span>.
           </p>
           {/* The page has no close button to fall back on, so the success
               screen has to carry the way onward itself. */}
           <a href="/shop" className="btn-cta mt-2 w-full py-2.5">
-            Start browsing cakes
+            Browse cakes
           </a>
         </div>
       ) : (
@@ -138,8 +138,7 @@ export function SignUpPanel({ className }: { className?: string }) {
                 Create your account
               </h1>
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                Order online, collect in store — and we&rsquo;ll send you 10% off
-                your next cake.
+                Get 10% off your next order.
               </p>
             </div>
             {/* Cormorant is ornament only: one line, never a heading. */}
@@ -151,7 +150,7 @@ export function SignUpPanel({ className }: { className?: string }) {
           <form onSubmit={handleSubmit} noValidate className="mt-6 flex flex-col gap-3.5">
             <div>
               <label htmlFor="su-email" className="field-label">
-                Your email
+                Email
               </label>
               <input
                 id="su-email"
@@ -167,7 +166,7 @@ export function SignUpPanel({ className }: { className?: string }) {
 
             <div>
               <label htmlFor="su-password" className="field-label">
-                Create a password
+                Password
               </label>
               <div className="relative">
                 <input
@@ -212,7 +211,7 @@ export function SignUpPanel({ className }: { className?: string }) {
                 className="mt-1 text-[0.72rem] leading-snug text-muted-foreground"
               >
                 {phoneShown
-                  ? "We text you the moment your cake is ready to collect — no ringing the shop."
+                  ? "We'll text you when your cake's ready."
                   : "That doesn't look like an Australian mobile."}
               </p>
             </div>
@@ -224,32 +223,22 @@ export function SignUpPanel({ className }: { className?: string }) {
               What lifts opt-in legitimately is first-person affirmative
               phrasing and a named benefit, never a default — "Email and
               text me" reads as an admin setting, "Yes, save me a slice"
-              reads as something you want.
+              reads as something you want. Trimmed to one line, but the
+              channels (email & text) and the benefit (new flavours &
+              offers) still have to be named — that's the legal floor.
             */}
-            <div className="mt-1 rounded-xl border border-border bg-secondary/70 p-3.5">
-              <p className="text-[0.84rem] font-semibold leading-snug text-foreground">
-                Fresh out of the oven, into your inbox
-              </p>
-              <p className="mt-1 text-[0.76rem] leading-snug text-muted-foreground">
-                Festival pre-orders fill fast — Diwali, Christmas, Eid. Ours go out
-                before the shop floor knows.
-              </p>
-              <label className="mt-3 flex min-h-[32px] cursor-pointer items-start gap-2.5 py-1 text-[0.78rem] leading-snug text-muted-foreground">
-                <input
-                  type="checkbox"
-                  checked={marketing}
-                  onChange={(e) => setMarketing(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
-                />
-                <span>
-                  <b className="font-semibold text-foreground">Yes, save me a slice</b> —
-                  first pick of new flavours, seasonal specials and festival pre-orders.
-                </span>
-              </label>
-              <p className="mt-3 text-[0.7rem] leading-snug text-muted-foreground/80">
-                By email and text. Unsubscribe any time.
-              </p>
-            </div>
+            <label className="flex min-h-[32px] cursor-pointer items-start gap-2.5 rounded-lg bg-secondary/60 px-3 py-2.5 text-[0.78rem] leading-snug text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={marketing}
+                onChange={(e) => setMarketing(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[#C85478]"
+              />
+              <span>
+                <b className="font-semibold text-foreground">Yes, save me a slice</b> —
+                new flavours &amp; offers by email &amp; text. Unsubscribe any time.
+              </span>
+            </label>
 
             <label className="flex min-h-[32px] cursor-pointer items-start gap-2.5 py-1 text-[0.78rem] leading-snug text-muted-foreground">
               <input
