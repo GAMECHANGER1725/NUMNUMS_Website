@@ -1230,7 +1230,7 @@ could not see from outside the repo. The research and the parked items are in
   Wed 16 Sep, and the default 10:00 AM was 7.1 hours short, so pressing Send on
   the first available date was rejected. The person it refused was always the
   one in a hurry. The earliest day is now the first whose FIRST offered pickup
-  time (`FIRST_PICKUP_HOUR`, 9am) is a clear 48 hours out, and the instant
+  time at the chosen shop (`firstPickupMin`) is a clear 48 hours out, and the instant
   re-check at submit is **deleted**, not adjusted — a rule enforced twice is a
   rule that can disagree with itself. Proven across all 24 order hours.
 - **Pickup date and time are one control, after the shop.** Hour + minute +
