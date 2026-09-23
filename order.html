@@ -614,11 +614,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
            people want a flavour cake off the menu, not a design quoted by a
            person. Outline, not filled: the form is this page's action. -->
       <div class="shop-fork reveal">
-        <p>
-          <strong>Just after one of our flavour cakes?</strong>
-          <span>Pick a flavour and size, pay online, collect tomorrow &mdash; from $39.99.</span>
-        </p>
-        <a href="/shop" class="shop-fork-btn">Shop Cakes <span aria-hidden="true">&rarr;</span></a>
+        <p class="shop-fork-q">Which cake are you after?</p>
+        <div class="shop-fork-grid">
+          <div class="shop-fork-opt">
+            <strong>A normal cake</strong>
+            <span>One of our 15 flavours in our design, with your words on top. Pay online, ready tomorrow &mdash; from $39.99.</span>
+            <a href="/shop" class="shop-fork-btn">Shop Cakes <span aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="shop-fork-opt is-here">
+            <strong>A custom cake</strong>
+            <span>Your own design &mdash; a theme, a character, a photo you send us. We quote you first, ready in 48 hours.</span>
+            <a href="#cake-order-form" class="shop-fork-here">You&rsquo;re in the right place &mdash; start below <span aria-hidden="true">&darr;</span></a>
+          </div>
+        </div>
       </div>
 
       <!-- Order cards -->
@@ -2115,9 +2123,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     .gallery-category { transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 
     /* Flavour-cake shoppers -> /shop */
-    .shop-fork { display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; flex-wrap: wrap; margin: 0 0 1.75rem; padding: 1rem 1.25rem; border-radius: 14px; background: #F5EBE0; border: 1px solid #E7DCD2; }
-    .shop-fork p { margin: 0; font-family: 'Jost', sans-serif; font-size: 0.92rem; line-height: 1.5; color: #5C3A22; flex: 1 1 280px; }
-    .shop-fork strong { display: block; font-weight: 600; color: #2C1A0E; }
+    .shop-fork { margin: 0 0 1.75rem; font-family: 'Jost', sans-serif; }
+    .shop-fork-q { margin: 0 0 0.75rem; text-align: center; font-size: 1.15rem; font-weight: 300; letter-spacing: -0.02em; color: #2C1A0E; }
+    .shop-fork-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 640px) { .shop-fork-grid { grid-template-columns: 1fr; } }
+    .shop-fork-opt { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; padding: 1.1rem 1.25rem; border-radius: 14px; background: #F5EBE0; border: 1px solid #E7DCD2; font-size: 0.9rem; line-height: 1.5; color: #5C3A22; }
+    .shop-fork-opt.is-here { background: #fff; border: 1.5px solid #C85478; }
+    .shop-fork-opt strong { font-size: 1.05rem; font-weight: 500; color: #2C1A0E; }
+    .shop-fork-opt > span { flex: 1; }
+    .shop-fork-opt .shop-fork-btn { margin-top: 0.4rem; }
+    .shop-fork-here { margin-top: 0.4rem; padding: 10px 0; font-size: 0.88rem; font-weight: 600; color: #C85478; text-decoration: none; }
+    .shop-fork-here:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .shop-fork-here:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; border-radius: 4px; }
     .shop-fork-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 9999px; border: 1.5px solid #C85478; color: #C85478; background: transparent; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1); }
     .shop-fork-btn:hover { background: #C85478; color: #fff; }
     .shop-fork-btn:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
