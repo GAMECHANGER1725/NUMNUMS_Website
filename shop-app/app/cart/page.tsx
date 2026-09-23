@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowRight, Lock, Trash2 } from "lucide-react";
+import { ArrowRight, Loader2, Lock, Trash2 } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { QtyStepper } from "@/components/ui/qty-stepper";
@@ -24,6 +24,10 @@ const storeHours = (code: string) => {
 };
 import { cakeFraming } from "@/lib/cake-framing";
 import { supabase } from "@/lib/supabase";
+import { beginCheckout } from "@/lib/analytics";
+
+/** Typo catcher, not a validator — create-checkout checks it again. */
+const EMAIL_RE = /^[^\s@]+@[^\s@.]+\.[^\s@]+$/;
 
 /**
  * Changing shop can invalidate the time already chosen — Riverstone has no
@@ -44,13 +48,17 @@ export default function CartPage() {
   const loaded = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [picked, setPicked] = useState<number[]>([]);
   const [email, setEmail] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // A coupon is bound to the email it was issued to. Signed in, we know it
-    // and the code can be checked here; a guest gets the same box on /checkout,
-    // which is where they type one.
+    // A coupon is bound to the email it was issued to. Signed in, we know it;
+    // a guest types it into the coupon box. Everything else — name, mobile,
+    // card — is asked for on Stripe's page, which is the next step.
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
   }, []);
+  const couponEmail = email || guestEmail.trim();
 
   const update = (next: Cart) => writeCart(next);
   const lineUnit = cart.lines.map((l) => listPriceCents(l.size, l.flavour) ?? 0);
@@ -74,6 +82,43 @@ export default function CartPage() {
   const dateStale = cart.dueDate !== "" && cart.dueDate < minDueDate();
   const ready = count > 0 && cart.store !== "" && cart.dueDate !== ""
     && slots.includes(cart.dueMin) && !dateStale;
+  /**
+   * Straight to Stripe's hosted page. The email goes along only when we
+   * already have it: signed in, or typed for a coupon — Stripe then locks it,
+   * so a code bound to one address cannot be carried to another.
+   */
+  async function pay() {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          email: cart.coupon ? couponEmail : email,
+          coupon: cart.coupon?.code ?? "",
+          cart,
+        }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(body?.error ?? "Could not start checkout.");
+      // A 200 with no url would navigate to ".../undefined" and strand the
+      // customer on a 404 mid-payment.
+      if (typeof body?.url !== "string" || !body.url) {
+        throw new Error("Could not start checkout. Please try again.");
+      }
+      // Once a checkout really exists, and before the redirect unloads the page.
+      beginCheckout(
+        cart.lines.map((l, i) => ({ size: l.size, flavour: l.flavour, qty: l.qty ?? 1, cents: lineUnit[i] })),
+        total,
+      );
+      window.location.assign(body.url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong. Try again.");
+      setBusy(false);
+    }
+  }
+
   const allPicked = picked.length > 0 && picked.length === cart.lines.length;
 
   const setQty = (i: number, qty: number) =>
@@ -293,12 +338,28 @@ export default function CartPage() {
           <aside className="flex flex-col gap-4 lg:sticky lg:top-[84px]">
             <CouponField
               applied={cart.coupon}
-              email={email}
-              noEmailNote="Have a code? Add it at the next step, with your email — codes are issued to one address."
+              email={EMAIL_RE.test(couponEmail) ? couponEmail : ""}
+              noEmailNote="Codes are issued to one address, so add the email yours was sent to."
               onApply={(c) =>
                 update({ ...cart, coupon: c ? { code: c.code, percent: c.percent } : null })
               }
-            />
+            >
+              {!email && (
+                <div className="mt-3">
+                  <label htmlFor="c-email" className="field-label">Email your code was sent to</label>
+                  <input id="c-email" type="email" autoComplete="email" inputMode="email"
+                    placeholder="you@example.com" className="field-input"
+                    value={guestEmail}
+                    onChange={(e) => {
+                      setGuestEmail(e.target.value);
+                      // The code is bound to the address it was checked
+                      // against. Keep it after an edit and the server refuses
+                      // it — a total that goes UP on Stripe's page.
+                      if (cart.coupon) update({ ...cart, coupon: null });
+                    }} />
+                </div>
+              )}
+            </CouponField>
 
             <section className="rounded-xl border border-border bg-card p-4" aria-labelledby="sum-h">
               <h2 id="sum-h" className="text-[0.95rem] font-semibold">Order summary</h2>
@@ -352,14 +413,18 @@ export default function CartPage() {
                 refunded in full.
               </p>
 
-              <Link
-                href="/checkout"
-                aria-disabled={!ready}
-                onClick={(e) => { if (!ready) e.preventDefault(); }}
-                className={ready ? "btn-cta mt-4 w-full py-3" : "btn-cta pointer-events-none mt-4 w-full py-3 opacity-50"}
-              >
-                Go to checkout <ArrowRight className="h-4 w-4" />
-              </Link>
+              {error && <p role="alert" className="mt-3 text-[0.82rem] font-medium text-destructive">{error}</p>}
+              <button type="button" onClick={pay} disabled={!ready || busy} className="btn-cta mt-4 w-full py-3">
+                {busy
+                  ? <><Loader2 className="h-4 w-4 animate-spin" />Opening secure checkout</>
+                  : <><Lock className="h-4 w-4" />Pay deposit {money(deposit)} <ArrowRight className="h-4 w-4" /></>}
+              </button>
+              <p className="mt-2 text-center text-[0.72rem] leading-relaxed text-muted-foreground">
+                Paying confirms you accept our{" "}
+                <a href="/terms" target="_blank" rel="noopener" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
+                  Terms &amp; Conditions
+                </a>.
+              </p>
               {/* Name the thing that is actually missing. "Pick a shop and a
                   collection date" was shown even when both were set and only
                   the time was not, and even when the saved date had gone

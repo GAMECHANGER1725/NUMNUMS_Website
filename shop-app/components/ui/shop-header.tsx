@@ -20,7 +20,7 @@ import { AccountMenu } from "@/components/ui/account-menu";
  * static HTML outside this Next app, and a `<Link>` to them would try a
  * client-side navigation that has nowhere to land.
  *
- * Not rendered on `/checkout`. Nav in a payment flow is an exit, which is why
+ * Payment happens on Stripe's page, which carries no nav of ours. Nav in a payment flow is an exit, which is why
  * neither of the two chains we looked at puts it there either.
  */
 const NAV = [

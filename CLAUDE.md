@@ -585,10 +585,16 @@ main site.
   "Signature Cakes" on the strength of the older note.
   Internally the DB still says `kind: 'normal'` and that stays — renaming an
   enum across ~15 call sites and the `customers` view buys nothing.
-- **The mobile is required, at sign-up and at checkout, and on the server.**
+- **The mobile is required, at sign-up and on Stripe's page.**
   It is how the shop says a cake is ready and the only way to reach somebody
   about their own order, so a web order without one is one nobody can chase.
-  `create-checkout` re-checks it — the browser's `MOBILE_RE` is a courtesy.
+  Since 2026-09-24 checkout is **Stripe's hosted page, straight from the cart**
+  (Vaidik's call — our own `/shop/checkout` details page is deleted and 301s
+  to the cart). Stripe collects the mobile (`phone_number_collection`, which
+  makes it required), the email, and a required **"Name for the order"**
+  custom field — the docket name, not the cardholder's. The webhook reads them
+  off the session and rewrites `+61` as `0`. What was lost: nothing can insist
+  it is a *mobile* rather than a landline before payment.
 - **Verification is an eight-digit code, not a link, and it signs them in.** A
   link opens a *different tab*, so the tab they filled the form in never learns
   they confirmed and sits on "check your email" forever; they come back, find
@@ -893,8 +899,8 @@ in the footer only, and lead the homepage with products before any story.
   layout.tsx`), which is why it is not in `sitemap.xml` or `llms.txt`. It has to
   be flipped at cutover, or the shop-first structure points at a page Google
   cannot see. That is the same switch as the Stripe live keys.
-- Checkout deliberately renders **no nav** — nav in a payment flow is an exit,
-  and neither chain puts one there either.
+- Payment is Stripe's hosted page, which carries **no nav** of ours — nav in a
+  payment flow is an exit, and neither chain puts one there either.
 
 ## Shop (`shop-app/` → `shop/`) — the customer-facing checkout
 
@@ -1101,7 +1107,12 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   else's email answers *"we don't recognise that code"*, the same as one that
   does not exist, so it is not an oracle. Checkout **clears an applied coupon
   when the email changes** — the binding is to one address, and a stale
-  discount is a total that goes UP on Stripe's page.
+  discount is a total that goes UP on Stripe's page. With Stripe collecting
+  the email, a guest applying a code types their email in the cart's coupon
+  card; that email is sent to `create-checkout` and becomes `customer_email`,
+  which **locks** Stripe's email field so the code cannot move to another
+  address. Without an email no coupon is applied. The mobile is not known
+  before payment, so the one-per-person rule matches on email alone there.
 - **The popup is a newsletter signup, not a sign-in.** It asks for a first name and an
   email and mints a 10% coupon through `/api/subscribe` → `netlify/functions/subscribe.mjs`.
   It writes `marketing_contacts` and `coupons` with the **service role**, because both are

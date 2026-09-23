@@ -72,6 +72,14 @@ export const handler = async (event) => {
     const count = Number(m.lines ?? 0);
     const groupId = crypto.randomUUID();
     const email = (session.customer_email ?? session.customer_details?.email ?? '').toLowerCase();
+    // Collected on Stripe's page. `m.name`/`m.phone` cover sessions created
+    // before that, when our own checkout page asked. Stripe hands back
+    // +61412345678; the shop reads and texts 0412 345 678, and phone_key
+    // (last nine digits) matches either way.
+    const name = m.name
+      || session.custom_fields?.find((f) => f.key === 'name')?.text?.value
+      || session.customer_details?.name || '';
+    const phone = String(m.phone || session.customer_details?.phone || '').replace(/^\+61/, '0');
 
     const rows = [];
     for (let i = 0; i < count; i++) {
@@ -82,8 +90,8 @@ export const handler = async (event) => {
         // NEVER true: set_order_defaults() forces a walk-in to picked_up, and
         // the cake would never be baked.
         walk_in: false,
-        customer_name: m.name,
-        customer_phone: m.phone || null,
+        customer_name: name,
+        customer_phone: phone || null,
         customer_email: email,
         flavour: l.f,
         size: l.s,
@@ -144,7 +152,7 @@ export const handler = async (event) => {
 
     if (email) {
       await db.from('marketing_contacts').upsert({
-        email, name: m.name, phone: m.phone || null, updated_at: new Date().toISOString(),
+        email, name, phone: phone || null, updated_at: new Date().toISOString(),
       }, { onConflict: 'email', ignoreDuplicates: false });
     }
 
@@ -156,8 +164,8 @@ export const handler = async (event) => {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          kind: 'web-order', store: m.store, due_at: m.due_at, name: m.name,
-          phone: m.phone, email, cakes: count,
+          kind: 'web-order', store: m.store, due_at: m.due_at, name,
+          phone, email, cakes: count,
           order_nos: (inserted ?? []).map((r) => r.order_no),
           total: (session.amount_total ?? 0) / 100,
           // The whole reason this field exists: it is what a Make scenario

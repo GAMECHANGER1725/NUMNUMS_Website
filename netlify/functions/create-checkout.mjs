@@ -73,16 +73,14 @@ export default async (req) => {
   try { body = await req.json(); } catch { return json(400, { error: 'Malformed request.' }); }
 
   try {
+    // Name, email and mobile are collected on Stripe's own page, not ours.
+    // An email arrives here only when it is already known — a signed-in
+    // customer, or a guest who typed it to apply a coupon — and it then LOCKS
+    // Stripe's email field, because a coupon is bound to one address and a
+    // customer who changed it on Stripe's page would carry the discount off.
     const email = String(body?.email ?? '').trim().toLowerCase();
-    if (!email.includes('@')) throw new BadRequest('We need an email to send your receipt to.');
-    const name = String(body?.name ?? '').trim().slice(0, 80);
-    if (!name) throw new BadRequest('We need a name for the order.');
-    // Required, not optional. The shop texts when a cake is ready, and a web
-    // order with no number is one nobody can chase. Validated here because the
-    // browser proves nothing — MOBILE_RE in the UI is a courtesy.
-    const phone = String(body?.phone ?? '').replace(/[\s()-]/g, '').slice(0, 20);
-    if (!/^(?:\+?61|0)4\d{8}$/.test(phone)) {
-      throw new BadRequest('We need an Australian mobile so we can text you when it is ready.');
+    if (email && !/^[^\s@]+@[^\s@.]+\.[^\s@]+$/.test(email)) {
+      throw new BadRequest('That email address does not look right.');
     }
 
     const cart = priceCart(body?.cart);
@@ -92,8 +90,12 @@ export default async (req) => {
     }
 
     // The problem is deliberately dropped: a mistyped code quotes no discount
-    // and still sells the cake. The checkout box already told them why.
-    const { coupon } = await couponFor(db, body?.coupon, email, phone);
+    // and still sells the cake. The cart's coupon box already told them why.
+    // No email means no coupon — couponFor refuses without one. The mobile is
+    // not known yet, so the one-per-person rule matches on email alone here.
+    // ponytail: phone half of personStatus skipped pre-payment; re-check it in
+    // the webhook if people start reusing codes across emails.
+    const { coupon } = await couponFor(db, body?.coupon, email);
     const discountTotal = coupon?.percent
       ? Math.round((cart.subtotalCents * coupon.percent) / 100)
       : 0;
@@ -133,8 +135,6 @@ export default async (req) => {
     const metadata = {
       store: cart.store,
       due_at: cart.dueAt,
-      name,
-      phone,
       coupon: coupon?.code ?? '',
       lines: String(cart.lines.length),
     };
@@ -156,7 +156,17 @@ export default async (req) => {
       // account first — Stripe rejects the session if it is not, which is why
       // it is opt-in through an env var rather than simply listed here.
       payment_method_types: payMethods(),
-      customer_email: email,
+      customer_email: email || undefined,
+      // Required on Stripe's page: it is how the shop says a cake is ready.
+      phone_number_collection: { enabled: true },
+      // The name the kitchen writes on the docket, which is not always the
+      // cardholder's — a cake is often paid for by someone else.
+      custom_fields: [{
+        key: 'name',
+        label: { type: 'custom', custom: 'Name for the order' },
+        type: 'text',
+        text: { maximum_length: 80 },
+      }],
       line_items,
       metadata,
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,

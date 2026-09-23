@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Check, Loader2, Ticket, X } from "lucide-react";
 import { listMyCoupons, lookUpCoupon, type Coupon } from "@/lib/coupons";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,8 @@ export type CouponFieldProps = {
   email: string;
   /** What to say when there is no email yet — it differs by page. */
   noEmailNote?: string;
+  /** Drawn inside the card, under the code box — the cart's guest email. */
+  children?: ReactNode;
   className?: string;
 };
 
@@ -33,7 +35,7 @@ export type CouponFieldProps = {
  * re-prices every line server-side, so a tampered code changes nothing that is
  * charged.
  */
-export function CouponField({ applied, onApply, email, noEmailNote, className }: CouponFieldProps) {
+export function CouponField({ applied, onApply, email, noEmailNote, children, className }: CouponFieldProps) {
   const haveEmail = email.includes("@");
   const [mine, setMine] = useState<Coupon[]>([]);
   const [code, setCode] = useState("");
@@ -163,6 +165,7 @@ export function CouponField({ applied, onApply, email, noEmailNote, className }:
           {problem}
         </p>
       )}
+      {children}
     </div>
   );
 }

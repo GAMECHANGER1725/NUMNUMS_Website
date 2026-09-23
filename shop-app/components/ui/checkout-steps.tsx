@@ -1,16 +1,16 @@
 import Link from "next/link";
 
 /**
- * Where you are in buying a cake: cart → details → done.
+ * Where you are in buying a cake: cart → payment on Stripe → done.
  *
- * Three steps because there are exactly three pages, so it can never lie about
- * how much is left. Completed steps are links back; the step you are on and the
+ * Three steps because there are exactly three screens, so it can never lie
+ * about how much is left. Payment is Stripe's page, so it is never a link. Completed steps are links back; the step you are on and the
  * ones ahead are not, because "Order complete" is not somewhere you can click
  * to.
  */
 const STEPS = [
   { n: 1, label: "Your cart", href: "/cart" },
-  { n: 2, label: "Your details", href: "/checkout" },
+  { n: 2, label: "Payment", href: null },
   { n: 3, label: "Collected", href: null },
 ] as const;
 
