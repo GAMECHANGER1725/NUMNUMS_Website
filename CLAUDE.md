@@ -1141,11 +1141,12 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
     wrong time. `readCart` and `priceCart` both convert. Do not drop those.
   - Changing shop clears a slot the new shop does not offer (`pickStore`),
     or Checkout greys out with nothing on screen saying why.
-  - `order.html` (custom cakes) filters the same windows off the
-    `pickup-location` radio. Its `.nd-*` enhancer builds its menu once and has
-    **no rebuild hook**, so the rows are hidden and the native options disabled
-    in step — the rows are what a person clicks, the disabled options are what
-    keyboard and form behaviour read. Change one and you must change both.
+  - `order.html` (custom cakes) uses the same windows (`WINDOWS` in its
+    calendar script) and asks the **shop first**, above a single date+time
+    control ported from `NnWhenField`: the month is open on the page, a tapped
+    day pops that shop's times under it. Changing shop clears a day now inside
+    the lead time or a time the new shop does not trade. The gate fails if the
+    location drops below the calendar or a separate time list comes back.
 - **The collection time is chips, not a dropdown.** A dropdown hides the shape
   of the day: you cannot see that one shop trades until 10pm without opening it
   and counting. Built on real radio inputs, so arrow keys, Home/End and roving
@@ -1232,9 +1233,11 @@ could not see from outside the repo. The research and the parked items are in
   time (`FIRST_PICKUP_HOUR`, 9am) is a clear 48 hours out, and the instant
   re-check at submit is **deleted**, not adjusted — a rule enforced twice is a
   rule that can disagree with itself. Proven across all 24 order hours.
-- **Pickup time is one list.** Hour + minute + AM/PM was six taps and it is what
-  made the rule contradict itself. Occasion is gone entirely (6 required fields
-  → 5). The name is remembered in `localStorage`. Fields flag on blur, not only
+- **Pickup date and time are one control, after the shop.** Hour + minute +
+  AM/PM was six taps and it is what made the rule contradict itself; a separate
+  date popover and time list made the customer answer half and come back.
+  Occasion is gone entirely. The name is **first name only**, remembered in
+  `localStorage`. Fields flag on blur, not only
   after Send.
 - **The progress bar reads its required fields defensively.** Removing a field
   from the markup otherwise takes the whole function down with a TypeError on a

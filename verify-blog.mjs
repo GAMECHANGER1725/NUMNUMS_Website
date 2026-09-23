@@ -643,22 +643,29 @@ const FACTS = {
   if (gallery > -1 && form > gallery) {
     fail('order.html: the gallery is above the form again — the form is the conversion event, not the proof');
   }
-  // One time control, not three. Hour + minute + AM/PM was six taps, and its
-  // 10:00 AM default is what made the 48-hour rule contradict itself.
-  for (const dead of ['ord-hour', 'ord-min', 'ord-ampm']) {
-    if (src.includes(`id="${dead}"`)) fail(`order.html: ${dead} is back — pickup time is one list`);
+  // Date and time are ONE control, like the shop's NnWhenField: the calendar
+  // is open on the page and a tapped day pops that shop's times. Hour + minute
+  // + AM/PM was six taps; a separate date popover and time list made the
+  // customer answer half, look away, and answer the rest.
+  for (const dead of ['ord-hour', 'ord-min', 'ord-ampm', 'date-trigger', 'cal-popover']) {
+    if (src.includes(`id="${dead}"`)) fail(`order.html: ${dead} is back — pickup date and time are one control`);
   }
-  if (!src.includes('id="ord-time"')) fail('order.html: the single #ord-time control is missing');
-  // The whole-day lead rule. Without the FIRST_PICKUP_HOUR roll-forward the
+  if (!src.includes('id="when-card"')) fail('order.html: the #when-card date+time control is missing');
+  if (/<select[^>]*id="ord-time"/.test(src)) fail('order.html: pickup time is a separate list again — it belongs in the calendar');
+  // The location has to come first: the times depend on which shop.
+  if (src.indexOf('name="pickup-location"') > src.indexOf('id="when-card"')) {
+    fail('order.html: pickup location is below the calendar — the times cannot know the shop');
+  }
+  // The whole-day lead rule. Without the firstPickupMin roll-forward the
   // calendar offers a day whose early times are inside the 48 hours, and the
   // form rejects the first date it just offered.
-  if (!/FIRST_PICKUP_HOUR/.test(src)) {
+  if (!/firstPickupMin/.test(src)) {
     fail('order.html: the whole-day lead rule is gone — the calendar can offer a date the form then refuses');
   }
   if (/Most orders need 48 hours notice/.test(src)) {
     fail('order.html: the instant 48h re-check is back, and it contradicts the calendar');
   }
-  notes.push('order form: above the gallery, one time control, one place enforcing the 48-hour rule');
+  notes.push('order form: above the gallery, shop before one date+time control, one place enforcing the 48-hour rule');
 }
 
 // ---------- Navigation ----------

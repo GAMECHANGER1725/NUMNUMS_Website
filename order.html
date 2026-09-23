@@ -637,6 +637,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,0.10);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
             <span class="material-symbols-outlined" style="font-size:1.5rem;color:#25D366;">chat</span>
           </div>
+          <h3 class="order-card-title">Order a Custom Cake</h3>
           <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;color:#5C3A22;margin:0 0 0.85rem;line-height:1.6;">Fill in the details below and we'll pre-fill a WhatsApp message with your cake, ready to send.</p>
 
           <!-- GOAL-GRADIENT PROGRESS -->
@@ -653,69 +654,65 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <!-- RECIPROCITY: quick tips before asking for details -->
           <div style="display:flex;flex-direction:column;gap:5px;padding:0.7rem 0.85rem;background:rgba(200,84,120,0.05);border-radius:0.6rem;margin-bottom:1.1rem;">
             <p style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#C85478;margin:0;">Before you start</p>
-            <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Chocolate + Ferrero Rocher is our most-ordered flavour pairing.</p>
             <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Have a reference photo? Any design works — just attach it in the WhatsApp message.</p>
             <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Most 20-guest parties choose the 10&Prime; size.</p>
             <a href="/order#flavour-size-guide" style="font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;color:#C85478;text-decoration:none;margin-top:2px;">See the full flavour &amp; size guide &rarr;</a>
           </div>
 
-          <!-- DATE PICKER -->
+          <!-- PICKUP LOCATION -->
           <div style="margin-bottom:0.85rem;">
-            <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Pickup Date</label>
-            <div style="position:relative;">
-              <button type="button" id="date-trigger" style="width:100%;display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid rgba(200,84,120,0.18);border-radius:0.75rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.85rem;color:rgba(44,26,14,0.4);cursor:pointer;text-align:left;outline:none;transition:border-color 0.2s ease;" aria-haspopup="true" aria-expanded="false">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:rgba(92,58,34,0.4);"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <span id="date-trigger-label">Pick a date</span>
-              </button>
-              <!-- Calendar popover -->
-              <div id="cal-popover" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:200;background:#fff;border:1px solid rgba(200,84,120,0.15);border-radius:1.25rem;padding:1rem 1rem 0.75rem;box-shadow:0 8px 32px rgba(44,26,14,0.14);min-width:272px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                  <button type="button" id="cal-prev" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(200,84,120,0.15);background:transparent;color:#5C3A22;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;outline:none;" aria-label="Previous month">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                  </button>
-                  <span id="cal-month-label" style="font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;color:#2C1A0E;letter-spacing:-0.01em;"></span>
-                  <button type="button" id="cal-next" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(200,84,120,0.15);background:transparent;color:#5C3A22;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;outline:none;" aria-label="Next month">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                  </button>
-                </div>
-                <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;"></div>
+            <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.5rem;">Pickup Location</label>
+            <div style="display:flex;gap:0.5rem;">
+              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
+                <input type="radio" name="pickup-location" id="loc-harris" value="Harris Park" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
+                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
+                Harris Park
+              </label>
+              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
+                <input type="radio" name="pickup-location" id="loc-riverstone" value="Riverstone" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
+                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
+                Riverstone
+              </label>
+            </div>
+            <div id="location-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
+          </div>
+
+          <!-- PICKUP DATE + TIME: one decision, one control, the same shape as
+               the shop's NnWhenField. The calendar sits open on the page and
+               tapping a day pops that shop's times out under it — which is why
+               the location is asked first: Harris Park and Riverstone keep
+               different hours, and a list that cannot know the shop offered a
+               9am Harris Park pickup two hours before the door opens.
+               #ord-time carries the chosen time for the submit handler. -->
+          <div style="margin-bottom:0.85rem;">
+            <span style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Pickup date &amp; time</span>
+            <div class="nn-when-card" id="when-card">
+              <div class="nn-when-head">
+                <button type="button" class="nd-cal-nav" id="cal-prev" aria-label="Previous month">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <p id="cal-month-label" aria-live="polite"></p>
+                <button type="button" class="nd-cal-nav" id="cal-next" aria-label="Next month">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+              <div id="cal-grid" class="nn-cal-grid" role="grid"></div>
+              <p class="nn-when-summary" id="when-summary"></p>
+              <div id="when-pop" class="nn-when-pop" role="dialog" aria-labelledby="when-pop-head" hidden>
+                <p class="nn-when-pop-head" id="when-pop-head"></p>
+                <div class="nn-time-list" id="when-times" role="radiogroup" aria-labelledby="when-pop-head"></div>
               </div>
             </div>
-            <div id="dt-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.74rem;margin-top:0.3rem;">Please select a pickup date.</div>
+            <input type="hidden" id="ord-time" value="">
+            <div id="dt-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.74rem;margin-top:0.3rem;">Please pick a pickup date and time.</div>
             <div id="dt-error-hint" style="display:none;color:#5C3A22;font-family:'Jost',sans-serif;font-size:0.74rem;margin-top:0.2rem;">In a hurry? <a href="tel:+61425697725" style="color:#C85478;font-weight:600;text-decoration:none;">Call us</a> — we'll do our best.</div>
           </div>
 
-          <!-- TIME PICKER -->
-          <!-- One list, not three. Hour + minute + AM/PM was six taps and the
-               commonest way to end up with a half-filled time; it is also what
-               made the 48-hour rule contradict itself, because the default
-               10:00 AM could sit inside the lead time on the earliest date the
-               calendar offered. The .nd-* enhancer dresses this automatically,
-               so it stays a custom control. -->
-          <div style="margin-bottom:0.85rem;">
-            <label for="ord-time" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Pickup Time</label>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span class="material-symbols-outlined" style="font-size:1.05rem;color:rgba(92,58,34,0.4);font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;flex-shrink:0;">schedule</span>
-              <div style="position:relative;flex:1;">
-                <select id="ord-time" data-dd-label="Pickup time" style="width:100%;padding:8px 24px 8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <!-- data-min is minutes from midnight. The two shops keep
-                       different hours (Harris Park 11:00-22:00, Riverstone
-                       09:00-18:30), so the rows a customer can pick are
-                       filtered by the location radio above — see wireTimeToLocation
-                       below. Without it this list promised a 9am Harris Park
-                       pickup two hours before the door opens. -->
-                  <option data-min="540">9:00 AM</option><option data-min="570">9:30 AM</option><option selected data-min="600">10:00 AM</option><option data-min="630">10:30 AM</option><option data-min="660">11:00 AM</option><option data-min="690">11:30 AM</option><option data-min="720">12:00 PM</option><option data-min="750">12:30 PM</option><option data-min="780">1:00 PM</option><option data-min="810">1:30 PM</option><option data-min="840">2:00 PM</option><option data-min="870">2:30 PM</option><option data-min="900">3:00 PM</option><option data-min="930">3:30 PM</option><option data-min="960">4:00 PM</option><option data-min="990">4:30 PM</option><option data-min="1020">5:00 PM</option><option data-min="1050">5:30 PM</option><option data-min="1080">6:00 PM</option><option data-min="1110">6:30 PM</option><option data-min="1140">7:00 PM</option><option data-min="1170">7:30 PM</option><option data-min="1200">8:00 PM</option><option data-min="1230">8:30 PM</option><option data-min="1260">9:00 PM</option><option data-min="1290">9:30 PM</option><option data-min="1320">10:00 PM</option>
-                </select>
-                <svg style="position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- FULL NAME -->
+          <!-- FIRST NAME -->
           <div style="margin-bottom:0.85rem;" id="form-row-0">
             <div>
-              <label for="cake-name" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Full name</label>
-              <input type="text" id="cake-name" autocomplete="name" placeholder="Your full name" style="width:100%;padding:8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;outline:none;">
+              <label for="cake-name" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">First name</label>
+              <input type="text" id="cake-name" autocomplete="given-name" placeholder="Your first name" style="width:100%;padding:8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;outline:none;">
               <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
             </div>
           </div>
@@ -726,7 +723,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                ask again on WhatsApp anyway, so it was two taps that told us
                nothing we did not already learn. Required fields: 6 -> 5. -->
           <div style="margin-bottom:0.85rem;" id="form-row-1">
-              <label for="cake-flavour" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Flavour</label>
+              <label for="cake-flavour" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Custom cake flavour</label>
               <div style="position:relative;">
                 <select id="cake-flavour" style="width:100%;padding:8px 24px 8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
                   <option value="">Flavour…</option>
@@ -772,24 +769,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.55;"><span id="price-hint-amt" style="font-weight:600;color:#2C1A0E;"></span><span id="price-hint-txt">Pick a size and we'll show your starting price.</span></p>
           </div>
 
-          <!-- PICKUP LOCATION -->
-          <div style="margin-bottom:0.85rem;">
-            <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.5rem;">Pickup Location</label>
-            <div style="display:flex;gap:0.5rem;">
-              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
-                <input type="radio" name="pickup-location" id="loc-harris" value="Harris Park" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
-                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
-                Harris Park
-              </label>
-              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
-                <input type="radio" name="pickup-location" id="loc-riverstone" value="Riverstone" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
-                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
-                Riverstone
-              </label>
-            </div>
-            <div id="location-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
-          </div>
-
           <!-- NOTES -->
           <div style="margin-bottom:0.85rem;">
             <label for="cake-notes" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Notes <span style="font-weight:300;text-transform:none;font-size:0.71rem;">(optional)</span></label>
@@ -817,7 +796,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="order-card cursor-card reveal reveal-d1" style="border-top:4px solid #C85478; display:flex; flex-direction:column; justify-content:space-between;">
           <div>
             <div style="width:44px; height:44px; border-radius:12px; background:rgba(200,84,120,0.10); display:flex; align-items:center; justify-content:center; margin-bottom:1.25rem;"><span class="material-symbols-outlined" style="font-size:1.5rem;color:#C85478;">phone</span></div>
-            <h3 class="font-display" style="font-size:1.4rem; font-weight:600; color:#2C1A0E; margin:0 0 0.75rem; letter-spacing:-0.02em;">Prefer to Call?</h3>
+            <h3 class="order-card-title">Prefer to Call?</h3>
             <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:0.88rem; color:#5C3A22; margin:0 0 0.5rem; line-height:1.65;">
               Call us and we'll take your order directly. No waiting around.
             </p>
@@ -1569,8 +1548,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     @media (max-width: 640px) {
       #form-row-1, #form-row-2 { grid-template-columns: 1fr !important; }
     }
-    #cal-popover { min-width: min(272px, calc(100vw - 3rem)); }
-    .cal-day-btn:not([disabled]):hover { background: rgba(200,84,120,0.09) !important; }
   </style>
 
   <script>
@@ -1722,114 +1699,191 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.addEventListener('click', closeAll);
     })();
 
-    // ── Custom Cake Order Form (popover calendar) ────────────────
+    // ── Custom Cake Order Form: pickup date + time as one control ──
+    // Same shape as the shop's NnWhenField: the month is open on the page,
+    // tapping a day commits it and pops that shop's times out underneath.
     (function() {
       var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      var DAYS_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-      var now        = new Date();
-      // A WHOLE-DAY rule, so the form can never offer a date it will then
-      // refuse. The old line truncated `now + 48h` to midnight, which enabled a
-      // day whose EARLY times were still inside the lead time — at 5pm Monday
-      // it offered Wednesday, and Wednesday 9am is 40 hours away, not 48. The
-      // earliest bookable day is therefore the first day whose FIRST offered
-      // pickup time (09:00, see the time list) is a clear 48 hours out.
-      // Costs up to a day of availability against the theoretical minimum, and
-      // buys a form that never rejects what it just offered.
-      var FIRST_PICKUP_HOUR = 9;
-      var minAllowed = new Date(now.getTime() + 48 * 60 * 60 * 1000);
-      var minDate    = new Date(minAllowed.getFullYear(), minAllowed.getMonth(), minAllowed.getDate());
-      if (new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate(), FIRST_PICKUP_HOUR) < minAllowed) {
-        minDate.setDate(minDate.getDate() + 1);
-      }
-      var today      = new Date(); today.setHours(0,0,0,0);
-      var viewYear   = minDate.getFullYear();
-      var viewMonth  = minDate.getMonth();
-      var selDate    = null;
+      var DAY_NAMES = ['M','T','W','T','F','S','S'];
+      // The two shops keep different hours, in minutes from midnight — the
+      // same windows COLLECTION in ops/catalog.mjs holds for the online shop.
+      var WINDOWS = { 'Harris Park': [660, 1320], 'Riverstone': [540, 1110] };
+      var BANDS = [['Morning', 0, 719], ['Afternoon', 720, 1019], ['Evening', 1020, 1440]];
+      var now = new Date();
+      var viewYear, viewMonth;
+      var selDate = null;   // Date at local midnight
+      var selMin  = 0;      // minutes from midnight; 0 = no time chosen
+      var openBtn = null;   // the day the times popup hangs off
 
+      function store() {
+        var r = document.querySelector('[name="pickup-location"]:checked');
+        return r ? r.value : 'Harris Park';
+      }
+      function slots() {
+        var w = WINDOWS[store()], out = [];
+        for (var m = w[0]; m <= w[1]; m += 30) out.push(m);
+        return out;
+      }
+      // A WHOLE-DAY rule, so the form can never offer a date it will then
+      // refuse. The earliest bookable day is the first whose FIRST pickup at
+      // the chosen shop is a clear 48 hours out; truncating `now + 48h` to
+      // midnight used to enable a day whose early times were inside the lead
+      // time. Enforced here and nowhere else — a second check at submit is a
+      // rule that can disagree with itself.
+      function minDate() {
+        var firstPickupMin = WINDOWS[store()][0];
+        var minAllowed = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+        var d = new Date(minAllowed.getFullYear(), minAllowed.getMonth(), minAllowed.getDate());
+        if (new Date(d.getTime() + firstPickupMin * 60000) < minAllowed) d.setDate(d.getDate() + 1);
+        return d;
+      }
+      function slotLabel(m) {
+        var h = Math.floor(m / 60), mm = m % 60;
+        return ((h + 11) % 12 + 1) + ':' + (mm < 10 ? '0' : '') + mm + ' ' + (h < 12 ? 'AM' : 'PM');
+      }
       function fmtDate(d) {
         return d.toLocaleDateString('en-AU', {weekday:'short',day:'numeric',month:'short',year:'numeric'});
+      }
+      function longDate(d) {
+        return d.toLocaleDateString('en-AU', {weekday:'long',day:'numeric',month:'long'});
+      }
+      function sameDay(a, b) { return a && b && a.getTime() === b.getTime(); }
+
+      function paintSummary() {
+        var el = document.getElementById('when-summary');
+        if (!el) return;
+        if (selDate && selMin) el.innerHTML = 'Collecting from ' + store() + ' <b>' + longDate(selDate) + '</b> at <b>' + slotLabel(selMin) + '</b>';
+        else if (selDate) el.innerHTML = 'Pick a time for <b>' + longDate(selDate) + '</b>';
+        else el.textContent = 'Greyed days are sooner than we can make a custom cake — we need 48 hours.';
+        var hidden = document.getElementById('ord-time');
+        if (hidden) hidden.value = selMin ? slotLabel(selMin) : '';
       }
 
       function renderCalendar() {
         var label = document.getElementById('cal-month-label');
         var grid  = document.getElementById('cal-grid');
         if (!label || !grid) return;
+        var min = minDate();
         label.textContent = MONTHS[viewMonth] + ' ' + viewYear;
+        var prev = document.getElementById('cal-prev');
+        if (prev) prev.disabled = viewYear < min.getFullYear() || (viewYear === min.getFullYear() && viewMonth <= min.getMonth());
         var html = '';
-        DAYS_SHORT.forEach(function(d) {
-          html += '<div style="font-family:\'Jost\',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:rgba(44,26,14,0.35);text-align:center;padding:2px 0 5px;">' + d + '</div>';
-        });
-        var first = new Date(viewYear, viewMonth, 1);
-        var startDow = (first.getDay() + 6) % 7;
-        for (var i = 0; i < startDow; i++) html += '<div></div>';
+        DAY_NAMES.forEach(function(d) { html += '<span class="nn-cal-dow" aria-hidden="true">' + d + '</span>'; });
+        var startDow = (new Date(viewYear, viewMonth, 1).getDay() + 6) % 7;
+        for (var i = 0; i < startDow; i++) html += '<span></span>';
         var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
         for (var day = 1; day <= daysInMonth; day++) {
-          var dt    = new Date(viewYear, viewMonth, day);
-          var isBlocked = dt < minDate;
-          var isToday = dt.getTime() === today.getTime();
-          var isSel   = selDate && dt.getTime() === selDate.getTime();
-          var bg  = isSel ? '#C85478' : 'transparent';
-          var col = isSel ? '#fff' : (isBlocked ? 'rgba(44,26,14,0.22)' : '#2C1A0E');
-          var fw  = isSel ? '600' : '400';
-          var dot = (isToday && !isSel) ? '<span style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:#C85478;display:block;"></span>' : '';
-          html += '<button type="button" class="cal-day-btn"' + (isBlocked ? ' disabled' : '') +
-            ' data-y="' + viewYear + '" data-m="' + viewMonth + '" data-d="' + day + '"' +
-            ' style="position:relative;width:100%;aspect-ratio:1;border-radius:50%;border:none;background:' + bg + ';color:' + col + ';font-weight:' + fw + ';font-family:\'Jost\',sans-serif;font-size:0.77rem;cursor:' + (isBlocked ? 'not-allowed' : 'pointer') + ';display:flex;align-items:center;justify-content:center;outline:none;padding:0;">' +
-            day + dot + '</button>';
+          var dt = new Date(viewYear, viewMonth, day);
+          var off = dt < min;
+          var on  = sameDay(dt, selDate);
+          html += '<button type="button" class="nd-cal-day' + (on ? ' is-on' : '') + '"' + (off ? ' disabled' : '') +
+            ' data-d="' + day + '" aria-pressed="' + on + '" aria-haspopup="dialog" aria-label="' + longDate(dt) + '">' +
+            day + (on && selMin ? '<span class="nn-day-dot" aria-hidden="true"></span>' : '') + '</button>';
         }
         grid.innerHTML = html;
-        grid.querySelectorAll('.cal-day-btn:not([disabled])').forEach(function(btn) {
-          btn.addEventListener('mouseenter', function() {
-            if (!selDate || new Date(+btn.dataset.y,+btn.dataset.m,+btn.dataset.d).getTime() !== selDate.getTime())
-              btn.style.background = 'rgba(200,84,120,0.09)';
-          });
-          btn.addEventListener('mouseleave', function() {
-            if (!selDate || new Date(+btn.dataset.y,+btn.dataset.m,+btn.dataset.d).getTime() !== selDate.getTime())
-              btn.style.background = 'transparent';
-          });
-          btn.addEventListener('click', function() {
-            selDate = new Date(+btn.dataset.y, +btn.dataset.m, +btn.dataset.d);
-            renderCalendar();
-            var lbl = document.getElementById('date-trigger-label');
-            var trig = document.getElementById('date-trigger');
-            if (lbl) { lbl.textContent = fmtDate(selDate); lbl.style.color = '#2C1A0E'; }
-            if (trig) trig.style.borderColor = 'rgba(200,84,120,0.35)';
-            closePopover();
-            var err = document.getElementById('dt-error');
-            if (err) err.style.display = 'none';
-            if (typeof updateOrderProgress === 'function') updateOrderProgress();
-          });
-        });
+        paintSummary();
       }
 
-      function openPopover() {
-        var pop = document.getElementById('cal-popover');
-        var trig = document.getElementById('date-trigger');
-        if (pop)  pop.style.display = 'block';
-        if (trig) trig.setAttribute('aria-expanded', 'true');
+      function closePop(refocus) {
+        var pop = document.getElementById('when-pop');
+        if (!pop || pop.hidden) return;
+        pop.hidden = true;
+        if (refocus && openBtn) {
+          var d = openBtn.dataset.d;
+          var again = document.querySelector('#cal-grid .nd-cal-day[data-d="' + d + '"]');
+          if (again) again.focus();
+        }
+        openBtn = null;
       }
-      function closePopover() {
-        var pop = document.getElementById('cal-popover');
-        var trig = document.getElementById('date-trigger');
-        if (pop)  pop.style.display = 'none';
-        if (trig) trig.setAttribute('aria-expanded', 'false');
+
+      function openPop(btn) {
+        var pop  = document.getElementById('when-pop');
+        var card = document.getElementById('when-card');
+        var list = document.getElementById('when-times');
+        if (!pop || !card || !list) return;
+        openBtn = btn;
+        document.getElementById('when-pop-head').textContent = longDate(selDate) + ' · ' + store();
+        var all = slots(), html = '';
+        BANDS.forEach(function(b) {
+          var times = all.filter(function(m) { return m >= b[1] && m <= b[2]; });
+          if (!times.length) return;
+          html += '<p class="nn-time-list-head">' + b[0] + '</p>';
+          times.forEach(function(m) {
+            var on = m === selMin;
+            html += '<label class="nn-time-row' + (on ? ' is-on' : '') + '"><input type="radio" name="when-time" value="' + m + '"' + (on ? ' checked' : '') + '>' +
+              '<span>' + slotLabel(m) + '</span>' + (on ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : '') + '</label>';
+          });
+        });
+        list.innerHTML = html;
+        pop.hidden = false;
+        // Below the day, clamped inside the card: beside a 36px cell there is
+        // no room on a phone, and a popup hanging off the card's edge is
+        // off the screen on the narrowest one.
+        var w = pop.offsetWidth;
+        var left = btn.offsetLeft + btn.offsetWidth / 2 - w / 2;
+        left = Math.max(0, Math.min(left, card.clientWidth - w));
+        pop.style.left = left + 'px';
+        pop.style.top  = (btn.offsetTop + btn.offsetHeight + 6) + 'px';
+        var chosen = list.querySelector('input:checked') || list.querySelector('input');
+        if (chosen) {
+          // Show an already-booked 9pm in view, not below the fold of the box.
+          var row = chosen.closest('.nn-time-row');
+          list.scrollTop = Math.max(0, row.offsetTop - list.clientHeight / 2);
+          chosen.focus({ preventScroll: true });
+        }
       }
+
+      var grid = document.getElementById('cal-grid');
+      if (grid) grid.addEventListener('click', function(e) {
+        var btn = e.target.closest('.nd-cal-day');
+        if (!btn || btn.disabled) return;
+        e.stopPropagation();
+        var d = new Date(viewYear, viewMonth, +btn.dataset.d);
+        // Commit the day immediately and clear a time chosen for another day,
+        // so the calendar, the popup heading and the summary never disagree.
+        if (!sameDay(d, selDate)) { selDate = d; selMin = 0; }
+        renderCalendar();
+        var fresh = grid.querySelector('.nd-cal-day[data-d="' + btn.dataset.d + '"]');
+        openPop(fresh);
+        var err = document.getElementById('dt-error');
+        if (err) err.style.display = 'none';
+        if (typeof updateOrderProgress === 'function') updateOrderProgress();
+      });
+
+      var times = document.getElementById('when-times');
+      if (times) times.addEventListener('change', function(e) {
+        if (e.target.name !== 'when-time') return;
+        selMin = +e.target.value;
+        closePop(true);
+        renderCalendar();
+        if (typeof updateOrderProgress === 'function') updateOrderProgress();
+      });
+
+      var popEl = document.getElementById('when-pop');
+      if (popEl) popEl.addEventListener('click', function(e) { e.stopPropagation(); });
+      document.addEventListener('click', function() { closePop(false); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePop(true); });
 
       var prevBtn = document.getElementById('cal-prev');
       var nextBtn = document.getElementById('cal-next');
-      var trig    = document.getElementById('date-trigger');
-      if (prevBtn) prevBtn.addEventListener('click', function(e) { e.stopPropagation(); viewMonth--; if(viewMonth<0){viewMonth=11;viewYear--;} renderCalendar(); });
-      if (nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} renderCalendar(); });
-      if (trig) trig.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var pop = document.getElementById('cal-popover');
-        if (pop && pop.style.display === 'none') openPopover(); else closePopover();
-      });
-      document.addEventListener('click', function(e) {
-        var pop = document.getElementById('cal-popover');
-        if (pop && pop.style.display !== 'none' && !pop.contains(e.target)) closePopover();
+      if (prevBtn) prevBtn.addEventListener('click', function(e) { e.stopPropagation(); closePop(false); viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } renderCalendar(); });
+      if (nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); closePop(false); viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } renderCalendar(); });
+
+      // Changing shop changes which days and times exist. A day now inside the
+      // lead time, or a time the new shop does not trade, must not survive the
+      // switch — it would go to WhatsApp as a pickup the shop cannot honour.
+      document.querySelectorAll('[name="pickup-location"]').forEach(function(r) {
+        r.addEventListener('change', function() {
+          closePop(false);
+          if (selDate && selDate < minDate()) { selDate = null; selMin = 0; }
+          if (selMin && slots().indexOf(selMin) < 0) selMin = 0;
+          renderCalendar();
+          if (typeof updateOrderProgress === 'function') updateOrderProgress();
+        });
       });
 
+      var start = minDate();
+      viewYear = start.getFullYear(); viewMonth = start.getMonth();
       renderCalendar();
 
       var form = document.getElementById('cake-order-form');
@@ -1893,7 +1947,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           // the progress bar failing silently takes the submit handler's
           // listener chain with it.
           var REQUIRED = ['cake-name', 'cake-flavour', 'cake-size'];
-          var done = selDate ? 1 : 0;
+          var done = (selDate && selMin) ? 1 : 0;
           REQUIRED.forEach(function(id) {
             var el = document.getElementById(id);
             if (el && String(el.value).trim()) done++;
@@ -1948,7 +2002,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var dtErr  = document.getElementById('dt-error');
           var dtHint = document.getElementById('dt-error-hint');
           dtHint.style.display = 'none';
-          if (!selDate) { dtErr.textContent='Please select a pickup date.'; dtErr.style.display='block'; ok=false; } else { dtErr.style.display='none'; }
+          if (!selDate || !selMin) { dtErr.textContent = selDate ? 'Please pick a pickup time for ' + longDate(selDate) + '.' : 'Please pick a pickup date and time.'; dtErr.style.display='block'; ok=false; } else { dtErr.style.display='none'; }
 
           // The 48-hour rule is enforced ONCE, by which days the calendar
           // offers at all (see minDate). The instant re-check that used to sit
@@ -1972,7 +2026,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           if (!locEl) { if(locErr) locErr.style.display='block'; ok=false; } else { if(locErr) locErr.style.display='none'; }
           if (!ok) return;
 
-          var pickupTime = document.getElementById('ord-time').value;
+          var pickupTime = slotLabel(selMin);
           var flavour = document.getElementById('cake-flavour').value;
           var size    = document.getElementById('cake-size').value;
           var estEl   = document.getElementById('price-hint-amt');
@@ -2135,6 +2189,44 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     .shop-fork-here { margin-top: 0.4rem; padding: 10px 0; font-size: 0.88rem; font-weight: 600; color: #C85478; text-decoration: none; }
     .shop-fork-here:hover { text-decoration: underline; text-underline-offset: 3px; }
     .shop-fork-here:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; border-radius: 4px; }
+
+    /* Card titles — Jost 300, never Cormorant at heading size. */
+    .order-card-title { font-family: 'Jost', sans-serif; font-size: 1.45rem; font-weight: 300; letter-spacing: -0.02em; color: #2C1A0E; margin: 0 0 0.6rem; line-height: 1.2; }
+
+    /* Pickup date + time: ported from the shop's NnWhenField (globals.css). */
+    .nn-when-card { position: relative; border: 1px solid rgba(200,84,120,0.18); border-radius: 0.75rem; background: #fff; padding: 0.75rem; font-family: 'Jost', sans-serif; }
+    .nn-when-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .nn-when-head p { margin: 0; font-size: 0.92rem; font-weight: 600; color: #2C1A0E; }
+    .nd-cal-nav { display: inline-flex; align-items: center; justify-content: center; height: 34px; width: 34px; border-radius: 9999px; border: none; background: transparent; color: #2C1A0E; cursor: pointer; transition: background-color 0.13s ease; }
+    .nd-cal-nav:hover:not(:disabled) { background: rgba(200,84,120,0.09); }
+    .nd-cal-nav:disabled { color: rgba(44,26,14,0.22); cursor: not-allowed; }
+    .nd-cal-nav:focus-visible { outline: 2px solid #C85478; outline-offset: 1px; }
+    .nn-cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-top: 0.5rem; }
+    .nn-cal-dow { padding: 4px 0; text-align: center; font-size: 0.64rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(44,26,14,0.4); }
+    /* No min-width: seven cells have to divide whatever the narrowest phone gives them. */
+    .nd-cal-day { position: relative; display: flex; align-items: center; justify-content: center; height: 36px; width: 100%; min-width: 0; padding: 0; border: none; border-radius: 0.5rem; background: transparent; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-variant-numeric: tabular-nums; color: #2C1A0E; cursor: pointer; transition: background-color 0.13s ease, color 0.13s ease; }
+    .nd-cal-day:hover:not(:disabled) { background: rgba(200,84,120,0.1); }
+    .nd-cal-day:disabled { color: rgba(44,26,14,0.25); cursor: not-allowed; }
+    .nd-cal-day:focus-visible { outline: 2px solid #C85478; outline-offset: -2px; }
+    .nd-cal-day.is-on { background: #C85478; color: #FFF8F2; font-weight: 600; }
+    .nd-cal-day.is-on:hover { background: #A03D5E; }
+    .nn-day-dot { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.85; }
+    .nn-when-summary { margin: 0.6rem 0 0; border-top: 1px solid rgba(200,84,120,0.15); padding-top: 0.55rem; font-size: 0.76rem; line-height: 1.45; color: #8A6B55; }
+    .nn-when-summary b { color: #2C1A0E; font-weight: 600; }
+    /* A DEFINITE width, capped by the card — see the shop's note on why. */
+    .nn-when-pop { position: absolute; z-index: 60; width: min(100%, 18rem); display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem; background: #FFF8F2; border: 1px solid rgba(200,84,120,0.18); border-radius: 0.7rem; box-shadow: 0 2px 6px rgba(44,26,14,.06), 0 18px 38px -14px rgba(44,26,14,.28); animation: nd-rise .16s cubic-bezier(.2,.9,.3,1); }
+    .nn-when-pop[hidden] { display: none; }
+    .nn-when-pop-head { margin: 0; font-size: 0.84rem; font-weight: 600; color: #2C1A0E; }
+    .nn-time-list { max-height: 13.5rem; overflow-y: auto; overscroll-behavior: contain; border: 1px solid rgba(200,84,120,0.18); border-radius: 0.6rem; background: #fff; padding: 0.2rem; }
+    .nn-time-list-head { position: sticky; top: 0; z-index: 1; margin: 0; padding: 0.35rem 0.5rem 0.25rem; background: #fff; font-size: 0.58rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: #B08A6A; }
+    .nn-time-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; min-height: 36px; padding: 0.3rem 0.5rem; border-radius: 0.4rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; color: #5C3A22; cursor: pointer; transition: background-color 120ms cubic-bezier(0.22,1,0.36,1), color 120ms cubic-bezier(0.22,1,0.36,1); }
+    .nn-time-row input { position: absolute; inset: 0; margin: 0; opacity: 0; appearance: none; -webkit-appearance: none; cursor: pointer; }
+    .nn-time-row:hover { background: #FFF1F5; }
+    /* Focus must not look like selection: the chosen row is the filled one with the tick. */
+    .nn-time-row:has(input:focus-visible) { outline: 2px solid #C85478; outline-offset: -2px; }
+    .nn-time-row.is-on { background: #C85478; color: #fff; font-weight: 500; }
+    .nn-time-row.is-on:hover { background: #A03D5E; }
+    @media (prefers-reduced-motion: reduce) { .nn-time-row, .nd-cal-day, .nd-cal-nav { transition: none; } .nn-when-pop { animation: none; } }
     .shop-fork-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 9999px; border: 1.5px solid #C85478; color: #C85478; background: transparent; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1); }
     .shop-fork-btn:hover { background: #C85478; color: #fff; }
     .shop-fork-btn:focus-visible { outline: 2px solid #C85478; outline-offset: 3px; }
@@ -2417,53 +2509,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       document.querySelectorAll('select').forEach(dress);
 
-      /* Pickup times follow the shop.
-         Harris Park trades 11:00-22:00 and Riverstone 09:00-18:30 — the same
-         windows COLLECTION in ops/catalog.mjs holds for the online shop. This
-         list used to be one fixed 9:00-18:30 for both, so it offered a 9am
-         Harris Park pickup two hours before the door opens, and hid the whole
-         evening that is most of that shop's trade.
-
-         The enhancer builds its menu once from sel.options and has no rebuild
-         hook, so rather than surgery on it, the rendered rows are hidden and
-         the native <select> options disabled in step. Both matter: the rows
-         are what a person clicks, and the disabled options are what keyboard
-         and form behaviour read. */
-      (function wireTimeToLocation() {
-        var WINDOWS = { 'Harris Park': [660, 1320], 'Riverstone': [540, 1110] };
-        var sel = document.getElementById('ord-time');
-        if (!sel) return;
-        var wrap = sel.closest('.nd');
-        var rows = wrap ? wrap.querySelectorAll('.nd-opt') : [];
-
-        function apply() {
-          var picked = document.querySelector('[name="pickup-location"]:checked');
-          var win = picked && WINDOWS[picked.value];
-          var allowed = function (min) { return !win || (min >= win[0] && min <= win[1]); };
-
-          Array.prototype.forEach.call(sel.options, function (o) {
-            o.disabled = !allowed(+o.dataset.min);
-          });
-          Array.prototype.forEach.call(rows, function (r) {
-            var o = sel.options[+r.dataset.i];
-            r.style.display = o && !o.disabled ? '' : 'none';
-          });
-
-          // A time that is no longer offered must not survive the switch: it
-          // would be sent to WhatsApp as a pickup the shop cannot honour.
-          if (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].disabled) {
-            for (var i = 0; i < sel.options.length; i++) {
-              if (!sel.options[i].disabled) { sel.selectedIndex = i; break; }
-            }
-            sel.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        }
-
-        document.querySelectorAll('[name="pickup-location"]').forEach(function (r) {
-          r.addEventListener('change', apply);
-        });
-        apply();
-      })();
     })();
   </script>
 
