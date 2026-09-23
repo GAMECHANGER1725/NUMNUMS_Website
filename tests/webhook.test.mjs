@@ -50,6 +50,15 @@ for (const [name, enc] of [['utf8', false], ['base64', true]]) {
   const ok = r.statusCode === 200 && r.body === 'unpaid';
   if (!ok) { bad++; realError(`FAIL valid signature (${name}) -> ${r.statusCode} ${r.body}`); }
 }
+// PayTo's money arrives on async_payment_succeeded. If the handler ignores that
+// event type it answers 'ignored'; reaching the payment_status check ('unpaid'
+// here) proves it is listened for.
+{
+  const p = payload.replace('checkout.session.completed', 'checkout.session.async_payment_succeeded');
+  const sig = stripe.webhooks.generateTestHeaderString({ payload: p, secret: 'whsec_testsecret123' });
+  const r = await handler({ body: p, headers: { 'stripe-signature': sig } });
+  if (r.body !== 'unpaid') { bad++; realError(`FAIL async_payment_succeeded -> ${r.statusCode} ${r.body} (PayTo orders would be dropped)`); }
+}
 // ── the misconfiguration guard ──────────────────────────────────────────────
 // Each required variable, removed one at a time, must stop the function before
 // it accepts an event it cannot fulfil — and must answer 500, not 200, so

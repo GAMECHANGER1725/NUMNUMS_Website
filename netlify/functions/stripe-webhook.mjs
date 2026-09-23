@@ -51,7 +51,15 @@ export const handler = async (event) => {
     return { statusCode: 400, body: 'signature verification failed' };
   }
 
-  if (evt.type !== 'checkout.session.completed') return { statusCode: 200, body: 'ignored' };
+  // PayTo is a delayed-notification rail: its session completes `unpaid` and
+  // the money arrives later as async_payment_succeeded. Listen for only
+  // `completed` and a PayTo customer pays for a cake nobody is told to bake.
+  // Both events carry the same session, and the unique index makes a second
+  // delivery a no-op.
+  if (evt.type !== 'checkout.session.completed' &&
+      evt.type !== 'checkout.session.async_payment_succeeded') {
+    return { statusCode: 200, body: 'ignored' };
+  }
   const session = evt.data.object;
   if (session.payment_status !== 'paid') return { statusCode: 200, body: 'unpaid' };
 
