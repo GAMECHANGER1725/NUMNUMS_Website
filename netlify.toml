@@ -94,12 +94,6 @@
   to = "/.netlify/functions/order-status"
   status = 200
 
-# The details page is gone: the cart hands straight to Stripe's hosted page.
-[[redirects]]
-  from = "/shop/checkout"
-  to = "/shop/cart"
-  status = 301
-
 [[redirects]]
   from = "/shop"
   to = "/shop/index.html"
