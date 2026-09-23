@@ -302,7 +302,7 @@ export default function ShopPage() {
                 </div>
                 <div className="flex gap-2">
                   <dt className="w-[4.6rem] flex-none text-muted-foreground">Ready</dt>
-                  <dd>48 hours from the go-ahead</dd>
+                  <dd>2 days from the go-ahead</dd>
                 </div>
                 <div className="flex gap-2">
                   <dt className="w-[4.6rem] flex-none text-muted-foreground">Paying</dt>

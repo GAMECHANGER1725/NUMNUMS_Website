@@ -713,7 +713,7 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   empty on the first paint (`useSyncExternalStore`'s server snapshot), so a
   one-time `useState` init read no date at all and a customer who had chosen
   3 October reopened on September.
-- **Greyed days are the rule made visible**: inside the 48-hour lead time, or
+- **Greyed days are the rule made visible**: inside the lead time, or
   past the 120-day horizon. A date you can pick and the server then refuses
   reads as a broken form rather than as a rule.
 - Audited open at 320×568, 430×740, 900×420 and 1440×900, on the store list,
@@ -1012,10 +1012,12 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **Verify the webhook signature on raw bytes, handling `isBase64Encoded`**, and answer
   **400** on a bad one. A 200 tells Stripe the forgery was accepted. Never `JSON.parse`
   before verifying. `netlify/functions/webhook.test.mjs` asserts all of that.
-- **A shop cake is NEXT DAY; a custom cake still needs 48 hours.** They are
-  different products and the numbers are not interchangeable — the 48 hours
-  quoted on `/order`, `index.html` and `cakes.html` is about a cake somebody
-  draws, and must not be "tidied" to match the shop. The shop's rule lives in
+- **A shop cake is NEXT DAY; a custom cake is 2 DAYS** (order today, collect
+  the day after tomorrow — Vaidik, 2026-09-23; it was 48 hours). They are
+  different products and the numbers are not interchangeable — the 2 days
+  quoted on `/order` and `index.html` is about a cake somebody draws, and must
+  not be "tidied" to match the shop. ~226 blog posts still say "48 hours";
+  that copy is conservative, not wrong, and was left for a separate pass. The shop's rule lives in
   `LEAD_DAYS` in `netlify/lib/shared.mjs`, mirrored in `shop-app/lib/cart.ts`.
   `CUTOFF_HOUR` is the Sydney hour at or after which an order rolls to the day
   after; **24 means no cut-off**, which is what "we do next day" says — an
@@ -1224,13 +1226,16 @@ could not see from outside the repo. The research and the parked items are in
   of the page. Moving the form up is what makes every one of those links work,
   with no edits to those files. It now starts at 781px. The gate fails the
   deploy if the gallery goes back above it.
-- **The 48-hour rule is enforced in ONE place: which days the calendar offers.**
+- **The 2-day rule is enforced in ONE place: which days the calendar offers.**
+  It is **calendar days from Sydney's today** (`LEAD_DAYS = 2`, built from
+  `Intl` wall-clock parts), so any time on that day is bookable and a phone in
+  another zone sees the same first day. History, from the 48-hour version:
   `minDate` used to truncate `now + 48h` to midnight, so it enabled a day whose
   early times were still inside the lead time — at 5:04pm Monday it offered
   Wed 16 Sep, and the default 10:00 AM was 7.1 hours short, so pressing Send on
   the first available date was rejected. The person it refused was always the
   one in a hurry. The earliest day is now the first whose FIRST offered pickup
-  time at the chosen shop (`firstPickupMin`) is a clear 48 hours out, and the instant
+  time was a clear 48 hours out, and the instant
   re-check at submit is **deleted**, not adjusted — a rule enforced twice is a
   rule that can disagree with itself. Proven across all 24 order hours.
 - **Pickup date and time are one control, after the shop.** Hour + minute +

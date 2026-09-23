@@ -656,16 +656,17 @@ const FACTS = {
   if (src.indexOf('name="pickup-location"') > src.indexOf('id="when-card"')) {
     fail('order.html: pickup location is below the calendar — the times cannot know the shop');
   }
-  // The whole-day lead rule. Without the firstPickupMin roll-forward the
-  // calendar offers a day whose early times are inside the 48 hours, and the
-  // form rejects the first date it just offered.
-  if (!/firstPickupMin/.test(src)) {
-    fail('order.html: the whole-day lead rule is gone — the calendar can offer a date the form then refuses');
+  // The lead rule is CALENDAR DAYS counted from Sydney's today (order today,
+  // collect the day after tomorrow) — not an hours offset, which lands on the
+  // wrong day across DST and in a phone set to another zone.
+  if (!/var LEAD_DAYS = 2;/.test(src) || !/timeZone: 'Australia\/Sydney'/.test(src)) {
+    fail('order.html: the 2-day Sydney calendar rule is gone — the calendar can offer the wrong first day');
   }
+  if (/\* 60 \* 60 \* 1000/.test(src)) fail('order.html: an hours-based lead time is back');
   if (/Most orders need 48 hours notice/.test(src)) {
     fail('order.html: the instant 48h re-check is back, and it contradicts the calendar');
   }
-  notes.push('order form: above the gallery, shop before one date+time control, one place enforcing the 48-hour rule');
+  notes.push('order form: above the gallery, shop before one date+time control, one place enforcing the 2-day rule');
 }
 
 // ---------- Navigation ----------

@@ -174,7 +174,7 @@ export function clearCart() {
 /**
  * A shop cake is **next day**, not a number of hours. Must agree with
  * `netlify/lib/shared.mjs` — that is the copy the money is checked against.
- * Custom cakes are a different product and keep their own 48 hours' notice.
+ * Custom cakes are a different product and keep their own 2 days' notice.
  */
 export const LEAD_DAYS = 1;
 /** Sydney hour at or after which an order rolls to the day after. 24 = none. */
