@@ -589,8 +589,9 @@ main site.
   It is how the shop says a cake is ready and the only way to reach somebody
   about their own order, so a web order without one is one nobody can chase.
   Since 2026-09-24 checkout is **Stripe's hosted page, straight from the cart**
-  (Vaidik's call — our own `/shop/checkout` details page is deleted and 301s
-  to the cart). Stripe collects the mobile (`phone_number_collection`, which
+  (Vaidik's call — our own `/shop/checkout` details page is deleted; it was
+  never published, so no redirect — adding one in `netlify.toml` coincided
+  with two deploys failing at upload with an HTTP 500). Stripe collects the mobile (`phone_number_collection`, which
   makes it required), the email, and a required **"Name for the order"**
   custom field — the docket name, not the cardholder's. The webhook reads them
   off the session and rewrites `+61` as `0`. What was lost: nothing can insist
