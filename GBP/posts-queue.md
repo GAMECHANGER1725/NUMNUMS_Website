@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-24
+
+```yaml
+id: post-rs-2026-09-24
+status: published
+published_at: 2026-09-24
+location: riverstone
+post_type: "Call to action"
+title: "One less thing to check: eggless cakes for Box Hill and Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1656.jpg"
+keywords_baited:
+  - egg-allergy-safe eggless custom cake
+  - Box Hill and Riverstone
+  - a guest with an egg allergy at a birthday party
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-09-24
 
 ```yaml
