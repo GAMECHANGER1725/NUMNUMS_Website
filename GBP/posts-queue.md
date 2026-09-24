@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-24
+
+```yaml
+id: post-hp-2026-09-24
+status: published
+published_at: 2026-09-24
+location: harris-park
+post_type: "Call to action"
+title: "Custom eggless housewarming cakes for Parramatta and Merrylands families"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1574.jpg"
+keywords_baited:
+  - custom eggless housewarming cake
+  - Parramatta and Merrylands
+  - elderly relatives who won't eat anything with egg in it
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-09-19
 
 ```yaml
