@@ -358,9 +358,9 @@
     /* form side */
     '.nnp-left{display:flex;flex-direction:column;justify-content:center;padding:36px 28px}',
     '@media(min-width:768px){.nnp-left{padding:52px 44px}}',
-    '.nnp-h{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;text-align:center;text-wrap:balance;margin:0}',
+    '.nnp-h{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;text-align:center;text-wrap:balance;margin:0;padding:0 24px}',
     '@media(min-width:768px){.nnp-h{font-size:2.2rem}}',
-    '.nnp-fn{vertical-align:super;font-size:.55em;font-weight:600;margin-left:1px}',
+    '.nnp-fn{vertical-align:super;line-height:0;font-size:.55em;font-weight:600;margin-left:1px}',
     '.nnp-sub{font-size:.92rem;font-weight:300;line-height:1.6;color:#5C3A22;text-align:center;margin:14px 0 0}',
     '.nnp-field{margin:22px 0 0}',
     '.nnp-input{width:100%;border:1px solid #D9C7BA;border-radius:.5rem;background:#fff;padding:13px 16px;font:inherit;font-size:.95rem;color:#2C1A0E;transition:border-color .15s ease,box-shadow .15s ease}',
@@ -372,6 +372,7 @@
     '.nnp-btn:active:not(:disabled){transform:scale(.98)}',
     '.nnp-btn:disabled{background:#EADFD6;color:#A08E80;cursor:not-allowed;box-shadow:none;transform:none}',
     '.nnp-note{margin:22px 0 0;font-size:.72rem;font-weight:300;line-height:1.6;color:#7A5A44;text-align:center}',
+    '.nnp-note+.nnp-note{margin-top:8px}',
     '.nnp-note a{color:#7A5A44;text-decoration:underline}',
     '.nnp-note a:hover{color:#C85478}',
     '.nnp-err{margin:14px 0 0;font-size:.82rem;font-weight:500;color:#B3261E;text-align:center}',
@@ -480,7 +481,7 @@
               '<div class="nnp-coupon">' +
                 '<div class="nnp-c-row">' +
                   '<div class="nnp-c-amt">' +
-                    '<span class="nnp-c-big">10%<sup class="nnp-fn">1</sup></span>' +
+                    '<span class="nnp-c-big">10%</span>' +
                     '<span class="nnp-c-off">off</span>' +
                   '</div>' +
                   '<div class="nnp-c-perf"></div>' +
