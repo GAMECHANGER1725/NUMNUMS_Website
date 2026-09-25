@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-09-25
+
+```yaml
+id: post-hp-2026-09-25
+status: published
+published_at: 2026-09-25
+location: harris-park
+post_type: "Call to action"
+title: "Multi-tier custom eggless cakes for Rosehill and Camellia weddings"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1415.jpg"
+keywords_baited:
+  - multi-tier custom eggless wedding cake
+  - Rosehill and Camellia Harris Park
+  - can an eggless cake hold up as a multi-tier wedding cake
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-09-24
 
 ```yaml
