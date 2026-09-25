@@ -349,9 +349,9 @@
   /* ---------------------------------------------------------------- styles */
 
   var CSS = [
-    '.nnp-backdrop{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(24,12,5,.42);-webkit-backdrop-filter:blur(10px) saturate(1.15);backdrop-filter:blur(10px) saturate(1.15);opacity:0;transition:opacity .31s ease}',
+    '.nnp-backdrop{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(24,12,5,.62);opacity:0;transition:opacity .25s ease}',
     '.nnp-backdrop.nnp-in{opacity:1}',
-    '.nnp-card{position:relative;width:100%;max-width:860px;max-height:92dvh;overflow-y:auto;border-radius:1.25rem;background:rgba(255,248,242,.5);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border:0;box-shadow:0 24px 60px -12px rgba(44,26,14,.45);transform:translateY(10px) scale(.985);transition:transform .35s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
+    '.nnp-card{position:relative;width:100%;max-width:860px;max-height:92dvh;overflow-y:auto;border-radius:1.25rem;background:#fff;box-shadow:0 24px 60px -12px rgba(44,26,14,.45);transform:translateY(10px) scale(.985);transition:transform .28s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
     '.nnp-backdrop.nnp-in .nnp-card{transform:none}',
     '.nnp-grid{display:grid}',
     '@media(min-width:768px){.nnp-grid{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);max-height:92dvh}.nnp-card{overflow:hidden}.nnp-left{overflow-y:auto;min-height:0}}',
@@ -370,12 +370,12 @@
     '.nnp-btn:hover:not(:disabled){background:#A03D5E;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,84,120,.35)}',
     '.nnp-btn:active:not(:disabled){transform:scale(.98)}',
     '.nnp-btn:disabled{background:#EADFD6;color:#A08E80;cursor:not-allowed;box-shadow:none;transform:none}',
-    '.nnp-note{margin:22px 0 0;font-size:.72rem;font-weight:400;line-height:1.6;color:#4A2518;text-align:center}',
-    '.nnp-note a{color:#4A2518;text-decoration:underline}',
+    '.nnp-note{margin:22px 0 0;font-size:.72rem;font-weight:300;line-height:1.6;color:#7A5A44;text-align:center}',
+    '.nnp-note a{color:#7A5A44;text-decoration:underline}',
     '.nnp-note a:hover{color:#C85478}',
     '.nnp-err{margin:14px 0 0;font-size:.82rem;font-weight:500;color:#B3261E;text-align:center}',
-    '.nnp-alt{margin:18px 0 0;text-align:center;font-size:.8rem;color:#4A2518}',
-    '.nnp-alt a{display:inline-flex;align-items:center;min-height:32px;margin:-8px;padding:8px;color:#96355A;font-weight:600;text-decoration:none}',
+    '.nnp-alt{margin:18px 0 0;text-align:center;font-size:.8rem;color:#7A5A44}',
+    '.nnp-alt a{display:inline-flex;align-items:center;min-height:32px;margin:-8px;padding:8px;color:#C85478;font-weight:600;text-decoration:none}',
     '.nnp-alt a:hover{text-decoration:underline}',
     /* Offer side — the sign-up page's own coupon, not a second design.
        `.panel-dark` and `.coupon` are ported verbatim from
@@ -572,7 +572,7 @@
     document.removeEventListener('keydown', onKey);
     var node = root;
     root = null;
-    setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 360);
+    setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 260);
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
