@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, Lock, Trash2 } from "lucide-react";
+import { ArrowRight, Loader2, Lock, Ticket, Trash2 } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { QtyStepper } from "@/components/ui/qty-stepper";
 import { CouponField } from "@/components/ui/coupon-field";
-import { NnSelect } from "@/components/ui/select";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
   money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
@@ -51,6 +50,22 @@ export default function CartPage() {
   const [guestEmail, setGuestEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Collapsed by default. Baymard: a visible coupon box sends 30-60% of
+  // shoppers off hunting for a code, and some never come back.
+  const [showCoupon, setShowCoupon] = useState(false);
+  // The summary's pay button; when it is off screen on a phone, the sticky
+  // bar takes over. It sat 1,718px down a 390px-wide cart.
+  const payRef = useRef<HTMLButtonElement>(null);
+  const [payVisible, setPayVisible] = useState(true);
+  const [nudged, setNudged] = useState<string | null>(null);
+
+  useEffect(() => {
+    const el = payRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setPayVisible(e.isIntersecting), { threshold: 0.6 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loaded]);
 
   useEffect(() => {
     // A coupon is bound to the email it was issued to. Signed in, we know it;
@@ -119,6 +134,21 @@ export default function CartPage() {
     }
   }
 
+  /**
+   * The pay button is never greyed out for a missing answer. A disabled
+   * button explains nothing; this one takes the customer to the first thing
+   * still to choose, says what it is, and gives it a small shake.
+   */
+  function go() {
+    if (ready) return pay();
+    const target = !cart.store ? "c-store" : "c-when";
+    const el = document.getElementById(target);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setNudged(null);
+    requestAnimationFrame(() => setNudged(target));
+    setTimeout(() => setNudged((t) => (t === target ? null : t)), 700);
+  }
+
   const allPicked = picked.length > 0 && picked.length === cart.lines.length;
 
   const setQty = (i: number, qty: number) =>
@@ -155,7 +185,10 @@ export default function CartPage() {
   return (
     <>
       <ShopHeader />
-      <main className="mx-auto w-full max-w-[64rem] px-4 pb-20 pt-8 sm:px-6">
+      <main className="mx-auto w-full max-w-[64rem] px-4 pb-32 pt-8 sm:px-6 lg:pb-20">
+        {/* Open the connection to Stripe while they are still choosing, so the
+            redirect after "Pay" starts warm. React hoists this into <head>. */}
+        <link rel="preconnect" href="https://checkout.stripe.com" />
         <h1 className="font-display text-center text-[2.4rem] font-light leading-tight tracking-tight">
           Your order
         </h1>
@@ -164,7 +197,10 @@ export default function CartPage() {
         <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_20rem]">
           {/* ── the cakes ─────────────────────────────────────────────── */}
           <section aria-labelledby="items-h">
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-2.5">
+            <h2 id="items-h" className="sr-only">Your cakes</h2>
+            {/* Bulk select earns its place with two or more cakes, not one. */}
+            {cart.lines.length > 1 && (
+            <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-2.5">
               <label className="flex cursor-pointer items-center gap-2.5 text-[0.86rem] font-medium">
                 <input
                   type="checkbox"
@@ -172,7 +208,7 @@ export default function CartPage() {
                   checked={allPicked}
                   onChange={(e) => setPicked(e.target.checked ? cart.lines.map((_, i) => i) : [])}
                 />
-                <span id="items-h">
+                <span>
                   Select all
                   <span className="ml-2 font-normal text-muted-foreground">
                     {count} {count === 1 ? "cake" : "cakes"}
@@ -189,8 +225,9 @@ export default function CartPage() {
                 Remove{picked.length ? ` (${picked.length})` : ""}
               </button>
             </div>
+            )}
 
-            <ul className="mt-3 flex flex-col gap-2">
+            <ul className="flex flex-col gap-2">
               {cart.lines.map((l, i) => {
                 // What is left of the ten-cake order, plus what this line
                 // already holds — the ceiling on this stepper is the order's,
@@ -199,7 +236,7 @@ export default function CartPage() {
                 return (
                   <li key={`${l.size}|${l.flavour}|${l.wording}`} className="rounded-xl border border-border bg-card p-3">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
-                      <input
+                      {cart.lines.length > 1 && <input
                         type="checkbox"
                         className="h-4 w-4 shrink-0 accent-[#C85478]"
                         checked={picked.includes(i)}
@@ -207,7 +244,7 @@ export default function CartPage() {
                         onChange={(e) =>
                           setPicked((p) => (e.target.checked ? [...p, i] : p.filter((j) => j !== i)))
                         }
-                      />
+                      />}
                       <Link href={`/cakes/${urlSlug(l.flavour)}`} className="cake-photo block h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-lg">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -274,28 +311,40 @@ export default function CartPage() {
             <section className="mt-8" aria-labelledby="collect-h">
               <h2 id="collect-h" className="section-label">When and where</h2>
               <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                <div className="sm:col-span-3">
-                  <label htmlFor="c-store" className="field-label">Shop</label>
-                  <NnSelect
-                    id="c-store"
-                    value={cart.store}
-                    onChange={(v) => update(pickStore(cart, v))}
-                    placeholder="Choose a shop…"
-                    ariaLabel="Shop to collect from"
-                    // The address only. The hours were appended here too and
-                    // the combined string pushed the select's caret off the
-                    // right edge of a 320px screen — they already sit beside
-                    // the Collection label, which is where they are needed.
-                    options={STORES.map((st) => ({
-                      value: st.code, label: st.label, note: st.address,
-                    }))}
-                  />
-                </div>
+                {/* Two shops, so both are on the page. A dropdown hid the only
+                    two answers there are behind a tap. Real radios, so arrow
+                    keys work; the circle is drawn, not the OS widget. */}
+                <fieldset id="c-store"
+                  className={`sm:col-span-3 ${nudged === "c-store" ? "nn-nudge" : ""}`}>
+                  <legend className="field-label">Shop</legend>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {STORES.map((st) => {
+                      const on = cart.store === st.code;
+                      return (
+                        <label key={st.code}
+                          className={`relative flex cursor-pointer items-start gap-3 rounded-xl border bg-card p-3.5 transition-[border-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-[0.99] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#C85478] ${
+                            on ? "border-[#C85478] shadow-[0_0_0_1px_#C85478,0_8px_20px_-10px_rgba(200,84,120,0.45)]"
+                              : "border-border hover:border-[#C85478]/50"}`}>
+                          <input type="radio" name="store" value={st.code} checked={on}
+                            onChange={() => update(pickStore(cart, st.code))} className="sr-only" />
+                          <span aria-hidden className={`mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-colors ${on ? "border-[#C85478]" : "border-[#CDBFB3]"}`}>
+                            <span className={`h-2 w-2 rounded-full bg-[#C85478] transition-transform duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${on ? "scale-100" : "scale-0"}`} />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block text-[0.92rem] font-medium">{st.label}</span>
+                            <span className="block text-[0.78rem] leading-snug text-muted-foreground">{st.address}</span>
+                            <span className="block text-[0.76rem] text-muted-foreground">Collection {storeHours(st.code)}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
                 {/* One control, because it is one decision: when am I picking
                     this up. The calendar is open on the page and the times pop
                     out of the day you tap — two separate fields made the
                     customer answer half of it, look away, and answer the rest. */}
-                <div className="sm:col-span-3">
+                <div className={`sm:col-span-3 ${nudged === "c-when" ? "nn-nudge" : ""}`}>
                   <p className="field-label" id="c-when-label">
                     Collection
                     {cart.store && (
@@ -336,6 +385,16 @@ export default function CartPage() {
 
           {/* ── the money ─────────────────────────────────────────────── */}
           <aside className="flex flex-col gap-4 lg:sticky lg:top-[84px]">
+            {/* Folded until asked for: an open code box sends people off to
+                find a code. An applied code keeps it open, so it can be seen
+                and removed. */}
+            {!showCoupon && !cart.coupon ? (
+              <button type="button" onClick={() => setShowCoupon(true)} aria-expanded={false}
+                className="inline-flex min-h-[40px] items-center gap-2 self-start rounded-full px-1 text-[0.86rem] font-medium text-[#C85478] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] active:scale-[0.98]">
+                <Ticket className="h-4 w-4" aria-hidden />Have a discount code?
+              </button>
+            ) : (
+            <div className="animate-in fade-in-0 slide-in-from-top-1 duration-300 motion-reduce:animate-none">
             <CouponField
               applied={cart.coupon}
               email={EMAIL_RE.test(couponEmail) ? couponEmail : ""}
@@ -360,6 +419,8 @@ export default function CartPage() {
                 </div>
               )}
             </CouponField>
+            </div>
+            )}
 
             <section className="rounded-xl border border-border bg-card p-4" aria-labelledby="sum-h">
               <h2 id="sum-h" className="text-[0.95rem] font-semibold">Order summary</h2>
@@ -414,7 +475,7 @@ export default function CartPage() {
               </p>
 
               {error && <p role="alert" className="mt-3 text-[0.82rem] font-medium text-destructive">{error}</p>}
-              <button type="button" onClick={pay} disabled={!ready || busy} className="btn-cta mt-4 w-full py-3">
+              <button ref={payRef} type="button" onClick={go} disabled={busy} className="btn-cta mt-4 w-full py-3">
                 {busy
                   ? <><Loader2 className="h-4 w-4 animate-spin" />Opening secure checkout</>
                   : <><Lock className="h-4 w-4" />Pay deposit {money(deposit)} <ArrowRight className="h-4 w-4" /></>}
@@ -431,7 +492,7 @@ export default function CartPage() {
                   stale overnight — in which case nothing on the page looked
                   wrong and the button simply would not work. */}
               {!ready && (
-                <p className="mt-2 text-center text-[0.76rem] text-muted-foreground">
+                <p role="status" className="mt-2 text-center text-[0.8rem] font-medium text-[#96355A]">
                   {dateStale
                     ? "That collection date has passed — pick a new one."
                     : !cart.store ? "Pick a shop to collect from."
@@ -474,6 +535,28 @@ export default function CartPage() {
           </aside>
         </div>
       </main>
+
+      {/* Phones: the pay button sat two screens below the cakes. This bar
+          carries the same button whenever the real one is off screen, and
+          slides away when it scrolls into view — never two buttons at once. */}
+      {loaded && count > 0 && (
+        <div aria-hidden={payVisible}
+          className={`fixed inset-x-0 bottom-0 z-40 border-t border-[#EBD3DA] bg-[#FFF8F2]/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.34,1.2,0.64,1)] lg:hidden ${
+            payVisible ? "pointer-events-none translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
+          <div className="mx-auto flex max-w-[40rem] items-center gap-3">
+            <div className="min-w-0 leading-tight">
+              <p className="text-[0.72rem] text-muted-foreground">Pay today</p>
+              <p className="font-display text-[1.35rem] tabular-nums text-[#C85478]">{money(deposit)}</p>
+            </div>
+            <button type="button" onClick={go} disabled={busy} tabIndex={payVisible ? -1 : 0}
+              className="btn-cta ml-auto flex-1 py-3">
+              {busy
+                ? <><Loader2 className="h-4 w-4 animate-spin" />Opening checkout</>
+                : <><Lock className="h-4 w-4" />{ready ? "Pay deposit" : "Continue"} <ArrowRight className="h-4 w-4" /></>}
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

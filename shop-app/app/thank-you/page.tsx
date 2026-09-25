@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, MapPin, Phone, Mail, FileText } from "lucide-react";
+import { CalendarPlus, Loader2, MapPin, Phone, Mail, FileText } from "lucide-react";
 import { Confetti, fireSideCannons, type ConfettiRef } from "@/components/ui/confetti";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { ShopHeader } from "@/components/ui/shop-header";
@@ -37,6 +37,32 @@ function cardLabel(c: NonNullable<Status["card"]>) {
 /** The receipt function, straight — not through /api, so it needs no redirect rule. */
 const receiptHref = (s: string, no: string, download = false) =>
   `/.netlify/functions/receipt?s=${encodeURIComponent(s)}&o=${encodeURIComponent(no)}${download ? "&download=1" : ""}`;
+
+/** An .ics built from the order rows — iPhone opens Calendar for it. */
+const calendarHref = (s: string) => `/.netlify/functions/calendar?s=${encodeURIComponent(s)}`;
+
+/** Google's own add-event link. Built from the confirmation we already hold, so it works before the order number lands. */
+function googleCalendarHref(dueAt: string, where: string, what: string) {
+  const at = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const start = new Date(dueAt);
+  const end = new Date(start.getTime() + 30 * 60_000);
+  const q = new URLSearchParams({
+    action: "TEMPLATE",
+    text: "Collect your cake — Num Num's Bakery",
+    dates: `${at(start)}/${at(end)}`,
+    location: where,
+    details: what,
+  });
+  return `https://calendar.google.com/calendar/render?${q}`;
+}
+
+/**
+ * Sections below the ticket arrive one after another, not all at once. The
+ * delay is inline because Tailwind only generates classes it can read as
+ * literal text; the global reduced-motion rule zeroes it.
+ */
+const REVEAL = "animate-in fade-in-0 slide-in-from-bottom-2 duration-500 fill-mode-both motion-reduce:animate-none";
+const after = (ms: number) => ({ animationDelay: `${ms}ms` });
 
 const POLL_MS = 1500;
 const GIVE_UP_AFTER = 12_000;
@@ -214,9 +240,34 @@ export default function ThankYouPage() {
               )}
             </AnimatedTicket>
 
-            <p className="mx-auto mt-6 max-w-md text-center text-[0.9rem] leading-relaxed text-[#5C3A22]">
-              We&rsquo;ll bake it fresh and text you the moment it&rsquo;s ready.
-            </p>
+            <div className={`mx-auto mt-6 max-w-md text-center ${REVEAL}`} style={after(250)}>
+              <p className="text-[0.9rem] leading-relaxed text-[#5C3A22]">
+                We&rsquo;ll bake it fresh and text you the moment it&rsquo;s ready.
+              </p>
+              {/* The day is the thing most likely to be forgotten, so the page
+                  offers to put it where they already look. */}
+              {status.due_at && (
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                  {orders.length > 0 && session && (
+                    <a href={calendarHref(session)}
+                      className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#EBD3DA] bg-white px-4 text-[0.84rem] font-medium text-[#2C1A0E] transition-[transform,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[#FDF3F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] active:scale-[0.97]">
+                      <CalendarPlus className="h-4 w-4 text-[#C85478]" aria-hidden />Add to calendar
+                    </a>
+                  )}
+                  <a target="_blank" rel="noopener"
+                    href={googleCalendarHref(
+                      status.due_at,
+                      store ? `${store.address}, ${store.locality}` : "",
+                      [orders.length ? `Order ${orders.join(", ")}` : "",
+                        `Balance to pay at collection: ${money(balance)}`,
+                        `Questions? ${SHOP_PHONE.display}`].filter(Boolean).join("\n"),
+                    )}
+                    className="inline-flex min-h-[40px] items-center rounded-full px-3 text-[0.84rem] font-medium text-[#C85478] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478]">
+                    Google Calendar
+                  </a>
+                </div>
+              )}
+            </div>
             {status.pending && (
               <p role="status" className="mx-auto mt-2 flex max-w-md items-center justify-center gap-2 text-center text-[0.82rem] text-[#5C3A22]/80">
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C85478] motion-reduce:animate-none" aria-hidden />
@@ -224,7 +275,7 @@ export default function ThankYouPage() {
               </p>
             )}
 
-            <section aria-labelledby="cakes-h" className="mt-10">
+            <section aria-labelledby="cakes-h" className={`mt-10 ${REVEAL}`} style={after(400)}>
               <h2 id="cakes-h" className="section-label">{status.cakes?.length === 1 ? "Your cake" : "Your cakes"}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {status.cakes?.map((c, i) => (
@@ -252,7 +303,7 @@ export default function ThankYouPage() {
               </dl>
             </section>
 
-            <section aria-labelledby="bring-h" className="mt-10">
+            <section aria-labelledby="bring-h" className={`mt-10 ${REVEAL}`} style={after(550)}>
               <h2 id="bring-h" className="text-[0.95rem] font-medium text-[#2C1A0E]">When you come in</h2>
               <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-[0.9rem] leading-relaxed text-[#5C3A22] marker:text-[#C85478]">
                 <li>Give your name or order number at the counter.</li>
@@ -260,9 +311,9 @@ export default function ThankYouPage() {
               </ul>
             </section>
 
-            <Contact />
+            <div className={REVEAL} style={after(700)}><Contact /></div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className={`mt-8 flex flex-wrap items-center gap-4 ${REVEAL}`} style={after(800)}>
               <Link href="/" className="btn-cta py-3">Order another cake</Link>
               {/* The main site's home, outside this app's /shop basePath — a
                   <Link> would resolve to /shop. */}

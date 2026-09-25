@@ -1038,6 +1038,26 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   Back and a reload, and there is never a second copy to keep in step; the
   checkout page reads it from there. Display only — `create-checkout`
   re-validates the code and re-prices every line.
+- **The cart's conversion rules** (2026-09-25, from Baymard's checkout research):
+  - **The coupon box is folded** behind "Have a discount code?" — an open code
+    field made 30-60% of Baymard's test users stop and hunt for one, and some
+    left. An applied code keeps it open so it can be seen and removed.
+  - **The shop is two radio cards, not a dropdown** — a menu hid the only two
+    answers there are. Real `<input type="radio">`, `sr-only`, drawn circle.
+  - **The pay button is never greyed out for a missing answer.** `go()` scrolls
+    to the first thing still to choose and shakes it (`.nn-nudge`, transform
+    only); a disabled button explained nothing. It is disabled only while busy.
+  - **Phones get a sticky pay bar** whenever the summary's button is off screen
+    (IntersectionObserver on `payRef`) — that button sat 1,718px down a 390px
+    cart. It slides away when the real one is in view, so there are never two.
+  - The select-all/remove bar appears only with two or more cakes.
+  - A `preconnect` to `checkout.stripe.com` warms the redirect.
+- **The confirmation page offers the pickup to the calendar**:
+  `netlify/functions/calendar.mjs` serves an `.ics` built from the order rows
+  (never from query text, or the domain would serve events strangers wrote),
+  folded at 75 octets, with a 2-hour alarm — checked with Python's `icalendar`.
+  Google Calendar gets its own template link, which works before the order
+  number lands.
 - **The cart says "Collection — Free", never a delivery fee.** There is no
   delivery. Both reference carts we were shown have a delivery line; copying it
   would be the kind of small untruth that costs a five-star review. For the same
