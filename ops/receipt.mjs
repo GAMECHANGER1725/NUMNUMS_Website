@@ -342,7 +342,10 @@ export function receiptSource(o, ctx) {
     const floor = M + 74;                       // the footer's air
 
     p.y -= 26;
-    p.text(photos.length === 1 ? 'DESIGN REFERENCE' : `DESIGN REFERENCE · ${photos.length} PHOTOS`,
+    // A web order's photo is the shop's own product shot, not something the
+    // customer sent, so the public receipt names it differently.
+    const label = ctx.photoLabel ?? 'DESIGN REFERENCE';
+    p.text(photos.length === 1 ? label : `${label} · ${photos.length} PHOTOS`,
       { size: 8, font: 'F2', colour: TAUPE });
     p.down(7).rule();
     p.down(10);

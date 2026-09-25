@@ -9,8 +9,26 @@
  * Returns only what the page prints, never the whole row: a session id is
  * guessable enough that this must not become a way to read the order book.
  */
+import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { json } from '../lib/shared.mjs';
+
+/**
+ * "Visa •••• 4242", for the ticket. Asked of Stripe only once the order exists,
+ * never on the polls before it, and allowed to fail: a confirmation page with
+ * no card line is fine, one that will not load because Stripe was slow is not.
+ */
+async function paidWith(s) {
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const session = await stripe.checkout.sessions.retrieve(s, { expand: ['payment_intent.latest_charge'] });
+    const d = session.payment_intent?.latest_charge?.payment_method_details;
+    if (d?.card) return { brand: d.card.brand, last4: d.card.last4, wallet: d.card.wallet?.type ?? null };
+    return d?.type ? { brand: d.type, last4: null, wallet: null } : null;
+  } catch {
+    return null;
+  }
+}
 
 export default async (req) => {
   const s = new URL(req.url).searchParams.get('s') ?? '';
@@ -43,5 +61,6 @@ export default async (req) => {
     cakes: data.map((r) => ({ size: r.size, flavour: r.flavour, wording: r.wording || null })),
     total: data.reduce((a, r) => a + cents(r.price) - cents(r.discount), 0) / 100,
     deposit: data.reduce((a, r) => a + cents(r.deposit), 0) / 100,
+    card: await paidWith(s),
   });
 };

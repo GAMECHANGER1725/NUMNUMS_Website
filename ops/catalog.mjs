@@ -209,3 +209,36 @@ export const listPriceCents = (code, flavour) => {
   if (base == null) return null;
   return Math.round(base * 100) + (SURCHARGE[flavour]?.[code] ?? 0);
 };
+
+// Only the address differs between the shops. Both trade as the one company,
+// so the legal identity on a tax invoice belongs to the BUSINESS below, not to
+// the store — an earlier version put a second entity on Harris Park, guessed
+// from a name match on the ABN register, and it was wrong. Never infer these.
+export const STORES = [
+  { code: 'harris-park', label: 'Harris Park', short: 'HP',
+    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150' },
+  { code: 'riverstone',  label: 'Riverstone',  short: 'RV',
+    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765' },
+];
+
+/**
+ * The seller, as it must appear on a tax invoice.
+ *
+ * `entity` and `abn` are the two fields a customer's accountant will check, and
+ * a wrong ABN makes the document useless for their GST claim. They are the same
+ * for both shops. Confirm against the register before changing either:
+ *   https://abr.business.gov.au/ABN/View?abn=39634402412
+ *
+ * `gstRegistered: false` would drop the heading to "Invoice" and remove every
+ * GST line — the document must not claim to be a tax invoice if it is not one.
+ */
+export const BUSINESS = {
+  name: "Num Num's Bakery",
+  tagline: '100% eggless cakes & Indian sweets',
+  entity: 'GNT Ventures Pty Ltd',
+  abn: '39 634 402 412',
+  gstRegistered: true,                     // registered for GST since 26 Jan 2020
+  phone: '+61 425 697 725',
+  email: 'info.numnumsbakery@gmail.com',
+  site: 'numnumsbakery.com.au',
+};

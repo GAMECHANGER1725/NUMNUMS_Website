@@ -44,6 +44,7 @@ const CASES = [
   ['check-coupon', '../netlify/functions/check-coupon.mjs', 'https://x.test/api/check-coupon'],
   ['create-checkout', '../netlify/functions/create-checkout.mjs', 'https://x.test/api/create-checkout'],
   ['order-status', '../netlify/functions/order-status.mjs', 'https://x.test/api/order-status?session_id=nope'],
+  ['receipt', '../netlify/functions/receipt.mjs', 'https://x.test/.netlify/functions/receipt?s=nope'],
   // Reached by a person clicking an email footer link, so a 502 here is a
   // customer who cannot get off the list — a Spam Act problem, not a glitch.
   ['unsubscribe', '../netlify/functions/unsubscribe.mjs', 'https://x.test/unsubscribe?t=bogus'],

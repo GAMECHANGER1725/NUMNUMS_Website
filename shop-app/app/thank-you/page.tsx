@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, MapPin, Phone, Mail } from "lucide-react";
+import { Loader2, MapPin, Phone, Mail, FileText } from "lucide-react";
 import { Confetti, fireSideCannons, type ConfettiRef } from "@/components/ui/confetti";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { ShopHeader } from "@/components/ui/shop-header";
+import { AnimatedTicket } from "@/components/ui/ticket-confirmation-card";
+import DownloadButton from "@/components/ui/button-download";
 import { clearCart, money, readCart, STORES, SHOP_PHONE, SHOP_EMAIL } from "@/lib/cart";
-import { COLLECTION, listPriceCents, slotLabel } from "@/lib/catalog";
+import { COLLECTION, flavourSlug, listPriceCents, slotLabel } from "@/lib/catalog";
 import { purchase } from "@/lib/analytics";
 
 type Cake = { size: string; flavour: string; wording: string | null };
@@ -20,7 +22,19 @@ type Status = {
   cakes?: Cake[];
   total?: number;
   deposit?: number;
+  card?: { brand: string; last4: string | null; wallet: string | null } | null;
 };
+
+/** "Visa •••• 4242 via Apple Pay" — what Stripe said, in the words on the card. */
+function cardLabel(c: NonNullable<Status["card"]>) {
+  const brand = c.brand === "amex" ? "Amex" : c.brand.charAt(0).toUpperCase() + c.brand.slice(1);
+  const wallet = c.wallet === "apple_pay" ? " via Apple Pay" : c.wallet === "google_pay" ? " via Google Pay" : "";
+  return c.last4 ? `${brand} •••• ${c.last4}${wallet}` : brand;
+}
+
+/** The receipt function, straight — not through /api, so it needs no redirect rule. */
+const receiptHref = (s: string, no: string, download = false) =>
+  `/.netlify/functions/receipt?s=${encodeURIComponent(s)}&o=${encodeURIComponent(no)}${download ? "&download=1" : ""}`;
 
 const POLL_MS = 1500;
 const GIVE_UP_AFTER = 12_000;
@@ -62,6 +76,7 @@ function Contact() {
 export default function ThankYouPage() {
   const [status, setStatus] = useState<Status | null>(null);
   const [slow, setSlow] = useState(false);
+  const [session, setSession] = useState("");
   const confettiRef = useRef<ConfettiRef>(null);
 
   useEffect(() => {
@@ -78,6 +93,7 @@ export default function ThankYouPage() {
         const res = await fetch(`/api/order-status?s=${encodeURIComponent(s!)}`);
         const body: Status = await res.json();
         if (body.paid) {
+          setSession(s!);
           setStatus(body);
           // Read the cart BEFORE clearing it: it is the last place the list
           // prices live, and analytics wants them per line.
@@ -133,109 +149,97 @@ export default function ThankYouPage() {
         {status?.paid ? (
           <>
             <CheckoutSteps current={3} />
-            <p className="section-label mt-8">Order confirmed</p>
-            <h1 className="font-display mt-2 text-[2.4rem] leading-[1.1] text-[#2C1A0E] sm:text-5xl">
-              {status.name ? `Thanks, ${status.name}.` : "Thank you."}{" "}
-              <span className="text-[#C85478]">Your cake is booked.</span>
-            </h1>
-            <p className="mt-3 text-[0.95rem] leading-relaxed text-[#5C3A22]">
+
+            <AnimatedTicket
+              className="mx-auto mt-8 max-w-md"
+              orderNos={orders}
+              amountCents={deposit}
+              title={status.name ? `Thanks, ${status.name}!` : "Thank you!"}
+              subtitle="Your cake is booked."
+              card={status.card ? { label: cardLabel(status.card) } : null}
+            >
+              <div>
+                <p className="text-[0.7rem] font-medium uppercase tracking-[0.12em] text-[#C85478]">Collect on</p>
+                {status.due_at && (
+                  <p className="font-medium">
+                    {sydney(status.due_at, { weekday: "long", day: "numeric", month: "long" })}
+                    <span className="text-[#5C3A22]"> · from {sydney(status.due_at, { hour: "numeric", minute: "2-digit" }).toLowerCase()}</span>
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <MapPin className="mt-1 h-4 w-4 shrink-0 text-[#C85478]" aria-hidden />
+                <div className="min-w-0 text-[0.88rem] leading-relaxed">
+                  <p className="font-medium">Num Num&rsquo;s {store?.label ?? status.store}</p>
+                  {store && <p className="text-[#5C3A22]">{store.address}, {store.locality}</p>}
+                  {hours && <p className="text-[0.8rem] text-[#5C3A22]/80">Collection {slotLabel(hours.open)} – {slotLabel(hours.close)}</p>}
+                  {store && (
+                    <a href={store.maps} target="_blank" rel="noopener"
+                      className="inline-flex min-h-[32px] items-center font-medium text-[#C85478] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478]">
+                      Open in Google Maps &rarr;
+                    </a>
+                  )}
+                </div>
+              </div>
+            </AnimatedTicket>
+
+            <p className="mx-auto mt-6 max-w-md text-center text-[0.9rem] leading-relaxed text-[#5C3A22]">
               We&rsquo;ll bake it fresh and text you the moment it&rsquo;s ready.
-              Your payment receipt is on its way to your email.
             </p>
 
-            {/* The collection ticket: what you show at the counter. Where and
-                when sit above the tear, because that is what gets read on the
-                day; what was bought and what is owed sit below it. */}
-            <article aria-label="Collection ticket"
-              className="mt-8 overflow-hidden rounded-3xl bg-white shadow-[0_1px_2px_rgba(74,37,24,0.05),0_12px_40px_-12px_rgba(200,84,120,0.25)]">
-              <div className="px-6 pb-6 pt-6 sm:px-8">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-[#C85478]">Collect on</p>
-                    {status.due_at && (
-                      <>
-                        <p className="font-display mt-1 text-[1.9rem] leading-tight text-[#2C1A0E]">
-                          {sydney(status.due_at, { weekday: "long", day: "numeric", month: "long" })}
-                        </p>
-                        <p className="text-[1.05rem] text-[#5C3A22]">
-                          from {sydney(status.due_at, { hour: "numeric", minute: "2-digit" }).toLowerCase()}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-[#5C3A22]/70">
-                      {orders.length === 1 ? "Order" : "Orders"}
-                    </p>
-                    {orders.map((n) => (
-                      <p key={n} className="font-mono text-[1.05rem] font-medium tabular-nums text-[#2C1A0E]">{n}</p>
-                    ))}
-                  </div>
-                </div>
+            <section aria-labelledby="cakes-h" className="mt-10">
+              <h2 id="cakes-h" className="section-label">{status.cakes?.length === 1 ? "Your cake" : "Your cakes"}</h2>
+              <ul className="mt-4 flex flex-col gap-3">
+                {status.cakes?.map((c, i) => (
+                  <li key={i} className="flex items-center gap-4 rounded-2xl bg-white p-3 shadow-[0_1px_2px_rgba(74,37,24,0.05),0_6px_20px_-10px_rgba(74,37,24,0.12)]">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- static export, no image optimiser */}
+                    <img src={`/shop/cakes/${flavourSlug(c.flavour)}.webp`} alt={`${c.flavour} cake`}
+                      width={80} height={80} loading="lazy"
+                      className="h-20 w-20 shrink-0 rounded-xl bg-[#FFF8F2] object-cover" />
+                    <div className="min-w-0">
+                      <p className="text-[0.98rem] text-[#2C1A0E]">{c.size} {c.flavour}</p>
+                      {c.wording && <p className="text-[0.84rem] text-[#5C3A22]">Writing: &ldquo;{c.wording}&rdquo;</p>}
+                      <p className="text-[0.76rem] text-[#5C3A22]/80">100% eggless</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
 
-                <div className="mt-6 flex gap-3 rounded-2xl bg-[#FFF8F2] p-4">
-                  <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-[#C85478]" aria-hidden />
-                  <div className="min-w-0">
-                    <p className="font-medium text-[#2C1A0E]">Num Num&rsquo;s {store?.label ?? status.store}</p>
-                    {store && (
-                      <p className="text-[0.86rem] leading-relaxed text-[#5C3A22]">
-                        {store.address}, {store.locality}
-                      </p>
-                    )}
-                    {hours && (
-                      <p className="text-[0.8rem] text-[#5C3A22]/80">
-                        Open for collection {slotLabel(hours.open)} – {slotLabel(hours.close)}
-                      </p>
-                    )}
-                    {store && (
-                      <a href={store.maps} target="_blank" rel="noopener"
-                        className="mt-1.5 inline-flex min-h-[32px] items-center text-[0.84rem] font-medium text-[#C85478] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478]">
-                        Open in Google Maps &rarr;
+              <dl className="mt-4 flex flex-col gap-1.5 rounded-2xl bg-white p-4 text-[0.9rem] shadow-[0_1px_2px_rgba(74,37,24,0.05)]">
+                <div className="flex justify-between text-[#5C3A22]"><dt>Order total</dt><dd className="tabular-nums">{money(total)}</dd></div>
+                <div className="flex justify-between text-[#5C3A22]"><dt>Deposit paid</dt><dd className="tabular-nums">&minus;{money(deposit)}</dd></div>
+                <div className="mt-1 flex items-baseline justify-between border-t border-[#F5EBE0] pt-2">
+                  <dt className="font-medium text-[#2C1A0E]">Pay at collection</dt>
+                  <dd className="font-display text-[1.7rem] tabular-nums text-[#C85478]">{money(balance)}</dd>
+                </div>
+              </dl>
+            </section>
+
+            {session && orders.length > 0 && (
+              <section aria-labelledby="receipt-h" className="mt-10">
+                <h2 id="receipt-h" className="section-label">Your receipt</h2>
+                <p className="mt-2 text-[0.86rem] leading-relaxed text-[#5C3A22]">
+                  A tax invoice for {orders.length === 1 ? "your order" : "each cake"}, showing the deposit paid and the balance due.
+                </p>
+                <ul className="mt-4 flex flex-col gap-3">
+                  {orders.map((no) => (
+                    <li key={no} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(74,37,24,0.05)]">
+                      <FileText className="h-5 w-5 shrink-0 text-[#C85478]" aria-hidden />
+                      <p className="mr-auto font-medium text-[#2C1A0E]">Tax invoice {no}</p>
+                      <div className="flex w-full gap-2 sm:w-auto">
+                      <a href={receiptHref(session, no)} target="_blank" rel="noopener"
+                        className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-full sm:flex-none border border-[#EBD3DA] px-5 text-[0.88rem] font-medium text-[#C85478] transition-colors hover:bg-[#FDF3F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] active:scale-[0.97]">
+                        View
                       </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* The tear. Two notches cut from the page colour, joined by a
-                  dashed rule — the one decorative thing on the page. */}
-              <div aria-hidden className="relative h-6">
-                <span className="absolute -left-3 top-0 h-6 w-6 rounded-full bg-background" />
-                <span className="absolute -right-3 top-0 h-6 w-6 rounded-full bg-background" />
-                <span className="absolute left-5 right-5 top-1/2 border-t-2 border-dashed border-[#EBD3DA]" />
-              </div>
-
-              <div className="px-6 pb-6 pt-4 sm:px-8">
-                <h2 className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-[#5C3A22]/70">
-                  {status.cakes?.length === 1 ? "Your cake" : `Your cakes (${status.cakes?.length ?? 0})`}
-                </h2>
-                <ul className="mt-2 flex flex-col divide-y divide-[#F5EBE0]">
-                  {status.cakes?.map((c, i) => (
-                    <li key={i} className="py-2.5">
-                      <p className="text-[0.95rem] text-[#2C1A0E]">{c.size} {c.flavour}</p>
-                      {c.wording && (
-                        <p className="text-[0.84rem] text-[#5C3A22]">Writing: &ldquo;{c.wording}&rdquo;</p>
-                      )}
+                      <DownloadButton href={receiptHref(session, no, true)} className="min-w-0 flex-1 sm:flex-none sm:min-w-40" />
+                      </div>
                     </li>
                   ))}
                 </ul>
+              </section>
+            )}
 
-                <dl className="mt-3 flex flex-col gap-1.5 border-t border-[#F5EBE0] pt-3 text-[0.9rem]">
-                  <div className="flex justify-between text-[#5C3A22]">
-                    <dt>Order total</dt><dd className="tabular-nums">{money(total)}</dd>
-                  </div>
-                  <div className="flex justify-between text-[#5C3A22]">
-                    <dt>Deposit paid</dt><dd className="tabular-nums">&minus;{money(deposit)}</dd>
-                  </div>
-                  <div className="mt-1 flex items-baseline justify-between">
-                    <dt className="font-medium text-[#2C1A0E]">Pay at collection</dt>
-                    <dd className="font-display text-[1.7rem] tabular-nums text-[#C85478]">{money(balance)}</dd>
-                  </div>
-                </dl>
-              </div>
-            </article>
-
-            <section aria-labelledby="bring-h" className="mt-8">
+            <section aria-labelledby="bring-h" className="mt-10">
               <h2 id="bring-h" className="text-[0.95rem] font-medium text-[#2C1A0E]">When you come in</h2>
               <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-[0.9rem] leading-relaxed text-[#5C3A22] marker:text-[#C85478]">
                 <li>Give your name or order number at the counter.</li>

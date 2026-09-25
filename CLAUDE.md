@@ -299,7 +299,8 @@ main site.
   typed — so both dates are printed. Cakes and confectionery are taxable food, prices are
   entered GST-inclusive, so GST is 1/11 of the total worked in whole cents.
 - **One company, two shops.** Both trade as **GNT Ventures Pty Ltd, ABN 39 634 402 412**,
-  registered for GST. The seller's identity and ABN live on `BUSINESS` in `db.mjs`; only the
+  registered for GST. The seller's identity and ABN live on `BUSINESS` in `catalog.mjs`
+  (re-exported by `db.mjs`, so the public receipt function prints the same one); only the
   address comes from the store. An earlier version put a second entity on Harris Park,
   matched off the ABN register by trading name and postcode — it looked convincing and it
   was wrong, and a wrong ABN makes the document useless for the customer's own GST claim.
@@ -895,6 +896,23 @@ in the footer only, and lead the homepage with products before any story.
   confirmation link is one forward away from a stranger. `success_url` and
   `cancel_url` go through `siteFor(req)`, so a deploy preview returns to
   itself — hardcoded production sent every preview test to a 404.
+  The page is a **ticket** (`components/ui/ticket-confirmation-card.tsx`, a
+  ported shadcn block): its barcode is **real Code 39** of the order number —
+  decoded back to `RV-1731` by zxing when it was built — not the block's
+  hash-seeded bars, and its card row is the card Stripe says was used
+  (`order-status` asks once the order exists, and may fail silently).
+- **The customer's receipt is the ops tax invoice**, served by
+  `netlify/functions/receipt.mjs` from `receiptSource` — one document, so the
+  counter's copy and the customer's cannot disagree. It is a URL keyed by the
+  Stripe session id + order number: inline to view, `&download=1` for an
+  attachment, because a blob download is a silent no-op on iPhone. The photo
+  is the flavour's JPEG cut in `/shop/cakes/*.jpg` (a PDF image must be JPEG;
+  the site's are webp), fetched from the same site and skipped on any failure,
+  headed **YOUR CAKE** via `ctx.photoLabel`. It is called at
+  `/.netlify/functions/receipt` directly — no `netlify.toml` redirect, since
+  adding one coincided with the failed deploys. `button-download.tsx` fetches
+  the file first (real byte progress, and a failure shows on the button) and
+  then opens the URL; it does **not** use shadcn's `Button`, which brings Radix.
 - **The cart follows you off `/shop`.** `paintCart` in `promo.js` paints the
   header pill on every static page from the same `nn_cart_v1` key the Next app
   writes (same origin). It lives in `promo.js` because that is the only script
