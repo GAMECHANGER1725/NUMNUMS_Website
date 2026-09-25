@@ -22,6 +22,8 @@ type Status = {
   cakes?: Cake[];
   total?: number;
   deposit?: number;
+  /** Paid according to Stripe, but the webhook has not written the order yet. */
+  pending?: boolean;
   card?: { brand: string; last4: string | null; wallet: string | null } | null;
 };
 
@@ -38,6 +40,10 @@ const receiptHref = (s: string, no: string, download = false) =>
 
 const POLL_MS = 1500;
 const GIVE_UP_AFTER = 12_000;
+// Once Stripe says paid, the page is confirmed; only the order number is
+// outstanding. Ask for it more slowly, for longer, then stop asking.
+const NUMBER_POLL_MS = 3000;
+const NUMBER_WAIT = 3 * 60_000;
 const FIRED_KEY = "nn_order_celebrated";
 // Revenue needs a LONGER-lived guard than the confetti. sessionStorage is
 // per-tab: reopening the thank-you link in a new tab or a week later is a
@@ -86,6 +92,10 @@ export default function ThankYouPage() {
     let stop = false;
     const started = Date.now();
 
+    // Captured on the first paid answer: the cart is cleared then, but
+    // `purchase` must wait for real order numbers to use as the transaction id.
+    let bought: { size: string; flavour: string; qty: number; cents: number }[] | null = null;
+
     async function poll() {
       if (stop) return;
       if (!s) return setSlow(true);
@@ -95,20 +105,30 @@ export default function ThankYouPage() {
         if (body.paid) {
           setSession(s!);
           setStatus(body);
-          // Read the cart BEFORE clearing it: it is the last place the list
-          // prices live, and analytics wants them per line.
-          const bought = readCart().lines.map((l) => ({
-            size: l.size,
-            flavour: l.flavour,
-            qty: l.qty ?? 1,
-            cents: listPriceCents(l.size, l.flavour) ?? 0,
-          }));
-          clearCart();
+          if (!bought) {
+            // Read the cart BEFORE clearing it: it is the last place the list
+            // prices live, and analytics wants them per line.
+            bought = readCart().lines.map((l) => ({
+              size: l.size,
+              flavour: l.flavour,
+              qty: l.qty ?? 1,
+              cents: listPriceCents(l.size, l.flavour) ?? 0,
+            }));
+            clearCart();
+            if (sessionStorage.getItem(FIRED_KEY) !== s) {
+              try { sessionStorage.setItem(FIRED_KEY, s!); } catch { /* private mode */ }
+              fireSideCannons(confettiRef.current);
+            }
+          }
+          if (body.pending) {
+            // Paid, and said so. Only the order number is still to come.
+            if (Date.now() - started < NUMBER_WAIT) setTimeout(poll, NUMBER_POLL_MS);
+            return;
+          }
           // The same guard the cannons use, and for a stronger reason: a
           // refresh that re-fires `purchase` books the same revenue twice.
-          // Only ever on a confirmed payment — this page is reachable by
-          // anyone with the URL, and Stripe can return before the webhook has
-          // written the order.
+          // Only once the order exists, so the transaction id is the real
+          // order number and not a placeholder GA4 would then keep.
           // Defaults to NOT banked: if storage is unavailable we cannot dedupe,
           // and losing every private-mode purchase is a worse error than a rare
           // duplicate, which needs the same link reopened in the same private
@@ -118,10 +138,6 @@ export default function ThankYouPage() {
           if (!banked) {
             try { localStorage.setItem(BANKED_KEY, s!); } catch { /* private mode */ }
             purchase(body.order_nos?.join(", ") ?? s!, bought, cents(body.total));
-          }
-          if (sessionStorage.getItem(FIRED_KEY) !== s) {
-            try { sessionStorage.setItem(FIRED_KEY, s!); } catch { /* private mode */ }
-            fireSideCannons(confettiRef.current);
           }
           return;
         }
@@ -186,6 +202,12 @@ export default function ThankYouPage() {
             <p className="mx-auto mt-6 max-w-md text-center text-[0.9rem] leading-relaxed text-[#5C3A22]">
               We&rsquo;ll bake it fresh and text you the moment it&rsquo;s ready.
             </p>
+            {status.pending && (
+              <p role="status" className="mx-auto mt-2 flex max-w-md items-center justify-center gap-2 text-center text-[0.82rem] text-[#5C3A22]/80">
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C85478] motion-reduce:animate-none" aria-hidden />
+                Your order number and receipt will appear here in a moment.
+              </p>
+            )}
 
             <section aria-labelledby="cakes-h" className="mt-10">
               <h2 id="cakes-h" className="section-label">{status.cakes?.length === 1 ? "Your cake" : "Your cakes"}</h2>

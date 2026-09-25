@@ -85,7 +85,7 @@ export function Barcode({ value }: { value: string }) {
 }
 
 export interface TicketProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Order numbers on this payment — one per cake. */
+  /** Order numbers on this payment — one per cake. Empty until the webhook has written them. */
   orderNos: string[];
   /** What was charged today, in cents. */
   amountCents: number;
@@ -127,7 +127,9 @@ export const AnimatedTicket = React.forwardRef<HTMLDivElement, TicketProps>(
               <p className="text-[0.7rem] font-medium uppercase tracking-[0.12em] text-[#5C3A22]/70">
                 {orderNos.length === 1 ? "Order no." : "Order nos."}
               </p>
-              {orderNos.map((n) => <p key={n} className="font-medium tabular-nums">{n}</p>)}
+              {orderNos.length
+                ? orderNos.map((n) => <p key={n} className="font-medium tabular-nums">{n}</p>)
+                : <p className="text-[0.9rem] text-[#5C3A22]/80">Coming shortly</p>}
             </div>
             <div className="text-right">
               <p className="text-[0.7rem] font-medium uppercase tracking-[0.12em] text-[#5C3A22]/70">Paid today</p>
@@ -149,7 +151,7 @@ export const AnimatedTicket = React.forwardRef<HTMLDivElement, TicketProps>(
 
           <DashedLine />
 
-          <Barcode value={orderNos[0] ?? ""} />
+          {orderNos[0] && <Barcode value={orderNos[0]} />}
         </div>
       </div>
     );
