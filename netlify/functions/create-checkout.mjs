@@ -10,6 +10,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { flavourSlug } from '../../ops/catalog.mjs';
+import { siteFor } from '../lib/email-shell.mjs';
 import { BadRequest, couponFor, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
@@ -205,8 +206,12 @@ export default async (req) => {
       line_items,
       metadata,
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
-      success_url: `${SITE}/shop/thank-you?s={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${SITE}/shop/cart`,
+      // Back to whichever site started the checkout — production, or the deploy
+      // preview being tested. Hardcoding production sent every preview test to
+      // a 404, because production had not been published with /shop yet.
+      // siteFor allowlists the host, so this is never an open redirect.
+      success_url: `${siteFor(req)}/shop/thank-you?s={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteFor(req)}/shop/cart`,
       // The one place the customer is told, on Stripe's own page, that this is
       // not the whole price. Required by the deposit terms, not decoration.
       payment_intent_data: {

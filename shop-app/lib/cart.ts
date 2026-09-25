@@ -212,9 +212,17 @@ export function maxDueDate(now = new Date()): string {
 }
 
 export const STORES = [
-  { code: "harris-park", label: "Harris Park", address: "Shop 1, 96–98 Wigram Street" },
-  { code: "riverstone", label: "Riverstone", address: "Shop 8, Riverstone Shopping Centre" },
+  { code: "harris-park", label: "Harris Park", address: "Shop 1, 96–98 Wigram Street",
+    locality: "Harris Park NSW 2150",
+    maps: "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521" },
+  { code: "riverstone", label: "Riverstone", address: "Shop 8, Riverstone Shopping Centre",
+    locality: "Riverstone NSW 2765",
+    maps: "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698" },
 ];
+
+/** One number and one inbox serve both shops — the same ones locations.html lists. */
+export const SHOP_PHONE = { display: "0425 697 725", tel: "+61425697725" };
+export const SHOP_EMAIL = "info.numnumsbakery@gmail.com";
 
 export const money = (cents: number) =>
   `$${(cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

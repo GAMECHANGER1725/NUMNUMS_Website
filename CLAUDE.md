@@ -887,6 +887,14 @@ in the footer only, and lead the homepage with products before any story.
 - **The success page is `/shop/thank-you`, not `/shop/order`** — that collided
   with `/order` in every conversation about this site. It is Stripe's
   `success_url`; renaming it means changing `create-checkout.mjs` too.
+  It is the **order confirmation**: a collection ticket (day, time, shop,
+  address, map link, order numbers) above a torn edge, the cakes and the
+  money below it — total, deposit paid, **balance at collection** — then the
+  shop phone and email (`SHOP_PHONE`/`SHOP_EMAIL` in `cart.ts`). It reads all
+  of that from `order-status`, which returns a **first name only**: a
+  confirmation link is one forward away from a stranger. `success_url` and
+  `cancel_url` go through `siteFor(req)`, so a deploy preview returns to
+  itself — hardcoded production sent every preview test to a 404.
 - **The cart follows you off `/shop`.** `paintCart` in `promo.js` paints the
   header pill on every static page from the same `nn_cart_v1` key the Next app
   writes (same origin). It lives in `promo.js` because that is the only script

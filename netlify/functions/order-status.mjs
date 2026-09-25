@@ -21,18 +21,27 @@ export default async (req) => {
   });
 
   const { data, error } = await db.from('orders')
-    .select('order_no,due_at,store,price,discount')
+    .select('order_no,due_at,store,price,discount,deposit,customer_name,size,flavour,wording')
     .eq('stripe_session_id', s)
     .order('cart_line');
 
   if (error) return json(500, { error: 'lookup failed' });
   if (!data?.length) return json(200, { paid: false });
 
+  // Cents, summed as integers: adding dollar floats is how $24.99 + $24.99
+  // prints as $49.980000000000004 on a confirmation page.
+  const cents = (v) => Math.round(Number(v ?? 0) * 100);
   return json(200, {
     paid: true,
     order_nos: data.map((r) => r.order_no),
     due_at: data[0].due_at,
     store: data[0].store,
-    total: data.reduce((a, r) => a + Number(r.price) - Number(r.discount), 0),
+    // First name only. The session id is long and random, but this page is
+    // one forwarded link away from a stranger, so it says no more than the
+    // counter would.
+    name: String(data[0].customer_name ?? '').trim().split(/\s+/)[0] || null,
+    cakes: data.map((r) => ({ size: r.size, flavour: r.flavour, wording: r.wording || null })),
+    total: data.reduce((a, r) => a + cents(r.price) - cents(r.discount), 0) / 100,
+    deposit: data.reduce((a, r) => a + cents(r.deposit), 0) / 100,
   });
 };

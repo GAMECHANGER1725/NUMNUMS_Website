@@ -11,7 +11,7 @@ import Link from "next/link";
 const STEPS = [
   { n: 1, label: "Your cart", href: "/cart" },
   { n: 2, label: "Payment", href: null },
-  { n: 3, label: "Collected", href: null },
+  { n: 3, label: "Confirmed", href: null },
 ] as const;
 
 export function CheckoutSteps({ current }: { current: 1 | 2 | 3 }) {
