@@ -197,6 +197,21 @@ export default function ThankYouPage() {
                   )}
                 </div>
               </div>
+              {session && orders.length > 0 && (
+                <div>
+                  <p className="text-[0.7rem] font-medium uppercase tracking-[0.12em] text-[#C85478]">Your receipt</p>
+                  {orders.map((no) => (
+                    <div key={no} className="mt-2 flex items-center gap-2">
+                      <a href={receiptHref(session, no)} target="_blank" rel="noopener"
+                        aria-label={`View tax invoice ${no}`}
+                        className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-full border border-[#EBD3DA] px-4 text-[0.88rem] font-medium text-[#C85478] transition-colors hover:bg-[#FDF3F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] active:scale-[0.97]">
+                        <FileText className="h-4 w-4" aria-hidden />View{orders.length > 1 ? ` ${no}` : ""}
+                      </a>
+                      <DownloadButton href={receiptHref(session, no, true)} className="min-w-0 flex-1" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </AnimatedTicket>
 
             <p className="mx-auto mt-6 max-w-md text-center text-[0.9rem] leading-relaxed text-[#5C3A22]">
@@ -236,30 +251,6 @@ export default function ThankYouPage() {
                 </div>
               </dl>
             </section>
-
-            {session && orders.length > 0 && (
-              <section aria-labelledby="receipt-h" className="mt-10">
-                <h2 id="receipt-h" className="section-label">Your receipt</h2>
-                <p className="mt-2 text-[0.86rem] leading-relaxed text-[#5C3A22]">
-                  A tax invoice for {orders.length === 1 ? "your order" : "each cake"}, showing the deposit paid and the balance due.
-                </p>
-                <ul className="mt-4 flex flex-col gap-3">
-                  {orders.map((no) => (
-                    <li key={no} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(74,37,24,0.05)]">
-                      <FileText className="h-5 w-5 shrink-0 text-[#C85478]" aria-hidden />
-                      <p className="mr-auto font-medium text-[#2C1A0E]">Tax invoice {no}</p>
-                      <div className="flex w-full gap-2 sm:w-auto">
-                      <a href={receiptHref(session, no)} target="_blank" rel="noopener"
-                        className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-full sm:flex-none border border-[#EBD3DA] px-5 text-[0.88rem] font-medium text-[#C85478] transition-colors hover:bg-[#FDF3F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] active:scale-[0.97]">
-                        View
-                      </a>
-                      <DownloadButton href={receiptHref(session, no, true)} className="min-w-0 flex-1 sm:flex-none sm:min-w-40" />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
 
             <section aria-labelledby="bring-h" className="mt-10">
               <h2 id="bring-h" className="text-[0.95rem] font-medium text-[#2C1A0E]">When you come in</h2>
