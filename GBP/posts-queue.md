@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-25
+
+```yaml
+id: post-rs-2026-09-25
+status: published
+published_at: 2026-09-25
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless housewarming cakes for new Schofields and Marsden Park homes"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5589.jpeg"
+keywords_baited:
+  - custom eggless housewarming cake
+  - Schofields Marsden Park Riverstone
+  - worried a new home housewarming cake won't suit vegetarian or Jain guests
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-09-25
 
 ```yaml
