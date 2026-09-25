@@ -980,6 +980,16 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   - `paidOn()` and `receipt.mjs` **already** handled partial payment: the invoice
     computes `owingC` and stamps **DEPOSIT PAID** with the balance. Nothing in ops
     needed changing — only the one webhook line that used to write the full net.
+- **Stripe's page is branded per session** (`branding_settings` in
+  `create-checkout`): Vanilla Cream background, Rose Petal pill button, and
+  **icon + "Num Num's Bakery", never `logo`** — a logo replaces the name, and
+  our square logo rendered as a 28px speck with nothing saying whose page it
+  was. The icon is `brand_assets/checkout-icon.png`, a 256px cut (the original
+  is 1.6MB). Per-session branding needs API `2025-09-30.clover`, so that one
+  call passes `{ apiVersion }`; the SDK's pinned version stays for the rest.
+  Each line carries its cake's photo from `/shop/cakes/`, and its description
+  leads with the **collection** shop and time, because a phone shows two lines
+  before "more". Font and the account's public name are Dashboard-only.
 - **Refund window: cancel more than 24h before collection and the deposit is
   returned in full.** Stated in the cart, on Stripe's own submit button and in the
   terms. Non-refundable after that, because a made-to-order cake cannot be resold —

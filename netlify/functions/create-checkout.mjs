@@ -9,9 +9,36 @@
  */
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { flavourSlug } from '../../ops/catalog.mjs';
 import { BadRequest, couponFor, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
+
+/**
+ * Stripe's page in our colours. Per-session branding needs API version
+ * 2025-09-30.clover or later, so only this one call opts into it — the SDK's
+ * pinned version stays for everything else. Font is not settable per session;
+ * it lives in the Stripe Dashboard (Settings → Branding).
+ */
+const BRANDED = { apiVersion: '2025-09-30.clover' };
+const branding = {
+  // Icon + name, never `logo`: a logo replaces the name, and our square logo
+  // renders as a 28px speck with nothing beside it saying whose page it is.
+  display_name: "Num Num's Bakery",
+  // A 256px cut of Logo_TParent.png: the original is 1.6MB, on a payment page.
+  icon: { type: 'url', url: `${SITE}/brand_assets/checkout-icon.png` },
+  background_color: '#FFF8F2', // Vanilla Cream
+  button_color: '#C85478',     // Rose Petal
+  border_style: 'pill',        // the site's buttons are pills
+};
+
+const STORE_NAME = { 'harris-park': 'Harris Park', riverstone: 'Riverstone' };
+
+/** "Saturday 27 September, 12:00 pm" in Sydney, whatever zone the function runs in. */
+const whenText = (iso) => new Date(iso).toLocaleString('en-AU', {
+  timeZone: 'Australia/Sydney', weekday: 'long', day: 'numeric', month: 'long',
+  hour: 'numeric', minute: '2-digit',
+});
 
 /** Cents to "$24.99", for the wording on Stripe's own page. */
 const aud = (c) => `$${(c / 100).toFixed(2)}`;
@@ -116,6 +143,7 @@ export default async (req) => {
     // full price in the description — a customer looking at Stripe's page must
     // be able to see what the cake costs and what they are paying now, or the
     // balance at pickup arrives as a surprise.
+    const collect = `Collect from ${STORE_NAME[cart.store] ?? cart.store}, ${whenText(cart.dueAt)}`;
     const line_items = cart.lines.map((l, i) => ({
       quantity: 1,
       price_data: {
@@ -123,10 +151,16 @@ export default async (req) => {
         unit_amount: deposits[i],
         product_data: {
           name: `${l.size} ${l.flavour} cake — 50% deposit`,
+          // Collection first: a phone shows two lines of this before "more".
           description: [
+            collect,
+            l.wording ? `Writing: “${l.wording}”` : null,
             `Full price ${aud(netPerLine[i])}, balance ${aud(netPerLine[i] - deposits[i])} on collection`,
-            l.wording ? `Writing: ${l.wording}` : null,
-          ].filter(Boolean).join('. '),
+            '100% eggless',
+          ].filter(Boolean).join(' · '),
+          // The same product shot the shop shows, so the customer sees the
+          // cake they chose, not a grey box, on the page they pay on.
+          images: [`${SITE}/shop/cakes/${flavourSlug(l.flavour)}.webp`],
         },
       },
     }));
@@ -150,6 +184,7 @@ export default async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      branding_settings: branding,
       // Cards carry Apple Pay, Google Pay and Link at the same rate and need no
       // extra integration. PayTo is a separate rail (1% capped at $3.50, so it
       // pays for itself on a tiered cake) and must be activated on the Stripe
@@ -179,10 +214,13 @@ export default async (req) => {
       },
       custom_text: {
         submit: {
-          message: `This is a ${Math.round(DEPOSIT_RATE * 100)}% deposit. The remaining ${aud(netTotal - depositTotal)} is payable when you collect your cake.`,
+          message: `This is a ${Math.round(DEPOSIT_RATE * 100)}% deposit. The remaining ${aud(netTotal - depositTotal)} is payable when you collect your cake. Cancel more than 24 hours before collection and the deposit is refunded in full.`,
+        },
+        after_submit: {
+          message: `${collect}. We'll text you the moment it's ready.`,
         },
       },
-    });
+    }, BRANDED);
 
     return json(200, { url: session.url });
   } catch (e) {
