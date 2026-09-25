@@ -360,6 +360,7 @@
     '@media(min-width:768px){.nnp-left{padding:52px 44px}}',
     '.nnp-h{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;text-align:center;text-wrap:balance;margin:0}',
     '@media(min-width:768px){.nnp-h{font-size:2.2rem}}',
+    '.nnp-fn{vertical-align:super;font-size:.55em;font-weight:600;margin-left:1px}',
     '.nnp-sub{font-size:.92rem;font-weight:300;line-height:1.6;color:#5C3A22;text-align:center;margin:14px 0 0}',
     '.nnp-field{margin:22px 0 0}',
     '.nnp-input{width:100%;border:1px solid #D9C7BA;border-radius:.5rem;background:#fff;padding:13px 16px;font:inherit;font-size:.95rem;color:#2C1A0E;transition:border-color .15s ease,box-shadow .15s ease}',
@@ -446,7 +447,7 @@
         '<div class="nnp-grid">' +
           '<div class="nnp-left">' +
             '<div class="nnp-form-wrap">' +
-              '<h2 class="nnp-h" id="nnp-h">Subscribe and save 10% on your next order</h2>' +
+              '<h2 class="nnp-h" id="nnp-h">Subscribe and save 10%<sup class="nnp-fn">1</sup> on your next order</h2>' +
               '<p class="nnp-sub">Join us for new flavours, seasonal specials and ' +
                 'festival pre-order dates. We&rsquo;ll email your code.</p>' +
               '<form novalidate>' +
@@ -461,6 +462,8 @@
                 '<p class="nnp-err" hidden></p>' +
                 '<button type="submit" class="nnp-btn" disabled>Get my 10% off</button>' +
               '</form>' +
+              '<p class="nnp-note"><sup class="nnp-fn">1</sup> For Signature Cakes ordered through our ' +
+                'online shop — custom cakes quoted through our order form are not included.</p>' +
               '<p class="nnp-note">By submitting, you agree to receive marketing communications ' +
                 'from Num Num’s Bakery via email and confirm that you’ve read and understood our ' +
                 '<a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</p>' +
@@ -477,7 +480,7 @@
               '<div class="nnp-coupon">' +
                 '<div class="nnp-c-row">' +
                   '<div class="nnp-c-amt">' +
-                    '<span class="nnp-c-big">10%</span>' +
+                    '<span class="nnp-c-big">10%<sup class="nnp-fn">1</sup></span>' +
                     '<span class="nnp-c-off">off</span>' +
                   '</div>' +
                   '<div class="nnp-c-perf"></div>' +
