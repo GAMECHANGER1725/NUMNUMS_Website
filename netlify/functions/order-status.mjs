@@ -8,10 +8,13 @@
  * "Confirming your payment…" for as long as the webhook was late — forever,
  * while production had no webhook at all.
  *
- * It still deliberately **creates nothing**. A customer who closes the tab after
- * paying is a non-event — the webhook has already done the work, or will on
- * Stripe's retry. Creating the order here too would mean two writers racing
- * for the same rows.
+ * And when Stripe says paid but no row exists, it **writes the order itself**,
+ * through the same `fulfilSession` the webhook uses. Stripe recommends
+ * fulfilling from both (docs.stripe.com/checkout/fulfillment), and the race
+ * the old note here feared cannot happen: the unique (stripe_session_id,
+ * cart_line) index lets exactly one writer win, and the loser returns before
+ * any side effect. This is also what makes a deploy preview work — no webhook
+ * can be registered to its per-build address.
  *
  * Returns only what the page prints, never the whole row: a session id is
  * guessable enough that this must not become a way to read the order book.
@@ -19,6 +22,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { json } from '../lib/shared.mjs';
+import { fulfilSession } from '../lib/fulfil.mjs';
 
 /**
  * The session, with the charge, or null. Allowed to fail: a confirmation page
@@ -76,15 +80,26 @@ export default async (req) => {
     auth: { persistSession: false },
   });
 
-  const { data, error } = await db.from('orders')
+  const rows = () => db.from('orders')
     .select('order_no,due_at,store,price,discount,deposit,customer_name,size,flavour,wording')
     .eq('stripe_session_id', s)
     .order('cart_line');
 
+  let { data, error } = await rows();
   if (error) return json(500, { error: 'lookup failed' });
   if (!data?.length) {
+    // Fetched from Stripe with the secret key, so `paid` here is Stripe's
+    // word, not the browser's — the only thing that may create an order.
     const session = await stripeSession(s);
-    return json(200, session?.payment_status === 'paid' ? fromSession(session) : { paid: false });
+    if (session?.payment_status !== 'paid') return json(200, { paid: false });
+    try {
+      await fulfilSession(db, session);
+      ({ data, error } = await rows());
+    } catch (e) {
+      // The webhook will retry it; meanwhile the customer is told they paid.
+      console.error('order-status could not fulfil', s, e);
+    }
+    if (error || !data?.length) return json(200, fromSession(session));
   }
 
   // Cents, summed as integers: adding dollar floats is how $24.99 + $24.99

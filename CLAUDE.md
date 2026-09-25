@@ -1049,6 +1049,18 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   works. The coupon discount is split proportionally with remainder cents on the first
   line, so `sum(price − discount)` equals the Stripe charge **exactly**; a naive split
   loses a cent and the books never balance again.
+- **An order is written from two doors, through one function.** `fulfilSession`
+  in `netlify/lib/fulfil.mjs` is called by `stripe-webhook` AND by
+  `order-status` — the latter only after fetching the session from Stripe with
+  the secret key and seeing `paid`. Stripe recommends both
+  (docs.stripe.com/checkout/fulfillment); the webhook covers a closed tab, the
+  page covers a late webhook — and a **deploy preview**, whose per-build
+  address no webhook can be registered to. Before this, a preview checkout took
+  the money and the page waited forever for an order number. The duplicate
+  guard returns before any side effect (coupon claim, next coupon, contact,
+  Make hook), so a race has one winner. A sandbox (`livemode: false`) order is
+  written with **TEST ORDER** at the head of its notes, because it lands in the
+  same order book the kitchen bakes from.
 - **Idempotency is a unique index**, `(stripe_session_id, cart_line)`. A retried webhook
   hits 23505 and returns 200. So a failure can safely return 500 and let Stripe retry for
   three days — every write is idempotent.
