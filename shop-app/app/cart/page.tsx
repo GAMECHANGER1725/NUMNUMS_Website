@@ -541,7 +541,7 @@ export default function CartPage() {
           slides away when it scrolls into view — never two buttons at once. */}
       {loaded && count > 0 && (
         <div aria-hidden={payVisible}
-          className={`fixed inset-x-0 bottom-0 z-40 border-t border-[#EBD3DA] bg-[#FFF8F2]/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.34,1.2,0.64,1)] lg:hidden ${
+          className={`fixed inset-x-0 bottom-0 z-40 nn-frost border-t border-white/60 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_24px_-12px_rgba(44,26,14,0.18)] transition-[transform,opacity] duration-[375ms] ease-[cubic-bezier(0.34,1.2,0.64,1)] lg:hidden ${
             payVisible ? "pointer-events-none translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
           <div className="mx-auto flex max-w-[40rem] items-center gap-3">
             <div className="min-w-0 leading-tight">

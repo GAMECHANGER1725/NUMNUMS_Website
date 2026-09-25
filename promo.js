@@ -349,9 +349,9 @@
   /* ---------------------------------------------------------------- styles */
 
   var CSS = [
-    '.nnp-backdrop{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(24,12,5,.62);opacity:0;transition:opacity .25s ease}',
+    '.nnp-backdrop{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(24,12,5,.42);-webkit-backdrop-filter:blur(10px) saturate(1.15);backdrop-filter:blur(10px) saturate(1.15);opacity:0;transition:opacity .31s ease}',
     '.nnp-backdrop.nnp-in{opacity:1}',
-    '.nnp-card{position:relative;width:100%;max-width:860px;max-height:92dvh;overflow-y:auto;border-radius:1.25rem;background:#fff;box-shadow:0 24px 60px -12px rgba(44,26,14,.45);transform:translateY(10px) scale(.985);transition:transform .28s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
+    '.nnp-card{position:relative;width:100%;max-width:860px;max-height:92dvh;overflow-y:auto;border-radius:1.25rem;background:rgba(255,248,242,.82);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);border:1px solid rgba(255,255,255,.55);box-shadow:0 24px 60px -12px rgba(44,26,14,.45),inset 0 1px 0 rgba(255,255,255,.6);transform:translateY(10px) scale(.985);transition:transform .35s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
     '.nnp-backdrop.nnp-in .nnp-card{transform:none}',
     '.nnp-grid{display:grid}',
     '@media(min-width:768px){.nnp-grid{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);max-height:92dvh}.nnp-card{overflow:hidden}.nnp-left{overflow-y:auto;min-height:0}}',
@@ -572,7 +572,7 @@
     document.removeEventListener('keydown', onKey);
     var node = root;
     root = null;
-    setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 260);
+    setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 360);
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
