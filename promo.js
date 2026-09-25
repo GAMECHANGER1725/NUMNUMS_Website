@@ -351,7 +351,7 @@
   var CSS = [
     '.nnp-backdrop{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(24,12,5,.42);-webkit-backdrop-filter:blur(10px) saturate(1.15);backdrop-filter:blur(10px) saturate(1.15);opacity:0;transition:opacity .31s ease}',
     '.nnp-backdrop.nnp-in{opacity:1}',
-    '.nnp-card{position:relative;width:100%;max-width:860px;max-height:92dvh;overflow-y:auto;border-radius:1.25rem;background:rgba(255,248,242,.5);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.4);box-shadow:0 24px 60px -12px rgba(44,26,14,.45),inset 0 1px 0 rgba(255,255,255,.4);transform:translateY(10px) scale(.985);transition:transform .35s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
+    '.nnp-card{position:relative;width:100%;max-width:860px;max-height:92dvh;overflow-y:auto;border-radius:1.25rem;background:rgba(255,248,242,.5);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border:0;box-shadow:0 24px 60px -12px rgba(44,26,14,.45);transform:translateY(10px) scale(.985);transition:transform .35s cubic-bezier(.34,1.56,.64,1);font-family:Jost,system-ui,sans-serif;color:#2C1A0E;line-height:1.7}',
     '.nnp-backdrop.nnp-in .nnp-card{transform:none}',
     '.nnp-grid{display:grid}',
     '@media(min-width:768px){.nnp-grid{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);max-height:92dvh}.nnp-card{overflow:hidden}.nnp-left{overflow-y:auto;min-height:0}}',
@@ -369,12 +369,13 @@
     '.nnp-btn{display:inline-flex;width:100%;align-items:center;justify-content:center;gap:8px;margin:22px 0 0;padding:14px 22px;border:none;border-radius:9999px;font:inherit;font-weight:600;font-size:.95rem;color:#fff;background:#C85478;cursor:pointer;box-shadow:0 4px 14px rgba(200,84,120,.28);transition:background .2s cubic-bezier(.34,1.56,.64,1),transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease}',
     '.nnp-btn:hover:not(:disabled){background:#A03D5E;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,84,120,.35)}',
     '.nnp-btn:active:not(:disabled){transform:scale(.98)}',
-    '.nnp-btn:disabled{background:#EADFD6;color:#A08E80;cursor:not-allowed;box-shadow:none;transform:none}',
-    '.nnp-note{margin:22px 0 0;font-size:.72rem;font-weight:400;line-height:1.6;color:#4A2518;text-align:center}',
+    '.nnp-btn:disabled{background:#F5EBE0;color:#7A5A44;cursor:not-allowed;box-shadow:none;transform:none}',
+    '.nnp-head{padding:20px 22px;border-radius:1rem;background:rgba(255,248,242,.9);box-shadow:0 1px 2px rgba(44,26,14,.06),0 8px 22px -14px rgba(44,26,14,.35)}',
+    '.nnp-note{margin:18px 0 0;padding:10px 14px;border-radius:.75rem;background:rgba(255,248,242,.9);font-size:.74rem;font-weight:400;line-height:1.6;color:#4A2518;text-align:center}',
     '.nnp-note a{color:#4A2518;text-decoration:underline}',
     '.nnp-note a:hover{color:#C85478}',
-    '.nnp-err{margin:14px 0 0;font-size:.82rem;font-weight:500;color:#B3261E;text-align:center}',
-    '.nnp-alt{margin:18px 0 0;text-align:center;font-size:.8rem;color:#4A2518}',
+    '.nnp-err{margin:14px 0 0;padding:8px 12px;border-radius:.75rem;background:rgba(255,248,242,.94);font-size:.82rem;font-weight:500;color:#B3261E;text-align:center}',
+    '.nnp-alt{display:table;margin:14px auto 0;padding:6px 16px;border-radius:9999px;background:rgba(255,248,242,.9);text-align:center;font-size:.82rem;color:#4A2518}',
     '.nnp-alt a{display:inline-flex;align-items:center;min-height:32px;margin:-8px;padding:8px;color:#96355A;font-weight:600;text-decoration:none}',
     '.nnp-alt a:hover{text-decoration:underline}',
     /* Offer side — the sign-up page's own coupon, not a second design.
@@ -446,9 +447,11 @@
         '<div class="nnp-grid">' +
           '<div class="nnp-left">' +
             '<div class="nnp-form-wrap">' +
-              '<h2 class="nnp-h" id="nnp-h">Subscribe and save 10% on your next order</h2>' +
-              '<p class="nnp-sub">Join us for new flavours, seasonal specials and ' +
-                'festival pre-order dates. We&rsquo;ll email your code.</p>' +
+              '<div class="nnp-head">' +
+                '<h2 class="nnp-h" id="nnp-h">Subscribe and save 10% on your next order</h2>' +
+                '<p class="nnp-sub">Join us for new flavours, seasonal specials and ' +
+                  'festival pre-order dates. We&rsquo;ll email your code.</p>' +
+              '</div>' +
               '<form novalidate>' +
                 '<div class="nnp-field">' +
                   '<label class="nnp-sr" for="nnp-name" hidden>First name</label>' +
@@ -619,10 +622,12 @@
     // the offer free to mint with a throwaway address.
     function done() {
       root.querySelector('.nnp-form-wrap').innerHTML =
-        '<h2 class="nnp-h">Check your email</h2>' +
-        '<p class="nnp-sub">Your 10% code is on its way. It applies to your next ' +
-          'order, so it unlocks once you’ve ordered with us — enter it at checkout ' +
-          'with this same email address.</p>' +
+        '<div class="nnp-head">' +
+          '<h2 class="nnp-h">Check your email</h2>' +
+          '<p class="nnp-sub">Your 10% code is on its way. It applies to your next ' +
+            'order, so it unlocks once you’ve ordered with us — enter it at checkout ' +
+            'with this same email address.</p>' +
+        '</div>' +
         '<button type="button" class="nnp-btn">Browse the cakes</button>';
       root.querySelector('.nnp-form-wrap .nnp-btn')
         .addEventListener('click', function () { location.href = '/shop'; });
