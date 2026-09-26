@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-09-26
+
+```yaml
+id: post-rs-2026-09-26
+status: published
+published_at: 2026-09-26
+location: riverstone
+post_type: "Call to action"
+title: "Custom eggless baby shower and gender reveal cakes for Tallawong and Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1912.jpg"
+keywords_baited:
+  - custom eggless baby shower and gender reveal cake
+  - Tallawong and Riverstone
+  - worried a gender reveal cake won't suit a Jain, vegetarian, or egg-allergy guest
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-09-26
 
 ```yaml
