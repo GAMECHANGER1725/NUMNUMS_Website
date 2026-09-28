@@ -3309,7 +3309,7 @@ async function renderReviews() {
 
   if (!rows.length) {
     root.innerHTML = `<div class="empty"><div class="empty-mark">Nobody to ask yet</div>
-      <p class="empty-note">A cake lands here the day after its pickup, as long as it has a phone number on it.</p></div>`;
+      <p class="empty-note">A cake lands here within the hour after its pickup time, as long as it has a phone number on it.</p></div>`;
     return;
   }
 
@@ -4423,7 +4423,7 @@ async function renderAnalytics({ force = false } = {}) {
       <div class="panel panel-warn">
         <div class="panel-title">${stale.length} order${stale.length === 1 ? '' : 's'} past pickup and still open</div>
         <div class="panel-note">
-          Every cake is counted as collected the day after its pickup, by a job
+          Every cake is counted as collected once its pickup time passes, by a job
           that runs hourly in Supabase (<em>collect-past-orders</em>). These were
           not, so that job has stopped — check it under Integrations › Cron.
         </div>

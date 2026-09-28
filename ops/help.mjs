@@ -791,8 +791,8 @@ export const HELP = [
     body: `
       <p>The <strong>Orders</strong> list is the worklist: today, tomorrow, coming up, and
         what was collected in the last week. It is not everything.</p>
-      <p>Nobody has to mark a cake picked up once its day is over. The day after its pickup,
-        every cake is counted as collected on its own.</p>
+      <p>Nobody has to mark a cake picked up. Within the hour after its pickup time, every
+        cake is counted as collected on its own.</p>
       <p>To reach the rest, use the <strong>search box</strong> at the top — a name, a phone
         number, a docket number like <span class="help-kbd">HP-1832</span>, or the cake.
         Search goes to the whole book, not just what is on screen, so an order from March

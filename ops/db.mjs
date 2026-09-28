@@ -733,7 +733,7 @@ export async function listCustomers({ term = '', sort = 'recent', limit = 60 } =
 
 // ── Google review asks ──────────────────────────────────────────────────────
 // Every collected cake with a number on it that nobody has been asked about
-// yet. A cake past its pickup day is collected by definition — the hourly
+// yet. A cake past its pickup time is collected by definition — the hourly
 // `collect-past-orders` job moves it (ops/supabase/2026-09-28-…).
 
 export async function listReviewAsks() {

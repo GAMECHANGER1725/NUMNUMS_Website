@@ -974,8 +974,9 @@ export function sortMix(rows, by = 'count') {
 /**
  * Orders whose pickup day has passed but which are still open.
  *
- * Since 2026-09-28 the hourly `collect-past-orders` cron marks every such cake
- * picked up, so anything here means that job has stopped. It is the job's only
+ * Since 2026-09-28 the hourly `collect-past-orders` cron marks every cake past
+ * its pickup time picked up, so anything here a day later means that job has
+ * stopped. It is the job's only
  * watchdog: pg_cron reports nothing to anyone when a run fails.
  *
  * `grace` keeps today out of it; a cake due at 4pm is not late at noon.

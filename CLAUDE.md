@@ -271,10 +271,11 @@ main site.
   date (it spans a day of bakes, like Overdue), and `rank()` still reads a number out of a day
   label, so a non-day label must never reach it — `stats.test.mjs` covers a queue of nothing but
   baked cakes for exactly that.
-- **Every cake is collected the day after its pickup, automatically** (Vaidik, 2026-09-28).
+- **Every cake is collected once its pickup TIME passes, automatically** (Vaidik, 2026-09-28).
   Overdue was never a worklist, just cakes that had gone out and needed tapping *picked up*.
-  The hourly pg_cron job **`collect-past-orders`** moves any placed/baked/arrived order whose
-  Sydney pickup day has passed to `picked_up` (with `picked_up_at = due_at`) and closes its
+  The pg_cron job **`collect-past-orders`** runs **hourly at :05, and Vaidik refused
+  every-minute**. It moves any placed/baked/arrived order with `due_at < now()` to
+  `picked_up` (with `picked_up_at = due_at`) and closes its
   print jobs, so every figure agrees with no display rule to keep in step. It is inline SQL,
   not a function, because a security-definer function in `public` is callable over PostgREST.
   Its events have a null actor and show as **Automatic** on the Edits page. The Data page's
