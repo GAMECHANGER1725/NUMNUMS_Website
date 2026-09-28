@@ -544,6 +544,23 @@ export function missingPhone(orders) {
 }
 
 /**
+ * The review list: one row per customer, newest pickup first. Two cakes to the
+ * same number are one message, not two — asking twice reads as spam. `ids` is
+ * every order behind the row, so marking the row asked closes all of them.
+ */
+export function reviewAsks(orders) {
+  const rows = new Map();
+  for (const o of [...orders].sort((a, b) => new Date(b.due_at) - new Date(a.due_at))) {
+    const key = phoneKey(o.customer_phone);
+    if (!key) continue;
+    const row = rows.get(key);
+    if (row) { row.ids.push(o.id); continue; }
+    rows.set(key, { key, name: o.customer_name, phone: o.customer_phone, due_at: o.due_at, store: o.store, ids: [o.id] });
+  }
+  return [...rows.values()];
+}
+
+/**
  * Print jobs grouped the same way the baker's queue is: by the pickup day of
  * the cake they belong to, soonest first, so "what has to be printed before
  * Saturday" is one glance rather than a scan of every job.
@@ -955,13 +972,11 @@ export function sortMix(rows, by = 'count') {
 }
 
 /**
- * Orders whose pickup day has passed but which nobody closed off.
+ * Orders whose pickup day has passed but which are still open.
  *
- * Either the cake went out and the status was never moved — in which case
- * every sales figure is wrong and the customer still shows as owing — or it
- * genuinely got missed. Both need a person, and neither shows up as a problem
- * anywhere: the log files them under "Overdue" alongside the live worklist,
- * which is where they quietly stay.
+ * Since 2026-09-28 the hourly `collect-past-orders` cron marks every such cake
+ * picked up, so anything here means that job has stopped. It is the job's only
+ * watchdog: pg_cron reports nothing to anyone when a run fails.
  *
  * `grace` keeps today out of it; a cake due at 4pm is not late at noon.
  */

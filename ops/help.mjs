@@ -54,7 +54,7 @@ export const TOURS = {
       {
         sel: '.tab[data-tab="log"]',
         title: 'Orders',
-        text: 'The worklist: overdue first, then today, tomorrow and what is coming. Tap any card to open the cake.',
+        text: 'The worklist: today, tomorrow and what is coming. Tap any card to open the cake.',
       },
       {
         sel: '#log-search',
@@ -232,7 +232,7 @@ export const TOURS = {
       {
         sel: '.section-head',
         title: 'The day groups',
-        text: 'Overdue sits at the top in rose, then Today, Tomorrow and the days after. The number on the right is how many cakes are in that group.',
+        text: 'Today first, then Tomorrow and the days after. The number on the right is how many cakes are in that group.',
       },
       {
         sel: '.docket',
@@ -367,7 +367,7 @@ export const TOURS = {
       {
         sel: '#view-bake .section-head',
         title: 'Grouped by the day it is wanted',
-        text: 'Overdue first, then today and the days after. A cake leaves this list the moment it is marked baked.',
+        text: 'Today first, then the days after. A cake leaves this list the moment it is marked baked.',
       },
       {
         sel: '#view-bake .docket',
@@ -714,8 +714,7 @@ export const HELP = [
       <p>Every cake is one card. Tap it to open everything about it.</p>
       <ul class="help-list">
         <li><strong>The coloured stripe down the left</strong> is how close the pickup is:
-          deep rose is overdue, rose is today, gold is tomorrow, pale is later, grey is
-          done.</li>
+          rose is today, gold is tomorrow, pale is later, grey is done.</li>
         <li><strong>Custom</strong> or <strong>Normal</strong> sits beside the pickup time on
           every card. Custom is made to a design; normal is off the menu.</li>
         <li><strong>Walk-in</strong> means it was bought and carried out at the counter, not
@@ -790,8 +789,10 @@ export const HELP = [
     roles: COUNTER,
     tour: 'find',
     body: `
-      <p>The <strong>Orders</strong> list is the worklist: what is overdue, today, tomorrow,
-        coming up, and what was collected in the last week. It is not everything.</p>
+      <p>The <strong>Orders</strong> list is the worklist: today, tomorrow, coming up, and
+        what was collected in the last week. It is not everything.</p>
+      <p>Nobody has to mark a cake picked up once its day is over. The day after its pickup,
+        every cake is counted as collected on its own.</p>
       <p>To reach the rest, use the <strong>search box</strong> at the top — a name, a phone
         number, a docket number like <span class="help-kbd">HP-1832</span>, or the cake.
         Search goes to the whole book, not just what is on screen, so an order from March
@@ -862,7 +863,7 @@ export const HELP = [
     tour: 'bake',
     body: `
       <p><strong>To bake</strong> is every cake still to be made, both shops together,
-        grouped by the day it is wanted. Overdue is at the top.</p>
+        grouped by the day it is wanted, soonest at the top.</p>
       <p>The <strong>Both stores / Harris Park / Riverstone</strong> bar filters the list —
         use it when you are loading a van or checking one shop's book. The combined list is
         the working view, so it is what you get by default, and the number beside each tab is
@@ -962,6 +963,18 @@ export const HELP = [
         last ordered. Tap them to see every order. The sort bar reorders the whole list — most
         recent, biggest spender, or who has gone quiet.</p>
       <p>Staff see the customers of their own shop only.</p>`,
+  },
+  {
+    title: 'Asking for Google reviews',
+    sub: 'More › Customers › Reviews',
+    roles: ['admin'],
+    body: `
+      <p><strong>Reviews</strong> lists everyone whose cake has been collected and who has
+        not been asked for a review yet, one line per phone number — two cakes to the same
+        person is still one number.</p>
+      <p>Tap <strong>Copy</strong>, paste the numbers wherever they are going, then tap
+        <strong>Mark as sent</strong> twice. They leave the list, and the next batch starts
+        from there.</p>`,
   },
   {
     title: 'The numbers',

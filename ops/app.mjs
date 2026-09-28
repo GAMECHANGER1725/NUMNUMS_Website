@@ -12,7 +12,7 @@ import {
   recentAuthEvents, orderEvents, recentEdits, uploadPhotos, removePhoto, orderPhotos, photoUrls, photoForPdf,
   invoiceUrl, deleteOrder, deletedOrders,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
-  ordersDueBetween, searchOrdersRemote,
+  ordersDueBetween, searchOrdersRemote, listReviewAsks, markReviewsAsked,
   writeStamp,
   listPrintJobs, listPrintFlags, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
@@ -23,7 +23,7 @@ import {
   dayLabel, soldWithin, salesByWeek, logSections, inStoreTally,
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex, inDateRange,
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
-  dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
+  dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm, reviewAsks,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine, PAV, pavSize }
   from './catalog.mjs';
@@ -249,7 +249,7 @@ async function render() {
 
   const PAINT = {
     log: renderLog, bake: renderBake, prints: renderPrints,
-    analytics: renderAnalytics, directory: renderDirectory,
+    analytics: renderAnalytics, directory: renderDirectory, reviews: renderReviews,
     staff: renderStaff, edits: renderEdits, export: renderExport, help: renderHelp,
   };
   // Supabase retries a failed request internally before giving up, so a dead
@@ -3004,6 +3004,10 @@ const MENU = [
     icon: '<path d="M16 20v-1.5a4 4 0 00-4-4H7a4 4 0 00-4 4V20M9.5 6.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM21 20v-1.5a4 4 0 00-3-3.87M16.5 3.6a4 4 0 010 7.75"/>',
     children: [
       { view: 'directory', label: 'Directory', note: 'Look someone up by name or number' },
+      // A leaf can narrow its group's roles. Staff keep the directory; the
+      // review list is Vaidik's job, and a number handed out twice is a
+      // customer asked twice.
+      { view: 'reviews', label: 'Reviews', note: 'Numbers to ask for a Google review', roles: ['admin'] },
     ],
   },
   {
@@ -3027,12 +3031,12 @@ const MENU = [
 
 const VIEW_TITLE = {
   log: 'Orders', bake: 'To bake', prints: 'Prints',
-  directory: 'Customers', staff: 'Staff', edits: 'Edits', export: 'Export', help: 'Help',
+  directory: 'Customers', reviews: 'Reviews', staff: 'Staff', edits: 'Edits', export: 'Export', help: 'Help',
 };
 const ANALYTICS_TITLE = { finance: 'Finance', customers: 'Customers', data: 'Data' };
 
 /** Every view the drawer can reach, so render() knows what to show and hide. */
-const DRAWER_VIEWS = ['analytics', 'directory', 'staff', 'edits', 'export'];
+const DRAWER_VIEWS = ['analytics', 'directory', 'reviews', 'staff', 'edits', 'export'];
 
 const menuGroups = () => MENU.filter((g) => g.roles.includes(me.role));
 
@@ -3071,7 +3075,7 @@ function openDrawer() {
           <svg class="nav-chev" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="nav-kids${navOpen.has(g.label) ? '' : ' hidden'}">
-          ${g.children.map((c) => `
+          ${g.children.filter((c) => !c.roles || c.roles.includes(me.role)).map((c) => `
             <button class="nav-item" data-view="${esc(c.view)}" data-page="${esc(c.page || '')}"
                     aria-current="${isCurrent(c) ? 'page' : 'false'}">
               <span class="nav-item-name">${esc(c.label)}</span>
@@ -3290,6 +3294,89 @@ async function openCustomer(phoneKey, c) {
   void body;
 }
 
+// ── Review asks ─────────────────────────────────────────────────────────────
+//
+// The numbers Dad messages for a Google review. This used to be built by hand:
+// copy every number off Overdue into WhatsApp, then tap each cake picked up.
+// Copy and Mark as sent are separate on purpose, and the second takes two taps:
+// a stray tap must not empty the list before the numbers have gone anywhere.
+
+async function renderReviews() {
+  const root = $('view-reviews');
+  root.innerHTML = '<p class="empty"><span class="empty-note">Loading…</span></p>';
+  const rows = reviewAsks(await listReviewAsks());
+  if (view !== 'reviews') return;
+
+  if (!rows.length) {
+    root.innerHTML = `<div class="empty"><div class="empty-mark">Nobody to ask yet</div>
+      <p class="empty-note">A cake lands here the day after its pickup, as long as it has a phone number on it.</p></div>`;
+    return;
+  }
+
+  const plural = rows.length === 1 ? '' : 's';
+  root.innerHTML = `
+    <div class="panel">
+      <div class="panel-title">${rows.length} customer${plural} to ask for a review</div>
+      <div class="panel-note">Collected cakes nobody has asked about yet, one line per number.
+        Copy them, send them on, then mark them sent so they leave the list.</div>
+      <div class="row-2">
+        <button class="btn btn-primary" id="rv-copy">Copy ${rows.length} number${plural}</button>
+        <button class="btn btn-outline" id="rv-sent">Mark as sent</button>
+      </div>
+    </div>
+    <div id="review-list">
+      ${rows.map((r) => `
+        <button class="cust-row" data-cust="${esc(r.key)}">
+          <div class="cust-head">
+            <span class="cust-name">${esc(r.name || 'No name')}</span>
+            ${r.ids.length > 1 ? `<span class="repeat-chip">${r.ids.length} cakes</span>` : ''}
+          </div>
+          <div class="cust-phone">${esc(r.phone)}</div>
+          <div class="cust-facts">
+            <span>picked up ${esc(dateFmt.format(new Date(r.due_at)))}</span>
+            <span>${esc(storeLabel(r.store))}</span>
+          </div>
+        </button>`).join('')}
+    </div>`;
+
+  $('rv-copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(rows.map((r) => r.phone).join('\n'));
+      toast(`Copied ${rows.length} number${plural}`);
+    } catch {
+      toast('Could not copy. Press and hold a number to copy it by hand.', 'error');
+    }
+  });
+
+  let armed = false;
+  const sent = $('rv-sent');
+  sent.addEventListener('click', async () => {
+    if (!armed) {
+      armed = true;
+      sent.textContent = 'Tap again to confirm';
+      setTimeout(() => { if (armed) { armed = false; sent.textContent = 'Mark as sent'; } }, 4000);
+      return;
+    }
+    armed = false;
+    sent.disabled = true;
+    try {
+      await markReviewsAsked(rows.flatMap((r) => r.ids));
+      toast(`Marked ${rows.length} customer${plural} as sent`);
+      renderReviews();
+    } catch (err) {
+      sent.disabled = false;
+      sent.textContent = 'Mark as sent';
+      toast(`Could not mark them sent: ${err.message}`, 'error');
+    }
+  });
+
+  // The directory's own sheet, so "what did they have" is one tap before asking.
+  root.querySelectorAll('[data-cust]').forEach((b) => b.addEventListener('click', async () => {
+    const [c] = await listCustomers({ term: b.dataset.cust, limit: 1 }).catch(() => []);
+    if (c) openCustomer(c.phone_key, c);
+  }));
+}
+
 // ── Staff ───────────────────────────────────────────────────────────────────
 //
 // Read-only on purpose. Roles and store scoping are what RLS enforces, so they
@@ -3410,7 +3497,8 @@ async function renderEdits() {
       const s = editSummary(e);
       return {
         at: e.at,
-        who: peopleById.get(e.actor)?.name || 'Someone',
+        // No actor means no browser session: the hourly auto-collect job.
+        who: peopleById.get(e.actor)?.name || (e.actor ? 'Someone' : 'Automatic'),
         kind: e.kind,
         verb: s.verb,
         lines: s.lines,
@@ -4335,9 +4423,9 @@ async function renderAnalytics({ force = false } = {}) {
       <div class="panel panel-warn">
         <div class="panel-title">${stale.length} order${stale.length === 1 ? '' : 's'} past pickup and still open</div>
         <div class="panel-note">
-          Either these went out and nobody moved the status — in which case the
-          takings below are short and the customer still reads as owing — or they
-          were missed. Tap one to close it off.
+          Every cake is counted as collected the day after its pickup, by a job
+          that runs hourly in Supabase (<em>collect-past-orders</em>). These were
+          not, so that job has stopped — check it under Integrations › Cron.
         </div>
         ${stale.slice(0, 8).map((o) => fixRow(o, `${o.daysLate} day${o.daysLate === 1 ? '' : 's'} late`)).join('')}
         ${stale.length > 8 ? `<p class="fix-more">and ${stale.length - 8} more</p>` : ''}

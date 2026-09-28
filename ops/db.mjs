@@ -731,6 +731,28 @@ export async function listCustomers({ term = '', sort = 'recent', limit = 60 } =
   return data || [];
 }
 
+// ── Google review asks ──────────────────────────────────────────────────────
+// Every collected cake with a number on it that nobody has been asked about
+// yet. A cake past its pickup day is collected by definition — the hourly
+// `collect-past-orders` job moves it (ops/supabase/2026-09-28-…).
+
+export async function listReviewAsks() {
+  return pageAll(() => sb.from('orders')
+    .select('id,store,customer_name,customer_phone,phone_key,due_at')
+    .eq('status', 'picked_up').is('review_asked_at', null).not('phone_key', 'is', null)
+    .order('due_at', { ascending: false }), 'listReviewAsks');
+}
+
+/** Stamps a batch as handed over. Chunked: every id rides in the URL. */
+export async function markReviewsAsked(ids) {
+  const at = new Date().toISOString();
+  for (let i = 0; i < ids.length; i += 200) {
+    const { error } = await sb.from('orders').update({ review_asked_at: at }).in('id', ids.slice(i, i + 200));
+    if (error) throw error;
+  }
+  wrote();
+}
+
 /** Everything one customer has ordered, newest first. */
 export async function ordersForCustomer(phoneKey) {
   const { data, error } = await sb.from('orders').select('*')

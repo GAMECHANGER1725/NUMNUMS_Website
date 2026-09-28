@@ -1475,11 +1475,11 @@ button.edit-row:active { background: rgba(200,84,120,.1); }
    counter, where a single column of cards is one short line of text per band
    of empty space. Two columns from 720px up; nothing below it changes. */
 @media (min-width: 720px) {
-  .docket-grid, #cust-list {
+  .docket-grid, #cust-list, #review-list {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 9px; align-items: start;
   }
-  .docket-grid .docket, #cust-list .cust-row { margin-bottom: 0; }
+  .docket-grid .docket, #cust-list .cust-row, #review-list .cust-row { margin-bottom: 0; }
 
   /* A day heading belongs to the whole row of cards under it, not one column. */
   .section-head { grid-column: 1 / -1; }
@@ -1701,6 +1701,7 @@ button.edit-row:active { background: rgba(200,84,120,.1); }
     <section id="view-prints" class="hidden"></section>
     <section id="view-analytics" class="hidden"></section>
     <section id="view-directory" class="hidden"></section>
+    <section id="view-reviews" class="hidden"></section>
     <section id="view-staff" class="hidden"></section>
     <section id="view-edits" class="hidden"></section>
     <section id="view-export" class="hidden"></section>

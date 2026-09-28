@@ -14,7 +14,7 @@ import {
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
   productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats, pricingGaps,
-  netPrice, discountOn,
+  netPrice, discountOn, reviewAsks,
 } from './stats.mjs';
 import { receiptSource } from './receipt.mjs';
 import { toNinetyNine } from './catalog.mjs';
@@ -568,6 +568,17 @@ test('orders with no usable phone are flagged as unmatched customers', () => {
     { status: 'cancelled', customer_phone: null },
   ];
   assert.equal(missingPhone(rows).length, 3);
+});
+
+test('the review list sends each number once, newest pickup first', () => {
+  const rows = reviewAsks([
+    { id: 'a', customer_name: 'Priya', customer_phone: '0425 697 725', due_at: '2026-09-20T05:00:00Z' },
+    { id: 'b', customer_name: 'Sam',   customer_phone: '0411 222 333', due_at: '2026-09-26T05:00:00Z' },
+    { id: 'c', customer_name: 'Priya', customer_phone: '+61425697725', due_at: '2026-09-25T05:00:00Z' },
+    { id: 'd', customer_name: 'Nobody', customer_phone: '', due_at: '2026-09-27T05:00:00Z' },
+  ]);
+  assert.deepEqual(rows.map((r) => r.name), ['Sam', 'Priya']);
+  assert.deepEqual(rows[1].ids, ['c', 'a'], 'marking Priya asked must close both cakes');
 });
 
 test('print jobs group by their cake\'s pickup day, printed ones last', () => {

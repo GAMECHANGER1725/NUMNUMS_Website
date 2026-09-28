@@ -271,6 +271,19 @@ main site.
   date (it spans a day of bakes, like Overdue), and `rank()` still reads a number out of a day
   label, so a non-day label must never reach it — `stats.test.mjs` covers a queue of nothing but
   baked cakes for exactly that.
+- **Every cake is collected the day after its pickup, automatically** (Vaidik, 2026-09-28).
+  Overdue was never a worklist, just cakes that had gone out and needed tapping *picked up*.
+  The hourly pg_cron job **`collect-past-orders`** moves any placed/baked/arrived order whose
+  Sydney pickup day has passed to `picked_up` (with `picked_up_at = due_at`) and closes its
+  print jobs, so every figure agrees with no display rule to keep in step. It is inline SQL,
+  not a function, because a security-definer function in `public` is callable over PostgREST.
+  Its events have a null actor and show as **Automatic** on the Edits page. The Data page's
+  "past pickup and still open" panel is its only watchdog. Do not bring an Overdue section back.
+- **More › Customers › Reviews (admin only)** lists collected cakes with a phone and a null
+  `orders.review_asked_at`, one row per phone (`reviewAsks`). Copy sends the numbers to the
+  clipboard, and **Mark as sent** (two taps) stamps them. `review_asked_at` is in
+  `log_order_event`'s skip list, so a batch writes no Edits rows. Everything collected before
+  2026-09-28 was backfilled as asked, because the old routine had already covered it.
 - **A status stamp is cleared when the status moves back past it.** `stamp_order_status()` used to
   write `baked_at` and never clear it, so a cake put back to *placed* kept a Baked row on its
   timeline, and a second bake kept the first one's time (the `is null` guard) — which would have
