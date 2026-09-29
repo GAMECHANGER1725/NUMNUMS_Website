@@ -1937,10 +1937,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           el.addEventListener('blur',  function() { el.style.borderColor='rgba(200,84,120,0.18)'; el.style.boxShadow='none'; });
         });
 
-        // Smart default: pre-select Harris Park (longest opening hours) so the
-        // location step is already done unless the customer wants Riverstone.
-        var defaultLoc = document.getElementById('loc-harris');
+        // Smart default: the shop they picked last time, else Harris Park
+        // (longest opening hours), so the location step is usually done. A
+        // Riverstone regular used to re-pick it — and see Harris Park's
+        // times — on every visit. Private-mode safe, like the name below.
+        var LOC_KEY = 'nn_pickup_store_v1', lastLoc = null;
+        try { lastLoc = localStorage.getItem(LOC_KEY); } catch (e) { /* private mode */ }
+        var defaultLoc = document.getElementById(lastLoc === 'Riverstone' ? 'loc-riverstone' : 'loc-harris');
         if (defaultLoc) { defaultLoc.checked = true; defaultLoc.dispatchEvent(new Event('change', { bubbles: true })); }
+        document.querySelectorAll('[name="pickup-location"]').forEach(function(r) {
+          r.addEventListener('change', function() {
+            try { localStorage.setItem(LOC_KEY, r.value); } catch (e) { /* private mode */ }
+          });
+        });
 
         // ── Remember the name ────────────────────────────────────────────
         // A returning customer should not retype it. Same private-mode-safe
