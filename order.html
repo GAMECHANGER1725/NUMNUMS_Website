@@ -85,6 +85,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-proof .hp-stars { color: #F4B400; font-size: 0.82rem; letter-spacing: 1px; }
     .hero-proof .hp-rating { font-family: 'Jost', sans-serif; font-size: 0.74rem; font-weight: 600; color: #fff; }
     .hero-proof .hp-sep { color: rgba(255,255,255,0.3); }
+    /* On a phone the note wraps under the rating, stranding the "|" at the end
+       of the first line. The pickup pill's "·" does not wrap and stays. */
+    @media (max-width: 640px) { .hero-proof .hp-sep:has(+ .hp-note) { display: none; } }
+    /* The hero label draws its own lighter rule for the dark background; the
+       generic ::before made it two. */
+    .page-hero .section-label::before { display: none; }
     .hero-proof .hp-note { font-family: 'Jost', sans-serif; font-size: 0.74rem; font-weight: 300; color: rgba(255,255,255,0.80); }
 
     .section-label { display: inline-flex; align-items: center; gap: 12px; font-family: 'Jost', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #C85478; }
@@ -584,7 +590,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h1 class="font-display" style="font-size:clamp(2.8rem,5vw,4.5rem); font-weight:600; letter-spacing:-0.03em; color:#fff; margin:0 0 0.5rem; line-height:1.05;">
         Your Exact Cake, Made Eggless &mdash; Ready in 2 Days
       </h1>
-      <p style="font-family:'Jost',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.10em; text-transform:uppercase; color:rgba(232,164,181,0.85); margin:0 0 0.75rem;">Available for pick up in Harris Park &amp; Riverstone</p>
       <p style="font-family:'Jost',sans-serif; font-weight:300; font-size:1.05rem; color:rgba(255,255,255,0.7); max-width:520px; margin:0 auto;">
         Send us any design &mdash; any size, any occasion. Give us 2 days and a photo if you have one, and we handle the rest. <strong style="font-weight:600; color:rgba(255,255,255,0.92);">We quote you back before anything is made &mdash; nothing is charged on this page.</strong>
       </p>
