@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Check, ChevronLeft, Star } from "lucide-react";
 import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES, DEPOSIT_RATE } from "@/lib/cart";
-import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
+import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug, sizeLabel, sizeServes } from "@/lib/catalog";
 import { copyFor } from "@/lib/flavour-copy";
 import { cakeFraming } from "@/lib/cake-framing";
 import { badgeFor, ORDER_BOOK } from "@/lib/badges";
@@ -24,6 +24,18 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
   const [size, setSize] = useState(DEFAULT_SIZE);
   const [wording, setWording] = useState("");
   const [added, setAdded] = useState(false);
+  // The real button; when it is off screen on a phone, the bar carries it.
+  // On a 390 phone it sat 1.46 screens down, under the photo and the chips —
+  // the first screen showed no price and nothing to press.
+  const addRef = useRef<HTMLButtonElement>(null);
+  const [addVisible, setAddVisible] = useState(true);
+  useEffect(() => {
+    const el = addRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setAddVisible(e.isIntersecting), { threshold: 0.6 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const copy = copyFor(flavour);
   const badge = badgeFor(flavour);
@@ -57,7 +69,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-[72rem] px-4 pb-20 pt-6 sm:px-6">
+    <main className="mx-auto w-full max-w-[72rem] px-4 pb-32 pt-6 sm:px-6 lg:pb-20">
       <Link
         href="/"
         className="-m-2 inline-flex min-h-[32px] items-center gap-1 p-2 text-[0.84rem] font-semibold text-[#C85478]"
@@ -189,6 +201,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
           </div>
 
           <button
+            ref={addRef}
             type="button"
             onClick={add}
             disabled={full}
@@ -266,6 +279,25 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
           ))}
         </ul>
       </section>
+
+      {/* Phones: the same button, same size and writing, whenever the real one
+          is off screen — the pattern the cart uses, and never two at once. */}
+      <div aria-hidden={addVisible}
+        className={`fixed inset-x-0 bottom-0 z-40 nn-frost border-t border-white/60 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_24px_-12px_rgba(44,26,14,0.18)] transition-[transform,opacity] duration-[375ms] ease-[cubic-bezier(0.34,1.2,0.64,1)] motion-reduce:transition-none lg:hidden ${
+          addVisible ? "pointer-events-none translate-y-full opacity-0" : "translate-y-0 opacity-100"}`}>
+        <div className="mx-auto flex max-w-[40rem] items-center gap-3">
+          <div className="min-w-0 leading-tight">
+            <p className="text-[0.72rem] text-muted-foreground">
+              {sizeLabel(size)} · serves {sizeServes(size)}
+            </p>
+            <p className="font-display text-[1.35rem] tabular-nums text-[#C85478]">{money(cents)}</p>
+          </div>
+          <button type="button" onClick={add} disabled={full} tabIndex={addVisible ? -1 : 0}
+            className="btn-cta ml-auto flex-1 py-3">
+            {added ? <><Check className="h-4 w-4" />Added</> : "Add to order"}
+          </button>
+        </div>
+      </div>
     </main>
   );
 }
