@@ -412,6 +412,7 @@
     '.nnp-btn:hover:not(:disabled){background:#A03D5E;transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,84,120,.35)}',
     '.nnp-btn:active:not(:disabled){transform:scale(.98)}',
     '.nnp-btn:disabled{background:#EADFD6;color:#A08E80;cursor:not-allowed;box-shadow:none;transform:none}',
+    '.nnp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
     '.nnp-note{margin:22px 0 0;font-size:.72rem;font-weight:300;line-height:1.6;color:#7A5A44;text-align:center}',
     '.nnp-note+.nnp-note{margin-top:8px}',
     '.nnp-note a{color:#7A5A44;text-decoration:underline}',
@@ -494,11 +495,11 @@
                 'festival pre-order dates. We&rsquo;ll email your code.</p>' +
               '<form novalidate>' +
                 '<div class="nnp-field">' +
-                  '<label class="nnp-sr" for="nnp-name" hidden>First name</label>' +
+                  '<label class="nnp-sr" for="nnp-name">First name</label>' +
                   '<input class="nnp-input" id="nnp-name" type="text" autocomplete="given-name" placeholder="First name">' +
                 '</div>' +
                 '<div class="nnp-field">' +
-                  '<label class="nnp-sr" for="nnp-email" hidden>Email</label>' +
+                  '<label class="nnp-sr" for="nnp-email">Email</label>' +
                   '<input class="nnp-input" id="nnp-email" type="email" autocomplete="email" inputmode="email" placeholder="Email">' +
                 '</div>' +
                 '<p class="nnp-err" hidden></p>' +
