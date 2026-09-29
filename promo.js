@@ -272,11 +272,9 @@
     var mob = document.getElementById('nav-cart-m');
     if (!pill && !mob) return;
 
-    var n = 0;
-    try {
-      var cart = JSON.parse(safeGet('localStorage', 'nn_cart_v1') || '{}');
-      if (cart && Array.isArray(cart.lines)) n = cart.lines.length;
-    } catch (e) { /* a stale or half-written cart is simply no cart */ }
+    // Cakes, as the shop counts them: one line of three read "(1)" here and
+    // "(3)" the moment the customer crossed into /shop.
+    var n = cartCakes();
 
     // "Your order" is what the shop's own header calls it. One name for one
     // thing, the whole way through — and an empty cart still needs to be a
