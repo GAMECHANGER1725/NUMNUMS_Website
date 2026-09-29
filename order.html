@@ -358,6 +358,9 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       /* 2.5rem each side left the calendar 262px on a 390 phone and 190px on
          a 320 one, so a day was a 30px (or 20px) tap target. */
       #cake-order-form.order-card { padding: 1.5rem 1.1rem; }
+      /* The first question sat 449px into the card. The chat icon is
+         decoration, and the attach-a-photo line was said twice. */
+      #cake-order-form .order-card-icon { display: none !important; }
     }
   </style>
 </head>
@@ -652,7 +655,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- WhatsApp card — custom cake order form -->
         <form id="cake-order-form" novalidate class="order-card cursor-card" style="border-top:4px solid #25D366; position:relative; scroll-margin-top:80px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,0.10);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+          <div class="order-card-icon" style="width:44px;height:44px;border-radius:12px;background:rgba(37,211,102,0.10);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
             <span class="material-symbols-outlined" style="font-size:1.5rem;color:#25D366;">chat</span>
           </div>
           <h3 class="order-card-title">Order a Custom Cake</h3>
@@ -672,7 +675,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <!-- RECIPROCITY: quick tips before asking for details -->
           <div style="display:flex;flex-direction:column;gap:5px;padding:0.7rem 0.85rem;background:rgba(200,84,120,0.05);border-radius:0.6rem;margin-bottom:1.1rem;">
             <p style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#C85478;margin:0;">Before you start</p>
-            <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Have a reference photo? Any design works — just attach it in the WhatsApp message.</p>
             <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Most 20-guest parties choose the 10&Prime; size.</p>
             <a href="#flavour-size-guide" style="font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;color:#C85478;text-decoration:none;margin-top:2px;">See the full flavour &amp; size guide &rarr;</a>
           </div>
