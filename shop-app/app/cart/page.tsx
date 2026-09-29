@@ -360,13 +360,21 @@ export default function CartPage() {
                           </span>
                           <span className="min-w-0">
                             <span className="block text-[0.92rem] font-medium">{st.label}</span>
-                            <span className="block text-[0.78rem] leading-snug text-muted-foreground">{st.address}</span>
+                            <span className="block text-[0.78rem] leading-snug text-muted-foreground">{st.address}, <span className="whitespace-nowrap">{st.locality}</span></span>
                             <span className="block text-[0.76rem] text-muted-foreground">Collection {storeHours(st.code)}</span>
                           </span>
                         </label>
                       );
                     })}
                   </div>
+                  {/* Outside the radio labels: a link inside one would toggle
+                      the shop instead of opening the map. */}
+                  {STORES.filter((st) => st.code === cart.store).map((st) => (
+                    <a key={st.code} href={st.maps} target="_blank" rel="noopener"
+                      className="mt-1 inline-flex min-h-[36px] items-center text-[0.8rem] font-semibold text-[#C85478] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478]">
+                      Directions to {st.label} ↗
+                    </a>
+                  ))}
                 </fieldset>
                 {/* One control, because it is one decision: when am I picking
                     this up. The calendar is open on the page and the times pop
