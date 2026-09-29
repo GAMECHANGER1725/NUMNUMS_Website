@@ -9,7 +9,7 @@ import { QtyStepper } from "@/components/ui/qty-stepper";
 import { CouponField } from "@/components/ui/coupon-field";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
-  money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, type Cart,
+  money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, SHOP_PHONE, type Cart,
 } from "@/lib/cart";
 import {
   listPriceCents, flavourSlug, urlSlug, COLLECTION, collectionSlots, slotLabel,
@@ -116,11 +116,14 @@ export default function CartPage() {
         }),
       });
       const body = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(body?.error ?? "Could not start checkout.");
+      // A 404/502 carries no JSON, so there is no server message to show —
+      // say what to do next, not only that it failed.
+      const fallback = `Could not start checkout. Try again, or call us on ${SHOP_PHONE.display}.`;
+      if (!res.ok) throw new Error(body?.error ?? fallback);
       // A 200 with no url would navigate to ".../undefined" and strand the
       // customer on a 404 mid-payment.
       if (typeof body?.url !== "string" || !body.url) {
-        throw new Error("Could not start checkout. Please try again.");
+        throw new Error(fallback);
       }
       // Once a checkout really exists, and before the redirect unloads the page.
       beginCheckout(
