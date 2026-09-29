@@ -2502,7 +2502,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var r = btn.getBoundingClientRect();
           var GAP = 5, EDGE = 8, FLOOR = 120;
           var below = window.innerHeight - r.bottom - GAP - EDGE;
-          var above = r.top - GAP - EDGE;
+          // Room above starts under the fixed nav (and the phone's sticky
+          // progress bar when it is down), not at the top of the window —
+          // a menu that flipped up put its first options behind the nav.
+          var nav = document.getElementById('navbar');
+          var bar = document.getElementById('order-progress-sticky');
+          var ceiling = Math.max(nav ? nav.getBoundingClientRect().bottom : 0,
+            bar && bar.classList.contains('visible') ? bar.getBoundingClientRect().bottom : 0);
+          var above = r.top - GAP - EDGE - ceiling;
           var needed = menu.scrollHeight;
           var room = below;
           if (needed > below && above > below) {
