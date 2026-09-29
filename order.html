@@ -2001,7 +2001,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             ticking = false;
             if (!mq.matches) { sticky.classList.remove('visible'); return; }
             var scrolledPast = wrap.getBoundingClientRect().top < 68;
-            sticky.classList.toggle('visible', scrolledPast);
+            // Only while the form is still on screen: it used to stay down
+            // over the gallery and size guide for the rest of the page.
+            var form = document.getElementById('cake-order-form');
+            var formOnScreen = !form || form.getBoundingClientRect().bottom > 119;
+            sticky.classList.toggle('visible', scrolledPast && formOnScreen);
           }
           window.addEventListener('scroll', function() {
             if (ticking) return;
