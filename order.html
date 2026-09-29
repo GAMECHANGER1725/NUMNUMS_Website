@@ -347,6 +347,9 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
     @media (max-width: 640px) {
       #cake-order-form input[type="text"], #cake-order-form textarea,
       #cake-order-form .nd-btn { font-size: 16px !important; }
+      /* 2.5rem each side left the calendar 262px on a 390 phone and 190px on
+         a 320 one, so a day was a 30px (or 20px) tap target. */
+      #cake-order-form.order-card { padding: 1.5rem 1.1rem; }
     }
   </style>
 </head>
