@@ -63,6 +63,14 @@ export function ShopHeader() {
 
   const moveIndicator = (e: React.MouseEvent<HTMLElement>) => placeIndicator(e.currentTarget);
 
+  // Back from the next page restores this one from the bfcache as it was
+  // left, menu open; the static pages close theirs the same way (promo.js).
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => { if (e.persisted) setOpen(false); };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
+
   useEffect(() => {
     restIndicator();
     // Fonts landing after first paint change every label's width, and a

@@ -311,6 +311,20 @@
   window.addEventListener('storage', paintCart);
   window.addEventListener('pageshow', paintCart);
 
+  // The phone menu, on every static page. Back from the next page restores
+  // this one from the bfcache exactly as it was left — menu open, scrolling
+  // locked — and a menu link that stays on the page (/order's #custom-form)
+  // scrolled behind a menu that never closed. The page's own button closes
+  // it, so its scroll-lock bookkeeping stays in one place.
+  function closeMobileMenu() {
+    var b = document.getElementById('mobile-menu-btn');
+    if (b && b.classList.contains('open')) b.click();
+  }
+  window.addEventListener('pageshow', function (e) { if (e.persisted) closeMobileMenu(); });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('#mobile-menu a[href^="#"]')) closeMobileMenu();
+  });
+
   // Supabase derives its session key from the project ref, so matching any
   // sb-*-auth-token survives a project or auth-domain change. Hardcoding the
   // ref means signed-in customers silently start seeing the offer again.
