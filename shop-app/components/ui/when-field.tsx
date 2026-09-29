@@ -110,7 +110,9 @@ export function NnWhenField({
   };
 
   return (
-    <div className="nn-when-card">
+    // The id is what the cart's go() scrolls to and nudges when the date or
+    // time is still missing; without it the phone's pay bar did nothing.
+    <div id={id} className="nn-when-card">
       <div className="flex items-center justify-between gap-2">
         <button
           type="button" className="nd-cal-nav" onClick={() => step(-1)}
