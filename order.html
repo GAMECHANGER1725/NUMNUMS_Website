@@ -2064,6 +2064,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           sync();
         })();
 
+        var leadSent = false;
         form.addEventListener('submit', function(e) {
           e.preventDefault();
           var ok = true;
@@ -2132,11 +2133,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             // the bakery to "please attach" a photo and quote "your final quote".
             'Reference photo: I\'ll attach one below if I have it.' +
             (tiered ? '' : '\nThe price above is the starting price for this size; the final quote depends on the design and is confirmed here on WhatsApp before payment.');
-          try {
-            if (typeof gtag === 'function') { gtag('event', 'order_form_submit', { method: 'whatsapp', transport: 'beacon' }); }
-            if (window.dataLayer) { window.dataLayer.push({ event: 'order_form_submit', enquiry_method: 'whatsapp' }); }
-            if (typeof fbq === 'function') { fbq('track', 'Lead', { content_name: 'order_form' }); }
-          } catch (e) {}
+          // Once per page: "Go back" on the pricing dialog and Send again used
+          // to report a second lead for the same cake. (When it fires — here,
+          // or on "Continue to WhatsApp" — changes what Meta optimises on, so
+          // that stays a separate decision.)
+          if (!leadSent) {
+            leadSent = true;
+            try {
+              if (typeof gtag === 'function') { gtag('event', 'order_form_submit', { method: 'whatsapp', transport: 'beacon' }); }
+              if (window.dataLayer) { window.dataLayer.push({ event: 'order_form_submit', enquiry_method: 'whatsapp' }); }
+              if (typeof fbq === 'function') { fbq('track', 'Lead', { content_name: 'order_form' }); }
+            } catch (e) {}
+          }
           var waUrl = 'https://wa.me/61425697725?text=' + encodeURIComponent(msg);
           var pricingModal = document.getElementById('pricing-confirm-modal');
           if (pricingModal) {
