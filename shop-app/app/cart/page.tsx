@@ -162,7 +162,7 @@ export default function CartPage() {
   // Fri–Sun is 81% of every order placed. It is here because it is true; a
   // fabricated "2 slots left" would read the same and be worth less than nothing.
   const busyDay = (() => {
-    if (!cart.dueDate) return false;
+    if (!cart.dueDate || dateStale) return false;
     const d = new Date(`${cart.dueDate}T12:00:00`).getDay();
     return d === 0 || d === 5 || d === 6;
   })();
@@ -378,10 +378,12 @@ export default function CartPage() {
                   {/* min/max are convenience; the server rebuilds and re-checks both. */}
                   <NnWhenField
                     id="c-when"
-                    date={cart.dueDate}
+                    // A saved date that has since passed reads as unset, not
+                    // as "Collecting Sunday 20 September" on a greyed day.
+                    date={dateStale ? "" : cart.dueDate}
                     min={minDueDate()}
                     max={maxDueDate()}
-                    time={cart.dueMin}
+                    time={dateStale ? 0 : cart.dueMin}
                     slots={slots}
                     onChange={({ date, time }) =>
                       update({ ...cart, dueDate: date, dueMin: time })}
