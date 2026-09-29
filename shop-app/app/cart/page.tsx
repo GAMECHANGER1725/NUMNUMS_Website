@@ -566,7 +566,7 @@ export default function CartPage() {
                 brief, this is the final screen that can say so. Stated as a
                 fact about what is in the cart, not as a warning. */}
             <p className="text-center text-[0.78rem] leading-relaxed text-muted-foreground">
-              These are our designs, baked for tomorrow. Want one made to your
+              These are our designs, 100% eggless and baked for tomorrow. Want one made to your
               own brief instead?{" "}
               <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
                 Get a custom quote
