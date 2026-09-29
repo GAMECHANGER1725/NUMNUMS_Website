@@ -504,8 +504,8 @@
                   '<label class="nnp-sr" for="nnp-email">Email</label>' +
                   '<input class="nnp-input" id="nnp-email" type="email" autocomplete="email" inputmode="email" placeholder="Email">' +
                 '</div>' +
-                '<p class="nnp-err" hidden></p>' +
-                '<button type="submit" class="nnp-btn" disabled>Get my 10% off</button>' +
+                '<p class="nnp-err" role="alert" hidden></p>' +
+                '<button type="submit" class="nnp-btn">Get my 10% off</button>' +
               '</form>' +
               '<p class="nnp-note"><sup class="nnp-fn">1</sup> For Signature Cakes ordered through our ' +
                 'online shop — custom cakes quoted through our order form are not included.</p>' +
@@ -658,10 +658,9 @@
     function validate() {
       var ok = EMAIL_RE.test(email.value.trim());
       email.setAttribute('aria-invalid', email.value === '' || ok ? 'false' : 'true');
-      btn.disabled = !ok;
       return ok;
     }
-    email.addEventListener('input', validate);
+    email.addEventListener('input', function () { validate(); err.hidden = true; });
 
     // The code is emailed, never shown here — printing it on screen is what made
     // the offer free to mint with a throwaway address.
@@ -679,7 +678,15 @@
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (!validate()) return;
+      // The button is never greyed out for a missing answer: a dead button
+      // explains nothing. Say what is wrong and put the cursor there.
+      if (!validate()) {
+        email.setAttribute('aria-invalid', 'true');
+        err.textContent = 'Enter your email so we can send your code.';
+        err.hidden = false;
+        email.focus();
+        return;
+      }
       btn.disabled = true;
       btn.textContent = 'Signing you up…';
       err.hidden = true;
@@ -699,7 +706,7 @@
         err.textContent = (e2 && e2.message) || 'Could not sign you up just then. Try again.';
         err.hidden = false;
         btn.textContent = 'Get my 10% off';
-        validate();
+        btn.disabled = false;
       });
     });
 
