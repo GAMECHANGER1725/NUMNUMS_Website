@@ -1562,6 +1562,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       #order-cards-grid { grid-template-columns: 1fr !important; }
       #footer-grid      { grid-template-columns: 1fr 1fr !important; gap: 2rem !important; }
     }
+    /* Tablets too: side by side at 820 the form got 292px of content and a
+       cramped wording/size row, beside a phone card that was mostly blank. */
+    @media (max-width: 1023px) {
+      #order-cards-grid { grid-template-columns: 1fr !important; max-width: 640px; margin: 0 auto; }
+    }
     @media (max-width: 480px) { #footer-grid { grid-template-columns: 1fr !important; } }
     @media (max-width: 640px) {
       #form-row-1, #form-row-2 { grid-template-columns: 1fr !important; }
