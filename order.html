@@ -1765,7 +1765,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         if (!el) return;
         if (selDate && selMin) el.innerHTML = 'Collecting from ' + store() + ' <b>' + longDate(selDate) + '</b> at <b>' + slotLabel(selMin) + '</b>';
         else if (selDate) el.innerHTML = 'Pick a time for <b>' + longDate(selDate) + '</b>';
-        else el.textContent = 'Greyed days are sooner than we can make a custom cake — order today, collect in 2 days.';
+        // Name the day. "Greyed days are sooner…" described nothing when the
+        // calendar opened on a fresh month with none greyed, and the person
+        // wanting a cake tomorrow never learned the soonest date, or that
+        // calling is the way to ask about sooner.
+        else el.innerHTML = 'Earliest custom pickup: <b>' + longDate(minDate()) + '</b> — custom cakes need 2 days. '
+          + 'In a hurry? <a href="tel:+61425697725" style="color:#C85478;font-weight:600;text-decoration:none;">Call us</a>.';
         var hidden = document.getElementById('ord-time');
         if (hidden) hidden.value = selMin ? slotLabel(selMin) : '';
       }
