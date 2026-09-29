@@ -239,7 +239,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
             <dt className="font-semibold">Allergens</dt>
             <dd className="mt-1 text-muted-foreground">
               Every cake is 100% eggless. Our kitchen is not allergen-free — see{" "}
-              <a href="/terms" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">
+              <a href="/terms#allergens" target="_blank" rel="noopener" className="font-medium text-[#C85478] underline-offset-2 hover:underline">
                 our allergen note
               </a>
               . If someone has a severe allergy, please speak to us before ordering.

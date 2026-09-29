@@ -50,6 +50,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     *{box-sizing:border-box;}
     body{background-color:#FFF8F2;color:#2C1A0E;font-family:'Jost',sans-serif;line-height:1.7;-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:hidden;}
     .font-display{font-family:'Cormorant Garamond',serif;}
+    #allergens{scroll-margin-top:96px;}
     #navbar{position:fixed;top:0;left:0;right:0;z-index:50;background-color:rgba(255,248,242,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 2px 20px rgba(44,26,14,0.10);}
     .nav-link{font-family:'Jost',sans-serif;font-weight:500;font-size:0.875rem;letter-spacing:0.02em;color:rgba(44,26,14,0.75);text-decoration:none;padding:8px 20px;border-radius:9999px;position:relative;z-index:1;transition:color 0.2s ease;white-space:nowrap;}
     .nav-link:hover,.nav-link.nav-active{color:#C85478;}
@@ -242,7 +243,7 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       <li>We may cancel a code that was obtained through an error or misuse.</li>
     </ul>
 
-    <h2>6. Allergens and dietary information</h2>
+    <h2 id="allergens">6. Allergens and dietary information</h2>
     <p><strong>Every cake we make is 100% eggless.</strong> That is the whole point of the bakery and
       it is not a claim we take lightly.</p>
     <p>However, <strong>our kitchen is not an allergen-free environment.</strong> We work with wheat
@@ -383,6 +384,10 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
         bars[2].style.transform = open ? 'translateY(-7px) rotate(-45deg)' : '';
       });
     })();
+  </script>
+  <script>
+  // The browser jumps to #allergens before the fonts land and the page grows above it, leaving the heading under the nav.
+  window.addEventListener('load', function () { if (location.hash === '#allergens') document.getElementById('allergens').scrollIntoView(); });
   </script>
   <script src="/promo.js" defer></script>
 </body>
