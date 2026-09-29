@@ -71,6 +71,22 @@ export function ShopHeader() {
     return () => window.removeEventListener("pageshow", onShow);
   }, []);
 
+  // Open, the menu behaves as the static one does: a tap anywhere else
+  // closes it and the page behind it stays put.
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: PointerEvent) => {
+      if (!(e.target as Element).closest("#nn-mobile-menu, .nn-ham")) setOpen(false);
+    };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("pointerdown", away);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("pointerdown", away);
+    };
+  }, [open]);
+
   useEffect(() => {
     restIndicator();
     // Fonts landing after first paint change every label's width, and a
