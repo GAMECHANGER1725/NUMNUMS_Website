@@ -887,9 +887,10 @@
 #nn-mobile-menu > div { margin-top: 1.6rem; }
 #nn-mobile-menu > div > a {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 0.85rem 1.75rem; border-radius: 9999px;
+  padding: 14px 34px; border-radius: 9999px;
   background: #C85478; color: #FFF8F2; text-decoration: none;
-  font-family: var(--font-jost), sans-serif; font-weight: 600; font-size: 0.95rem;
+  font-family: var(--font-jost), sans-serif; font-weight: 500; font-size: 1rem;
+  letter-spacing: 0.02em; box-shadow: 0 4px 18px rgba(200, 84, 120, 0.35);
 }
 
 /* 1024px, not 640: six labels plus the cart pill need ~950px, and "Signature

@@ -252,6 +252,10 @@
       + 'body:has(.hero-video) #navbar:not(.scrolled) #nav-cart:not(.nn-has-items){color:#FFF8F2!important;'
       + 'border-color:rgba(255,248,242,.75)!important;}'
       + 'body:has(.hero-video) #navbar:not(.scrolled) #nav-cart:not(.nn-has-items):hover{border-color:#C85478!important;}'
+      // The phone menu's CTA pill, one spec on both surfaces (the shop's
+      // #nn-mobile-menu rule carries the same numbers). Cream text like the
+      // header pill, and weight 500: Jost never goes above it.
+      + '#mobile-menu>div>a{color:#FFF8F2;font-weight:500;}'
       // A press, as the shop's pill and icon button now have. Transform only.
       + '#nav-cart:active,.nn-acct-btn:active{transform:scale(.97);}'
       + '@media (prefers-reduced-motion:reduce){#nav-cart:active,.nn-acct-btn:active{transform:none;}}'
