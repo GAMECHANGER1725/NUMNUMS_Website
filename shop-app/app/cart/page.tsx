@@ -167,7 +167,29 @@ export default function CartPage() {
     return d === 0 || d === 5 || d === 6;
   })();
 
-  if (loaded && count === 0) {
+  /*
+   * A full load paints the static export before the app runs, and that export
+   * was rendered on the build machine: an empty cart ("Pay deposit $0.00") and
+   * the BUILD day's earliest date and greyed calendar. Hydrating over it threw
+   * React #418, and on a slow phone the $0.00 cart with a past "earliest" date
+   * sat there for seconds. So nothing that depends on the cart or on today is
+   * rendered until the browser has both; the title and steps hold their place.
+   */
+  if (!loaded) {
+    return (
+      <>
+        <ShopHeader />
+        <main className="mx-auto w-full max-w-[64rem] px-4 pb-32 pt-8 sm:px-6 lg:pb-20">
+          <h1 className="font-display text-center text-[2.4rem] font-light leading-tight tracking-tight">
+            Your order
+          </h1>
+          <CheckoutSteps current={1} />
+        </main>
+      </>
+    );
+  }
+
+  if (count === 0) {
     return (
       <>
         <ShopHeader />
