@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Popover } from "@base-ui/react/popover";
 import { LogOut, Ticket, User } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 
 /**
  * The account menu behind the person icon.
@@ -22,24 +21,33 @@ export function AccountMenu() {
   const [email, setEmail] = useState<string | null>(null);
   const [coupons, setCoupons] = useState(0);
 
+  // The Supabase client (gotrue + realtime, ~64KB gzipped) is pulled in after
+  // hydration rather than with the page, so "Add to order" is not waiting on
+  // the account menu's session check.
   useEffect(() => {
     let live = true;
-    supabase.auth.getUser().then(({ data }) => { if (live) setEmail(data.user?.email ?? null); });
-    // Verifying an email signs the customer in from another component, so this
-    // has to follow the session rather than read it once.
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (live) setEmail(session?.user?.email ?? null);
+    let unsub = () => {};
+    import("@/lib/supabase").then(({ supabase }) => {
+      if (!live) return;
+      supabase.auth.getUser().then(({ data }) => { if (live) setEmail(data.user?.email ?? null); });
+      // Verifying an email signs the customer in from another component, so this
+      // has to follow the session rather than read it once.
+      const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+        if (live) setEmail(session?.user?.email ?? null);
+      });
+      unsub = () => sub.subscription.unsubscribe();
     });
-    return () => { live = false; sub.subscription.unsubscribe(); };
+    return () => { live = false; unsub(); };
   }, []);
 
   useEffect(() => {
     let live = true;
     if (email) {
       // RLS scopes this to their own email; an error is simply no coupons.
-      supabase.from("coupons").select("code", { count: "exact", head: true })
-        .is("redeemed_at", null)
-        .then(({ count }) => { if (live) setCoupons(count ?? 0); });
+      import("@/lib/supabase").then(({ supabase }) =>
+        supabase.from("coupons").select("code", { count: "exact", head: true })
+          .is("redeemed_at", null)
+          .then(({ count }) => { if (live) setCoupons(count ?? 0); }));
     }
     return () => { live = false; };
   }, [email]);
@@ -78,7 +86,7 @@ export function AccountMenu() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => supabase.auth.signOut()}
+                  onClick={() => import("@/lib/supabase").then(({ supabase }) => supabase.auth.signOut())}
                   className="nd-opt w-full"
                 >
                   <LogOut className="h-4 w-4 text-muted-foreground" />
