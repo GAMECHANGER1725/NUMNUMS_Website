@@ -108,7 +108,7 @@ export function CouponField({ applied, onApply, email, noEmailNote, children, cl
                   {c.percent}%
                 </span>
                 <span className="flex-1">
-                  <span className="block font-mono text-[0.78rem] font-semibold tracking-wider">
+                  <span className="block text-[0.78rem] font-semibold tracking-wider">
                     {c.code}
                   </span>
                   <span className="block text-[0.72rem] text-muted-foreground">{expiryText(c)}</span>
@@ -119,6 +119,10 @@ export function CouponField({ applied, onApply, email, noEmailNote, children, cl
           ))}
         </ul>
       )}
+
+      {/* The email the code is bound to comes FIRST: Apply waits on it, and
+          a guest met the dead Apply button before the box it was waiting for. */}
+      {children}
 
       <form
         onSubmit={(e) => {
@@ -133,14 +137,14 @@ export function CouponField({ applied, onApply, email, noEmailNote, children, cl
             setCode(e.target.value);
             setProblem(null); // clear the red the moment they start fixing it
           }}
-          placeholder={mine.length ? "Or enter another code" : "Enter a coupon code"}
+          placeholder={mine.length ? "Or another code" : "Coupon code"}
           autoComplete="off"
           autoCapitalize="characters"
           aria-label="Coupon code"
           aria-invalid={problem != null}
           aria-describedby={problem ? "coupon-problem" : undefined}
           className={cn(
-            "field-input flex-1 font-mono uppercase tracking-wider",
+            "field-input flex-1 uppercase tracking-wider",
             problem && "border-destructive ring-2 ring-destructive/25",
           )}
         />
@@ -165,7 +169,6 @@ export function CouponField({ applied, onApply, email, noEmailNote, children, cl
           {problem}
         </p>
       )}
-      {children}
     </div>
   );
 }
