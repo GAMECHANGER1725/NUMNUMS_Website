@@ -496,6 +496,34 @@ const FACTS = {
       if (got !== cents) fail(`catalog.mjs: ${flavour} ${size}" surcharge is ${got}c, FACTS says ${cents}c`);
     }
   }
+  // order.html carries two more copies of the price list in its inline script
+  // (the starting-price hint and the guest slider). Nothing read them, so a
+  // change to catalog.mjs would have left /order quoting the old price.
+  {
+    const order = read('order.html');
+    const obj = (name) => {
+      const m = order.match(new RegExp(`var ${name}\\s*=\\s*(\\{[\\s\\S]*?\\n?\\s*\\})\\s*;`));
+      return m ? new Function(`return ${m[1]}`)() : null;
+    };
+    const base = obj('BASE'), flav = obj('FLAVOUR');
+    if (!base || !flav) fail('order.html: could not find the BASE / FLAVOUR price tables the /order price hint reads');
+    else {
+      for (const [size, [, price]] of Object.entries(FACTS.sizes)) {
+        if (base[size] !== Math.round(Number(price) * 100)) fail(`order.html: price hint BASE["${size}"] is ${base[size]}c, FACTS says ${price}`);
+      }
+      for (const [flavour, sizes] of Object.entries(FACTS.surcharge)) {
+        for (const [size, cents] of Object.entries(sizes)) {
+          if (flav[flavour]?.[size] !== cents) fail(`order.html: price hint FLAVOUR["${flavour}"]["${size}"] is ${flav[flavour]?.[size]}c, FACTS says ${cents}c`);
+        }
+      }
+    }
+    const slider = [...order.matchAll(/\{\s*size:'(\d+)"',\s*serves:'[^']*',\s*price:'([\d.]+)'/g)].map((m) => [m[1], m[2]]);
+    if (slider.length !== Object.keys(FACTS.sizes).length) fail(`order.html: guest slider CAKE_DATA lists ${slider.length} sizes, FACTS has ${Object.keys(FACTS.sizes).length}`);
+    for (const [size, price] of slider) {
+      if (FACTS.sizes[size]?.[1] !== price) fail(`order.html: guest slider ${size}" is $${price}, FACTS says $${FACTS.sizes[size]?.[1]}`);
+    }
+    notes.push('order.html: price hint and guest slider match FACTS');
+  }
   // shop-app cannot import across its Turbopack root, so it carries a generated
   // byte-for-byte copy. That copy is what the checkout page prices off, so it
   // has to be the same file — not merely a file that once was.
