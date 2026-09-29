@@ -429,6 +429,10 @@ export default function CartPage() {
             {/* Folded until asked for: an open code box sends people off to
                 find a code. An applied code keeps it open, so it can be seen
                 and removed. */}
+            {/* On a desktop the open coupon box pushed the pay button below a 900px fold
+                (and lg:sticky cannot lift an aside taller than the screen), so there it
+                sits after the summary. On a phone the sticky bar covers it. */}
+            <div className="lg:order-last">
             {!showCoupon && !cart.coupon ? (
               <button type="button" onClick={() => setShowCoupon(true)} aria-expanded={false}
                 className="inline-flex min-h-[40px] items-center gap-2 self-start rounded-full px-1 text-[0.86rem] font-medium text-[#C85478] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] active:scale-[0.98]">
@@ -462,6 +466,7 @@ export default function CartPage() {
             </CouponField>
             </div>
             )}
+            </div>
 
             <section className="rounded-xl border border-border bg-card p-4" aria-labelledby="sum-h">
               <h2 id="sum-h" className="text-[0.95rem] font-semibold">Order summary</h2>
