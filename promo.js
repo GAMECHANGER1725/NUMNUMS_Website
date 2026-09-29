@@ -430,6 +430,8 @@
        is drop-shadow: a mask clips box-shadow, drop-shadow follows the cut. */
     '.nnp-pic{position:relative;overflow:hidden;order:-1;min-height:164px;display:flex;align-items:center;justify-content:center;padding:22px 18px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
     '@media(min-width:768px){.nnp-pic{order:0;height:auto;padding:36px 28px}}',
+    // A short phone (320x568) held 852px of popup in a 523px card: the email field sat under the fold and the button under an inner scroll.
+    "@media(max-width:767px) and (max-height:620px){.nnp-pic{min-height:0;padding:12px 16px}.nnp-left{padding:22px 22px}.nnp-h{font-size:1.5rem}.nnp-sub{margin-top:8px;font-size:.86rem}.nnp-field{margin-top:14px}.nnp-note{margin-top:14px}}",
     '.nnp-pic::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 22% 42%,rgba(200,84,120,.30) 0%,transparent 62%),radial-gradient(ellipse at 82% 88%,rgba(227,182,100,.16) 0%,transparent 58%)}',
     '.nnp-pic::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,248,242,.085) 0 1px,transparent 1px 34px);-webkit-mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%);mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%)}',
     '.nnp-offer{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}',
