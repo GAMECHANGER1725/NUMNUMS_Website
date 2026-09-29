@@ -2100,6 +2100,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var pickupTime = slotLabel(selMin);
           var flavour = document.getElementById('cake-flavour').value;
           var size    = document.getElementById('cake-size').value;
+          var tiered  = size === 'Multi-tier (custom)';
           var estEl   = document.getElementById('price-hint-amt');
           var est     = estEl ? (estEl.textContent||'').trim() : '';
           var custName = (document.getElementById('cake-name').value||'').trim();
@@ -2110,13 +2111,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             'Flavour: '          + flavour                        + '\n' +
             'Wording on cake: '  + (wording||'None')              + '\n' +
             'Size: '             + size                           + '\n' +
-            (est ? 'Starting price shown on site: ' + est + '\n' : '') +
+            // Multi-tier has no starting price; its hint text is not one.
+            (est && !tiered ? 'Starting price shown on site: ' + est + '\n' : '') +
             'Pickup location: '  + locEl.value                    + '\n' +
             'Date needed: '      + fmtDate(selDate)               + '\n' +
             'Pickup time: '      + pickupTime                     + '\n' +
             'Notes: '            + (notes||'None')                + '\n' +
-            'If you have a reference image for your desired design, please attach it to this message.\n' +
-            'Custom cake pricing: the price above is the starting price for this size — your final quote depends on the design and will be confirmed here on WhatsApp before payment.';
+            // The customer sends this, so it speaks as them — it used to tell
+            // the bakery to "please attach" a photo and quote "your final quote".
+            'Reference photo: I\'ll attach one below if I have it.' +
+            (tiered ? '' : '\nThe price above is the starting price for this size; the final quote depends on the design and is confirmed here on WhatsApp before payment.');
           try {
             if (typeof gtag === 'function') { gtag('event', 'order_form_submit', { method: 'whatsapp', transport: 'beacon' }); }
             if (window.dataLayer) { window.dataLayer.push({ event: 'order_form_submit', enquiry_method: 'whatsapp' }); }
