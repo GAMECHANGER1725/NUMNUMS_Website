@@ -152,14 +152,16 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
                   className="size-chip w-full"
                 >
                   <span className="block text-[0.95rem] font-semibold">{s.label}</span>
-                  <span className="block text-[0.64rem] leading-tight text-muted-foreground">
+                  {/* Larger only where the chips are three to a row; six to
+                      a row has no room for it. */}
+                  <span className="block text-[0.72rem] leading-tight text-muted-foreground sm:text-[0.64rem]">
                     serves {s.serves}
                   </span>
                   <span className="mt-0.5 block text-[0.7rem] font-medium tabular-nums">
                     {money(listPriceCents(s.code, flavour) ?? 0)}
                   </span>
                   {s.code === ORDER_BOOK.topSize && (
-                    <span className="mt-1 block text-[0.56rem] font-bold uppercase leading-[1.15] tracking-[0.04em] text-[#C85478]">
+                    <span className="mt-1 block text-[0.62rem] font-bold uppercase leading-[1.15] tracking-[0.04em] text-[#A03D5E] sm:text-[0.56rem]">
                       Most ordered
                     </span>
                   )}
