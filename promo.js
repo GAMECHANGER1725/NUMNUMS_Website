@@ -416,7 +416,7 @@
     '.nnp-btn{text-decoration:none;text-align:center;box-sizing:border-box}',
     '.nnp-note{margin:22px 0 0;font-size:.72rem;font-weight:300;line-height:1.6;color:#7A5A44;text-align:center}',
     '.nnp-note+.nnp-note{margin-top:8px}',
-    '.nnp-note a{color:#7A5A44;text-decoration:underline}',
+    '.nnp-note a{color:#7A5A44;text-decoration:underline;display:inline-block;padding:7px 2px;margin:-7px 0}',
     '.nnp-note a:hover{color:#C85478}',
     '.nnp-err{margin:14px 0 0;font-size:.82rem;font-weight:500;color:#B3261E;text-align:center}',
     '.nnp-alt{margin:18px 0 0;text-align:center;font-size:.8rem;color:#7A5A44}',
