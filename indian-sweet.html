@@ -1752,25 +1752,44 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
     });
   });
 
-  // Mobile menu
-  const mobileBtn = document.getElementById('mobile-menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
-  mobileBtn.addEventListener('click', () => {
-    const isOpen = mobileBtn.classList.toggle('open');
-    mobileBtn.setAttribute('aria-expanded', isOpen);
-    mobileMenu.setAttribute('aria-hidden', !isOpen);
-    if (isOpen) {
-      mobileMenu.style.display = 'flex';
-      requestAnimationFrame(() => {
-        mobileMenu.style.opacity = '1';
-        mobileMenu.style.transform = 'translateY(0) scaleY(1)';
-      });
-    } else {
-      mobileMenu.style.opacity = '0';
-      mobileMenu.style.transform = 'translateY(-12px) scaleY(0.97)';
-      setTimeout(() => { mobileMenu.style.display = 'none'; }, 380);
-    }
-  });
+  // Mobile menu — the same script every other page uses (outside tap, scroll lock, staggered entrance).
+  (function() {
+      var btn=document.getElementById('mobile-menu-btn'),menu=document.getElementById('mobile-menu');
+      if(!btn||!menu)return;
+      var links=Array.from(menu.querySelectorAll('a'));
+      var cta=menu.querySelector('div');
+      function openMenu(){
+        btn.classList.add('open');btn.setAttribute('aria-expanded','true');
+        if(menu.parentNode!==document.body)document.body.appendChild(menu);
+        menu.style.zIndex='9999';
+        menu.setAttribute('aria-hidden','false');menu.style.display='flex';
+        document.body.style.overflow='hidden';
+        links.forEach(function(a){a.style.opacity='0';a.style.transform='translateX(-18px)';a.style.transition='none';});
+        if(cta){cta.style.opacity='0';cta.style.transform='translateY(14px)';cta.style.transition='none';}
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          menu.style.opacity='1';menu.style.transform='translateY(0) scaleY(1)';
+          links.forEach(function(a,i){
+            var d=(0.06+i*0.07).toFixed(2)+'s';
+            a.style.transition='opacity 0.38s ease '+d+', transform 0.42s cubic-bezier(0.34,1.3,0.64,1) '+d;
+            a.style.opacity='1';a.style.transform='translateX(0)';
+          });
+          if(cta){
+            var d=(0.06+links.length*0.07).toFixed(2)+'s';
+            cta.style.transition='opacity 0.38s ease '+d+', transform 0.44s cubic-bezier(0.34,1.3,0.64,1) '+d;
+            cta.style.opacity='1';cta.style.transform='translateY(0)';
+          }
+        });});
+      }
+      function closeMenu(){
+        btn.classList.remove('open');btn.setAttribute('aria-expanded','false');
+        menu.setAttribute('aria-hidden','true');
+        menu.style.opacity='0';menu.style.transform='translateY(-12px) scaleY(0.97)';
+        document.body.style.overflow='';
+        setTimeout(function(){menu.style.display='none';},320);
+      }
+      btn.addEventListener('click',function(){btn.classList.contains('open')?closeMenu():openMenu();});
+      document.addEventListener('mousedown',function(e){if(menu.style.display!=='none'&&!menu.contains(e.target)&&!btn.contains(e.target))closeMenu();});
+    })();
 
   // ── Tubelight indicator ──────────────────────────────────────
   (function () {
