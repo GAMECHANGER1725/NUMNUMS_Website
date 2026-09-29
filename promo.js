@@ -96,6 +96,8 @@
     + '.nn-acct-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;'
     + 'height:38px;width:38px;margin-left:4px;border:0;background:transparent;border-radius:9999px;'
     + 'color:inherit;cursor:pointer;padding:0;transition:background-color .16s ease,color .16s ease;}'
+    // Over the homepage's video the links and the hamburger are white; the account icon stayed espresso (2.8:1).
+    + 'body:has(.hero-video) #navbar:not(.scrolled) .nn-acct-btn{color:#fff;}'
     + '.nn-acct-btn:hover{background:rgba(200,84,120,0.12);color:#C85478;}'
     + '.nn-acct-btn:focus-visible{outline:2px solid #C85478;outline-offset:2px;}'
     + '.nn-acct-btn[aria-expanded="true"]{background:rgba(200,84,120,0.15);color:#C85478;}'
