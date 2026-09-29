@@ -234,6 +234,13 @@
       + '#nav-cart.nn-has-items{background:#C85478!important;color:#FFF8F2!important;'
       + 'border-color:#C85478!important;}'
       + '#nav-cart.nn-has-items:hover{background:#A03D5E!important;border-color:#A03D5E!important;}'
+      // Over a dark hero the nav is transparent and its links are white; a
+      // rose outline there measured 1.32:1 against the brown — the main CTA
+      // in the bar was the hardest thing in it to read. Cream until scrolled.
+      // (The shop has no transparent state, so there is nothing to mirror.)
+      + '#navbar:not(.scrolled) #nav-cart:not(.nn-has-items){color:#FFF8F2!important;'
+      + 'border-color:rgba(255,248,242,.75)!important;}'
+      + '#navbar:not(.scrolled) #nav-cart:not(.nn-has-items):hover{border-color:#C85478!important;}'
       // The static nav hides this pill entirely under 640px, which is fine
       // for a CTA and wrong for a cart — most of this traffic is on a phone,
       // and a cart you cannot see is a cart you assume you lost.
