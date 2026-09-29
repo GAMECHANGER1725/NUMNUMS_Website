@@ -278,7 +278,7 @@ export default function CartPage() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={`/shop/cakes/${flavourSlug(l.flavour)}.webp`}
-                          alt=""
+                          alt={`${l.flavour} cake`}
                           className="h-full w-full object-cover"
                           style={{ objectPosition: cakeFraming(flavourSlug(l.flavour)) }}
                         />
