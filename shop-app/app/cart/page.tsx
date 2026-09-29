@@ -579,6 +579,11 @@ export default function CartPage() {
                 : <><Lock className="h-4 w-4" />{ready ? "Pay deposit" : "Continue"} <ArrowRight className="h-4 w-4" /></>}
             </button>
           </div>
+          {/* The rest of the deal, at the moment of tapping: the summary card
+              that says it is a screen or more above this bar on a phone. */}
+          <p className="mx-auto mt-1.5 max-w-[40rem] text-center text-[0.7rem] text-muted-foreground">
+            {money(total - deposit)} on collection · full refund up to 24h before
+          </p>
         </div>
       )}
     </>
