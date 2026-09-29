@@ -252,6 +252,12 @@
       + 'body:has(.hero-video) #navbar:not(.scrolled) #nav-cart:not(.nn-has-items){color:#FFF8F2!important;'
       + 'border-color:rgba(255,248,242,.75)!important;}'
       + 'body:has(.hero-video) #navbar:not(.scrolled) #nav-cart:not(.nn-has-items):hover{border-color:#C85478!important;}'
+      // Keyboard focus on the logo, the hamburger and the menu links was the
+      // browser's default ring (blue, or a faint 1px one) while everything
+      // else in the bar draws the 2px rose one. Same rule as the shop's.
+      + '#navbar a[aria-label*="home"]:focus-visible,#mobile-menu-btn:focus-visible,#ham-btn:focus-visible,'
+      + '#mobile-menu a:focus-visible{outline:2px solid #C85478;outline-offset:2px;border-radius:9999px;}'
+      + '#mobile-menu>a:hover{color:#C85478;}'
       // The static nav hides this pill entirely under 640px, which is fine
       // for a CTA and wrong for a cart — most of this traffic is on a phone,
       // and a cart you cannot see is a cart you assume you lost.

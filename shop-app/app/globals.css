@@ -832,6 +832,10 @@
 }
 .nn-nav-link:hover, .nn-nav-active { color: #C85478; }
 .nn-nav-link:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
+.nn-logo:focus-visible, .nn-ham:focus-visible, #nn-mobile-menu a:focus-visible {
+  outline: 2px solid #C85478; outline-offset: 2px; border-radius: 9999px;
+}
+#nn-mobile-menu > a:hover { color: #C85478; }
 
 /* The static pill's hover-swap needs three nested spans and a sliding dot.
    Here the label changes with the cart, so the swap would fight it — this is
