@@ -2108,6 +2108,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var DEFAULT_TXT = "Pick a size and we'll show your starting price.";
 
         function money(cents) { return '$' + (cents / 100).toFixed(2); }
+
+        // A parent comparing bakeries looks for the price first, and it only
+        // appeared once a size was chosen (the full table sits in a tooltip
+        // screens further down). The starting price goes in each size's note,
+        // from BASE — no second copy. This runs before the .nd-* enhancer
+        // builds the menu out of this text.
+        Array.prototype.forEach.call(sizeSel.options, function(o) {
+          var sz = o.getAttribute('data-size');
+          if (sz && BASE[sz]) o.textContent += ' · from ' + money(BASE[sz]);
+        });
         function attrOf(sel, name) {
           var o = sel.options[sel.selectedIndex];
           return o ? (o.getAttribute(name) || '') : '';
