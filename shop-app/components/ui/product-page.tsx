@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Check, ChevronLeft, Star } from "lucide-react";
-import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES } from "@/lib/cart";
+import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES, DEPOSIT_RATE } from "@/lib/cart";
 import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { copyFor } from "@/lib/flavour-copy";
 import { cakeFraming } from "@/lib/cake-framing";
@@ -204,7 +204,10 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
             </p>
           ) : (
             <p className="mt-3 text-center text-[0.78rem] text-muted-foreground">
-              Pay online · collect from Harris Park or Riverstone · ready tomorrow
+              {/* The deposit is said here, not first in the cart: "Pay online"
+                  read as paying the whole price now. */}
+              <span className="block">Pay {Math.round(DEPOSIT_RATE * 100)}% now, the rest on collection</span>
+              <span className="block">Harris Park or Riverstone · ready tomorrow</span>
             </p>
           )}
 
