@@ -1188,7 +1188,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p class="ps-serves" style="font-family:'Jost',sans-serif;font-size:0.875rem;font-weight:400;color:#5C3A22;margin:0 0 1.5rem;line-height:1.5;">Serves 6–8 guests</p>
           </div>
           <a href="#custom-form" class="btn-cta ps-order-btn" style="align-self:flex-start;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             Order this size
           </a>
         </div>
@@ -1685,6 +1684,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
         slider.addEventListener('input', update);
         update();
+        // "Order this size" takes the size with it, rather than landing on a
+        // form that asks for it again. The .nd-* button repaints on change.
+        if (orderBtn) orderBtn.addEventListener('click', function() {
+          var t = getTier(+slider.value);
+          var sel = document.getElementById('cake-size');
+          if (t < 0 || !sel) return;
+          sel.value = CAKE_DATA[t].size;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+        });
       }
       initPricingSlider('pricing-slider-order');
     })();
