@@ -360,6 +360,13 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
     .loc-btn:hover:not(:has(input:checked)) { border-color: rgba(200,84,120,0.42) !important; }
     .loc-btn:active { transform: scale(0.97); }
     @media (prefers-reduced-motion: reduce) { .loc-btn:active { transform: none; } }
+    /* Hover on the fields and the text links, and a pressed state on the pickers — inline styles set the field border, hence !important. */
+    #cake-order-form input[type="text"]:hover:not(:focus), #cake-order-form textarea:hover:not(:focus) { border-color: rgba(200,84,120,0.42) !important; }
+    #flavour-size-guide-link:hover, a[href^="mailto:info.numnumsbakery"]:hover { text-decoration: underline !important; }
+    .shop-alt-btn:hover { background: #FDF3F6; }
+    .shop-alt-btn:active { transform: scale(0.97); }
+    .nd-btn:active, .nd-cal-day:not(:disabled):active { transform: scale(0.97); }
+    @media (prefers-reduced-motion: reduce) { .nd-btn:active, .nd-cal-day:not(:disabled):active, .shop-alt-btn:active { transform: none; } }
     /* iOS Safari zooms the whole page when a field under 16px takes focus —
        the name box was 13px, so every iPhone arriving from an ad got a zoomed
        form to pinch back out of. Inline styles set the size, hence !important. */
@@ -686,7 +693,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="display:flex;flex-direction:column;gap:5px;padding:0.7rem 0.85rem;background:rgba(200,84,120,0.05);border-radius:0.6rem;margin-bottom:1.1rem;">
             <p style="font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#C85478;margin:0;">Before you start</p>
             <p style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.5;">Most 20-guest parties choose the 10&Prime; size.</p>
-            <a href="#flavour-size-guide" style="font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;color:#C85478;text-decoration:none;margin-top:2px;">See the full flavour &amp; size guide &rarr;</a>
+            <a href="#flavour-size-guide" id="flavour-size-guide-link" style="font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;color:#C85478;text-decoration:none;margin-top:2px;">See the full flavour &amp; size guide &rarr;</a>
           </div>
 
           <!-- PICKUP LOCATION -->
@@ -895,7 +902,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div style="display:flex; gap:8px; margin-bottom:6px;"><dt style="flex:0 0 5rem; color:#8a7263;">Ready</dt><dd style="margin:0;">Tomorrow</dd></div>
             <div style="display:flex; gap:8px;"><dt style="flex:0 0 5rem; color:#8a7263;">Paying</dt><dd style="margin:0;">50% online, the rest on collection</dd></div>
           </dl>
-          <a href="/shop" style="display:block; margin-top:1rem; padding:10px 0; border:1px solid #C85478; border-radius:9999px; text-align:center; font-family:'Jost',sans-serif; font-size:0.88rem; font-weight:600; color:#C85478; text-decoration:none;">Shop Signature cakes</a>
+          <a href="/shop" class="shop-alt-btn" style="display:block; margin-top:1rem; padding:10px 0; border:1px solid #C85478; border-radius:9999px; text-align:center; font-family:'Jost',sans-serif; font-size:0.88rem; font-weight:600; color:#C85478; text-decoration:none;">Shop Signature cakes</a>
         </div>
 
       </div>
