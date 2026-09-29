@@ -223,7 +223,7 @@ export default function CartPage() {
             {/* Bulk select earns its place with two or more cakes, not one. */}
             {cart.lines.length > 1 && (
             <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-2.5">
-              <label className="flex cursor-pointer items-center gap-2.5 text-[0.86rem] font-medium">
+              <label className="flex min-h-[36px] cursor-pointer items-center gap-2.5 text-[0.86rem] font-medium">
                 <input
                   type="checkbox"
                   className="h-4 w-4 accent-[#C85478]"
@@ -258,15 +258,19 @@ export default function CartPage() {
                 return (
                   <li key={`${l.size}|${l.flavour}|${l.wording}`} className="rounded-xl border border-border bg-card p-3">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
-                      {cart.lines.length > 1 && <input
-                        type="checkbox"
-                        className="h-4 w-4 shrink-0 accent-[#C85478]"
-                        checked={picked.includes(i)}
-                        aria-label={`Select the ${l.size} ${l.flavour}`}
-                        onChange={(e) =>
-                          setPicked((p) => (e.target.checked ? [...p, i] : p.filter((j) => j !== i)))
-                        }
-                      />}
+                      {/* The label is the tap target: a bare 16px box is too
+                          small a thing to hit; the negative margin keeps the row. */}
+                      {cart.lines.length > 1 && <label className="-m-2.5 flex shrink-0 cursor-pointer p-2.5">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 accent-[#C85478]"
+                          checked={picked.includes(i)}
+                          aria-label={`Select the ${l.size} ${l.flavour}`}
+                          onChange={(e) =>
+                            setPicked((p) => (e.target.checked ? [...p, i] : p.filter((j) => j !== i)))
+                          }
+                        />
+                      </label>}
                       <Link href={`/cakes/${urlSlug(l.flavour)}`} className="cake-photo block h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-lg">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -326,7 +330,7 @@ export default function CartPage() {
               })}
             </ul>
 
-            <Link href="/" className="mt-3 inline-flex text-[0.84rem] font-semibold text-[#C85478]">
+            <Link href="/" className="mt-3 inline-flex min-h-[40px] items-center text-[0.84rem] font-semibold text-[#C85478]">
               + Add another cake
             </Link>
 
