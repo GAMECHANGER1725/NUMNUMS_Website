@@ -2132,7 +2132,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             pricingModal.dataset.waUrl = waUrl;
             pricingModal.style.display = 'flex';
           } else {
-            window.open(waUrl, '_blank', 'noopener');
+            openWhatsApp(waUrl);
           }
         });
       }
@@ -2624,6 +2624,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
   <script>
+    // On a phone, hand wa.me to the WhatsApp app in the same tab. Instagram and
+    // Facebook open ads in an in-app browser, which can swallow a new-window
+    // open; a same-tab link is what they reliably pass on to the app, and Back
+    // returns to the form as it was. Desktop keeps the new tab.
+    function openWhatsApp(url) {
+      if (window.matchMedia && matchMedia('(pointer: coarse)').matches) location.href = url;
+      else window.open(url, '_blank', 'noopener');
+    }
     (function() {
       var modal = document.getElementById('pricing-confirm-modal');
       if (!modal) return;
@@ -2631,7 +2639,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.getElementById('pricing-confirm-continue').addEventListener('click', function() {
         var url = modal.dataset.waUrl;
         close();
-        if (url) window.open(url, '_blank', 'noopener');
+        if (url) openWhatsApp(url);
       });
       document.getElementById('pricing-confirm-back').addEventListener('click', close);
       modal.addEventListener('click', function(e) { if (e.target === modal) close(); });
