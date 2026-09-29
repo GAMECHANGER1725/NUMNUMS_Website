@@ -674,7 +674,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 Riverstone
               </label>
             </div>
-            <div id="location-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
+            <div id="location-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Pick a shop to collect from.</div>
           </div>
 
           <!-- PICKUP DATE + TIME: one decision, one control, the same shape as
@@ -713,7 +713,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
               <label for="cake-name" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">First name</label>
               <input type="text" id="cake-name" autocomplete="given-name" placeholder="Your first name" style="width:100%;padding:8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;outline:none;">
-              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
+              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Add your first name.</div>
             </div>
           </div>
 
@@ -735,7 +735,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </select>
                 <svg style="position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
-              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
+              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Pick a flavour.</div>
             </div>
 
           <!-- WORDING + SIZE -->
@@ -759,7 +759,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </select>
                 <svg style="position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </div>
-              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
+              <div class="form-field-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Pick a size.</div>
             </div>
           </div>
 
@@ -2023,7 +2023,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var locEl  = document.querySelector('[name="pickup-location"]:checked');
           var locErr = document.getElementById('location-error');
           if (!locEl) { if(locErr) locErr.style.display='block'; ok=false; } else { if(locErr) locErr.style.display='none'; }
-          if (!ok) return;
+          if (!ok) {
+            // Take them to the first thing still missing, as the shop cart's
+            // go() does. On a phone three of the four messages sat above the
+            // screen, so the button looked as if it did nothing.
+            var firstErr = Array.prototype.find.call(
+              form.querySelectorAll('#location-error, #dt-error, .form-field-error'),
+              function(el) { return el.style.display === 'block'; });
+            var box = firstErr && firstErr.parentElement;
+            if (box) {
+              var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              box.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' });
+              var ctl = box.querySelector('.nd-cal-day.is-on')
+                || box.querySelector('.nd-btn, .nd-cal-day:not([disabled]), input:not([type="hidden"]):not([aria-hidden="true"])');
+              if (ctl) ctl.focus({ preventScroll: true });
+            }
+            return;
+          }
 
           var pickupTime = slotLabel(selMin);
           var flavour = document.getElementById('cake-flavour').value;
