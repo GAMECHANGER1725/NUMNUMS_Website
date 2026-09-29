@@ -288,7 +288,9 @@ export default function CartPage() {
                         <p className="mt-0.5 text-[0.78rem] text-muted-foreground">
                           Size: <span className="text-foreground">{l.size}</span>
                         </p>
-                        <p className="truncate text-[0.78rem] text-muted-foreground">
+                        {/* Wrapped, never cut off: this is the last place to
+                            proof what gets piped, letter for letter. */}
+                        <p className="break-words text-[0.78rem] text-muted-foreground">
                           Writing: <span className="text-foreground">{l.wording || "none"}</span>
                         </p>
                       </div>
