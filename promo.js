@@ -318,8 +318,20 @@
     return false;
   }
 
+  // Cakes, not rows — the shop's cartCount sums quantities, and so does this.
+  function cartCakes() {
+    try {
+      var c = JSON.parse(safeGet('localStorage', 'nn_cart_v1') || '{}');
+      if (!c || !Array.isArray(c.lines)) return 0;
+      return c.lines.reduce(function (n, l) { return n + (Number(l && l.qty) || 1); }, 0);
+    } catch (e) { return 0; }                           // a half-written cart is no cart
+  }
+
   if (safeGet('sessionStorage', SEEN_KEY)) return;
   if (signedIn()) return;                                 // already a member
+  // A cake already in the cart means somebody is mid-order — the same reason
+  // /order is excluded below. The code could not be used on this order anyway.
+  if (cartCakes() > 0) return;
   if (location.pathname.indexOf('/shop') === 0) return;   // already in the shop
   // The legal pages are where this very form SENDS people. Covering the
   // document someone stepped out to read, with the offer they stepped out of,
