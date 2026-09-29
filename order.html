@@ -2036,6 +2036,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         form.querySelectorAll('select, input[type="radio"]').forEach(function(el) {
           el.addEventListener('change', updateOrderProgress);
         });
+        // The name is typed, not chosen: without this the bar sat still until the field lost focus.
+        var nameEl = document.getElementById('cake-name');
+        if (nameEl) nameEl.addEventListener('input', updateOrderProgress);
         updateOrderProgress();
 
         // Sticky progress bar (mobile only): reveal with a spring animation once
