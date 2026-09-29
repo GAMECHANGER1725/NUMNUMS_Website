@@ -61,7 +61,11 @@
       + '.btn-hover-interactive{display:none!important;}'
       + '#mobile-menu-btn.open .ham-bar:nth-child(1){transform:translateY(8px) rotate(45deg);}'
       + '#mobile-menu-btn.open .ham-bar:nth-child(2){opacity:0;transform:scaleX(0.4);}'
-      + '#mobile-menu-btn.open .ham-bar:nth-child(3){transform:translateY(-8px) rotate(-45deg);}}';
+      + '#mobile-menu-btn.open .ham-bar:nth-child(3){transform:translateY(-8px) rotate(-45deg);}}'
+      // Hiding the nav's pill by CLASS hid every page button sharing it —
+      // /about's "Order a Cake" vanished below 1025px. Content buttons come
+      // back; :not(#nav-cart) outranks this rule and each page's own <=640 one.
+      + '@media (max-width:1024px){a.btn-hover-interactive:not(#nav-cart){display:inline-flex!important;}}';
     document.head.appendChild(st);
   }
 
