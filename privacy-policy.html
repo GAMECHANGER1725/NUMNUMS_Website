@@ -334,8 +334,7 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       if (!root) return;
       root.innerHTML = '<button id="ham-btn" style="width:40px;height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px;" aria-label="Open menu" aria-expanded="false"><span class="ham-bar" style="display:block;width:22px;height:2px;background:#2C1A0E;border-radius:9999px;transition:transform 0.3s,opacity 0.2s;"></span><span class="ham-bar" style="display:block;width:22px;height:2px;background:#2C1A0E;border-radius:9999px;transition:transform 0.3s,opacity 0.2s;"></span><span class="ham-bar" style="display:block;width:22px;height:2px;background:#2C1A0E;border-radius:9999px;transition:transform 0.3s,opacity 0.2s;"></span></button>';
       var portal = document.getElementById('mobile-menu-portal');
-      portal.innerHTML = '<div id="mobile-menu" style="display:none;position:fixed;inset:0;z-index:9999;background:#FFF8F2;padding:5rem 1.75rem 2rem;overflow-y:auto;"><a href="/shop">Shop Cakes</a>
-<a href="/indian-sweet">Indian Sweets</a><a href="/order">Custom Cakes</a><a href="/locations">Locations</a><a href="/blog/">Blog</a><a href="/shop" id="nav-cart-m" class="btn-cta">Order Now</a></div>';
+      portal.innerHTML = '<div id="mobile-menu" style="display:none;position:fixed;top:68px;left:0;right:0;bottom:0;z-index:9999;background:#FFF8F2;padding:1.5rem 1.75rem 2rem;overflow-y:auto;"><a href="/shop">Shop Cakes</a><a href="/indian-sweet">Indian Sweets</a><a href="/order">Custom Cakes</a><a href="/locations">Locations</a><a href="/blog/">Blog</a><a href="/shop" id="nav-cart-m" class="btn-cta">Order Now</a></div>';
       var btn = document.getElementById('ham-btn');
       var menu = document.getElementById('mobile-menu');
       var bars = btn.querySelectorAll('.ham-bar');

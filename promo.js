@@ -58,6 +58,9 @@
       + '#nav-pill{background:transparent!important;border:none!important;'
       + 'backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;}'
       + '#mobile-menu-btn{display:flex!important;}'
+      // The legal pages build their own button into this root; without it
+      // they had no navigation at all between 641 and 1024px.
+      + '#mobile-hamburger-root{display:flex!important;}'
       + '.btn-hover-interactive{display:none!important;}'
       + '#mobile-menu-btn.open .ham-bar:nth-child(1){transform:translateY(8px) rotate(45deg);}'
       + '#mobile-menu-btn.open .ham-bar:nth-child(2){opacity:0;transform:scaleX(0.4);}'
