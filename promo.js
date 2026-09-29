@@ -413,6 +413,7 @@
     '.nnp-btn:active:not(:disabled){transform:scale(.98)}',
     '.nnp-btn:disabled{background:#EADFD6;color:#A08E80;cursor:not-allowed;box-shadow:none;transform:none}',
     '.nnp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
+    '.nnp-btn{text-decoration:none;text-align:center;box-sizing:border-box}',
     '.nnp-note{margin:22px 0 0;font-size:.72rem;font-weight:300;line-height:1.6;color:#7A5A44;text-align:center}',
     '.nnp-note+.nnp-note{margin-top:8px}',
     '.nnp-note a{color:#7A5A44;text-decoration:underline}',
@@ -666,13 +667,11 @@
     // the offer free to mint with a throwaway address.
     function done() {
       root.querySelector('.nnp-form-wrap').innerHTML =
-        '<h2 class="nnp-h">Check your email</h2>' +
+        '<h2 class="nnp-h" id="nnp-h">Check your email</h2>' +
         '<p class="nnp-sub">Your 10% code is on its way. It applies to your next ' +
           'order, so it unlocks once you’ve ordered with us — enter it at checkout ' +
           'with this same email address.</p>' +
-        '<button type="button" class="nnp-btn">Browse the cakes</button>';
-      root.querySelector('.nnp-form-wrap .nnp-btn')
-        .addEventListener('click', function () { location.href = '/shop'; });
+        '<a class="nnp-btn" href="/shop">Browse the cakes</a>';
       celebrate();
     }
 
