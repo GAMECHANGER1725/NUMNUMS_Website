@@ -341,6 +341,14 @@ src="https://www.facebook.com/tr?id=1545168307280017&ev=PageView&noscript=1"
       .nd-menu { animation: none; }
       .nd-caret { transition: none; }
     }
+    /* Pickup location: the radio inside is invisible, so the label has to show
+       keyboard focus, hover and press itself — it showed none of them. The
+       selected colours are inline (set on change), so hover skips the checked
+       one rather than fight them. */
+    .loc-btn:has(input:focus-visible) { outline: 2px solid #C85478; outline-offset: 2px; }
+    .loc-btn:hover:not(:has(input:checked)) { border-color: rgba(200,84,120,0.42) !important; }
+    .loc-btn:active { transform: scale(0.97); }
+    @media (prefers-reduced-motion: reduce) { .loc-btn:active { transform: none; } }
     /* iOS Safari zooms the whole page when a field under 16px takes focus —
        the name box was 13px, so every iPhone arriving from an ad got a zoomed
        form to pinch back out of. Inline styles set the size, hence !important. */
