@@ -1045,6 +1045,8 @@
 .nn-icon-btn:hover { background: rgba(200, 84, 120, 0.1); color: #C85478; }
 .nn-icon-btn:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; }
 .nn-icon-btn[data-popup-open] { background: rgba(200, 84, 120, 0.13); color: #C85478; }
+.nn-cta:active, .nn-icon-btn:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: reduce) { .nn-cta:active, .nn-icon-btn:active { transform: none; } }
 .nn-icon-dot {
   position: absolute; right: 6px; top: 6px;
   height: 8px; width: 8px; border-radius: 9999px;

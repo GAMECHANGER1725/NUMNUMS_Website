@@ -252,6 +252,9 @@
       + 'body:has(.hero-video) #navbar:not(.scrolled) #nav-cart:not(.nn-has-items){color:#FFF8F2!important;'
       + 'border-color:rgba(255,248,242,.75)!important;}'
       + 'body:has(.hero-video) #navbar:not(.scrolled) #nav-cart:not(.nn-has-items):hover{border-color:#C85478!important;}'
+      // A press, as the shop's pill and icon button now have. Transform only.
+      + '#nav-cart:active,.nn-acct-btn:active{transform:scale(.97);}'
+      + '@media (prefers-reduced-motion:reduce){#nav-cart:active,.nn-acct-btn:active{transform:none;}}'
       // Keyboard focus on the logo, the hamburger and the menu links was the
       // browser's default ring (blue, or a faint 1px one) while everything
       // else in the bar draws the 2px rose one. Same rule as the shop's.
