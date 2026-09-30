@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
 import { CakeRow } from "@/components/ui/cake-row";
 import { SELLABLE_FLAVOURS, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
@@ -162,10 +162,21 @@ export default function ShopPage() {
                       </span>
                     )}
                   </span>
-                  <span className="block px-3 py-2.5">
+                  <span className="block px-3 pb-3 pt-2.5">
                     <span className="block text-[0.86rem] font-medium leading-tight">{f.name}</span>
-                    <span className="block text-[0.74rem] text-muted-foreground">
-                      from {money(listPriceCents("6 inch", f.name) ?? 0)}
+                    {/* The price and the way in sit on one line, so the card
+                        reads as something you buy, not a picture you open.
+                        It says Order, not Add to cart: a cake needs a size
+                        first, and adding one blind is the error Baymard sees
+                        most on list-page quick-adds. The whole card is the
+                        link; this is its visible verb. */}
+                    <span className="mt-1.5 flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                      <span className="whitespace-nowrap text-[0.74rem] text-muted-foreground">
+                        from {money(listPriceCents("6 inch", f.name) ?? 0)}
+                      </span>
+                      <span className="cake-order">
+                        Order<ArrowRight className="cake-order-arrow h-3.5 w-3.5" aria-hidden />
+                      </span>
                     </span>
                   </span>
                 </Link>

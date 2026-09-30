@@ -302,7 +302,12 @@
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
     scroll-padding-left: 0.125rem;
-    padding-bottom: 0.25rem;
+    /* An overflow-x container clips on y as well, so the card's hover lift
+       was cut off at the top and its shadow at the bottom. Room is made
+       inside the rail and handed back with negative margins, so the layout
+       around it does not move. */
+    padding: 0.5rem 0 1.25rem;
+    margin: -0.5rem 0 -1rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -450,6 +455,23 @@
     transform-origin: 51% 93%;   /* the baseline, so a zoom grows off the plate */
   }
   .cake-card:hover .cake-photo img { transform: scale(1.045); }
+
+  /* The card's buy button. Outline at rest so fifteen of them do not shout
+     over the photos; the card under the pointer (or finger) fills its own,
+     so there is only ever one solid rose button on the board. */
+  .cake-order {
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex: none;
+    min-height: 32px; padding: 0 12px; border-radius: 9999px;
+    border: 1px solid #C85478; color: #C85478; background: transparent;
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.01em;
+    transition: background-color 0.18s ease, color 0.18s ease;
+  }
+  .cake-order-arrow { transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .cake-card:hover .cake-order, .cake-card:focus-visible .cake-order, .cake-card:active .cake-order {
+    background: #C85478; color: #FFF8F2;
+  }
+  .cake-card:hover .cake-order-arrow, .cake-card:focus-visible .cake-order-arrow { transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) { .cake-order-arrow { transition: none; } .cake-card:hover .cake-order-arrow { transform: none; } }
 
   .cake-ground {
     position: absolute;
