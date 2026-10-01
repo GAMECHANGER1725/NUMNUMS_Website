@@ -32,3 +32,12 @@ ops/OPS-LOGINS.md
 # source and are kept, the seeded canvas is a ~2MB build artifact and is not.
 .design-pickup/*.html
 !.design-pickup/*.dc.html
+
+# seo-audit skill working output. The skill writes findings to `{domain}-audit/`,
+# but the repo root IS the Netlify publish directory, so anything left here is
+# served publicly. The findings that matter are committed under
+# SEO/GSC-Analysis/<date>-findings/ instead, which carries a noindex header.
+# Anchored with a leading slash so it matches ONLY the repo root. Unanchored,
+# `*-audit/` also matches skills/seo-audit/, which is a tracked, byte-for-byte
+# vendored copy of the claude-seo plugin and must never be excluded.
+/*-audit/
