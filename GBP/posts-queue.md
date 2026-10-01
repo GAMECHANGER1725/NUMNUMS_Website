@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-01
+
+```yaml
+id: post-rs-2026-10-01
+status: published
+published_at: 2026-10-01
+location: riverstone
+post_type: "Call to action"
+title: "6-inch eggless cakes from $39.99 for Vineyard and Tallawong birthdays"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1658.jpg"
+keywords_baited:
+  - small eggless birthday cake Vineyard
+  - 6 inch custom cake Tallawong
+  - eggless cake pickup Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-01
 
 ```yaml
