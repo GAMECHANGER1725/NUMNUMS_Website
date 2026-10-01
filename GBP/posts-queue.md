@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-01
+
+```yaml
+id: post-hp-2026-10-01
+status: published
+published_at: 2026-10-01
+location: harris-park
+post_type: "Call to action"
+title: "Custom eggless anniversary cakes for Auburn and Harris Park couples"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/8453f154-2848-4b86-9433-91cf698e8d7a.jpeg"
+keywords_baited:
+  - custom eggless anniversary cake
+  - Auburn and Harris Park
+  - anniversary cake that suits a guest who can't eat egg
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-09-26
 
 ```yaml
