@@ -1,0 +1,2091 @@
+================================================================================
+NUM NUM'S BAKERY — SEO / GSC / GA4 MONTHLY ANALYSIS
+================================================================================
+RUN_DATE: 2026-10-01
+RUN_TYPE: NumNums-SEO-Monthly, unattended automated routine
+SITE: https://numnumsbakery.com.au
+BUSINESS: Num Num's Bakery (GNT Ventures Pty Ltd, ABN 39 634 402 412). 100% eggless
+  bakery, Sydney NSW. Custom eggless cakes and Indian sweets ONLY — no snacks, no
+  savoury, no egg-based products. PICKUP ONLY, no delivery. Two shops: Harris Park
+  (Shop 1, 96-98 Wigram Street, NSW 2150, daily 11:00-22:00) and Riverstone
+  (Shop 8, Riverstone Shopping Centre, NSW 2765, daily 09:00-18:30).
+REPO: GAMECHANGER1725/NUMNUMS_Website
+BRANCH THIS RUN PUSHED TO: claude/charming-thompson-e129we
+REPO STATE AT START: synced to origin/main @ fa73dfb (git pull --rebase clean)
+
+HOW TO READ THIS FILE
+  Every number carries its window label and its unit. "clicks"/"impressions" are
+  Google Search Console web-search totals. "sessions" are GA4. "position" is
+  average position where LOWER IS BETTER, so a POSITIVE delta is a WORSENING.
+  "ctr" is a percentage already (2.67 means 2.67%).
+  A metric written NO DATA was not obtainable this run; nothing is estimated.
+
+--------------------------------------------------------------------------------
+DATA_SOURCES
+--------------------------------------------------------------------------------
+GSC: Google Search Console Search Analytics API, property sc-domain:numnumsbakery.com.au
+     via skills/seo-audit/scripts/gsc_query.py, service-account auth. WORKED.
+GA4: Google Analytics Data API v1beta, property 531794710, service-account auth.
+     WORKED. Four vendored report types exist (organic/top-pages/device/country) but
+     ga4_report.py accepts only --days, and it filters every report to Organic Search.
+     GSC_* and GA4_* windows had to be like-for-like, and the required
+     GA4_BY_CHANNEL / GA4_BY_AUDIENCE / GA4_BY_EVENT sections need dimensions no
+     vendored script exposes (sessionDefaultChannelGroup, newVsReturning, eventName)
+     and google_report.py --help offers no broader report. So GA4 was pulled by a
+     direct GA4 Data API call with explicit start/end dates, using the same
+     service-account credentials. Every GA4 figure below is a real API response.
+     Nothing under skills/seo-audit/ was modified.
+SERVICE ACCOUNT: num-nums-bakery-seo@central-splice-311105.iam.gserviceaccount.com
+google_auth.py --check output, verbatim:
+     Credential Tier: 2 -- Full (API key + Service Account + GA4)
+       [OK] PageSpeed Insights v5
+       [OK] Chrome UX Report (CrUX) API
+       [OK] CrUX History API
+       [OK] Google Search Console API
+       [OK] Google Indexing API v3
+       [OK] GA4 Data API v1beta
+     NOTE: --check reported CrUX [OK] but every actual CrUX call returned HTTP 403
+     (API_KEY_SERVICE_BLOCKED / SERVICE_DISABLED, "Chrome UX Report API has not been
+     used in project 96266000644 before or it is disabled"). --check is not a
+     reliable signal for CrUX. See FAILURES.
+LIVE CRAWL: WORKED THIS RUN. https://numnumsbakery.com.au returned HTTP/2 200.
+     The outbound-HTTPS block that broke the 6 runs from 02-08 through 01-09-2026 is
+     GONE. 241 live sitemap URLs were fetched; PageSpeed Insights v5 ran on 8 URLs.
+WINDSOR.AI: not used. Retired for this routine as of 2026-09.
+URL INSPECTION API: WORKED. 49 URLs inspected.
+PAGESPEED INSIGHTS v5: WORKED (real API, Lighthouse 13.5.0). Lab data only.
+CrUX FIELD DATA: NO DATA (403). Core Web Vitals pass/fail is UNASSESSABLE this run.
+BACKLINK DATA: NO DATA. backlinks_auth.py reports "Backlink Tier: 0 -- Basic";
+     Moz and Bing Webmaster keys are both MISSING. Common Crawl has the domain
+     in_crawl=true, in_rankings=false, all centrality/rank values null (below
+     threshold). No referring-domain or DA/PA figure is given because none was
+     obtainable; none is estimated.
+
+--------------------------------------------------------------------------------
+WINDOW_BOUNDARIES (explicit ISO dates)
+--------------------------------------------------------------------------------
+GSC lags ~3 days. Every GSC window is anchored at today-3 = 2026-09-28.
+  w7       2026-09-22 .. 2026-09-28   (current 7 days)
+  w7prev   2026-09-15 .. 2026-09-21   (previous 7 days, days 8-14 back)
+  w28      2026-09-01 .. 2026-09-28   (current 28 days)
+  w28prev  2026-08-04 .. 2026-08-31   (previous 28 days, days 29-56 back)
+  w3mo     2026-06-30 .. 2026-09-28   (91 days)
+  w6mo     2026-04-01 .. 2026-09-28   (181 days)
+  w12mo    2025-09-29 .. 2026-09-28   (365 days)
+  sep2026  2026-09-01 .. 2026-09-30   (calendar month, the complete prior month)
+  aug2026  2026-08-01 .. 2026-08-31   (calendar month, for month-over-month)
+GA4 windows use the SAME explicit dates, so GSC and GA4 are like-for-like and
+  CROSS_SOURCE is a valid comparison. GA4 has no 3-day lag, so sep2026 is complete
+  in GA4 and truncated in GSC — this matters, see the three warnings below.
+
+*** THREE MEASUREMENT WARNINGS THAT CHANGE HOW EVERY TREND BELOW READS ***
+
+WARNING 1 — SEPTEMBER IS 28 DAYS OF GSC DATA, NOT 30.
+  GSC w28 (09-01..09-28) and GSC sep2026 (09-01..09-30) return the IDENTICAL totals
+  (796 clicks / 29793 impressions). 2026-09-29 and 2026-09-30 carry zero rows, which
+  is the reporting lag, not a traffic collapse. So the headline
+  "Sep -14.3% clicks vs Aug" compares 28 days against 31 days.
+  PER-DAY, the honest figure:
+    GSC clicks/day  Sep 796/28 = 28.43   Aug 929/31 = 29.97   -> -5.1%
+    GSC impr/day    Sep 29793/28 = 1064  Aug 35018/31 = 1130  -> -5.8%
+    GA4 organic sessions/day (no lag) Sep 1017/30 = 33.9  Aug 1096/31 = 35.4 -> -4.1%
+  Two independent sources agree on roughly -4% to -6% per day. That is the real
+  month-over-month movement. The -14% headline is an artifact. Do not act on -14%.
+
+WARNING 2 — THE 12-MONTH WINDOW CONTAINS NO MORE DATA THAN THE 6-MONTH WINDOW.
+  w6mo and w12mo are byte-identical on every metric (2890 clicks / 103682
+  impressions / 2.79% / 11.3) and GA4 likewise (6145 sessions). GSC holds no usable
+  data before ~2026-04-01 for this property. Google also flags an impressions
+  logging error for 2025-05-13..2026-04-27. Therefore: 12-month trend and
+  seasonality CANNOT be assessed, and any "year on year" claim is unsupported.
+  Treat w6mo as the longest honest window. First real YoY comparison: 2027-04.
+
+WARNING 3 — THE LIVE SITE IS A BUILD WEEKS BEHIND main. THIS IS THE BIGGEST
+  SINGLE FINDING OF THE RUN AND IT IS NOT A CODE DEFECT.
+  Netlify auto-publish is OFF and nobody has pressed Publish. Proven, not inferred:
+    - LIVE sitemap.xml has 241 <loc>; the repo has 240. The extra one is /cakes.
+    - LIVE /cakes returns 200 and is "Submitted and indexed" in GSC (crawled
+      2026-09-19). On disk /cakes is deleted and 301s to /order.
+    - LIVE pages carry /cakes links: homepage 9, /about 7, /order 7, /locations 6,
+      /blog/ 6, and ~235 blog posts with 3-8 each. On disk: ZERO.
+    - LIVE /terms 404s, though terms.html exists on disk and 232 pages link to it.
+    - LIVE /shop 404s, though shop/index.html is committed and rewritten in netlify.toml.
+    - LIVE /promo.js 404s.
+    - LIVE CSP lacks accounts.google.com and the Supabase host that disk netlify.toml has.
+    - LIVE nav has no "Shop Cakes"; the homepage still gates its skeleton on
+      window.load with a 3000ms fallback (the DOM-ready fix is on disk, unpublished).
+  CONSEQUENCES: /cakes still took 24 clicks and 1900 impressions in 28d (5th highest
+  page) and 39 GA4 organic sessions, all of which belong to /order. Every PageSpeed
+  figure below describes the OLD build. Everything the 01-09 and 07-09 runs fixed is
+  still not live. PUBLISHING IS THE SINGLE HIGHEST-VALUE ACTION AVAILABLE and it is
+  a human action in the Netlify UI.
+  This also governed how fixes were applied this run: every live-crawl finding was
+  cross-checked against disk first, so nothing already fixed-and-unpublished was
+  "fixed" a second time.
+
+--------------------------------------------------------------------------------
+PRIOR_RUN_BACKLOG
+--------------------------------------------------------------------------------
+OPEN SEO PRs FROM PRIOR RUNS OF THIS ROUTINE: 0
+  The known 5-PR backlog (#56, #62, #69, #74, #79, August 2026 weekly runs) is GONE.
+  None appears in the open list. Backlog trend: 4-5 -> 0. SHRINKING, now clear.
+  Step 7's self-merge change has had the intended effect.
+OPEN PRs IN THE REPO OVERALL: 48, every one titled "GBP Harris Park|Riverstone:
+  queue post <date>", #43 (2026-07-21) through #102 (2026-10-01), all draft.
+  These belong to the GBP posting routine, NOT to this SEO routine. They are listed
+  here as diagnostic information only. NOT ACTIONABLE BY THIS ROUTINE — do not
+  force-merge another routine's PRs. Oldest is 72 days old. Worth the owner's
+  attention: that routine is accumulating drafts the way this one used to.
+
+--------------------------------------------------------------------------------
+SEO_AUDIT_SCORE
+--------------------------------------------------------------------------------
+METHOD: the `seo-audit` project skill was invoked by name and resolved from
+  skills/seo-audit/ (symlinked at .claude/skills/seo-audit). 12 specialist agents
+  were spawned: seo-technical, seo-content, seo-schema, seo-local, seo-sitemap,
+  seo-performance, seo-geo, seo-google, seo-sxo, seo-cluster, seo-backlinks,
+  seo-image-gen. Excluded per this routine's data-only rule: seo-visual (needs
+  Playwright) and the screenshots/ output and the PDF. Excluded as inapplicable:
+  seo-ecommerce (lead-gen/enquiry site; /shop is noindex and unlaunched),
+  seo-maps and seo-dataforseo (no DataForSEO MCP), seo-drift (no stored baseline).
+  Scored with the skill's own Scoring Weights table.
+
+OVERALL: 81/100 post-fix   (75/100 pre-fix measured this run)
+PREVIOUS RUN (07-09-2026): 80/100 post-fix
+DELTA vs LAST RUN: +1
+  Read that +1 with care rather than as "no progress". The two runs do not share a
+  denominator: 07-09 could measure Performance, this run cannot (CrUX 403), so this
+  run's Performance is PSI-lab-only and is the single biggest drag on the score.
+  Pre-fix to post-fix THIS run is +6 (75 -> 81), which is the honest measure of what
+  this run's 1,006 edits achieved.
+
+PER-CATEGORY (weight | pre-fix | post-fix | basis)
+  Technical SEO        22%  |  80 |  85 | live crawl of 241 URLs + local files
+  Content Quality      23%  |  74 |  76 | local file analysis (234 posts, programmatic)
+  On-Page SEO          20%  |  93 |  95 | local file analysis (242 pages, programmatic)
+  Schema/Structured    10%  |  62 |  92 | local file analysis (246 JSON-LD blocks, 600 entity nodes)
+  Performance (CWV)    10%  |  55 |  55 | PSI v5 LAB ONLY. CrUX field = N/A (403). No fix applied.
+  AI Search Readiness  10%  |  70 |  78 | local file analysis (242 pages)
+  Images                5%  |  52 |  62 | local file analysis + real pixel dims via PIL
+  WEIGHTED TOTAL             | 74.5| 80.8|  -> 75 and 81
+
+  Performance is scored, not N/A, because PSI v5 returned real Lighthouse data for 8
+  URLs. But the CWV half of that category — the only half Google ranks on — is
+  genuinely unmeasured, so 55 is a lab proxy, not a CWV verdict. It is NOT comparable
+  to a month where field data existed. Enabling the CrUX API is what makes this
+  number trustworthy again.
+
+SUPPLEMENTARY SCORES (specialist categories outside the skill's 7-row weight table;
+reported for diagnosis, EXCLUDED from the weighted total so the headline stays
+comparable month to month):
+  Sitemap integrity     92/100  local files + GSC Sitemaps API
+  Indexation            62/100  URL Inspection API, 49 URLs
+  Local SEO             52/100  local files  <- LOWEST. Driven by the hours error now fixed.
+  SXO / page-type fit   54/100  GSC + local files + 5 live SERP checks
+  Topic cluster health  54/100  GSC query+page joins + local link graph
+  Backlinks            N/A      no real link data obtainable; not guessed
+
+--------------------------------------------------------------------------------
+FIXES_APPLIED
+--------------------------------------------------------------------------------
+246 files changed. 1,006 individual edits. Every one traces to a Step 1 finding.
+Format: file(s) | change | severity | verification
+
+RIVERSTONE TRADING HOURS WERE WRONG ACROSS THE WHOLE SITE — the largest single
+factual defect found, and it needed adjudication because two specialists
+contradicted each other. seo-local said 9:00-18:30 is right; seo-geo said
+6am-8pm is right and the 9:00-18:30 figure was only a collection window. Resolved
+by evidence, not by preference: ops/catalog.mjs COLLECTION gives harris-park
+11:00-22:00 and riverstone 09:00-18:30, and Harris Park's openingHoursSpecification
+reads 11:00-22:00 on ALL 190 of its schema nodes — i.e. this site's own established
+convention is that openingHoursSpecification EQUALS the COLLECTION window. Riverstone
+was the only outlier, and exactly one of its 168 nodes (locations.html) already said
+09:00-18:30. CLAUDE.md records the hours as Vaidik's call of 2026-09-21, so stale
+pre-change values across a corpus written earlier is precisely what you would expect.
+  168 files (JSON-LD) | openingHoursSpecification Mon-Fri 06:00-20:00 + Sat-Sun
+    07:00-19:00 -> single daily 09:00-18:30 entry; 167 nodes corrected, 1 already
+    correct | CRITICAL | PASS: all 168 Riverstone nodes now identical; 246/246
+    JSON-LD blocks still parse
+  214 files (visible copy, meta descriptions, og:/twitter: descriptions, FAQ answers)
+    | 579 hour expressions rewritten to the daily form, dash/case/spacing style
+    matched per occurrence | CRITICAL | PASS: 0 residual wrong-hours strings
+  29 files | 28 duplicated "Daily 9am-6:30pm<br>Daily 9am-6:30pm" strings collapsed
+    — an artifact my own first pass created where weekday and weekend hours sat on
+    separate lines; caught by re-grepping rather than assumed clean | HIGH | PASS: 0 remain
+  11 files | 14 PROSE passages that ARGUED FROM the old 6am opening rewritten, not
+    string-substituted ("Not many cake bakeries open at 6 am", "the early weekday
+    opening (6 am) suits families collecting before school drop-off", etc). A blind
+    swap would have left the site praising an opening time it no longer has | HIGH |
+    PASS: 1 residual "6 am" left deliberately — blog/hsc-results-day-cake-sydney.html
+    "a household holding its breath in the kitchen at 6 am", which is narrative about
+    HSC results release and nothing to do with shop hours
+  locations.html | the page CONTRADICTED ITSELF: hours table said 6:00 AM-8:00 PM /
+    7:00 AM-7:00 PM while its own subtitle, prose, meta description and schema said
+    9am-6:30pm | CRITICAL | PASS: table, prose, meta, og, twitter and schema now all
+    read daily 9:00 AM - 6:30 PM
+  skills/blog-write/SKILL.md (lines 593, 675), docs/HOW-TO-ADD-BLOG-POSTS.md (533, 619)
+    | ROOT CAUSE: the wrong hours were written into the post-generator checklists, so
+    every new post reproduced the error | CRITICAL | PASS: 0 occurrences remain.
+    Scope note: this routine must not touch SKILL.md's topic-selection gate and did
+    not — only the four NAP/hours fact lines were changed.
+
+JSON-LD / STRUCTURED DATA
+  index.html, indian-sweet.html, 5 blog posts | 13 entity nodes carried NO sameAs at
+    all, breaching the project rule that every entity node must have sameAs containing
+    the Wikidata URI. 1 store node given the full sameAs array; 1 Organization given
+    it; 6 inline Product `seller` Organizations and 3 bare `publisher` Organizations
+    replaced with {"@id": .../#organization} references; 2 typed @id stubs de-typed to
+    pure references | CRITICAL | PASS: 600 entity nodes checked, 0 missing Wikidata sameAs
+  26 blog posts | 26 Bakery nodes had no `geo` at all; correct GeoCoordinates added per
+    store @id | HIGH | PASS: 0 store nodes without geo
+  blog/eggless-cakes-near-me-sydney.html | a stray untyped `LocalBusiness` at Harris
+    Park carried geo -33.8196/151.0014, a third coordinate pair for an address that
+    should have exactly one. Retyped to Bakery, given @id #harrispark, geo corrected |
+    HIGH | PASS: the whole repo now has exactly 2 distinct geo pairs, one per shop
+  order.html, about.html | 3 dangling @id references that resolved to nothing on their
+    own page: Service.provider -> #harrispark/#riverstone (undefined there, collapsed
+    to the single #organization reference) and isPartOf -> #website (undefined
+    anywhere, repointed) | MEDIUM | PASS: 0 dangling on-site @id references repo-wide
+  4 blog posts | Bakery nodes carrying the #harrispark @id but the bare name
+    "Num Num's Bakery" renamed to "Num Num's Bakery — Harris Park" | MEDIUM | PASS
+  blog/eggless-cake-for-vegetarians-sydney.html | Organization name "Num Nums Bakery"
+    -> "Num Num's Bakery" | MEDIUM | PASS
+  index.html, indian-sweet.html, locations.html | Riverstone streetAddress long variant
+    "Shop 8, Riverstone Shopping Centre (Riverstone Village)" -> the short form used by
+    the other 165 nodes | MEDIUM | PASS
+  blog/luxury-cake-sydney.html, blog/eggless-cake-for-vegetarians-sydney.html | duplicate
+    #organization @id emitted 3x and 2x on one page; extra typed stubs de-typed | LOW | PASS
+
+FACTUAL CORRECTIONS
+  llms.txt | "15+ flavours including ... Chocolate Truffle ..." named a flavour that
+    does not exist in ops/catalog.mjs, the single source of truth for the catalogue.
+    Replaced with the real 15, named in full | HIGH | PASS: verified against catalog.mjs
+  llms.txt | "eggless cakes, sweets, and pastries" -> "eggless cakes and Indian sweets".
+    Pastries are outside the stated business scope | HIGH | PASS
+  llms.txt | Riverstone hours and the long street-address variant corrected to match | CRITICAL | PASS
+  blog/eggless-birthday-cakes-every-age-sydney.html | "milestone adult cakes" in
+    twitter:description -> "milestone birthday cakes". CLAUDE.md: never "Adult
+    Cakes" | MEDIUM | PASS: 0 occurrences outside the brand guideline stating the rule
+
+DEAD OUTBOUND REFERENCES — 33 unique outbound URLs were 404. The four that mattered
+carried 206 of the occurrences. Each replacement was HTTP-verified live this run, and
+each keeps the cited authority correct so the surrounding anchor text stays true.
+  175 occurrences across ~157 files | FSANZ allergen page, both the lowercase and
+    capital-P spellings of /consumer/foodstandards/[Pp]ages/foodallergens.aspx (404)
+    -> https://www.foodstandards.gov.au/consumer/foodallergies (verified 200) | HIGH |
+    PASS: 0 residual
+  17 occurrences | health.nsw.gov.au/foodsafety/Pages/default.aspx and bare
+    /foodsafety (404) -> https://www.health.nsw.gov.au/Infectious/foodborne/Pages/default.aspx
+    (verified 200). Deliberately kept on health.nsw.gov.au rather than moved to FSANZ,
+    because the anchor text reads "NSW Health" and reattributing it would have made
+    the sentence wrong | HIGH | PASS
+  8 occurrences | health.nsw.gov.au/environment/foodsafety/Pages/pregnancy.aspx (404)
+    -> the same live NSW Health foodborne page | HIGH | PASS
+  10 occurrences across 9 files | ABS religious-affiliation-australia/latest-release
+    (404, both www and bare host) -> ABS cultural-diversity-census/latest-release
+    (verified 200), which carries the 2021 Census religion data the anchor cites | MEDIUM | PASS
+  CHURN, recorded for honesty: a 5th variant, abs.gov.au/articles/religious-affiliation-australia,
+    was ALSO swapped to the cultural-diversity-census release in 5 places — but that URL
+    was verified 200, so those 5 edits repaired nothing. No user-visible impact (both
+    URLs are live ABS religion sources and the anchor "2021 ABS Census" stays accurate)
+    and the end state is one consistent citation, so it was left rather than churned back.
+
+ON-PAGE
+  blog/eggless-cake-types.html, blog/eggless-cakes-valentines-day-sydney.html | each
+    repeated its ENTIRE head meta block twice (title, description, canonical, hreflang,
+    og:*, twitter:*, stylesheet). 24 duplicate lines removed from each | MEDIUM |
+    PASS: each now has exactly 1 title in <head>, 1 canonical, 1 description, 1 og:title
+  17 pages (index, about, locations, indian-sweet, order, terms, privacy-policy, blog/
+    index + 9 posts) | og:image and twitter:image pointed at num_nums_HPphoto.jpeg
+    (518x388) or riverstone_store_img.webp (259x194) — both BELOW the 600x315 social
+    minimum, the Riverstone one absurdly so. Repointed to brand_assets/og-home.jpg,
+    which is a real 1200x630 asset already in the repo that NO page was using.
+    og:image:width/height/alt added | HIGH | PASS: dims confirmed 1200x630 by PIL;
+    og-home.jpg served and present in the rendered HTML
+  blog/luxury-cake-sydney.html | had twitter:card only; twitter:title, :description
+    and :image added from its own og values | LOW | PASS
+  blog/{luxury-cake-sydney,naked-cake-sydney,eggless-cake-for-pooja-sydney}.html |
+    no hreflang at all; en-AU + x-default added matching the other 231 posts | LOW | PASS
+  238 occurrences across 236 files + llms.txt | "https://numnumsbakery.com.au/blog"
+    -> ".../blog/" so og:url, JSON-LD breadcrumbs and llms.txt agree with the canonical
+    and the sitemap, which already used the trailing slash. The bare form 301s | LOW |
+    PASS
+  4 occurrences | the deleted /cakes URL quoted as PLAIN TEXT (including inside FAQ
+    JSON-LD answers) -> /order | LOW | PASS: 0 residual on-disk /cakes references
+
+netlify.toml | INTERNAL FILES WERE PUBLICLY INDEXABLE. `publish = "."` serves the repo
+  root, so these all answer 200 in production — VERIFIED LIVE THIS RUN, not theorised:
+  /CLAUDE.md, /package.json, /verify-blog.mjs, /serve.mjs, /blog-gsc-per-page.md,
+  /GBP/image-bank.md, and by the same mechanism /plans/*.md (including
+  "Five-Year Direction — 2026-2031.md"), /blog-cluster-report.md, /skills/**, /docs/**.
+  16 header rules added applying X-Robots-Tag "noindex, nofollow" to /*.md, /*.mjs,
+  /*.json and the /plans/ /GBP/ /SEO/ /skills/ /docs/ /netlify/ /tests/ /src/ /scripts/
+  /seo-baseline/ /supabase-email-templates/ /shop-app/ /reviews-app/ trees | HIGH |
+  PASS: TOML parses, all 540 redirects and the build command intact.
+  noindex rather than a robots.txt Disallow ON PURPOSE: a blocked URL can never be
+  re-crawled to see a noindex, so Disallow would freeze anything already indexed.
+  SCOPE LIMIT, STATED PLAINLY: this closes the SEO leak, NOT the public readability.
+  The files are still fetchable by exact URL. Fixing that properly means moving the
+  site into a build output directory, which is an architecture change with real deploy
+  risk, so it is NOT done unattended — see OWNER_DECISIONS_REQUIRED.
+  /ops/ is deliberately NOT covered: CLAUDE.md forbids adding ops routes, headers or
+  CSP entries to the root netlify.toml, and that rule was respected even though
+  /ops/ being reachable on the public domain was flagged by seo-technical.
+
+--------------------------------------------------------------------------------
+VERIFICATION PERFORMED (programmatic only — no screenshots, no Puppeteer/Chrome)
+--------------------------------------------------------------------------------
+1. `node verify-blog.mjs` — the ACTUAL Netlify build command, so it gates the deploy:
+     "✓ all blog invariants hold"  (PASSES, exit 0)
+     posts 234 | cards 234 | sitemap 234 | llms 234 | redirects 361
+     facts: 240 pages / 243 JSON-LD blocks (0 invalid) / serving sizes, prices, NAP,
+     entity @ids and internal links all checked — all PASS
+     checkout, webhook, response-shape, coupon, email, auth-emails, order.html,
+     controls, shop, overlay, order form and nav checks — all PASS
+     NOTE it failed at first with ERR_MODULE_NOT_FOUND for `stripe` and
+     `@supabase/supabase-js`. seo-sitemap flagged that [Medium] as a possible Netlify
+     build risk. IT IS A FALSE POSITIVE: both are already declared in package.json
+     dependencies, so Netlify installs them; only this sandbox lacked them. They were
+     installed locally to get a real gate run, and the resulting package.json /
+     package-lock.json / node_modules changes were REVERTED so this commit carries no
+     dependency churn.
+2. `node serve.mjs` + curl: all 23 changed page types returned HTTP 200
+   (/, /about, /locations, /order, /indian-sweet, /terms, /privacy-policy, /blog/,
+   9 edited posts, /llms.txt, /sitemap.xml, /robots.txt).
+3. Served-HTML greps, 12 positive assertions — all PASS: Riverstone 9:00 AM-6:30 PM in
+   the locations table, "opens": "09:00" in schema, og-home.jpg present, og:image:width
+   1200, repaired NSW Health and ABS links, corrected geo -33.8206078, added
+   twitter:title, added hreflang en-AU, rewritten 6am prose, llms.txt hours and flavours.
+4. Served-HTML greps, 3 negative assertions — all PASS (absent): old "6 am" on the
+   homepage, "6:00 AM" in the locations table, duplicate title block.
+5. Inline-attribute guardrail: `git diff` scanned for single-quoted style= and on*=
+   attributes. ZERO introduced. (Netlify's HTML minifier truncates those in production
+   while localhost looks fine — a past incident on this repo.)
+6. JSON-LD: all 246 blocks across 242 pages parse as valid JSON. 600 entity nodes
+   checked: 0 missing the Wikidata sameAs, 0 store nodes missing geo, exactly 2
+   distinct geo pairs repo-wide, 0 dangling on-site @id references.
+7. sitemap.xml: well-formed XML, 240 URLs, 240 unique, 0 duplicates. 234 posts on disk
+   + /blog/ = 235 blog URLs, + 5 static = 240. /cakes absent. Matches llms.txt and
+   blog/index.html at 234.
+8. netlify.toml parses as TOML; 540 redirects and `command = "node verify-blog.mjs"`
+   unchanged.
+NOTHING WAS REVERTED. No applied change failed its check.
+
+--------------------------------------------------------------------------------
+FINDINGS DELIBERATELY NOT AUTO-FIXED (and exactly why)
+--------------------------------------------------------------------------------
+These are code-actionable but were NOT applied, because applying them unattended
+would have been guessing at a business fact, publishing an editorial judgement, or
+risking the deploy. Each needs a decision, not a patch.
+
+1. aggregateRating 4.6 from 50 reviews, on index.html and locations.html — IDENTICAL
+   for BOTH shops. Third-party scrapes in seo-baseline record Google at 4.1 with
+   358-609 reviews, which contradicts the markup, and the 4.6/50 figure's provenance
+   cannot be established from the repo. Publishing a review rating that overstates the
+   real one is an Australian Consumer Law exposure, not just an SEO defect, and the ACCC
+   has "fake pricing/reviews" as a named 2026-27 enforcement priority. But DELETING
+   possibly-genuine markup unattended is also wrong, and one combined figure presented
+   as each store's own rating cannot be right either way. Needs the true per-store
+   numbers from the GBP console. Google ignores self-serving LocalBusiness ratings
+   anyway, so there is no ranking cost to removing it.
+   Also: 9 named Review nodes sit across those two pages, provenance likewise unverified.
+2. The 48-hour lead time in 225 of 234 posts. The real rule is 2 days for custom and
+   next-day for shop cakes. "48 hours" is conservative rather than wrong, CLAUDE.md
+   explicitly parks it for a separate pass, and rewriting 1,729 lines of lead-time copy
+   unattended is an editorial job. NOT TOUCHED, by instruction.
+3. Keyword cannibalisation consolidation. 20% of impressions (22,634 of 112,356 in
+   w3mo) are same-SERP self-competition, and 526 queries had 2+ of our URLs. The fix
+   is consolidate-and-301 across whole clusters — 12 posts in the calendar cluster
+   alone earn 21 impressions or fewer. Deleting or redirecting earning pages is
+   irreversible and is the owner's call. See RECOMMENDATIONS R4.
+4. The internal-link matrix. seo-cluster produced ~70 specific source->target->anchor
+   links for the 50 posts that have only one inbound link. Genuinely valuable and
+   genuinely safe-ish, but it is ~70 insertions of new prose anchors into article
+   bodies, which is content authoring rather than defect repair, and it wants a human
+   eye on anchor placement. Deferred to a dedicated pass. See R3.
+5. 6 posts never say "100% eggless" in visible text (eggless-cake-calories-guide-sydney,
+   eggless-cake-cancellation-policy-sydney, eggless-cake-gluten-free-sydney,
+   eggless-cake-ingredient-labels-sydney, halal-friendly-cakes-eggless-sydney,
+   natural-ingredients-eggless-cakes). Fixing it means writing a sentence into each
+   article, which is copywriting. Listed for the blog routine.
+6. Answer-first openings. Only 41 of 232 posts have both "eggless" and "Sydney" in
+   their first 50 words; 93 open with a scene-setter; 208 have a first paragraph over
+   60 words. This is the top AI-citability lever and it is a rewrite of 93 openings.
+7. Missing `image` (337 nodes) and `priceRange` (334 nodes) on store schema, and the
+   Gulab Jamun & Rasgulla Product on indian-sweet.html having an Offer with no price.
+   The price is a real business fact not present in catalog.mjs, so it was not invented.
+   The image/priceRange additions are safe and mechanical and are queued for next run.
+8. sitemap <priority>/<changefreq>: 206 of 240 URLs carry them, 34 do not, and as set
+   they rank blog posts (0.7-0.8) ABOVE the homepage and /order (none). Google ignores
+   both tags entirely, so editing 206 entries buys zero ranking change — pure churn.
+   Left alone deliberately; the inconsistency is cosmetic.
+9. The 1.66MB brand_assets/Logo_TParent.png. seo-image-gen rated this CRITICAL, calling
+   it a 1.66MB download on 237 pages for a 48px logo. CHECKED AND REJECTED AS A FALSE
+   POSITIVE: the logo is already inside a <picture> with a
+   <source srcset="...Logo_TParent_56.webp" type="image/webp"> — the 112x112, 4KB webp.
+   Every modern browser already takes the 4KB file; the PNG is only the legacy
+   fallback. No fix needed, and the "saving" would have been imaginary. Worth recording
+   so a future run does not re-raise it.
+
+--------------------------------------------------------------------------------
+NON_CODE_ACTIONS (a human must do these; no code can)
+--------------------------------------------------------------------------------
+RANKED. The first one is worth more than everything this routine has fixed in three months.
+
+N1. PUBLISH THE BUILD IN NETLIFY. [CRITICAL]
+    Auto-publish is OFF and the live site is weeks behind main. Until someone presses
+    Publish: /cakes stays indexed and keeps absorbing 24 clicks and 1,900 impressions
+    a month that belong to /order; /terms and /shop keep 404ing; ~235 pages keep
+    linking to a dead URL; the window.load skeleton keeps costing ~3s of perceived
+    load on every first visit; and every fix in this file plus the 01-09 and 07-09 runs
+    stays invisible to Google. Check the build goes green first — verify-blog.mjs is
+    the build command and it passes as of this commit.
+N2. ENABLE THE CHROME UX REPORT API on Google Cloud project 96266000644 (or issue a key
+    not restricted away from it). Without it Core Web Vitals cannot be measured at all,
+    which blanks the one category Google actually ranks on and makes the health score
+    non-comparable month to month. One console toggle.
+N3. CONFIRM THE TRUE PER-STORE GOOGLE RATING AND REVIEW COUNT, then either correct or
+    remove the aggregateRating markup (see NOT-AUTO-FIXED #1). ACL exposure.
+N4. FIX THE GSC SITEMAP REGISTRATION. The sitemap the site actually serves and lists in
+    robots.txt — /sitemap.xml — IS NOT SUBMITTED. What is registered:
+      /sitemap_index.xml  241 URLs, 0 errors, 3 warnings, last submitted 2025-10-10
+                          (it is only a netlify.toml 301 to the real one)
+      /wp-sitemap.xml     a dead WordPress-era sitemap, 1 ERROR, 4 warnings,
+                          last submitted 2025-08-20, 404s live
+    Submit https://numnumsbakery.com.au/sitemap.xml and delete the wp-sitemap.xml entry.
+N5. INVESTIGATE THE SEPTEMBER DIRECT-TRAFFIC SPIKE. GA4 Direct sessions nearly doubled
+    Aug->Sep (357 -> 718, +101%) while Organic fell 7%. Direct engagement is 20.6%
+    against Organic's 69.4%. A doubling of a channel at one-third the engagement is
+    usually bot/referrer-spam or untagged campaign traffic, not 361 new customers
+    typing the URL. If it is spam it is inflating every all-traffic figure. Check
+    GA4 Admin -> Data filters and the unassigned/source-medium breakdown.
+N6. CONFIGURE GA4 KEY EVENTS. keyEvents = 0 in EVERY window. order_form_submit (4 in
+    28d) and enquiry_click (8 in 28d) fire correctly but are not marked as key events,
+    so the business has no conversion metric in GA4 and no way to value any SEO work.
+    Mark order_form_submit and enquiry_click as key events. Two clicks in GA4 Admin.
+N7. RESOLVE THE FACTORY ADDRESS CONTRADICTION. llms.txt says the factory is
+    "2/4 Nelson Road, Yennora NSW 2161"; locations.html names "10-12A Wingate Road,
+    Mulgrave NSW 2756". One is wrong, both are published, and neither can be verified
+    from the repo. Confirm which (if either) should be public at all.
+N8. CHECK THE DELIVERY COPY ON locations.html. It says ready-made items are available
+    via Uber Eats, Menulog and DoorDash. CLAUDE.md states the business is PICKUP ONLY
+    and sanctions Uber Eats as a text link only; Menulog and DoorDash appear nowhere in
+    the project's own documentation. If those two channels do not exist the copy is
+    misleading; if they do, CLAUDE.md is out of date. Not guessed at.
+N9. CORRECT THIRD-PARTY CITATIONS. The wrong address "96/96 Wigram St" appears on
+    magicpin and vegspoons and in ~10 blog posts (the on-site instances are a
+    code action queued for next run; the off-site ones need claiming/editing).
+N10. CLAIM THE AU CITATION SET. No site evidence of Apple Business Connect, Bing Places,
+    Yelp AU, TrueLocal, Yellow Pages AU, Hotfrog, Localsearch/StartLocal, Foursquare.
+    An unticked directory checklist already exists in GBP/gbp-numnums-harris-park.md.
+N11. GET REAL BACKLINK DATA. Add a free Moz API key or verify the site in Bing Webmaster
+    Tools, or read the GSC Links report in the UI. Backlinks have now been N/A for
+    every run of this routine; the category cannot be scored or improved blind.
+N12. GBP CONSOLE: confirm "Cake shop" as primary category on both profiles, set the
+    corrected hours (9:00-18:30 Riverstone), reply to reviews, run the review-request
+    flow. NOTE: the GBP/ docs describe croissants, pastries, brownies and CakeShake —
+    all outside the cakes-and-Indian-sweets range. Do not paste that copy into the console.
+N13. LINK OPPORTUNITIES, ranked by effort-to-value for a two-shop bakery: local press
+    and food blogs on the 100%-eggless angle; vegetarian/Jain/egg-allergy community
+    lists; Parramatta and Blacktown council and chamber listings; Indian community and
+    temple sponsorship; wedding and event supplier directories; school and workplace
+    fundraisers. Avoid paid links, PBNs and mass directory submission.
+N14. BESPOKE 1200x630 OG IMAGES. This run repointed 17 undersized og:images onto the
+    existing og-home.jpg, which fixes the dimensions but not the relevance: 137 of 242
+    pages still share ONE image (Chocolate.webp) and all 235 local og:images are
+    portrait or 4:3. Also 94 hotlinked Unsplash stock photos are reused up to 67 times
+    each, with alt text implying they show Num Num's own cakes — an authenticity problem
+    as much as an SEO one. Priority order is in the images findings file.
+
+--------------------------------------------------------------------------------
+GSC DATA TABLES — machine-generated directly from the Search Console API responses.
+Every row is a real API value. Rows are unedited.
+--------------------------------------------------------------------------------
+## GSC_TOTALS  (clicks | impressions | ctr% | avg_position)
+window   | start      | end        | clicks | impressions | ctr%  | avg_pos
+w7       | 2026-09-22 | 2026-09-28 |    191 |        8620 |  2.22 |   11.70
+w7prev   | 2026-09-15 | 2026-09-21 |    214 |        6828 |  3.13 |   11.10
+w28      | 2026-09-01 | 2026-09-28 |    796 |       29793 |  2.67 |   11.00
+w28prev  | 2026-08-04 | 2026-08-31 |    819 |       30772 |  2.66 |   10.90
+w3mo     | 2026-06-30 | 2026-09-28 |   2455 |       89722 |  2.74 |   11.00
+w6mo     | 2026-04-01 | 2026-09-28 |   2890 |      103682 |  2.79 |   11.30
+w12mo    | 2025-09-29 | 2026-09-28 |   2890 |      103682 |  2.79 |   11.30
+sep2026  | 2026-09-01 | 2026-09-30 |    796 |       29793 |  2.67 |   11.00
+aug2026  | 2026-08-01 | 2026-08-31 |    929 |       35018 |  2.65 |   11.00
+
+## GSC_WOW  (current 7d vs previous 7d)
+metric      | current(w7) | previous(w7prev) | abs_delta | pct_delta
+clicks      |          191 |           214 |    -23.00 |  -10.75%
+impressions |         8620 |          6828 |  +1792.00 |  +26.24%
+ctr         |         2.22 |          3.13 |     -0.91 |  -29.07%
+position    |        11.70 |         11.10 |     +0.60 |   +5.41%  (lower is better; negative delta = improvement)
+
+## GSC_MOM  (current 28d vs previous 28d)
+metric      | current(w28) | previous(w28prev) | abs_delta | pct_delta
+clicks      |          796 |           819 |    -23.00 |   -2.81%
+impressions |        29793 |         30772 |   -979.00 |   -3.18%
+ctr         |         2.67 |          2.66 |     +0.01 |   +0.38%
+position    |        11.00 |         10.90 |     +0.10 |   +0.92%  (lower is better; negative delta = improvement)
+
+## GSC_CALENDAR_MONTH  (Sep 2026 vs Aug 2026)
+metric      | current(sep2026) | previous(aug2026) | abs_delta | pct_delta
+clicks      |          796 |           929 |   -133.00 |  -14.32%
+impressions |        29793 |         35018 |  -5225.00 |  -14.92%
+ctr         |         2.67 |          2.65 |     +0.02 |   +0.75%
+position    |        11.00 |         11.00 |     +0.00 |   +0.00%  (lower is better; negative delta = improvement)
+
+## GSC_BY_DEVICE  (per window; position gap = mobile_pos - desktop_pos, positive = mobile worse)
+window   | device  | clicks | impressions | ctr%  | avg_pos
+w7       | desktop |     47 |        4118 |  1.14 |   16.20
+w7       | mobile  |    144 |        4464 |  3.23 |    7.60
+w7       | tablet  |      0 |          38 |  0.00 |    6.80
+w7prev   | desktop |     53 |        2432 |  2.18 |   17.90
+w7prev   | mobile  |    160 |        4346 |  3.68 |    7.40
+w7prev   | tablet  |      1 |          50 |  2.00 |    7.90
+w28      | desktop |    200 |       12217 |  1.64 |   16.20
+w28      | mobile  |    593 |       17424 |  3.40 |    7.40
+w28      | tablet  |      3 |         152 |  1.97 |    7.80
+w28prev  | desktop |    207 |       11758 |  1.76 |   16.50
+w28prev  | mobile  |    604 |       18821 |  3.21 |    7.50
+w28prev  | tablet  |      8 |         193 |  4.15 |    7.50
+w3mo     | desktop |    576 |       35313 |  1.63 |   16.60
+w3mo     | mobile  |   1865 |       53886 |  3.46 |    7.40
+w3mo     | tablet  |     14 |         523 |  2.68 |    8.40
+w6mo     | desktop |    671 |       40350 |  1.66 |   17.30
+w6mo     | mobile  |   2200 |       62734 |  3.51 |    7.50
+w6mo     | tablet  |     19 |         598 |  3.18 |    9.00
+w12mo    | desktop |    671 |       40350 |  1.66 |   17.30
+w12mo    | mobile  |   2200 |       62734 |  3.51 |    7.50
+w12mo    | tablet  |     19 |         598 |  3.18 |    9.00
+sep2026  | desktop |    200 |       12217 |  1.64 |   16.20
+sep2026  | mobile  |    593 |       17424 |  3.40 |    7.40
+sep2026  | tablet  |      3 |         152 |  1.97 |    7.80
+aug2026  | desktop |    219 |       13539 |  1.62 |   16.70
+aug2026  | mobile  |    701 |       21262 |  3.30 |    7.40
+aug2026  | tablet  |      9 |         217 |  4.15 |    8.30
+
+MOBILE_VS_DESKTOP_POSITION_GAP (mobile avg position minus desktop avg position):
+  w7       gap=-8.60  mobile better or equal
+  w7prev   gap=-10.50  mobile better or equal
+  w28      gap=-8.80  mobile better or equal
+  w28prev  gap=-9.00  mobile better or equal
+  w3mo     gap=-9.20  mobile better or equal
+  w6mo     gap=-9.80  mobile better or equal
+  w12mo    gap=-9.80  mobile better or equal
+  sep2026  gap=-8.80  mobile better or equal
+  aug2026  gap=-9.30  mobile better or equal
+
+## GSC_BY_QUERY — TOP 50 BY CLICKS  window=w28 2026-09-01..2026-09-28
+rank | query                                              | clicks | impr  | ctr%  | pos   | brand
+   1 | num num bakery                                     |     73 |   318 | 22.96 |  1.90 | B
+   2 | eggless cake near me                               |     36 |  1069 |  3.37 | 11.00 | -
+   3 | numnum bakery                                      |     25 |    77 | 32.47 |  1.10 | B
+   4 | num nums bakery                                    |     23 |   111 | 20.72 |  1.60 | B
+   5 | num num bakery riverstone                          |     19 |    79 | 24.05 |  1.00 | B
+   6 | num num riverstone                                 |     12 |    55 | 21.82 |  1.00 | B
+   7 | num num bakery harris park                         |     11 |    62 | 17.74 |  1.10 | B
+   8 | numnums bakery                                     |     10 |    49 | 20.41 |  1.40 | B
+   9 | eggless cake sydney                                |      9 |   445 |  2.02 | 30.80 | -
+  10 | num nums bakery harris park                        |      9 |    41 | 21.95 |  1.10 | B
+  11 | num nums bakery menu                               |      6 |    23 | 26.09 |  2.20 | B
+  12 | riverstone cake shop                               |      6 |    21 | 28.57 |  1.40 | -
+  13 | cake shop near me                                  |      5 |   265 |  1.89 |  7.30 | -
+  14 | eggless cakes near me                              |      5 |   312 |  1.60 | 27.80 | -
+  15 | nums nums bakery                                   |      5 |    16 | 31.25 |  1.10 | B
+  16 | eggless cake parramatta                            |      4 |    44 |  9.09 |  3.50 | -
+  17 | num num                                            |      4 |   119 |  3.36 |  2.10 | B
+  18 | num nums bakery riverstone                         |      4 |    41 |  9.76 |  1.10 | B
+  19 | num nums bakery riverstone menu                    |      4 |    15 | 26.67 |  2.60 | B
+  20 | photo cake sydney                                  |      4 |    35 | 11.43 |  4.00 | -
+  21 | bakery near me                                     |      3 |   101 |  2.97 |  8.30 | -
+  22 | cake shops near me                                 |      3 |    35 |  8.57 |  7.50 | -
+  23 | eggless cake                                       |      3 |    49 |  6.12 |  8.20 | -
+  24 | eggless cake in sydney                             |      3 |    14 | 21.43 |  9.90 | -
+  25 | eggless cakes                                      |      3 |   299 |  1.00 | 18.30 | -
+  26 | eggless cakes sydney                               |      3 |   351 |  0.85 | 27.40 | -
+  27 | nam nam bakery                                     |      3 |    16 | 18.75 |  1.00 | -
+  28 | num num bakery wentworthville                      |      3 |    24 | 12.50 |  2.00 | B
+  29 | num num cakes                                      |      3 |    10 | 30.00 |  2.90 | B
+  30 | bakery in harris park                              |      2 |    22 |  9.09 |  4.40 | -
+  31 | cake shop riverstone                               |      2 |    24 |  8.33 |  1.80 | -
+  32 | cakes near me                                      |      2 |    51 |  3.92 | 12.60 | -
+  33 | egg free cakes sydney                              |      2 |    80 |  2.50 | 13.80 | -
+  34 | eggless chocolate cake near me                     |      2 |     7 | 28.57 |  5.00 | -
+  35 | harris park cake shop                              |      2 |    62 |  3.23 |  5.90 | -
+  36 | indian cake shop near me                           |      2 |    28 |  7.14 |  4.50 | -
+  37 | num nums                                           |      2 |   270 |  0.74 |  5.80 | B
+  38 | num nums bakery photos                             |      2 |    21 |  9.52 |  2.20 | B
+  39 | numnum cake                                        |      2 |     4 | 50.00 |  1.20 | B
+  40 | numnums                                            |      2 |    48 |  4.17 |  3.60 | B
+  41 | photo cake                                         |      2 |   111 |  1.80 | 14.90 | -
+  42 | rasmalai cake                                      |      2 |    34 |  5.88 |  5.50 | -
+  43 | riverstone bakery                                  |      2 |    74 |  2.70 |  7.80 | -
+  44 | 1st birthday cakes                                 |      1 |    25 |  4.00 | 18.40 | -
+  45 | birthday cake shop near me                         |      1 |     4 | 25.00 | 10.00 | -
+  46 | birthday cakes                                     |      1 |    21 |  4.76 | 14.80 | -
+  47 | birthday cakes near me                             |      1 |    16 |  6.25 |  9.60 | -
+  48 | butterscotch cake                                  |      1 |     3 | 33.33 |  1.30 | -
+  49 | butterscotch cake near me                          |      1 |     4 | 25.00 |  3.80 | -
+  50 | cake bakery near me                                |      1 |     2 | 50.00 | 12.00 | -
+BRANDED_TOTAL   clicks=222 impressions=1425
+NONBRANDED_TOTAL clicks=181 impressions=5045
+BRANDED_SHARE_OF_CLICKS=55.1%  NONBRANDED_SHARE_OF_CLICKS=44.9%
+BRANDED_SHARE_OF_IMPRESSIONS=22.0%  NONBRANDED_SHARE_OF_IMPRESSIONS=78.0%
+(rows returned by API for this window: 200; note GSC omits low-volume/anonymised queries, so these totals are the visible subset, not the window total)
+
+## GSC_BY_QUERY — TOP 50 BY IMPRESSIONS  window=w28 2026-09-01..2026-09-28
+rank | query                                              | clicks | impr  | ctr%  | pos   | brand
+   1 | eggless cake near me                               |     36 |  1069 |  3.37 | 11.00 | -
+   2 | eggless cake sydney                                |      9 |   445 |  2.02 | 30.80 | -
+   3 | eggless cake shop                                  |      1 |   406 |  0.25 | 21.90 | -
+   4 | eggless cakes sydney                               |      3 |   351 |  0.85 | 27.40 | -
+   5 | num num bakery                                     |     73 |   318 | 22.96 |  1.90 | B
+   6 | eggless cakes near me                              |      5 |   312 |  1.60 | 27.80 | -
+   7 | eggless cakes                                      |      3 |   299 |  1.00 | 18.30 | -
+   8 | num nums                                           |      2 |   270 |  0.74 |  5.80 | B
+   9 | cake shop near me                                  |      5 |   265 |  1.89 |  7.30 | -
+  10 | kids birthday cakes                                |      1 |   149 |  0.67 | 15.70 | -
+  11 | num num                                            |      4 |   119 |  3.36 |  2.10 | B
+  12 | num nums bakery                                    |     23 |   111 | 20.72 |  1.60 | B
+  13 | photo cake                                         |      2 |   111 |  1.80 | 14.90 | -
+  14 | bakery near me                                     |      3 |   101 |  2.97 |  8.30 | -
+  15 | egg free cakes sydney                              |      2 |    80 |  2.50 | 13.80 | -
+  16 | num num bakery riverstone                          |     19 |    79 | 24.05 |  1.00 | B
+  17 | numnum bakery                                      |     25 |    77 | 32.47 |  1.10 | B
+  18 | riverstone bakery                                  |      2 |    74 |  2.70 |  7.80 | -
+  19 | kids birthday cake sydney                          |      1 |    73 |  1.37 | 17.90 | -
+  20 | num num bakery harris park                         |     11 |    62 | 17.74 |  1.10 | B
+  21 | harris park cake shop                              |      2 |    62 |  3.23 |  5.90 | -
+  22 | cake shop harris park                              |      1 |    61 |  1.64 |  5.10 | -
+  23 | num num riverstone                                 |     12 |    55 | 21.82 |  1.00 | B
+  24 | cake near me                                       |      1 |    55 |  1.82 |  9.70 | -
+  25 | cakes near me                                      |      2 |    51 |  3.92 | 12.60 | -
+  26 | cake shop in harris park                           |      1 |    50 |  2.00 |  5.50 | -
+  27 | numnums bakery                                     |     10 |    49 | 20.41 |  1.40 | B
+  28 | eggless cake                                       |      3 |    49 |  6.12 |  8.20 | -
+  29 | numnums                                            |      2 |    48 |  4.17 |  3.60 | B
+  30 | nom nom bakery                                     |      1 |    47 |  2.13 |  6.80 | -
+  31 | eggless cake parramatta                            |      4 |    44 |  9.09 |  3.50 | -
+  32 | num nums bakery harris park                        |      9 |    41 | 21.95 |  1.10 | B
+  33 | num nums bakery riverstone                         |      4 |    41 |  9.76 |  1.10 | B
+  34 | photo cake sydney                                  |      4 |    35 | 11.43 |  4.00 | -
+  35 | cake shops near me                                 |      3 |    35 |  8.57 |  7.50 | -
+  36 | rasmalai cake                                      |      2 |    34 |  5.88 |  5.50 | -
+  37 | cake shop                                          |      1 |    33 |  3.03 |  7.50 | -
+  38 | bakery                                             |      0 |    31 |  0.00 | 12.20 | -
+  39 | indian cake shop near me                           |      2 |    28 |  7.14 |  4.50 | -
+  40 | eggless cake blacktown                             |      1 |    27 |  3.70 |  6.30 | -
+  41 | num nums bakery reviews                            |      1 |    26 |  3.85 |  3.80 | B
+  42 | 1st birthday cakes                                 |      1 |    25 |  4.00 | 18.40 | -
+  43 | num num bakery wentworthville                      |      3 |    24 | 12.50 |  2.00 | B
+  44 | cake shop riverstone                               |      2 |    24 |  8.33 |  1.80 | -
+  45 | num nums bakery menu                               |      6 |    23 | 26.09 |  2.20 | B
+  46 | custom image cake                                  |      1 |    23 |  4.35 |  8.70 | -
+  47 | bakery in harris park                              |      2 |    22 |  9.09 |  4.40 | -
+  48 | riverstone cake shop                               |      6 |    21 | 28.57 |  1.40 | -
+  49 | num nums bakery photos                             |      2 |    21 |  9.52 |  2.20 | B
+  50 | birthday cakes                                     |      1 |    21 |  4.76 | 14.80 | -
+BRANDED_TOTAL   clicks=222 impressions=1425
+NONBRANDED_TOTAL clicks=181 impressions=5045
+BRANDED_SHARE_OF_CLICKS=55.1%  NONBRANDED_SHARE_OF_CLICKS=44.9%
+BRANDED_SHARE_OF_IMPRESSIONS=22.0%  NONBRANDED_SHARE_OF_IMPRESSIONS=78.0%
+(rows returned by API for this window: 200; note GSC omits low-volume/anonymised queries, so these totals are the visible subset, not the window total)
+
+## GSC_BY_QUERY — TOP 50 BY IMPRESSIONS (3-month, for stability)  window=w3mo 2026-06-30..2026-09-28
+rank | query                                              | clicks | impr  | ctr%  | pos   | brand
+   1 | eggless cake near me                               |     97 |  2881 |  3.37 |  9.60 | -
+   2 | eggless cake shop                                  |      2 |  2044 |  0.10 | 20.70 | -
+   3 | eggless cake sydney                                |     25 |  1130 |  2.21 | 22.80 | -
+   4 | num num bakery                                     |    233 |  1036 | 22.49 |  1.90 | B
+   5 | cake shop near me                                  |     27 |   908 |  2.97 |  7.00 | -
+   6 | eggless cakes near me                              |     18 |   838 |  2.15 | 21.00 | -
+   7 | num nums                                           |      6 |   838 |  0.72 |  5.50 | B
+   8 | eggless cakes sydney                               |      7 |   803 |  0.87 | 22.20 | -
+   9 | eggless cakes                                      |      7 |   800 |  0.88 | 16.90 | -
+  10 | best cakes sydney                                  |      3 |   568 |  0.53 | 11.80 | -
+  11 | num num                                            |     10 |   411 |  2.43 |  2.40 | B
+  12 | num nums bakery                                    |     62 |   353 | 17.56 |  1.70 | B
+  13 | photo cake                                         |      5 |   348 |  1.44 | 12.70 | -
+  14 | bakery near me                                     |      6 |   346 |  1.73 |  9.40 | -
+  15 | riverstone bakery                                  |      4 |   297 |  1.35 |  6.60 | -
+  16 | eggless cake                                       |      7 |   295 |  2.37 |  7.90 | -
+  17 | num num bakery riverstone                          |     62 |   274 | 22.63 |  1.30 | B
+  18 | nom nom bakery                                     |      9 |   247 |  3.64 |  6.00 | -
+  19 | numnum bakery                                      |     78 |   236 | 33.05 |  1.30 | B
+  20 | egg free cakes sydney                              |      4 |   227 |  1.76 | 11.80 | -
+  21 | harris park cake shop                              |      8 |   216 |  3.70 |  5.80 | -
+  22 | rasmalai cake near me                              |      6 |   194 |  3.09 |  7.20 | -
+  23 | cake shop harris park                              |      5 |   189 |  2.65 |  5.40 | -
+  24 | cake near me                                       |      5 |   185 |  2.70 |  8.20 | -
+  25 | cakes near me                                      |      8 |   182 |  4.40 | 10.80 | -
+  26 | num num riverstone                                 |     27 |   168 | 16.07 |  1.00 | B
+  27 | eggless cake parramatta                            |     13 |   160 |  8.12 |  4.20 | -
+  28 | numnums                                            |      3 |   160 |  1.88 |  3.80 | B
+  29 | num num bakery harris park                         |     32 |   157 | 20.38 |  1.20 | B
+  30 | kids birthday cakes                                |      2 |   154 |  1.30 | 16.00 | -
+  31 | cake shop in harris park                           |      3 |   128 |  2.34 |  5.30 | -
+  32 | eggless cake blacktown                             |      4 |   122 |  3.28 |  5.10 | -
+  33 | bakery riverstone                                  |      1 |   120 |  0.83 |  6.50 | -
+  34 | numnums bakery                                     |     27 |   119 | 22.69 |  1.60 | B
+  35 | num num harris park                                |     15 |   115 | 13.04 |  1.00 | B
+  36 | cake shops near me                                 |      4 |   115 |  3.48 |  8.50 | -
+  37 | num num bakery wentworthville                      |      4 |   111 |  3.60 |  2.70 | B
+  38 | cake shop                                          |      2 |   109 |  1.83 | 12.70 | -
+  39 | eggless cupcakes near me                           |      4 |   105 |  3.81 |  7.60 | -
+  40 | best cake sydney                                   |      1 |   104 |  0.96 | 14.10 | -
+  41 | rasmalai cake                                      |      5 |   100 |  5.00 |  4.50 | -
+  42 | num nums bakery reviews                            |      3 |    93 |  3.23 |  3.50 | B
+  43 | photo cake sydney                                  |     12 |    87 | 13.79 |  4.30 | -
+  44 | num nums bakery harris park                        |     19 |    86 | 22.09 |  1.10 | B
+  45 | num nums bakery riverstone                         |     10 |    86 | 11.63 |  1.20 | B
+  46 | num nums bakery menu                               |     12 |    84 | 14.29 |  2.90 | B
+  47 | best cake                                          |      1 |    84 |  1.19 |  9.50 | -
+  48 | cake                                               |      1 |    84 |  1.19 |  8.20 | -
+  49 | kids birthday cake sydney                          |      1 |    78 |  1.28 | 17.70 | -
+  50 | num nums bakery riverstone menu                    |     16 |    77 | 20.78 |  2.60 | B
+BRANDED_TOTAL   clicks=654 impressions=4589
+NONBRANDED_TOTAL clicks=513 impressions=16568
+BRANDED_SHARE_OF_CLICKS=56.0%  NONBRANDED_SHARE_OF_CLICKS=44.0%
+BRANDED_SHARE_OF_IMPRESSIONS=21.7%  NONBRANDED_SHARE_OF_IMPRESSIONS=78.3%
+(rows returned by API for this window: 200; note GSC omits low-volume/anonymised queries, so these totals are the visible subset, not the window total)
+
+## GSC_QUERY_MOVERS — WEEK OVER WEEK
+(queries present in BOTH windows with >=30 impressions in either; 8 qualify)
+-- BIGGEST POSITION GAINS (improved) --
+query                                              | old_pos -> new_pos | delta | old_impr -> new_impr | old_clicks -> new_clicks
+best chocolate cake sydney                         |   33.20 ->   19.70 | -13.50 |        8 ->       50 |           0 ->          0
+eggless cakes sydney                               |   33.50 ->   25.20 |  -8.30 |       65 ->      204 |           1 ->          1
+eggless cake sydney                                |   34.80 ->   34.10 |  -0.70 |      126 ->      178 |           1 ->          1
+cake shop near me                                  |    6.50 ->    6.90 |  +0.40 |       64 ->       67 |           0 ->          2
+num num                                            |    1.70 ->    2.30 |  +0.60 |       31 ->       19 |           1 ->          1
+num num bakery                                     |    1.70 ->    2.60 |  +0.90 |       72 ->      106 |          18 ->         21
+num nums                                           |    4.50 ->    5.90 |  +1.40 |       69 ->       59 |           1 ->          1
+eggless cake near me                               |   10.60 ->   14.70 |  +4.10 |      212 ->      364 |          11 ->          9
+-- BIGGEST POSITION LOSSES (worsened) --
+eggless cake near me                               |   10.60 ->   14.70 |  +4.10 |      212 ->      364 |          11 ->          9
+num nums                                           |    4.50 ->    5.90 |  +1.40 |       69 ->       59 |           1 ->          1
+num num bakery                                     |    1.70 ->    2.60 |  +0.90 |       72 ->      106 |          18 ->         21
+num num                                            |    1.70 ->    2.30 |  +0.60 |       31 ->       19 |           1 ->          1
+cake shop near me                                  |    6.50 ->    6.90 |  +0.40 |       64 ->       67 |           0 ->          2
+eggless cake sydney                                |   34.80 ->   34.10 |  -0.70 |      126 ->      178 |           1 ->          1
+eggless cakes sydney                               |   33.50 ->   25.20 |  -8.30 |       65 ->      204 |           1 ->          1
+best chocolate cake sydney                         |   33.20 ->   19.70 | -13.50 |        8 ->       50 |           0 ->          0
+QUERIES_ENTERED_WINDOW: 130  QUERIES_LEFT_WINDOW: 130
+ENTERED_TOP50_BY_CLICKS: ['1 birthday cake', '1st birthday cakes near me', '1th birthday cake', 'a smash cake', 'all occasions speciality cakes', 'bakery near me', 'birthday cakes near me', 'cake shop near me', 'cakes with pictures on top', 'cupcakes', 'does ice cream cake have eggs', 'eggless birthday cake near me', 'eggless brownies near me', 'eggless cake', 'eggless cake price', 'eggless cake shop', 'eggless cake shops', 'eggless cakes near me', 'indian cakes', 'kids birthday cakes', 'mango cake', 'num num bakery wentworthville', 'photo cake sydney', 'photo onto cake', 'rasmalai cake']
+LEFT_TOP50_BY_CLICKS: ['16 number cake', '1st birthday cake', 'adaminaby bakery', 'alternative', 'are cakes halal', 'bakery in harris park', 'butterscotch cake', 'butterscotch cake near me', 'cake shop', 'cake shop near me open now', 'cupcakes near me', 'custom image cake', 'eggless cake blacktown', 'eggless cake in sydney', 'eggless chocolate cake near me', 'gluten and dairy free cakes', 'halal birthday cake', 'indian sweets delivery', 'kids birthday cake sydney', 'nam nam bakery', 'nom nom bakery', 'nomnom cake', 'num nums bakery harris park', 'num nums bakery reviews', 'num nums bakery riverstone']
+
+## GSC_QUERY_MOVERS — MONTH OVER MONTH
+(queries present in BOTH windows with >=30 impressions in either; 36 qualify)
+-- BIGGEST POSITION GAINS (improved) --
+query                                              | old_pos -> new_pos | delta | old_impr -> new_impr | old_clicks -> new_clicks
+cake shop                                          |   13.90 ->    7.50 |  -6.40 |       43 ->       33 |           1 ->          1
+cake shops near me                                 |   10.00 ->    7.50 |  -2.50 |       31 ->       35 |           1 ->          3
+eggless cake parramatta                            |    4.70 ->    3.50 |  -1.20 |       66 ->       44 |           6 ->          4
+cake shop harris park                              |    6.20 ->    5.10 |  -1.10 |       61 ->       61 |           2 ->          1
+eggless cake shop                                  |   22.60 ->   21.90 |  -0.70 |      496 ->      406 |           1 ->          1
+num num bakery riverstone                          |    1.70 ->    1.00 |  -0.70 |       87 ->       79 |          17 ->         19
+eggless cake                                       |    8.80 ->    8.20 |  -0.60 |      135 ->       49 |           1 ->          3
+num num bakery                                     |    2.50 ->    1.90 |  -0.60 |      331 ->      318 |          71 ->         73
+numnums                                            |    4.10 ->    3.60 |  -0.50 |       63 ->       48 |           1 ->          2
+numnums bakery                                     |    1.70 ->    1.40 |  -0.30 |       23 ->       49 |           6 ->         10
+cake shop near me                                  |    7.60 ->    7.30 |  -0.30 |      281 ->      265 |           5 ->          5
+num num                                            |    2.40 ->    2.10 |  -0.30 |      133 ->      119 |           5 ->          4
+photo cake sydney                                  |    4.30 ->    4.00 |  -0.30 |       26 ->       35 |           4 ->          4
+num nums bakery riverstone                         |    1.20 ->    1.10 |  -0.10 |       26 ->       41 |           4 ->          4
+numnum bakery                                      |    1.10 ->    1.10 |  +0.00 |       65 ->       77 |          21 ->         25
+-- BIGGEST POSITION LOSSES (worsened) --
+eggless cake sydney                                |   15.60 ->   30.80 | +15.20 |      270 ->      445 |           8 ->          9
+eggless cakes near me                              |   13.50 ->   27.80 | +14.30 |      174 ->      312 |           5 ->          5
+eggless cakes sydney                               |   15.80 ->   27.40 | +11.60 |      168 ->      351 |           3 ->          3
+egg free cakes sydney                              |    8.50 ->   13.80 |  +5.30 |       54 ->       80 |           1 ->          2
+bakery                                             |    8.00 ->   12.20 |  +4.20 |       19 ->       31 |           0 ->          0
+eggless cakes                                      |   14.20 ->   18.30 |  +4.10 |      268 ->      299 |           2 ->          3
+cakes near me                                      |    9.40 ->   12.60 |  +3.20 |       80 ->       51 |           5 ->          2
+photo cake                                         |   12.00 ->   14.90 |  +2.90 |      154 ->      111 |           2 ->          2
+cake near me                                       |    6.80 ->    9.70 |  +2.90 |       50 ->       55 |           1 ->          1
+eggless cake near me                               |    9.00 ->   11.00 |  +2.00 |      870 ->     1069 |          36 ->         36
+num nums                                           |    4.90 ->    5.80 |  +0.90 |      271 ->      270 |           3 ->          2
+num nums bakery reviews                            |    3.00 ->    3.80 |  +0.80 |       32 ->       26 |           1 ->          1
+rasmalai cake                                      |    4.70 ->    5.50 |  +0.80 |       23 ->       34 |           2 ->          2
+harris park cake shop                              |    5.50 ->    5.90 |  +0.40 |       68 ->       62 |           3 ->          2
+num nums bakery                                    |    1.30 ->    1.60 |  +0.30 |       98 ->      111 |          18 ->         23
+QUERIES_ENTERED_WINDOW: 120  QUERIES_LEFT_WINDOW: 120
+ENTERED_TOP50_BY_CLICKS: ['1st birthday cakes', 'birthday cake shop near me', 'birthday cakes', 'butterscotch cake', 'butterscotch cake near me', 'cake bakery near me', 'cake shop riverstone', 'cake shops near me', 'egg free cakes sydney', 'eggless cake', 'eggless cake in sydney', 'eggless chocolate cake near me', 'indian cake shop near me', 'num num bakery wentworthville', 'num nums bakery photos', 'numnum cake', 'numnums', 'riverstone bakery']
+LEFT_TOP50_BY_CLICKS: ['bakeries near me', 'bakery cake', 'bakery harris park', 'bakery parramatta', 'best cake near me', 'best cakes sydney', 'best eggless cake near me', 'birthday cake', 'black forest cake near me', 'buy eggless cake', 'cake shop harris park', 'egg free cake near me', 'egg less cake near me', 'eggless cupcakes near me', "nam's eggless bakes", 'nom nom bakery', 'num num harris park', 'rasmalai cake near me']
+
+## GSC_STRIKING_DISTANCE — queries at avg position 5-20, ranked by impressions (28d)
+query                                              | impr | clicks | ctr%  | pos   | brand
+eggless cake near me                               | 1069 |     36 |  3.37 | 11.00 | -
+eggless cakes                                      |  299 |      3 |  1.00 | 18.30 | -
+num nums                                           |  270 |      2 |  0.74 |  5.80 | B
+cake shop near me                                  |  265 |      5 |  1.89 |  7.30 | -
+kids birthday cakes                                |  149 |      1 |  0.67 | 15.70 | -
+photo cake                                         |  111 |      2 |  1.80 | 14.90 | -
+bakery near me                                     |  101 |      3 |  2.97 |  8.30 | -
+egg free cakes sydney                              |   80 |      2 |  2.50 | 13.80 | -
+riverstone bakery                                  |   74 |      2 |  2.70 |  7.80 | -
+kids birthday cake sydney                          |   73 |      1 |  1.37 | 17.90 | -
+harris park cake shop                              |   62 |      2 |  3.23 |  5.90 | -
+cake shop harris park                              |   61 |      1 |  1.64 |  5.10 | -
+cake near me                                       |   55 |      1 |  1.82 |  9.70 | -
+cakes near me                                      |   51 |      2 |  3.92 | 12.60 | -
+cake shop in harris park                           |   50 |      1 |  2.00 |  5.50 | -
+eggless cake                                       |   49 |      3 |  6.12 |  8.20 | -
+nom nom bakery                                     |   47 |      1 |  2.13 |  6.80 | -
+cake shops near me                                 |   35 |      3 |  8.57 |  7.50 | -
+rasmalai cake                                      |   34 |      2 |  5.88 |  5.50 | -
+cake shop                                          |   33 |      1 |  3.03 |  7.50 | -
+bakery                                             |   31 |      0 |  0.00 | 12.20 | -
+eggless cake blacktown                             |   27 |      1 |  3.70 |  6.30 | -
+1st birthday cakes                                 |   25 |      1 |  4.00 | 18.40 | -
+custom image cake                                  |   23 |      1 |  4.35 |  8.70 | -
+birthday cakes                                     |   21 |      1 |  4.76 | 14.80 | -
+birthday cakes near me                             |   16 |      1 |  6.25 |  9.60 | -
+cake shop schofields                               |   16 |      1 |  6.25 |  8.70 | -
+cakes                                              |   15 |      1 |  6.67 | 17.40 | -
+eggless cake in sydney                             |   14 |      3 | 21.43 |  9.90 | -
+dairy free cakes castle hill                       |   14 |      1 |  7.14 |  8.10 | -
+eggless cake delivery sydney                       |   14 |      1 |  7.14 |  5.90 | -
+bakeries near me                                   |   13 |      0 |  0.00 |  9.90 | -
+cake shop near me open now                         |   12 |      1 |  8.33 |  7.00 | -
+custom picture cake                                |   10 |      1 | 10.00 |  7.70 | -
+cupcakes near me                                   |    8 |      1 | 12.50 |  6.20 | -
+eggless birthday cake near me                      |    8 |      1 | 12.50 |  7.60 | -
+eggless cake delivery                              |    8 |      1 | 12.50 |  7.40 | -
+indian cakes                                       |    8 |      1 | 12.50 |  7.40 | -
+eggless chocolate cake near me                     |    7 |      2 | 28.57 |  5.00 | -
+cake shop wentworthville                           |    7 |      1 | 14.29 | 16.90 | -
+(count in band: 114)
+
+## GSC_HIGH_IMPRESSION_ZERO_CLICK — 28d, impressions>=25 and clicks==0 (title/meta rewrite candidates)
+query                                              | impr | pos   | brand
+bakery                                             |   31 | 12.20 | -
+(count: 1)
+
+## GSC_BY_PAGE — TOP 50 BY CLICKS (28d)  window=w28 2026-09-01..2026-09-28
+rank | page                                                        | clicks | impr  | ctr%  | pos
+   1 | /                                                          |    418 |  6841 |  6.11 | 12.70
+   2 | /blog/best-eggless-cake-shops-sydney-2026                  |     81 |  2832 |  2.86 |  8.90
+   3 | /blog/photo-cake-sydney                                    |     41 |  1987 |  2.06 |  9.60
+   4 | /blog/eggless-cake-bakery-harris-park-riverstone-sydney    |     30 |  1851 |  1.62 |  7.00
+   5 | /cakes                                                     |     24 |  1900 |  1.26 | 12.80
+   6 | /blog/eggless-cakes-schofields                             |     23 |  1137 |  2.02 |  8.20
+   7 | /blog/first-birthday-cake-sydney                           |     16 |   911 |  1.76 | 11.20
+   8 | /blog/eggless-cake-indian-flavours                         |     11 |   335 |  3.28 | 27.10
+   9 | /order                                                     |     11 |  1065 |  1.03 |  4.10
+  10 | /blog/eggless-cake-storage-freshness-guide                 |     10 |  2083 |  0.48 |  5.80
+  11 | /blog/eggless-cakes-dean-park                              |      9 |   940 |  0.96 |  7.60
+  12 | /blog/kids-birthday-cake-sydney                            |      9 |  1034 |  0.87 | 15.90
+  13 | /indian-sweet                                              |      8 |  1266 |  0.63 | 11.90
+  14 | /blog/sheet-cake-sydney                                    |      7 |    71 |  9.86 |  6.40
+  15 | /blog/best-dessert-shop-sydney                             |      6 |   703 |  0.85 | 12.10
+  16 | /blog/cake-price-guide-sydney                              |      6 |   299 |  2.01 |  5.90
+  17 | /blog/eggless-cake-lower-sugar-options-sydney              |      6 |   170 |  3.53 | 20.70
+  18 | /blog/eggless-cake-vs-regular-cake                         |      5 |   644 |  0.78 |  7.30
+  19 | /blog/halal-friendly-cakes-eggless-sydney                  |      5 |   716 |  0.70 | 14.40
+  20 | /blog/rasmalai-cake-sydney                                 |      5 |    79 |  6.33 |  5.50
+  21 | /blog/christening-naming-day-cakes-sydney                  |      4 |    26 | 15.38 |  6.70
+  22 | /blog/eggless-cake-nut-free-sydney                         |      4 |   357 |  1.12 | 15.40
+  23 | /blog/eggless-cakes-chuseok-sydney                         |      4 |   132 |  3.03 |  8.90
+  24 | /blog/naked-cake-sydney                                    |      4 |    42 |  9.52 |  9.30
+  25 | /blog/number-cakes-sydney                                  |      4 |    54 |  7.41 |  7.30
+  26 | /blog/birthday-cake-for-men-sydney                         |      3 |    75 |  4.00 |  7.70
+  27 | /blog/cake-serving-size-guide-sydney                       |      3 |   665 |  0.45 |  7.70
+  28 | /blog/eggless-cake-troubleshooting                         |      3 |   219 |  1.37 |  6.20
+  29 | /blog/eggless-cake-vs-sponge-cake                          |      3 |    82 |  3.66 |  5.70
+  30 | /blog/eggless-cakes-riverstone                             |      3 |   489 |  0.61 | 10.30
+  31 | /blog/eggless-cakes-soft-moist-myths-vs-facts              |      3 |   455 |  0.66 |  7.20
+  32 | /blog/farewell-cake-sydney.html                            |      3 |     9 | 33.33 |  4.70
+  33 | /blog/indian-sweets-harris-park-riverstone-sydney          |      3 |   148 |  2.03 |  5.50
+  34 | /blog/best-cake-sydney                                     |      2 |   628 |  0.32 | 18.30
+  35 | /blog/eggless-cake-for-toddlers-sydney                     |      2 |    34 |  5.88 |  7.00
+  36 | /about                                                     |      1 |   583 |  0.17 |  3.80
+  37 | /blog                                                      |      1 |   242 |  0.41 |  7.40
+  38 | /blog/autumn-cake-sydney                                   |      1 |    38 |  2.63 |  7.60
+  39 | /blog/cake-delivery-sydney                                 |      1 |    32 |  3.12 | 13.00
+  40 | /blog/cake-flavour-guide-sydney                            |      1 |    12 |  8.33 | 11.40
+  41 | /blog/cake-smash-cakes-sydney                              |      1 |    49 |  2.04 |  5.80
+  42 | /blog/cake-smash-vs-first-birthday-cake-sydney             |      1 |    16 |  6.25 |  6.00
+  43 | /blog/cake-toppers-sydney                                  |      1 |    43 |  2.33 | 11.50
+  44 | /blog/eggless-cake-catering-sydney                         |      1 |     3 | 33.33 | 14.00
+  45 | /blog/eggless-cake-for-pregnancy-sydney                    |      1 |    11 |  9.09 | 10.70
+  46 | /blog/eggless-cake-for-vegetarians-sydney                  |      1 |    25 |  4.00 | 10.40
+  47 | /blog/eggless-cake-lactose-intolerance                     |      1 |   181 |  0.55 |  7.70
+  48 | /blog/eggless-cake-small-gatherings-sydney                 |      1 |    35 |  2.86 |  9.80
+  49 | /blog/eggless-cake-sydney                                  |      1 |    17 |  5.88 |  9.50
+  50 | /blog/eggless-cake-texture-moist                           |      1 |    26 |  3.85 |  6.00
+(pages with any impressions this window: 341)
+
+## GSC_BY_PAGE — TOP 50 BY CLICKS (3-month)  window=w3mo 2026-06-30..2026-09-28
+rank | page                                                        | clicks | impr  | ctr%  | pos
+   1 | /                                                          |   1308 | 22957 |  5.70 | 13.10
+   2 | /blog/best-eggless-cake-shops-sydney-2026                  |    224 |  9005 |  2.49 |  9.40
+   3 | /blog/photo-cake-sydney                                    |    136 |  5790 |  2.35 |  8.90
+   4 | /blog/eggless-cake-bakery-harris-park-riverstone-sydney    |    109 |  7516 |  1.45 |  7.30
+   5 | /cakes                                                     |     61 |  5447 |  1.12 | 13.80
+   6 | /blog/eggless-cakes-schofields                             |     40 |  1711 |  2.34 |  7.80
+   7 | /blog/best-dessert-shop-sydney                             |     37 |  2825 |  1.31 | 10.00
+   8 | /order                                                     |     36 |  3219 |  1.12 |  4.70
+   9 | /blog/first-birthday-cake-sydney                           |     31 |  1233 |  2.51 | 10.60
+  10 | /blog/eggless-cake-storage-freshness-guide                 |     28 |  5046 |  0.55 |  7.10
+  11 | /indian-sweet                                              |     26 |  3125 |  0.83 | 10.90
+  12 | /blog/eggless-cakes-dean-park                              |     23 |  1988 |  1.16 |  7.90
+  13 | /blog/cake-price-guide-sydney                              |     21 |  1007 |  2.09 |  6.10
+  14 | /blog/kids-birthday-cake-sydney                            |     20 |  1261 |  1.59 | 14.70
+  15 | /blog/cake-serving-size-guide-sydney                       |     19 |  2071 |  0.92 |  7.00
+  16 | /blog/best-cake-sydney                                     |     15 |  2695 |  0.56 | 14.60
+  17 | /blog/same-day-cake-sydney                                 |     15 |   875 |  1.71 |  8.70
+  18 | /blog/number-cakes-sydney                                  |     14 |   253 |  5.53 |  6.50
+  19 | /blog/eggless-cake-vs-regular-cake                         |     13 |  1969 |  0.66 |  7.00
+  20 | /blog/cake-smash-cakes-sydney                              |     11 |   145 |  7.59 |  6.10
+  21 | /blog/eggless-cake-indian-flavours                         |     11 |   399 |  2.76 | 24.50
+  22 | /blog/eggless-cake-for-toddlers-sydney                     |      9 |   110 |  8.18 |  9.70
+  23 | /blog/sheet-cake-sydney                                    |      9 |   129 |  6.98 |  6.80
+  24 | /blog/farewell-cake-sydney.html                            |      8 |    89 |  8.99 |  5.50
+  25 | /blog/halal-friendly-cakes-eggless-sydney                  |      8 |  1036 |  0.77 | 13.40
+  26 | /blog/birthday-cake-for-men-sydney                         |      7 |   165 |  4.24 |  8.50
+  27 | /blog/eggless-cake-nut-free-sydney                         |      7 |   536 |  1.31 | 14.90
+  28 | /blog/eggless-cakes-doonside                               |      7 |   407 |  1.72 |  7.90
+  29 | /blog/indian-sweets-harris-park-riverstone-sydney          |      7 |   451 |  1.55 |  6.10
+  30 | /about                                                     |      6 |  1835 |  0.33 |  4.30
+  31 | /blog/are-eggless-cakes-healthy                            |      6 |   672 |  0.89 |  4.70
+  32 | /blog/eggless-cake-for-vegetarians-sydney                  |      6 |   685 |  0.88 | 19.80
+  33 | /blog/eggless-cake-lower-sugar-options-sydney              |      6 |   211 |  2.84 | 18.20
+  34 | /blog/eggless-cakes-chuseok-sydney                         |      6 |   141 |  4.26 |  8.60
+  35 | /blog/eggless-cakes-eid-milad-un-nabi-sydney               |      6 |   322 |  1.86 |  7.30
+  36 | /blog                                                      |      5 |   750 |  0.67 | 12.40
+  37 | /blog/eggless-cake-troubleshooting                         |      5 |   553 |  0.90 |  7.40
+  38 | /blog/eggless-cakes-gender-reveal-sydney                   |      5 |   235 |  2.13 |  8.40
+  39 | /blog/eggless-cakes-mid-autumn-festival-sydney             |      5 |   124 |  4.03 |  8.60
+  40 | /blog/luxury-cake-sydney                                   |      5 |    93 |  5.38 | 12.50
+  41 | /blog/rasmalai-cake-sydney                                 |      5 |    79 |  6.33 |  5.50
+  42 | /blog/christening-naming-day-cakes-sydney                  |      4 |    45 |  8.89 |  7.20
+  43 | /blog/eggless-cake-for-pregnancy-sydney                    |      4 |   136 |  2.94 | 12.90
+  44 | /blog/eggless-cake-ingredients-sydney                      |      4 |   324 |  1.23 |  8.40
+  45 | /blog/eggless-cake-vs-sponge-cake                          |      4 |   174 |  2.30 |  8.00
+  46 | /blog/eggless-cakes-riverstone                             |      4 |   666 |  0.60 |  9.90
+  47 | /blog/eggless-cakes-soft-moist-myths-vs-facts              |      4 |   743 |  0.54 |  7.20
+  48 | /blog/eggless-cakes-the-ponds                              |      4 |    79 |  5.06 |  5.30
+  49 | /blog/naked-cake-sydney                                    |      4 |   176 |  2.27 | 13.20
+  50 | /blog/wedding-cake-sydney-north-west                       |      4 |   382 |  1.05 | 10.90
+(pages with any impressions this window: 377)
+
+## GSC_BY_PAGE — PAGES THAT LOST CLICKS WoW (w7 vs w7prev)
+lost | page                                                        | prev_clicks -> now | prev_pos -> now_pos
+  12 | /                                                          |         115 -> 103 | 11.5 -> 13.4
+   7 | /blog/photo-cake-sydney                                    |          12 ->   5 | 9.3 -> 8.2
+   4 | /indian-sweet                                              |           5 ->   1 | 9.6 -> 11.6
+   4 | /blog/rasmalai-cake-sydney                                 |           4 ->   0 | 6.2 -> 5.2
+   3 | /blog/eggless-cake-nut-free-sydney                         |           3 ->   0 | 14.9 -> 16.5
+   2 | /blog/kids-birthday-cake-sydney                            |           4 ->   2 | 17.5 -> 15.2
+   2 | /blog/halal-friendly-cakes-eggless-sydney                  |           2 ->   0 | 14.7 -> 15.4
+   2 | /blog/first-birthday-cake-sydney                           |           6 ->   4 | 10.3 -> 10.7
+   2 | /blog/eggless-cake-bakery-harris-park-riverstone-sydney    |           5 ->   3 | 8.3 -> 6.3
+   1 | /blog/sheet-cake-sydney                                    |           3 ->   2 | 5.3 -> 7.3
+   1 | /blog/farewell-cake-sydney.html                            |           2 ->   1 | 4.8 -> 4.5
+   1 | /blog/eggless-cakes-the-ponds                              |           1 ->   0 | 3.3 -> 2
+   1 | /blog/eggless-cakes-soft-moist-myths-vs-facts              |           1 ->   0 | 7.1 -> 7.5
+   1 | /blog/eggless-cakes-mid-autumn-festival-sydney             |           1 ->   0 | 9.5 -> 9.6
+   1 | /blog/eggless-cake-vs-sponge-cake                          |           1 ->   0 | 4.8 -> 6.6
+   1 | /blog/eggless-cake-small-gatherings-sydney                 |           1 ->   0 | 10.1 -> 9.2
+   1 | /blog/eggless-cake-lactose-intolerance                     |           1 ->   0 | 7.7 -> 8.2
+   1 | /blog/eggless-cake-for-pregnancy-sydney                    |           1 ->   0 | 7 -> 5.4
+   1 | /blog/christening-naming-day-cakes-sydney                  |           2 ->   1 | 5.4 -> 6.4
+   1 | /blog/cake-smash-vs-first-birthday-cake-sydney             |           1 ->   0 | 5 -> 6.7
+   1 | /blog/cake-delivery-sydney                                 |           1 ->   0 | 17 -> 9.8
+   1 | /blog/autumn-cake-sydney                                   |           1 ->   0 | 6.3 -> 8.7
+   1 | /blog                                                      |           1 ->   0 | 6.3 -> 3.9
+(pages losing clicks WoW: 23)
+
+## GSC_BLOG_PAGES_WITH_IMPRESSIONS (28d) — every /blog/ URL with any impressions
+count=335  of 234 posts on disk -> 143.2% of the corpus earned any impression in 28d
+page                                                        | clicks | impr | ctr%  | pos
+/blog/best-eggless-cake-shops-sydney-2026                  |     81 | 2832 |  2.86 |  8.90
+/blog/eggless-cake-storage-freshness-guide                 |     10 | 2083 |  0.48 |  5.80
+/blog/photo-cake-sydney                                    |     41 | 1987 |  2.06 |  9.60
+/blog/eggless-cake-bakery-harris-park-riverstone-sydney    |     30 | 1851 |  1.62 |  7.00
+/blog/eggless-cakes-schofields                             |     23 | 1137 |  2.02 |  8.20
+/blog/kids-birthday-cake-sydney                            |      9 | 1034 |  0.87 | 15.90
+/blog/eggless-cakes-dean-park                              |      9 |  940 |  0.96 |  7.60
+/blog/first-birthday-cake-sydney                           |     16 |  911 |  1.76 | 11.20
+/blog/halal-friendly-cakes-eggless-sydney                  |      5 |  716 |  0.70 | 14.40
+/blog/best-dessert-shop-sydney                             |      6 |  703 |  0.85 | 12.10
+/blog/cake-serving-size-guide-sydney                       |      3 |  665 |  0.45 |  7.70
+/blog/eggless-cake-vs-regular-cake                         |      5 |  644 |  0.78 |  7.30
+/blog/best-cake-sydney                                     |      2 |  628 |  0.32 | 18.30
+/blog/eggless-cakes-riverstone                             |      3 |  489 |  0.61 | 10.30
+/blog/eggless-cakes-soft-moist-myths-vs-facts              |      3 |  455 |  0.66 |  7.20
+/blog/eggless-cake-nut-free-sydney                         |      4 |  357 |  1.12 | 15.40
+/blog/eggless-cake-indian-flavours                         |     11 |  335 |  3.28 | 27.10
+/blog/cake-price-guide-sydney                              |      6 |  299 |  2.01 |  5.90
+/blog/corporate-cake-sydney                                |      0 |  283 |  0.00 | 12.70
+/blog/same-day-cake-sydney                                 |      1 |  263 |  0.38 |  9.20
+/blog/eggless-cake-vs-ice-cream-cake-sydney                |      1 |  226 |  0.44 |  6.80
+/blog/eggless-cake-troubleshooting                         |      3 |  219 |  1.37 |  6.20
+/blog/are-eggless-cakes-healthy                            |      0 |  214 |  0.00 |  4.50
+/blog/birthday-cake-near-me-sydney-suburbs                 |      0 |  189 |  0.00 |  5.60
+/blog/eggless-cake-delivery-sydney                         |      0 |  183 |  0.00 |  4.70
+/blog/eggless-cake-lactose-intolerance                     |      1 |  181 |  0.55 |  7.70
+/blog/vegan-vs-eggless-cakes-difference                    |      0 |  173 |  0.00 |  6.70
+/blog/eggless-cake-office-birthday-sydney                  |      0 |  171 |  0.00 | 27.90
+/blog/eggless-cake-lower-sugar-options-sydney              |      6 |  170 |  3.53 | 20.70
+/blog/indian-sweets-harris-park-riverstone-sydney          |      3 |  148 |  2.03 |  5.50
+/blog/eggless-cake-egg-substitutes                         |      0 |  144 |  0.00 |  7.00
+/blog/eggless-cakes-sydney-olympic-park                    |      0 |  143 |  0.00 |  6.10
+/blog/eggless-cakes-telopea                                |      0 |  142 |  0.00 | 12.10
+/blog/eggless-cakes-chuseok-sydney                         |      4 |  132 |  3.03 |  8.90
+/blog/eggless-cake-ingredients-sydney                      |      0 |  119 |  0.00 |  7.20
+/blog/eggless-cakes-gender-reveal-sydney                   |      0 |  106 |  0.00 | 10.30
+/blog/semi-naked-cake-sydney                               |      0 |   96 |  0.00 |  7.20
+/blog/unique-birthday-cake-ideas-sydney                    |      0 |   94 |  0.00 |  8.00
+/blog/eggless-cakes-mays-hill                              |      0 |   86 |  0.00 |  8.70
+/blog/multicultural-celebration-cake-sydney                |      0 |   86 |  0.00 | 16.60
+/blog/eggless-cake-vs-sponge-cake                          |      3 |   82 |  3.66 |  5.70
+/blog/eggless-cakes-mid-autumn-festival-sydney             |      1 |   82 |  1.22 |  9.30
+/blog/rasmalai-cake-sydney                                 |      5 |   79 |  6.33 |  5.50
+/blog/birthday-cake-for-men-sydney                         |      3 |   75 |  4.00 |  7.70
+/blog/sheet-cake-sydney                                    |      7 |   71 |  9.86 |  6.40
+/blog/cake-shop-near-me-marsden-park-talawong              |      0 |   71 |  0.00 |  7.20
+/blog/cake-shop-western-sydney                             |      0 |   66 |  0.00 |  8.70
+/blog/eggless-cake-ingredient-labels-sydney                |      0 |   64 |  0.00 |  6.60
+/blog/how-eggless-cakes-are-made                           |      0 |   62 |  0.00 |  6.90
+/blog/eggless-cake-vs-cheesecake-sydney                    |      0 |   59 |  0.00 |  5.20
+/blog/eggless-cake-nutrition-sydney                        |      0 |   57 |  0.00 |  6.50
+/blog/eggless-cake-reviews-sydney                          |      0 |   57 |  0.00 |  9.60
+/blog/eggless-cakes-eid-milad-un-nabi-sydney               |      0 |   57 |  0.00 | 10.00
+/blog/eggless-cake-for-egg-allergy                         |      0 |   55 |  0.00 |  6.70
+/blog/number-cakes-sydney                                  |      4 |   54 |  7.41 |  7.30
+/blog/birthday-cake-north-west-sydney                      |      0 |   54 |  0.00 |  9.70
+/blog/eggless-cake-calories-guide-sydney                   |      0 |   53 |  0.00 |  6.50
+/blog/eggless-cake-low-fodmap-sydney                       |      0 |   50 |  0.00 |  7.60
+/blog/cake-smash-cakes-sydney                              |      1 |   49 |  2.04 |  5.80
+/blog/cake-toppers-sydney                                  |      1 |   43 |  2.33 | 11.50
+/blog/naked-cake-sydney                                    |      4 |   42 |  9.52 |  9.30
+/blog/wedding-cake-sydney-north-west                       |      0 |   39 |  0.00 | 11.90
+/blog/autumn-cake-sydney                                   |      1 |   38 |  2.63 |  7.60
+/blog/dashain-tihar-sydney                                 |      0 |   38 |  0.00 |  7.30
+/blog/drip-cake-sydney                                     |      0 |   36 |  0.00 |  7.30
+/blog/eggless-cake-small-gatherings-sydney                 |      1 |   35 |  2.86 |  9.80
+/blog/eggless-cake-for-toddlers-sydney                     |      2 |   34 |  5.88 |  7.00
+/blog/eggless-cake-vs-supermarket-cake                     |      0 |   34 |  0.00 |  8.20
+/blog/cake-delivery-sydney                                 |      1 |   32 |  3.12 | 13.00
+/blog/eggless-cakes-vesak-day-sydney                       |      0 |   32 |  0.00 |  8.40
+/blog/eggless-cake-vs-pavlova                              |      0 |   31 |  0.00 |  6.80
+/blog/eggless-cakes-plumpton                               |      0 |   31 |  0.00 |  9.50
+/blog/eggless-cake-types                                   |      1 |   30 |  3.33 |  7.10
+/blog/dairy-free-vs-eggless-cakes                          |      0 |   30 |  0.00 |  4.40
+/blog/eggless-cakes-whalan                                 |      0 |   30 |  0.00 | 15.10
+/blog/kids-birthday-cake-north-west-sydney                 |      1 |   27 |  3.70 | 12.50
+/blog/christening-naming-day-cakes-sydney                  |      4 |   26 | 15.38 |  6.70
+/blog/eggless-cake-texture-moist                           |      1 |   26 |  3.85 |  6.00
+/blog/eggless-cakes-ganesh-chaturthi-sydney                |      1 |   26 |  3.85 | 10.00
+/blog/eggless-cake-for-vegetarians-sydney                  |      1 |   25 |  4.00 | 10.40
+/blog/cake-consultation-sydney                             |      0 |   25 |  0.00 |  2.50
+/blog/eggless-cakes-box-hill-sydney                        |      0 |   24 |  0.00 |  9.20
+/blog/eggless-cakes-eid-sydney                             |      0 |   23 |  0.00 |  9.00
+/blog/eggless-cakes-nowruz-sydney                          |      0 |   23 |  0.00 |  8.60
+/blog/eggless-cakes-parklea                                |      0 |   23 |  0.00 |  7.50
+/blog/eggless-cake-transport-packaging-sydney              |      0 |   22 |  0.00 |  7.00
+/blog/eggless-cakes-cabramatta                             |      0 |   22 |  0.00 |  7.00
+/blog/eggless-cakes-the-ponds                              |      1 |   20 |  5.00 |  3.00
+/blog/eggless-cakes-eid-ul-adha-sydney                     |      0 |   20 |  0.00 |  8.30
+/blog/eggless-cakes-karwa-chauth-sydney                    |      0 |   20 |  0.00 |  7.80
+/blog/how-to-design-birthday-cake-sydney                   |      0 |   20 |  0.00 | 11.80
+/blog/teej-sydney                                          |      0 |   20 |  0.00 |  8.90
+/blog/eggless-cakes-near-me-sydney                         |      1 |   19 |  5.26 |  7.80
+/blog/afternoon-tea-cakes-sydney                           |      0 |   19 |  0.00 |  7.30
+/blog/eggless-cake-cancellation-policy-sydney              |      0 |   18 |  0.00 |  7.10
+/blog/eggless-cakes-colebee                                |      0 |   18 |  0.00 |  8.90
+/blog/eggless-cakes-merrylands                             |      0 |   18 |  0.00 |  8.30
+/blog/eggless-cakes-mount-druitt                           |      0 |   18 |  0.00 |  9.80
+/blog/eggless-cakes-silverwater                            |      0 |   18 |  0.00 |  6.90
+/blog/eggless-cakes-yennora                                |      0 |   18 |  0.00 |  8.40
+/blog/eggless-cake-sydney                                  |      1 |   17 |  5.88 |  9.50
+/blog/eggless-cakes-bhai-dooj-sydney                       |      0 |   17 |  0.00 |  6.50
+/blog/eggless-cakes-durga-puja-sydney                      |      0 |   17 |  0.00 |  8.10
+/blog/eggless-cakes-first-communion-sydney                 |      0 |   17 |  0.00 |  8.70
+/blog/eggless-cupcakes-sydney                              |      0 |   17 |  0.00 |  7.90
+/blog/ram-navami-sydney                                    |      0 |   17 |  0.00 | 10.60
+/blog/cake-smash-vs-first-birthday-cake-sydney             |      1 |   16 |  6.25 |  6.00
+/blog/cake-school-fete-fundraiser-sydney                   |      0 |   16 |  0.00 |  7.60
+/blog/eggless-cakes-carlingford                            |      0 |   16 |  0.00 |  7.90
+/blog/eggless-cakes-purim-sydney                           |      0 |   16 |  0.00 |  7.40
+/blog/eggless-cake-for-diabetics-sydney                    |      0 |   15 |  0.00 |  8.50
+/blog/eggless-cake-vs-mud-cake                             |      0 |   15 |  0.00 |  4.60
+/blog/eggless-cakes-rooty-hill                             |      0 |   15 |  0.00 |  7.70
+/blog/eggless-cake-gluten-free-sydney                      |      0 |   14 |  0.00 |  8.70
+/blog/eggless-cakes-chhath-puja-sydney                     |      0 |   14 |  0.00 |  9.00
+/blog/eggless-cakes-grantham-farm                          |      0 |   14 |  0.00 |  8.10
+/blog/eggless-cakes-kenthurst                              |      0 |   14 |  0.00 |  8.20
+/blog/eggless-cakes-meadowbank                             |      0 |   14 |  0.00 | 10.60
+/blog/eggless-cakes-wentworth-point                        |      0 |   14 |  0.00 |  5.10
+/blog/luxury-cake-sydney                                   |      0 |   14 |  0.00 | 12.60
+/blog/eggless-cakes-lidcombe                               |      1 |   13 |  7.69 | 10.30
+/blog/assyrian-new-year-kha-b-nisan-sydney                 |      0 |   13 |  0.00 |  7.70
+/blog/eggless-cake-flavour-pairing-guide                   |      0 |   13 |  0.00 |  7.50
+/blog/eggless-cakes-bella-vista                            |      0 |   13 |  0.00 |  8.90
+/blog/eggless-cakes-eastwood                               |      0 |   13 |  0.00 |  9.00
+/blog/eggless-cakes-navratri-sydney                        |      0 |   13 |  0.00 |  9.00
+/blog/eggless-cakes-west-ryde                              |      0 |   13 |  0.00 |  9.20
+/blog/eggless-cakes-willmot                                |      0 |   13 |  0.00 |  9.50
+/blog/eggless-red-velvet-cake-sydney                       |      0 |   13 |  0.00 |  7.20
+/blog/cake-flavour-guide-sydney                            |      1 |   12 |  8.33 | 11.40
+/blog/cake-cutting-ceremony-sydney                         |      0 |   12 |  0.00 |  5.80
+/blog/eggless-cakes-epping                                 |      0 |   12 |  0.00 |  9.70
+/blog/eggless-cakes-yalda-night-sydney                     |      0 |   12 |  0.00 |  6.70
+/blog/eggless-cake-for-pregnancy-sydney                    |      1 |   11 |  9.09 | 10.70
+/blog/eggless-cakes-rouse-hill                             |      1 |   11 |  9.09 |  5.80
+/blog/halloween-cake-sydney                                |      1 |   11 |  9.09 |  6.40
+/blog/cake-message-ideas-sydney                            |      0 |   11 |  0.00 |  6.50
+/blog/eggless-cake-fillings-sydney                         |      0 |   11 |  0.00 |  7.30
+/blog/eggless-cakes-birrong                                |      0 |   11 |  0.00 |  9.20
+/blog/eggless-cakes-confirmation-sydney                    |      0 |   11 |  0.00 | 10.80
+/blog/eggless-cakes-fairfield                              |      0 |   11 |  0.00 |  7.50
+/blog/eggless-cakes-tallawong                              |      0 |   11 |  0.00 | 14.90
+/blog/rosh-hashanah-cakes-sydney                           |      0 |   11 |  0.00 |  6.90
+/blog/cake-design-trends-sydney-2026                       |      0 |   10 |  0.00 |  5.20
+/blog/eggless-cake-keto-low-carb-sydney                    |      0 |   10 |  0.00 |  6.00
+/blog/eggless-cakes-berala.html                            |      0 |   10 |  0.00 |  7.60
+/blog/eggless-cakes-doonside                               |      0 |   10 |  0.00 | 14.40
+/blog/eggless-cakes-guru-nanak-gurpurab-sydney             |      0 |   10 |  0.00 |  9.70
+/blog/eggless-cakes-maha-shivratri-sydney                  |      0 |   10 |  0.00 |  6.60
+/blog/eggless-cakes-merrylands-west                        |      0 |   10 |  0.00 |  7.00
+/blog/eggless-cakes-oakhurst                               |      0 |   10 |  0.00 | 10.10
+/blog/eggless-cakes-pitt-town                              |      0 |   10 |  0.00 |  8.20
+/blog/eggless-cakes-pongal-sydney                          |      0 |   10 |  0.00 |  8.10
+/blog/push-present-cake-sydney                             |      0 |   10 |  0.00 |  5.80
+/blog/sensory-friendly-cake-sydney                         |      0 |   10 |  0.00 | 10.60
+/blog/farewell-cake-sydney.html                            |      3 |    9 | 33.33 |  4.70
+/blog/eggless-chocolate-cake-sydney                        |      1 |    9 | 11.11 |  5.20
+/blog/tet-vietnamese-new-year-sydney                       |      1 |    9 | 11.11 |  6.70
+/blog/eggless-cake-for-birthday                            |      0 |    9 |  0.00 |  7.70
+/blog/eggless-cake-for-pooja-sydney                        |      0 |    9 |  0.00 | 10.70
+/blog/eggless-cake-wholesale-sydney                        |      0 |    9 |  0.00 |  4.90
+/blog/eggless-cakes-harris-park                            |      0 |    9 |  0.00 |  6.60
+/blog/eggless-cakes-newington                              |      0 |    9 |  0.00 | 13.90
+/blog/eggless-cakes-villawood                              |      0 |    9 |  0.00 |  8.10
+/blog/eggless-cakes-windsor                                |      0 |    9 |  0.00 |  8.00
+/blog/cake-delivery-areas-sydney                           |      0 |    8 |  0.00 |  7.00
+/blog/custom-kids-birthday-cakes-marsden-park-schofields   |      0 |    8 |  0.00 |  5.20
+/blog/eggless-cake-buttercream-vs-fondant                  |      0 |    8 |  0.00 |  6.80
+/blog/eggless-cake-size-guide-sydney                       |      0 |    8 |  0.00 |  7.90
+/blog/eggless-cakes-annangrove                             |      0 |    8 |  0.00 |  8.90
+/blog/eggless-cakes-diwali-indian-festivals-sydney         |      0 |    8 |  0.00 |  9.60
+/blog/eggless-cakes-hebersham                              |      0 |    8 |  0.00 |  8.10
+/blog/eggless-cakes-marayong                               |      0 |    8 |  0.00 |  7.80
+/blog/eggless-cakes-mcgraths-hill                          |      0 |    8 |  0.00 |  8.60
+/blog/eggless-cakes-south-granville                        |      0 |    8 |  0.00 |  8.10
+/blog/theme-cakes-sydney                                   |      0 |    8 |  0.00 |  8.00
+/blog/basant-panchami-saraswati-puja-sydney                |      0 |    7 |  0.00 |  8.00
+/blog/eggless-birthday-cakes-sydney                        |      0 |    7 |  0.00 | 10.90
+/blog/eggless-cake-food-colouring-sydney                   |      0 |    7 |  0.00 |  5.90
+/blog/eggless-cakes-bonnyrigg                              |      0 |    7 |  0.00 |  9.40
+/blog/eggless-cakes-cherrybrook                            |      0 |    7 |  0.00 |  7.70
+/blog/eggless-cakes-galston                                |      0 |    7 |  0.00 |  8.10
+/blog/eggless-cakes-kellyville                             |      0 |    7 |  0.00 |  8.30
+/blog/eggless-cakes-lalor-park                             |      0 |    7 |  0.00 |  9.00
+/blog/eggless-cakes-north-kellyville                       |      0 |    7 |  0.00 |  7.60
+/blog/eggless-cakes-quakers-hill                           |      0 |    7 |  0.00 |  7.90
+/blog/eggless-cakes-vineyard                               |      0 |    7 |  0.00 |  7.90
+/blog/eggless-cakes-vishu-sydney                           |      0 |    7 |  0.00 |  9.70
+/blog/eggless-cakes-yagoona                                |      0 |    7 |  0.00 | 10.40
+/blog/novelty-sculpted-cake-designs-sydney                 |      0 |    7 |  0.00 |  7.40
+/blog/spring-cake-sydney                                   |      0 |    7 |  0.00 |  8.90
+/blog/anniversary-cake-sydney                              |      0 |    6 |  0.00 |  7.50
+/blog/eggless-cake-ordering-mistakes                       |      0 |    6 |  0.00 |  6.00
+/blog/eggless-cake-vs-cupcakes-sydney                      |      0 |    6 |  0.00 |  7.30
+/blog/eggless-cake-vs-tart-sydney                          |      0 |    6 |  0.00 | 11.00
+/blog/eggless-cakes-blacktown                              |      0 |    6 |  0.00 |  6.30
+/blog/eggless-cakes-bligh-park                             |      0 |    6 |  0.00 | 15.30
+/blog/eggless-cakes-girraween                              |      0 |    6 |  0.00 |  8.20
+/blog/eggless-cakes-hassall-grove                          |      0 |    6 |  0.00 |  9.80
+/blog/eggless-cakes-homebush                               |      0 |    6 |  0.00 |  9.70
+/blog/eggless-cakes-northwest-sydney                       |      0 |    6 |  0.00 |  9.30
+/blog/eggless-cakes-old-toongabbie                         |      0 |    6 |  0.00 |  7.70
+/blog/eggless-cakes-onam-sydney                            |      0 |    6 |  0.00 |  7.00
+/blog/how-to-choose-cake-sydney                            |      0 |    6 |  0.00 |  6.80
+/blog/songkran-thai-new-year-sydney                        |      0 |    6 |  0.00 |  6.70
+/blog/cake-display-ideas-sydney                            |      0 |    5 |  0.00 |  4.60
+/blog/cake-order-online-sydney                             |      0 |    5 |  0.00 | 27.60
+/blog/eggless-cake-vs-brownies                             |      0 |    5 |  0.00 |  5.40
+/blog/eggless-cakes-auburn                                 |      0 |    5 |  0.00 |  6.20
+/blog/eggless-cakes-beaumont-hills                         |      0 |    5 |  0.00 |  9.20
+/blog/eggless-cakes-bridal-shower-sydney                   |      0 |    5 |  0.00 | 11.20
+/blog/eggless-cakes-dundas                                 |      0 |    5 |  0.00 |  7.00
+/blog/eggless-cakes-glendenning                            |      0 |    5 |  0.00 | 10.20
+/blog/eggless-cakes-guildford-west                         |      0 |    5 |  0.00 | 17.60
+/blog/eggless-cakes-holi-sydney                            |      0 |    5 |  0.00 | 10.60
+/blog/eggless-cakes-kellyville-ridge                       |      0 |    5 |  0.00 |  6.80
+/blog/eggless-cakes-parramatta                             |      0 |    5 |  0.00 |  7.20
+/blog/eggless-cakes-pemulwuy                               |      0 |    5 |  0.00 |  9.80
+/blog/eggless-cakes-rhodes                                 |      0 |    5 |  0.00 |  7.20
+/blog/eggless-cakes-sefton                                 |      0 |    5 |  0.00 | 16.40
+/blog/eggless-cakes-wilberforce                            |      0 |    5 |  0.00 | 13.20
+/blog/hsc-results-day-cake-sydney                          |      0 |    5 |  0.00 |  5.40
+/blog/cakes-near-me-sydney                                 |      0 |    4 |  0.00 | 19.20
+/blog/custom-cake-sydney                                   |      0 |    4 |  0.00 | 12.20
+/blog/eggless-cake-gifting-guide-sydney                    |      0 |    4 |  0.00 |  8.50
+/blog/eggless-cakes-chester-hill                           |      0 |    4 |  0.00 |  8.80
+/blog/eggless-cakes-clyde                                  |      0 |    4 |  0.00 |  3.50
+/blog/eggless-cakes-fairfield-heights                      |      0 |    4 |  0.00 | 10.20
+/blog/eggless-cakes-glenwood                               |      0 |    4 |  0.00 |  9.00
+/blog/eggless-cakes-granville                              |      0 |    4 |  0.00 |  8.80
+/blog/eggless-cakes-greystanes                             |      0 |    4 |  0.00 |  8.80
+/blog/eggless-cakes-marsfield                              |      0 |    4 |  0.00 | 13.00
+/blog/eggless-cakes-mehendi-sydney                         |      0 |    4 |  0.00 | 19.20
+/blog/eggless-cakes-ramadan-sydney                         |      0 |    4 |  0.00 |  9.20
+/blog/eggless-cakes-shalvey                                |      0 |    4 |  0.00 |  9.00
+/blog/eggless-cakes-strathfield                            |      0 |    4 |  0.00 |  6.00
+/blog/eggless-cakes-sweet-16-sydney                        |      0 |    4 |  0.00 |  5.20
+/blog/eggless-cakes-toongabbie                             |      0 |    4 |  0.00 |  7.80
+/blog/eggless-cakes-winston-hills                          |      0 |    4 |  0.00 |  7.20
+/blog/how-to-order-cake-sydney                             |      0 |    4 |  0.00 | 25.00
+/blog/how-to-order-custom-eggless-cake-online              |      0 |    4 |  0.00 |  6.50
+/blog/eggless-cake-catering-sydney                         |      1 |    3 | 33.33 | 14.00
+/blog/best-eggless-cakes-near-me                           |      0 |    3 |  0.00 | 12.30
+/blog/cake-for-university-events-sydney                    |      0 |    3 |  0.00 |  6.30
+/blog/cake-gifting-sydney                                  |      0 |    3 |  0.00 |  7.00
+/blog/cake-vs-dessert-table-sydney                         |      0 |    3 |  0.00 |  5.70
+/blog/eggless-cake-price-sydney                            |      0 |    3 |  0.00 |  6.00
+/blog/eggless-cake-tasting-sydney                          |      0 |    3 |  0.00 |  1.00
+/blog/eggless-cake-trends-sydney-2026                      |      0 |    3 |  0.00 |  8.70
+/blog/eggless-cakes-bar-mitzvah-sydney                     |      0 |    3 |  0.00 |  4.00
+/blog/eggless-cakes-beecroft                               |      0 |    3 |  0.00 |  8.30
+/blog/eggless-cakes-bidwill                                |      0 |    3 |  0.00 |  7.30
+/blog/eggless-cakes-bossley-park                           |      0 |    3 |  0.00 |  9.30
+/blog/eggless-cakes-castle-hill                            |      0 |    3 |  0.00 |  8.70
+/blog/eggless-cakes-denistone                              |      0 |    3 |  0.00 | 10.70
+/blog/eggless-cakes-dural                                  |      0 |    3 |  0.00 |  9.30
+/blog/eggless-cakes-emerton                                |      0 |    3 |  0.00 | 57.30
+/blog/eggless-cakes-filipino-debut-sydney                  |      0 |    3 |  0.00 |  7.70
+/blog/eggless-cakes-graduation-sydney                      |      0 |    3 |  0.00 |  9.00
+/blog/eggless-cakes-guildford                              |      0 |    3 |  0.00 |  4.70
+/blog/eggless-cakes-kings-langley                          |      0 |    3 |  0.00 | 10.00
+/blog/eggless-cakes-lethbridge-park                        |      0 |    3 |  0.00 |  6.30
+/blog/eggless-cakes-lohri-sydney                           |      0 |    3 |  0.00 |  5.00
+/blog/eggless-cakes-maraylya                               |      0 |    3 |  0.00 |  9.70
+/blog/eggless-cakes-minchinbury                            |      0 |    3 |  0.00 |  9.70
+/blog/eggless-cakes-north-parramatta                       |      0 |    3 |  0.00 |  9.70
+/blog/eggless-cakes-norwest                                |      0 |    3 |  0.00 |  5.70
+/blog/eggless-cakes-prairiewood                            |      0 |    3 |  0.00 |  9.30
+/blog/eggless-cakes-seven-hills                            |      0 |    3 |  0.00 |  5.70
+/blog/eggless-cakes-smithfield                             |      0 |    3 |  0.00 |  7.00
+/blog/eggless-cakes-south-windsor                          |      0 |    3 |  0.00 |  8.70
+/blog/eggless-cakes-stanhope-gardens                       |      0 |    3 |  0.00 | 17.70
+/blog/eggless-cakes-thaipusam-sydney                       |      0 |    3 |  0.00 |  9.30
+/blog/eggless-cakes-tregear                                |      0 |    3 |  0.00 |  9.70
+/blog/eggless-cakes-valentines-day-sydney                  |      0 |    3 |  0.00 |  7.70
+/blog/eggless-cakes-woodcroft                              |      0 |    3 |  0.00 |  8.70
+/blog/eggless-cakes-woodville                              |      0 |    3 |  0.00 | 15.00
+/blog/top-7-custom-eggless-cake-designs-kids-birthdays     |      0 |    3 |  0.00 |  7.30
+/blog/cake-for-new-job-promotion-sydney                    |      0 |    2 |  0.00 |  2.00
+/blog/cake-for-work-anniversary-sydney                     |      0 |    2 |  0.00 |  6.50
+/blog/eggless-cake-bulk-order-sydney                       |      0 |    2 |  0.00 |  6.50
+/blog/eggless-cake-customization-sydney.html               |      0 |    2 |  0.00 | 10.50
+/blog/eggless-cakes-anniversary-sydney                     |      0 |    2 |  0.00 |  9.00
+/blog/eggless-cakes-baby-shower-sydney                     |      0 |    2 |  0.00 |  5.00
+/blog/eggless-cakes-bat-mitzvah-sydney                     |      0 |    2 |  0.00 |  7.50
+/blog/eggless-cakes-berkshire-park                         |      0 |    2 |  0.00 |  5.00
+/blog/eggless-cakes-cattai                                 |      0 |    2 |  0.00 |  5.50
+/blog/eggless-cakes-ermington                              |      0 |    2 |  0.00 |  7.50
+/blog/eggless-cakes-nelson-nsw                             |      0 |    2 |  0.00 |  5.00
+/blog/eggless-cakes-oatlands                               |      0 |    2 |  0.00 |  9.00
+/blog/eggless-cakes-old-guildford                          |      0 |    2 |  0.00 |  4.00
+/blog/eggless-cakes-pendle-hill                            |      0 |    2 |  0.00 | 10.00
+/blog/eggless-cakes-raksha-bandhan-sydney                  |      0 |    2 |  0.00 |  8.00
+/blog/eggless-cakes-retirement-sydney                      |      0 |    2 |  0.00 | 110.00
+/blog/eggless-cakes-shanes-park                            |      0 |    2 |  0.00 |  5.00
+/blog/eggless-cakes-sinhala-tamil-new-year-sydney          |      0 |    2 |  0.00 |  7.00
+/blog/eggless-cakes-teachers-day-sydney                    |      0 |    2 |  0.00 | 11.00
+/blog/eggless-cakes-telopea.html                           |      0 |    2 |  0.00 | 10.00
+/blog/eggless-cakes-ugadi-sydney                           |      0 |    2 |  0.00 |  5.50
+/blog/eggless-cakes-wetherill-park                         |      0 |    2 |  0.00 |  6.50
+/blog/eggless-fruit-cake-sydney                            |      0 |    2 |  0.00 |  7.50
+/blog/summer-cake-sydney                                   |      0 |    2 |  0.00 |  7.50
+/blog/eggless-cakes-glenorie                               |      1 |    1 | 100.00 |  9.00
+/blog/celebration-cake-sydney                              |      0 |    1 |  0.00 |  8.00
+/blog/eggless-%E0%A4%95%E0%A5%87%E0%A4%95-troubleshooting  |      0 |    1 |  0.00 |  1.00
+/blog/eggless-bakery                                       |      0 |    1 |  0.00 |  1.00
+/blog/eggless-cake-flavours                                |      0 |    1 |  0.00 | 11.00
+/blog/eggless-cake-online-order                            |      0 |    1 |  0.00 | 11.00
+/blog/eggless-cake-school-celebration-sydney               |      0 |    1 |  0.00 |  8.00
+/blog/eggless-cakes-christmas-sydney                       |      0 |    1 |  0.00 | 28.00
+/blog/eggless-cakes-constitution-hill                      |      0 |    1 |  0.00 |  6.00
+/blog/eggless-cakes-dundas-valley                          |      0 |    1 |  0.00 |  9.00
+/blog/eggless-cakes-engagement-sydney                      |      0 |    1 |  0.00 |  3.00
+/blog/eggless-cakes-glenhaven                              |      0 |    1 |  0.00 |  4.00
+/blog/eggless-cakes-holroyd                                |      0 |    1 |  0.00 |  6.00
+/blog/eggless-cakes-housewarming-sydney                    |      0 |    1 |  0.00 |  7.00
+/blog/eggless-cakes-kings-park                             |      0 |    1 |  0.00 |  6.00
+/blog/eggless-cakes-lunar-new-year-sydney                  |      0 |    1 |  0.00 | 10.00
+/blog/eggless-cakes-north-richmond                         |      0 |    1 |  0.00 |  7.00
+/blog/eggless-cakes-pennant-hills                          |      0 |    1 |  0.00 |  9.00
+/blog/eggless-cakes-prospect                               |      0 |    1 |  0.00 |  9.00
+/blog/eggless-cakes-quinceanera-sydney                     |      0 |    1 |  0.00 | 10.00
+/blog/eggless-cakes-richmond                               |      0 |    1 |  0.00 |  8.00
+/blog/eggless-mini-cakes-cupcake-towers-sydney             |      0 |    1 |  0.00 |  7.00
+/blog/eggless-vs-regular-cakes-the-difference              |      0 |    1 |  0.00 |  1.00
+/blog/eggs-soft-moist-myths-facts                          |      0 |    1 |  0.00 |  1.00
+/blog/grand-final-party-cake-sydney                        |      0 |    1 |  0.00 |  8.00
+/blog/hanukkah-cakes-sydney                                |      0 |    1 |  0.00 |  9.00
+/blog/how-egg-less-cakes-are-made                          |      0 |    1 |  0.00 |  1.00
+/blog/natural-ingredients-eggless-cakes                    |      0 |    1 |  0.00 | 10.00
+/blog/orthodox-christmas-cakes-sydney                      |      0 |    1 |  0.00 |  9.00
+/blog/passover-cakes-sydney                                |      0 |    1 |  0.00 | 10.00
+/blog/reunion-cake-sydney                                  |      0 |    1 |  0.00 |  6.00
+/blog/why-we-chose-100-percent-eggless-bakery              |      0 |    1 |  0.00 |  9.00
+/blog/winter-cake-sydney                                   |      0 |    1 |  0.00 | 10.00
+BLOG_PAGES_ZERO_CLICKS_28D: 277 of 335 with impressions
+BLOG_IMPRESSIONS_28D: 25348  BLOG_CLICKS_28D: 345
+
+## GSC_BLOG_CORPUS_REACH (12 month) — how much of the 234-post corpus ever earns impressions
+blog URLs with >=1 impression in 12mo: 370 of 234 (158.1%)
+blog URLs with 0 clicks in 12mo (but some impressions): 219
+blog impressions 12mo: 81274  blog clicks 12mo: 1141
+TOP 25 BLOG POSTS BY CLICKS (12mo):
+  /blog/best-eggless-cake-shops-sydney-2026                  clicks= 233 impr= 9297 pos= 9.40
+  /blog/photo-cake-sydney                                    clicks= 142 impr= 5862 pos= 8.90
+  /blog/eggless-cake-bakery-harris-park-riverstone-sydney    clicks= 139 impr= 9631 pos= 7.60
+  /blog/best-dessert-shop-sydney                             clicks=  41 impr= 3161 pos= 9.90
+  /blog/eggless-cakes-schofields                             clicks=  40 impr= 1711 pos= 7.80
+  /blog/first-birthday-cake-sydney                           clicks=  35 impr= 1269 pos=10.60
+  /blog/eggless-cake-storage-freshness-guide                 clicks=  28 impr= 5315 pos= 7.00
+  /blog/eggless-cakes-dean-park                              clicks=  23 impr= 1988 pos= 7.90
+  /blog/cake-price-guide-sydney                              clicks=  21 impr= 1007 pos= 6.10
+  /blog/kids-birthday-cake-sydney                            clicks=  20 impr= 1292 pos=14.60
+  /blog/cake-serving-size-guide-sydney                       clicks=  19 impr= 2071 pos= 7.00
+  /blog/number-cakes-sydney                                  clicks=  16 impr=  290 pos= 6.70
+  /blog/best-cake-sydney                                     clicks=  15 impr= 2695 pos=14.60
+  /blog/same-day-cake-sydney                                 clicks=  15 impr=  875 pos= 8.70
+  /blog/eggless-cake-indian-flavours                         clicks=  14 impr=  435 pos=23.10
+  /blog/eggless-cake-vs-regular-cake                         clicks=  14 impr= 2017 pos= 7.00
+  /blog/eggless-cake-for-toddlers-sydney                     clicks=  12 impr=  146 pos= 9.80
+  /blog/cake-smash-cakes-sydney                              clicks=  11 impr=  166 pos= 6.80
+  /blog/eggless-cakes-quakers-hill                           clicks=   9 impr=  293 pos= 7.60
+  /blog/sheet-cake-sydney                                    clicks=   9 impr=  129 pos= 6.80
+  /blog/farewell-cake-sydney.html                            clicks=   8 impr=  154 pos= 5.60
+  /blog/halal-friendly-cakes-eggless-sydney                  clicks=   8 impr= 1134 pos=13.10
+  /blog/are-eggless-cakes-healthy                            clicks=   7 impr=  722 pos= 4.70
+  /blog/birthday-cake-for-men-sydney                         clicks=   7 impr=  165 pos= 8.50
+  /blog/eggless-cake-nut-free-sydney                         clicks=   7 impr=  536 pos=14.90
+BLOG POSTS WITH IMPRESSIONS BUT ZERO CLICKS IN 12 MONTHS (worst 30 by wasted impressions):
+  /blog/eggless-cakes-fathers-day-sydney                     impr=  282 pos=11.10
+  /blog/eggless-cake-office-birthday-sydney                  impr=  248 pos=25.60
+  /blog/eggless-cake-vs-cheesecake-sydney                    impr=  247 pos= 7.20
+  /blog/how-to-design-birthday-cake-sydney                   impr=  239 pos=12.90
+  /blog/eggless-cakes-minchinbury                            impr=  212 pos= 7.00
+  /blog/eggless-cakes-lalor-park                             impr=  196 pos=15.60
+  /blog/eggless-cakes-mount-druitt                           impr=  168 pos= 7.40
+  /blog/eggless-cakes-newington                              impr=  144 pos= 7.80
+  /blog/eggless-cakes-telopea                                impr=  142 pos=12.10
+  /blog/eggless-cakes-seven-hills                            impr=  133 pos= 7.20
+  /blog/anniversary-cake-sydney                              impr=  127 pos=15.70
+  /blog/eggless-cakes-old-toongabbie                         impr=  120 pos=32.80
+  /blog/drip-cake-sydney                                     impr=  116 pos= 7.30
+  /blog/eggless-cakes-kenthurst                              impr=  116 pos= 7.40
+  /blog/eggless-cakes-rooty-hill                             impr=  114 pos=11.20
+  /blog/eggless-cake-ingredient-labels-sydney                impr=  113 pos= 6.80
+  /blog/eggless-cakes-silverwater                            impr=  110 pos= 8.80
+  /blog/eggless-cake-low-fodmap-sydney                       impr=  105 pos= 8.60
+  /blog/eggless-cakes-prospect                               impr=  104 pos=10.40
+  /blog/eggless-cake-vs-supermarket-cake                     impr=   99 pos= 7.60
+  /blog/eggless-cakes-dundas-valley                          impr=   99 pos=14.60
+  /blog/eggless-cakes-shanes-park                            impr=   96 pos= 4.40
+  /blog/cake-consultation-sydney                             impr=   94 pos= 4.10
+  /blog/eggless-cakes-cabramatta                             impr=   94 pos= 6.80
+  /blog/eggless-cakes-dundas                                 impr=   93 pos= 6.90
+  /blog/eggless-cakes-marsfield                              impr=   92 pos= 6.40
+  /blog/eggless-cakes-grantham-farm                          impr=   87 pos=20.00
+  /blog/eggless-cakes-hebersham                              impr=   85 pos= 6.60
+  /blog/teej-sydney                                          impr=   85 pos= 7.80
+  /blog/eggless-cakes-smithfield                             impr=   82 pos=11.30
+
+## GSC_BY_GEO
+-- w28 2026-09-01..2026-09-28 --
+country | clicks | impr  | ctr%  | pos   | share_of_impr
+aus     |    737 | 23485 |  3.14 | 12.00 |  79.4%
+ind     |     10 |  1511 |  0.66 |  7.00 |   5.1%
+usa     |      8 |  1411 |  0.57 |  7.00 |   4.8%
+gbr     |     17 |  1380 |  1.23 |  6.80 |   4.7%
+can     |      0 |   216 |  0.00 |  6.10 |   0.7%
+irl     |      1 |   171 |  0.58 |  8.20 |   0.6%
+sgp     |      6 |   117 |  5.13 |  6.00 |   0.4%
+nzl     |      0 |   103 |  0.00 |  5.80 |   0.3%
+phl     |      4 |    92 |  4.35 |  6.90 |   0.3%
+mys     |      0 |    92 |  0.00 |  6.90 |   0.3%
+zaf     |      1 |    81 |  1.23 |  5.90 |   0.3%
+are     |      0 |    81 |  0.00 |  7.20 |   0.3%
+AUS-only totals: clicks=737 impressions=23485 ctr=3.14 pos=12.00
+AUS share of all impressions: 78.8%  AUS share of all clicks: 92.6%
+-- w3mo 2026-06-30..2026-09-28 --
+country | clicks | impr  | ctr%  | pos   | share_of_impr
+aus     |   2303 | 71099 |  3.24 | 11.60 |  80.1%
+usa     |     17 |  6092 |  0.28 | 10.70 |   6.9%
+ind     |     34 |  4240 |  0.80 |  7.70 |   4.8%
+gbr     |     42 |  3010 |  1.40 |  6.50 |   3.4%
+can     |      4 |   580 |  0.69 |  6.50 |   0.7%
+sgp     |     13 |   320 |  4.06 |  6.50 |   0.4%
+nzl     |      2 |   315 |  0.63 |  7.40 |   0.4%
+phl     |      6 |   280 |  2.14 | 12.40 |   0.3%
+are     |      3 |   263 |  1.14 |  6.30 |   0.3%
+irl     |      3 |   235 |  1.28 |  8.20 |   0.3%
+mys     |      1 |   216 |  0.46 |  8.80 |   0.2%
+idn     |      3 |   210 |  1.43 | 11.20 |   0.2%
+AUS-only totals: clicks=2303 impressions=71099 ctr=3.24 pos=11.60
+AUS share of all impressions: 79.2%  AUS share of all clicks: 93.8%
+-- w12mo 2025-09-29..2026-09-28 --
+country | clicks | impr  | ctr%  | pos   | share_of_impr
+aus     |   2723 | 83386 |  3.27 | 11.90 |  81.2%
+usa     |     19 |  6652 |  0.29 | 10.70 |   6.5%
+ind     |     39 |  4562 |  0.85 |  7.80 |   4.4%
+gbr     |     42 |  3270 |  1.28 |  6.50 |   3.2%
+can     |      6 |   653 |  0.92 |  6.70 |   0.6%
+sgp     |     13 |   369 |  3.52 |  6.80 |   0.4%
+nzl     |      2 |   345 |  0.58 |  7.40 |   0.3%
+are     |      4 |   294 |  1.36 |  6.20 |   0.3%
+phl     |      6 |   291 |  2.06 | 12.20 |   0.3%
+idn     |      3 |   243 |  1.23 | 11.00 |   0.2%
+irl     |      3 |   242 |  1.24 |  8.20 |   0.2%
+mys     |      1 |   233 |  0.43 |  8.50 |   0.2%
+AUS-only totals: clicks=2723 impressions=83386 ctr=3.27 pos=11.90
+AUS share of all impressions: 80.4%  AUS share of all clicks: 94.2%
+
+## GSC_LONG_TREND
+window | clicks | impressions | ctr%  | avg_pos | clicks_per_day | impr_per_day
+w7     |    191 |        8620 |  2.22 |   11.70 |          27.29 |      1231.43
+w28    |    796 |       29793 |  2.67 |   11.00 |          28.43 |      1064.04
+w3mo   |   2455 |       89722 |  2.74 |   11.00 |          26.98 |       985.96
+w6mo   |   2890 |      103682 |  2.79 |   11.30 |          15.97 |       572.83
+w12mo  |   2890 |      103682 |  2.79 |   11.30 |           7.92 |       284.06
+
+Direction read (clicks/day and impressions/day across widening windows):
+  clicks/day:      7d=27.29  28d=28.43  3mo=26.98  6mo=15.97  12mo=7.92
+  impressions/day: 7d=1231.43  28d=1064.04  3mo=985.96  6mo=572.83  12mo=284.06
+  avg position:    7d=11.70  28d=11.00  3mo=11.00  6mo=11.30  12mo=11.30
+
+MONTHLY SERIES (from the 12-month daily data, bucketed by calendar month):
+month   | clicks | impressions | ctr%
+2026-05 |     57 |        1160 |  4.91
+2026-06 |    400 |       13394 |  2.99
+2026-07 |    708 |       24317 |  2.91
+2026-08 |    929 |       35018 |  2.65
+2026-09 |    796 |       29793 |  2.67
+(days of data returned: 124)
+
+
+--------------------------------------------------------------------------------
+GSC_LONG_TREND  (direction per metric, plus seasonality)
+--------------------------------------------------------------------------------
+PER-DAY RATES, which is the only way to compare windows of different length:
+window | clicks/day | impressions/day | ctr%  | avg_position
+w7     |      27.29 |         1231.43 | 2.22  | 11.70
+w28    |      28.43 |         1064.04 | 2.67  | 11.00
+w3mo   |      26.98 |          985.96 | 2.74  | 11.00
+w6mo   |      15.97 |          572.83 | 2.79  | 11.30
+w12mo  |       7.92 |          284.06 | 2.79  | 11.30   <- NOT a real 12-month rate
+
+DIRECTION:
+  clicks       RISING over 6 months, FLAT over the last 3, SLIGHTLY DOWN last 7 days.
+               27.0/day (3mo) -> 28.4/day (28d) -> 27.3/day (7d). Essentially flat at
+               ~27-28 clicks/day for three months. No growth, no decline.
+  impressions  RISING and the clearest positive signal: 986/day (3mo) -> 1064/day (28d)
+               -> 1231/day (7d). +25% from the 3-month baseline to the last 7 days.
+  ctr          FALLING: 2.74% (3mo) -> 2.67% (28d) -> 2.22% (7d). This is the mirror
+               image of the impression rise — the site is being SHOWN to more people
+               and converting a smaller share of them.
+  position     STABLE then slightly worse: 11.0 (3mo and 28d) -> 11.7 (7d).
+
+THE ONE PATTERN THAT MATTERS: impressions +26.2% week-over-week while clicks fell
+10.8% and CTR fell 29.1%. Rising impressions with falling CTR at roughly flat position
+means new impressions are arriving on queries the site ranks for but does not answer
+well — broader, lower-intent terms entering the mix. It is NOT a ranking loss. The
+lever is CTR on what the site is already shown for (titles, meta, page-type match),
+not more content. See R1 and R2.
+
+SEASONALITY: CANNOT BE ASSESSED. Only ~6 months of usable data exist and Google flags
+an impressions logging error for 2025-05-13..2026-04-27. Any seasonal claim would be
+invented. Monthly series below is the full honest record:
+  month   | clicks | impressions | ctr%
+  2026-04 |     12 |         505 | 2.38
+  2026-05 |     87 |        3250 | 2.68
+  2026-06 |    336 |       10946 | 3.07
+  2026-07 |    710 |       23311 | 3.05
+  2026-08 |    929 |       35018 | 2.65
+  2026-09 |    796 |       29793 | 2.67  (28 days of data, not 30 — see WARNING 1)
+  Impressions grew 69x from April to August. That is the blog corpus being indexed,
+  not seasonality. The first genuinely comparable year-on-year read is 2027-04.
+
+MOBILE VS DESKTOP — THE ROUTINE'S STANDING ASSUMPTION IS BACKWARDS HERE.
+This routine is briefed to watch for "pages where mobile average position trails
+desktop by more than 2 positions". On this site the gap runs hard the OTHER WAY and
+has done for six months:
+  window  | mobile pos | desktop pos | gap (mobile - desktop) | verdict
+  w7      |       7.60 |       16.20 |                  -8.60 | mobile BETTER by 8.6
+  w28     |       7.40 |       16.20 |                  -8.80 | mobile BETTER by 8.8
+  w28prev |       7.50 |       16.50 |                  -9.00 | mobile BETTER by 9.0
+  w3mo    |       7.40 |       16.60 |                  -9.20 | mobile BETTER by 9.2
+  w6mo    |       7.50 |       17.30 |                  -9.80 | mobile BETTER by 9.8
+  tablet  |       7.80 (w28) — tracks mobile, 152 impressions, negligible
+There is NO page where mobile trails desktop by 2+ positions, so that recommendation
+category is legitimately EMPTY this month. The real finding is the inverse:
+  DESKTOP ranks ~9 positions worse and converts at 1.64% CTR against mobile's 3.40%,
+  on 12,217 impressions in 28d (41% of all impressions). Desktop is 200 of 796 clicks.
+  Desktop is not a rendering problem — GA4 says desktop organic engagement is 75.9%,
+  the BEST of any device. Desktop visitors who arrive do better than mobile ones.
+  The gap is in the SERP: these are almost certainly local-pack and "near me" queries
+  where mobile gets the map pack and desktop does not. That is a Google Business
+  Profile and local-signal matter (N12), not an on-site one.
+
+--------------------------------------------------------------------------------
+GA4_TOTALS  (property 531794710; "ORG" = sessionDefaultChannelGroup = Organic Search)
+--------------------------------------------------------------------------------
+window  | start      end        | all_sess all_users | org_sess org_users org_new org_pageviews | org_bounce org_engaged org_avg_dur | org_sess/day
+w7      | 2026-09-22 2026-09-28 |      420       351 |      229       180     160           491 |      30.1%       69.9%      189.4s |       32.71
+w7prev  | 2026-09-15 2026-09-21 |      532       437 |      273       205     185           563 |      32.2%       67.8%      132.6s |       39.00
+w28     | 2026-09-01 2026-09-28 |     1749      1434 |      945       709     682          2016 |      31.1%       68.9%      168.5s |       33.75
+w28prev | 2026-08-04 2026-08-31 |     1399      1118 |      988       743     713          2068 |      31.3%       68.7%      154.6s |       35.29
+w3mo    | 2026-06-30 2026-09-28 |     4508      3581 |     2932      2158    2126          6104 |      32.0%       68.0%      153.2s |       32.22
+w6mo    | 2026-04-01 2026-09-28 |     6145      4747 |     4104      2936    2918          8677 |      31.7%       68.3%      158.0s |       22.67
+w12mo   | 2025-09-29 2026-09-28 |     6145      4747 |     4104      2936    2918          8677 |      31.7%       68.3%      158.0s |       11.24
+sep2026 | 2026-09-01 2026-09-30 |     1862      1518 |     1017       761     733          2174 |      30.6%       69.4%      171.7s |       33.90
+aug2026 | 2026-08-01 2026-08-31 |     1549      1234 |     1096       820     797          2296 |      30.7%       69.3%      152.5s |       35.35
+NOTE: GA4 keyEvents = 0 in EVERY window and for every channel. No conversions are
+configured in this GA4 property. See NON_CODE_ACTIONS N6.
+NOTE: w6mo and w12mo are identical — GA4 has no data before ~2026-04 either.
+
+--------------------------------------------------------------------------------
+GA4_WOW  (current 7d vs previous 7d)
+--------------------------------------------------------------------------------
+(w7 2026-09-22..2026-09-28  vs  w7prev 2026-09-15..2026-09-21)
+metric                    | current | previous | abs_delta | pct_delta
+all sessions              |     420 |      532 |      -112 |   -21.05%
+all users                 |     351 |      437 |       -86 |   -19.68%
+organic sessions          |     229 |      273 |       -44 |   -16.12%
+organic users             |     180 |      205 |       -25 |   -12.20%
+organic new users         |     160 |      185 |       -25 |   -13.51%
+organic pageviews         |     491 |      563 |       -72 |   -12.79%
+organic bounce rate %     |   30.13 |    32.23 |     -2.10 |    -6.53%
+organic engagement %      |   69.87 |    67.77 |     +2.10 |    +3.10%
+organic avg dur (s)       |  189.38 |   132.57 |    +56.80 |   +42.85%
+
+--------------------------------------------------------------------------------
+GA4_MOM  (current 28d vs previous 28d)
+--------------------------------------------------------------------------------
+(w28 2026-09-01..2026-09-28  vs  w28prev 2026-08-04..2026-08-31)
+metric                    | current | previous | abs_delta | pct_delta
+all sessions              |    1749 |     1399 |      +350 |   +25.02%
+all users                 |    1434 |     1118 |      +316 |   +28.26%
+organic sessions          |     945 |      988 |       -43 |    -4.35%
+organic users             |     709 |      743 |       -34 |    -4.58%
+organic new users         |     682 |      713 |       -31 |    -4.35%
+organic pageviews         |    2016 |     2068 |       -52 |    -2.51%
+organic bounce rate %     |   31.11 |    31.28 |     -0.16 |    -0.52%
+organic engagement %      |   68.89 |    68.72 |     +0.16 |    +0.24%
+organic avg dur (s)       |  168.51 |   154.56 |    +13.95 |    +9.02%
+
+--------------------------------------------------------------------------------
+GA4_CALENDAR_MONTH  (Sep 2026 vs Aug 2026 — note 30 vs 31 days)
+--------------------------------------------------------------------------------
+(sep2026 2026-09-01..2026-09-30  vs  aug2026 2026-08-01..2026-08-31)
+metric                    | current | previous | abs_delta | pct_delta
+all sessions              |    1862 |     1549 |      +313 |   +20.21%
+all users                 |    1518 |     1234 |      +284 |   +23.01%
+organic sessions          |    1017 |     1096 |       -79 |    -7.21%
+organic users             |     761 |      820 |       -59 |    -7.20%
+organic new users         |     733 |      797 |       -64 |    -8.03%
+organic pageviews         |    2174 |     2296 |      -122 |    -5.31%
+organic bounce rate %     |   30.58 |    30.66 |     -0.08 |    -0.25%
+organic engagement %      |   69.42 |    69.34 |     +0.08 |    +0.11%
+organic avg dur (s)       |  171.68 |   152.50 |    +19.18 |   +12.58%
+
+--------------------------------------------------------------------------------
+GA4_BY_CHANNEL  (all traffic, sessionDefaultChannelGroup)
+--------------------------------------------------------------------------------
+-- w28 2026-09-01..2026-09-28  (total 1750 sessions) --
+   channel              | sessions | share  | users | new_users | pageviews | engagement
+   Organic Search       |      945 |  54.0% |   709 |       682 |      2016 |      68.9%
+   Direct               |      685 |  39.1% |   619 |       613 |      1094 |      20.7%
+   AI Assistant         |       91 |   5.2% |    86 |        84 |       179 |      76.9%
+   Referral             |       15 |   0.9% |    11 |        11 |        37 |      53.3%
+   Organic Social       |       10 |   0.6% |    10 |        10 |        10 |      70.0%
+   Organic Shopping     |        2 |   0.1% |     2 |         0 |         2 |      50.0%
+   Unassigned           |        2 |   0.1% |     2 |         0 |         1 |       0.0%
+
+-- sep2026 2026-09-01..2026-09-30  (total 1863 sessions) --
+   channel              | sessions | share  | users | new_users | pageviews | engagement
+   Organic Search       |     1017 |  54.6% |   761 |       733 |      2174 |      69.4%
+   Direct               |      718 |  38.5% |   646 |       639 |      1145 |      20.6%
+   AI Assistant         |       97 |   5.2% |    91 |        89 |       192 |      76.3%
+   Referral             |       17 |   0.9% |    12 |        11 |        39 |      47.1%
+   Organic Social       |       10 |   0.5% |    10 |        10 |        10 |      70.0%
+   Organic Shopping     |        2 |   0.1% |     2 |         0 |         2 |      50.0%
+   Unassigned           |        2 |   0.1% |     2 |         0 |         1 |       0.0%
+
+-- aug2026 2026-08-01..2026-08-31  (total 1549 sessions) --
+   channel              | sessions | share  | users | new_users | pageviews | engagement
+   Organic Search       |     1096 |  70.8% |   820 |       797 |      2296 |      69.3%
+   Direct               |      357 |  23.0% |   330 |       327 |       463 |      20.4%
+   AI Assistant         |       76 |   4.9% |    72 |        70 |       141 |      67.1%
+   Referral             |       11 |   0.7% |     8 |         7 |        22 |      54.5%
+   Organic Social       |        7 |   0.5% |     7 |         7 |         8 |      57.1%
+   Unassigned           |        2 |   0.1% |     2 |         0 |         1 |       0.0%
+
+-- w7 2026-09-22..2026-09-28  (total 420 sessions) --
+   channel              | sessions | share  | users | new_users | pageviews | engagement
+   Organic Search       |      229 |  54.5% |   180 |       160 |       491 |      69.9%
+   Direct               |      157 |  37.4% |   141 |       138 |       271 |      22.9%
+   AI Assistant         |       19 |   4.5% |    19 |        19 |        40 |      84.2%
+   Organic Social       |        7 |   1.7% |     7 |         7 |         7 |      57.1%
+   Referral             |        5 |   1.2% |     3 |         2 |         7 |      40.0%
+   Organic Shopping     |        2 |   0.5% |     2 |         0 |         2 |      50.0%
+   Unassigned           |        1 |   0.2% |     1 |         0 |         0 |       0.0%
+
+-- w7prev 2026-09-15..2026-09-21  (total 531 sessions) --
+   channel              | sessions | share  | users | new_users | pageviews | engagement
+   Organic Search       |      273 |  51.4% |   205 |       185 |       563 |      67.8%
+   Direct               |      235 |  44.3% |   213 |       207 |       403 |      19.6%
+   AI Assistant         |       18 |   3.4% |    17 |        17 |        32 |      61.1%
+   Referral             |        3 |   0.6% |     2 |         2 |         5 |     100.0%
+   Organic Social       |        1 |   0.2% |     1 |         1 |         1 |     100.0%
+   Unassigned           |        1 |   0.2% |     1 |         0 |         1 |       0.0%
+
+-- w3mo 2026-06-30..2026-09-28  (total 4514 sessions) --
+   channel              | sessions | share  | users | new_users | pageviews | engagement
+   Organic Search       |     2932 |  65.0% |  2158 |      2126 |      6104 |      68.0%
+   Direct               |     1301 |  28.8% |  1181 |      1187 |      1917 |      22.3%
+   AI Assistant         |      219 |   4.9% |   203 |       199 |       422 |      71.2%
+   Referral             |       27 |   0.6% |    20 |        19 |        60 |      51.9%
+   Organic Social       |       26 |   0.6% |    26 |        26 |        30 |      57.7%
+   Unassigned           |        5 |   0.1% |     5 |         0 |         2 |       0.0%
+   Organic Shopping     |        2 |   0.0% |     2 |         0 |         2 |      50.0%
+   Paid Social          |        2 |   0.0% |     2 |         2 |         4 |      50.0%
+
+-- w6mo 2026-04-01..2026-09-28  (total 6195 sessions) --
+   channel              | sessions | share  | users | new_users | pageviews | engagement
+   Organic Search       |     4104 |  66.2% |  2936 |      2918 |      8677 |      68.3%
+   Direct               |     1772 |  28.6% |  1547 |      1556 |      3213 |      26.9%
+   AI Assistant         |      232 |   3.7% |   215 |       211 |       449 |      70.3%
+   Referral             |       37 |   0.6% |    28 |        27 |        79 |      54.1%
+   Organic Social       |       27 |   0.4% |    27 |        26 |        41 |      59.3%
+   Unassigned           |       19 |   0.3% |    19 |         8 |       223 |      31.6%
+   Organic Shopping     |        2 |   0.0% |     2 |         0 |         2 |      50.0%
+   Paid Social          |        2 |   0.0% |     2 |         2 |         4 |      50.0%
+
+*** THE AI ASSISTANT CHANNEL IS A REAL AND GROWING SOURCE ***
+GA4 now classifies a distinct "AI Assistant" channel (referrals from ChatGPT,
+Perplexity, Copilot and similar). It is small but it has the HIGHEST engagement rate
+of any channel on the site — higher than Organic Search, and more than three times
+Direct:
+   window                      sessions  share_of_all  engagement
+   aug2026 2026-08-01..08-31        76         4.9%        67.1%
+   sep2026 2026-09-01..09-30        97         5.2%        76.3%
+   w28prev 2026-08-04..08-31        71         5.1%        67.6%
+   w28     2026-09-01..09-28        91         5.2%        76.9%
+   w7prev  2026-09-15..09-21        18         3.4%        61.1%
+   w7      2026-09-22..09-28        19         4.5%        84.2%
+   w3mo    2026-06-30..09-28       219         4.9%        71.2%
+   w6mo    2026-04-01..09-28       232         3.7%        70.3%
+Sessions +27.6% Aug->Sep (76 -> 97) while Organic Search fell 7.2%. Engagement rose
+from 67.1% to 76.3%. For comparison: Organic Search 69.4%, Direct 20.6%.
+This is the strongest available evidence that the site's AI-citability work (llms.txt,
+the open AI-crawler robots.txt, FAQ markup, takeaway boxes on 226 of 234 posts) is
+returning actual engaged visitors. It is also why the two llms.txt factual errors
+fixed this run mattered: a wrong flavour name and wrong trading hours were being fed
+straight to the engines driving the most engaged traffic on the site.
+
+--------------------------------------------------------------------------------
+GA4_BY_LANDING_PAGE  (Organic Search only, w28 2026-09-01..2026-09-28, top 20)
+--------------------------------------------------------------------------------
+   landing page                                            | sessions | bounce | engaged
+   /                                                       |      440 |  21.4% |   78.6%
+   /blog/best-eggless-cake-shops-sydney-2026               |       72 |  25.0% |   75.0%
+   /order                                                  |       62 |  62.9% |   37.1%
+   (not set)                                               |       39 | 100.0% |    0.0%
+   /cakes                                                  |       39 |  38.5% |   61.5%
+   /blog/photo-cake-sydney                                 |       37 |  27.0% |   73.0%
+   /blog/eggless-cake-bakery-harris-park-riverstone-sydney |       33 |  30.3% |   69.7%
+   /blog/eggless-cakes-schofields                          |       21 |  23.8% |   76.2%
+   /blog/first-birthday-cake-sydney                        |       19 |  47.4% |   52.6%
+   /blog/eggless-cake-indian-flavours                      |       12 |  25.0% |   75.0%
+   /indian-sweet                                           |       12 |  25.0% |   75.0%
+   /blog/eggless-cake-storage-freshness-guide              |       10 |  80.0% |   20.0%
+   /blog/kids-birthday-cake-sydney                         |        9 |  11.1% |   88.9%
+   /blog/sheet-cake-sydney                                 |        8 |  25.0% |   75.0%
+   /blog/cake-price-guide-sydney                           |        7 |  28.6% |   71.4%
+   /blog/eggless-cake-vs-regular-cake                      |        7 |  71.4% |   28.6%
+   /blog/best-dessert-shop-sydney                          |        6 |   0.0% |  100.0%
+   /blog/eggless-cake-lower-sugar-options-sydney           |        6 |   0.0% |  100.0%
+   /blog/eggless-cakes-dean-park                           |        6 |  16.7% |   83.3%
+   /blog/halal-friendly-cakes-eggless-sydney               |        6 |  66.7% |   33.3%
+
+READ THIS TABLE FOR ONE THING: /order is the worst-performing page that matters.
+62.9% bounce and 37.1% engagement, against the homepage's 21.4% / 78.6%. It is the
+conversion page for custom cakes and it loses nearly two-thirds of the organic
+visitors who land on it. /blog/eggless-cake-storage-freshness-guide (80.0% bounce)
+and /blog/eggless-cake-vs-regular-cake (71.4%) are informational and bounce for a
+benign reason. /order has no such excuse. See RECOMMENDATIONS R2.
+/cakes still collected 39 organic sessions — a URL that does not exist on disk.
+"(not set)" 39 sessions at 100% bounce is unattributed and likely part of the Direct
+anomaly in N5.
+
+--------------------------------------------------------------------------------
+GA4_BY_DEVICE  (Organic Search, w28)
+--------------------------------------------------------------------------------
+   device   | sessions | users | bounce | engaged | avg duration
+   mobile   |      691 |   506 |  33.7% |   66.3% |    152.2s
+   desktop  |      249 |   199 |  24.1% |   75.9% |    215.8s
+   tablet   |        6 |     5 |  16.7% |   83.3% |     57.2s
+   Mobile is 73.1% of organic sessions (691 of 946). Desktop converts attention
+   better once it arrives (75.9% engaged, 215.8s) but is a quarter of the volume.
+
+--------------------------------------------------------------------------------
+GA4_BY_GEO  (Organic Search, w28)
+--------------------------------------------------------------------------------
+   city                   region                      | sessions | users
+   Sydney                 New South Wales            |      692 |   539
+   Melbourne              Victoria                   |       60 |    57
+   Brisbane               Queensland                 |       20 |    19
+   Rugby                  England                    |       16 |     3
+   Newcastle              New South Wales            |       11 |    11
+   Adelaide               South Australia            |        7 |     6
+   Central Coast          New South Wales            |        7 |     5
+   Singapore              (not set)                  |        7 |     1
+   Bowral - Mittagong     New South Wales            |        6 |     5
+   Bath                   England                    |        5 |     4
+   Marsden Park           New South Wales            |        5 |     3
+   Wollongong             New South Wales            |        5 |     5
+   Canberra               Australian Capital Territo |        4 |     4
+   London                 England                    |        4 |     3
+   Wagga Wagga            New South Wales            |        4 |     4
+   country                | sessions | users
+   Australia              |      867 |   657
+   United Kingdom         |       34 |    18
+   India                  |       14 |    11
+   United States          |        8 |     8
+   Singapore              |        7 |     1
+   Sri Lanka              |        2 |     2
+   Brazil                 |        1 |     1
+   Canada                 |        1 |     1
+   Sydney NSW is 692 of 946 organic sessions = 73.2%. Australia 867 = 91.6%.
+   Melbourne 60 and Brisbane 20 are out of catchment for a pickup-only business.
+   Rugby/Bath/London (England) 25 combined and Singapore 7-from-1-user look like
+   bot or proxy traffic rather than demand.
+
+--------------------------------------------------------------------------------
+GA4_BY_AUDIENCE  (Organic Search, w28, new vs returning)
+--------------------------------------------------------------------------------
+   segment     | sessions | users | engaged | avg duration
+   new         |      679 |   682 |   79.7% |    181.8s
+   returning   |      201 |   132 |   54.7% |    178.1s
+   (not set)   |       65 |    49 |    0.0% |      0.0s
+   New 679 sessions at 79.7% engaged; returning 201 at 54.7%. A local bakery
+   living on new discovery, which is consistent with 78% of impressions being
+   non-branded.
+
+   browser (organic, w28):
+     Chrome               485
+     Safari               382
+     Edge                  52
+     Samsung Internet      23
+     Opera                  3
+     Firefox                2
+
+--------------------------------------------------------------------------------
+GA4_BY_EVENT  (w28)
+--------------------------------------------------------------------------------
+   ORGANIC SEARCH sessions only:
+   event                        | count | users
+   page_view                    |  2016 |   708
+   user_engagement              |  1729 |   615
+   session_start                |   948 |   709
+   first_visit                  |   682 |   682
+   scroll                       |   250 |   176
+   form_start                   |   173 |   130
+   click                        |    26 |    23
+   enquiry_click                |     8 |     7
+   order_form_submit            |     4 |     4
+   ALL TRAFFIC:
+   page_view                    |  3339 |  1432
+   user_engagement              |  2297 |   810
+   session_start                |  1755 |  1433
+   first_visit                  |  1400 |  1400
+   scroll                       |   547 |   365
+   form_start                   |   239 |   162
+   click                        |    43 |    37
+   enquiry_click                |    10 |     9
+   view_search_results          |     9 |     5
+   order_form_submit            |     4 |     4
+   marketplace_click            |     1 |     1
+
+   TWO THINGS THIS TABLE SAYS:
+   1. The real conversion funnel is tiny and measurable: form_start 173 (organic) ->
+      order_form_submit 4. That is a 2.3% form completion rate. enquiry_click 8.
+      169 people started the custom-cake form and did not send it.
+   2. The shop funnel is ABSENT. No view_item, add_to_cart, begin_checkout or
+      purchase events exist in any window. shop-app/lib/analytics.ts implements them,
+      but /shop is noindex, unlaunched, and 404s on the live build — so nothing fires.
+      Expected, not a defect, but it means e-commerce reporting is zero until cutover.
+   3. marketplace_click = 1 (the Uber Eats text link). Too small to judge, which is
+      what that event exists to establish.
+CROSS_SOURCE  (GSC clicks vs GA4 organic sessions — reconciling the gap)
+--------------------------------------------------------------------------------
+window  | dates                     | GSC clicks | GA4 organic sessions | gap   | gap %
+w7      | 2026-09-22..2026-09-28    |        191 |                  229 |   +38 | +19.9%
+w28     | 2026-09-01..2026-09-28    |        796 |                  945 |  +149 | +18.7%
+w28prev | 2026-08-04..2026-08-31    |        819 |                  988 |  +169 | +20.6%
+w3mo    | 2026-06-30..2026-09-28    |       2455 |                 2932 |  +477 | +19.4%
+w6mo    | 2026-04-01..2026-09-28    |       2890 |                 4104 | +1214 | +42.0%
+aug2026 | 2026-08-01..2026-08-31    |        929 |                 1096 |  +167 | +18.0%
+sep2026 | 2026-09-01..2026-09-30    |        796 |                 1017 |  +221 | +27.8%
+
+GA4 runs 18-21% above GSC on every like-for-like window, which is the EXPECTED
+direction and a healthy, stable ratio. Causes, in order of size:
+  1. GSC counts Google web-search clicks only. GA4 "Organic Search" also counts Bing,
+     DuckDuckGo, Ecosia and Yahoo. For an Australian local business 15-20% non-Google
+     organic is normal, and that alone accounts for most of the gap.
+  2. A GA4 session can begin from one Google click and continue past the 30-minute
+     boundary into a second session, inflating sessions relative to clicks.
+  3. GSC de-duplicates repeat clicks within a session; GA4 does not.
+The w6mo gap of +42% is NOT a real divergence — it is WARNING 2: GSC holds no data
+before ~2026-04-01, so the GSC side of that row is short, not the GA4 side long.
+The sep2026 gap of +27.8% is WARNING 1: GSC September is 28 days, GA4 September is 30.
+CONCLUSION: the two sources agree. There is no tracking defect indicated. The one
+discrepancy worth chasing is not in organic at all — it is the Direct channel (N5).
+
+
+--------------------------------------------------------------------------------
+COMPARISON_VS_LAST_MONTH
+--------------------------------------------------------------------------------
+PRIOR FILE READ: SEO/GSC-Analysis/07-09-2026-GSC-Analysis.txt (most recent on disk).
+Others present: 01-09-2026, 28-07-2026, 26-07-2026, 22-07-2026.
+Note the prior file is dated 07-09 and was a WEEKLY run, so its 7-day window
+(reported 197 clicks / 6844 impressions / 2.88% / 9.78) is not the same window as
+this run's. Comparison is therefore like-for-like only where stated.
+
+METRIC MOVEMENT, 7-day window, 07-09 run vs this run:
+  metric        | 07-09-2026 | 01-10-2026 | delta
+  clicks        |        197 |        191 | -6 (-3.0%)
+  impressions   |       6844 |       8620 | +1776 (+25.9%)
+  ctr           |      2.88% |      2.22% | -0.66pt (-22.9%)
+  avg position  |       9.78 |      11.70 | +1.92 (worse)
+  health score  |  80 (post) |  81 (post) | +1
+READ: impressions up a quarter, clicks flat, CTR and position down. Same pattern as
+the within-run trend above. Position worsening from 9.78 to 11.70 while impressions
+rose 26% is the expected arithmetic of ranking for MORE and BROADER queries — a site
+entering more SERPs at position 15-30 drags its average down without losing anything.
+Not a penalty signal. Corroborated by zero canonical mismatches across 49 inspected
+URLs and no manual-action indicators.
+
+QUERIES ENTERING / LEAVING THE TOP 50 BY CLICKS (w7 vs w7prev, like-for-like):
+  ENTERED: 'cake shop near me', 'cake shops near me', 'eggless cake in sydney',
+    'eggless cakes near me', 'nam nam bakery', 'num num bakery wentworthville',
+    'num nums bakery menu', 'photo cake sydney', 'riverstone cake shop'
+  LEFT: 'best cake shop in sydney', 'cake shop parramatta', 'eggless birthday cake',
+    'eggless cake blacktown', 'eggless cake delivery sydney', 'num num bakery menu'
+  The entering set is more local-intent ("cake shop near me", "riverstone cake shop",
+  "num num bakery wentworthville") which is the right direction for a two-shop pickup
+  business.
+
+WAS LAST MONTH'S WORK VISIBLE? The honest answer is NO, AND IT COULD NOT HAVE BEEN.
+The 07-09 run applied 341 files of fixes and the 01-09 run 49 files. NONE of it is
+live: the deploy has not been published (WARNING 3). So no metric movement this month
+can be attributed to either run's fixes, in either direction. This is the third
+consecutive month in which this routine's output has not reached production. It is
+the reason N1 is ranked first.
+
+RECOMMENDATION_FOLLOWUP (last month's recommendations, one line each):
+RECOMMENDATION_FOLLOWUP: Publish the Netlify build so the 07-09 fixes go live | acted: no | observed effect: none possible — live site still serves a pre-/cakes-removal build; /cakes took 24 clicks + 1900 impressions this month that belong to /order
+RECOMMENDATION_FOLLOWUP: Retype 355 store nodes BakeryOrCafe -> Bakery | acted: yes (07-09, on disk) | observed effect: too early to tell — verified still correct on disk this run (0 invalid @type remain), but unpublished so Google has not seen it
+RECOMMENDATION_FOLLOWUP: Normalise 325 geo coordinates to one pair per address | acted: yes (07-09, on disk) | observed effect: held, and completed this run — 26 nodes still had NO geo and 1 carried a third coordinate pair; repo now has exactly 2 pairs
+RECOMMENDATION_FOLLOWUP: Add Wikidata sameAs to every entity node | acted: yes (01-09 and 07-09) | observed effect: incomplete — 13 nodes still had no sameAs at all, fixed this run; now 0 of 600
+RECOMMENDATION_FOLLOWUP: Add Article mainEntityOfPage to 234 posts | acted: yes (07-09) | observed effect: verified holding — 234/234 Article nodes complete this run
+RECOMMENDATION_FOLLOWUP: Add 190 pillar links across 95 suburb posts | acted: yes (07-09) | observed effect: partial — all 234 posts now link /locations and /order, but 50 posts still have only ONE inbound internal link and the money pages link to zero blog spokes
+RECOMMENDATION_FOLLOWUP: Redirect the live 404 carrying 234 impressions | acted: yes (07-09, on disk) | observed effect: unpublished, so still 404 live (/terms)
+RECOMMENDATION_FOLLOWUP: Fix /blog canonical + sitemap to /blog/ | acted: yes (07-09) | observed effect: partially regressed/incomplete — og:url and 238 JSON-LD breadcrumb references still said /blog without the slash; fixed this run
+RECOMMENDATION_FOLLOWUP: Give 242 tracking pixels alt="" | acted: yes (07-09) | observed effect: holding — 1,255 of 1,257 real images carry a meaningful alt, 0 missing the attribute
+
+--------------------------------------------------------------------------------
+RECOMMENDATIONS  (ranked; each cites the metric that triggered it)
+--------------------------------------------------------------------------------
+R1. PUBLISH THE BUILD. [human action, zero code, highest value by a wide margin]
+    TRIGGER: /cakes = 24 clicks and 1,900 impressions in w28 (5th highest page) and 39
+    GA4 organic sessions, for a URL deleted on disk; /terms and /shop 404 live; ~235
+    live pages link to /cakes; the live homepage still gates on window.load (which
+    fires at 22-31s on this site) with a 3000ms fallback. Three months of this
+    routine's fixes are invisible to Google.
+    Everything below is worth less than this until it is done.
+
+R2. REWRITE /order's FIRST SCREEN FOR THE QUERY IT ACTUALLY RANKS FOR. [code, 1 page]
+    TRIGGER: /order has GA4 organic bounce 62.9% and engagement 37.1% — by far the
+    worst of any page that matters (homepage: 21.4% / 78.6%) — on 62 organic sessions
+    in w28. In GSC it sits at average position 4.10 with 1,065 impressions and 1.03%
+    CTR: it ranks WELL and is clicked badly, then bounces. Position 4 with 1% CTR is
+    the single clearest piece of wasted ranking on the site.
+    WHY: its title is "Order Eggless Cakes Online in Sydney" — a form-style promise —
+    while the page is a custom-cake QUOTE form, and the queries reaching it are
+    category queries. Add to the first screen, above the gallery (CLAUDE.md requires
+    the form stays above the gallery): price entry point ("from $39.99"), the lead
+    time (2 days for custom, next day for shop cakes), and PICKUP ONLY. Do not
+    recreate /cakes — that was considered and refused on 2026-09-21 for cannibalising
+    /order, and the 301 must stay.
+
+R3. CLOSE THE INTERNAL-LINK GAPS. [code, ~70 edits, matrix already specified]
+    TRIGGER: 50 posts have exactly ONE inbound internal link (the blog/index.html card
+    grid). The site's single best-earning page, /blog/best-eggless-cake-shops-sydney-2026
+    (233 clicks and 9,297 impressions in 12mo, 81 clicks in w28), has ZERO inbound body
+    links. /blog/rasmalai-cake-sydney ranks position 5.50 on "rasmalai cake" with 34
+    impressions and also has zero inbound links. The five money pages (index, order,
+    indian-sweet, about, locations) link to ZERO blog spokes between them.
+    Hub->spoke coverage averages ~10% across 14 clusters.
+    The specific source -> target -> anchor matrix is in the cluster findings file.
+    Highest value first: index.html and indian-sweet.html -> rasmalai-cake-sydney;
+    bakery hub and best-of listicle -> each other and -> eggless-cake-sydney;
+    locations.html -> the harris-park and riverstone posts.
+
+R4. DECIDE WHAT TO DO ABOUT SELF-COMPETITION. [owner decision, then code]
+    TRIGGER: measured, not inferred — summing GSC page-dimension impressions for w3mo
+    gives 112,356 against a property total of 89,722. The 22,634 difference (20%) is
+    impressions where two or more of our own URLs appeared in the same result page.
+    526 queries had 2+ live URLs; 493 non-brand ones account for 25,829 impressions of
+    which 10,051 sit on URLs other than the best one. Worked examples:
+      "eggless cake near me" 4,452 impressions split across best-of (1,482 @ p7.3),
+        bakery hub (1,270 @ p7.5), / (496 @ p18.3), dean-park (459 @ p9.7), schofields
+        (232 @ p10.9) and ~30 more suburb pages.
+      "eggless cake shop" 1,886 split across listicle (798 @ p11.3), / (480 @ p26),
+        bakery hub (447 @ p6.2) and the VEGETARIANS post (135 @ p34) — wrong intent.
+    Brand-query overlap (8,224 excess impressions, all near position 1.9 as sitelinks)
+    is BENIGN — leave it.
+    Four clusters earn effectively nothing after a year: calendar/seasonal (14 posts,
+    456 impressions, 3 clicks), life events (20 posts, 1,153 impressions, 11 clicks),
+    festivals excluding the halal page (16 posts, 671 impressions, 12 clicks), and the
+    Harris Park suburb set (42 pages, 3,407 impressions, 24 clicks = 0.6 clicks per
+    page per year). Consolidating them is irreversible, so it is the owner's call, not
+    this routine's. Do NOT touch the 13 earners: bakery hub, best-of listicle,
+    photo-cake, storage, serving-size, price-guide, first-birthday, kids-birthday,
+    number-cakes, dean-park, schofields, doonside, halal.
+
+R5. FIX THE 30 FESTIVAL REDIRECTS THAT POINT AT AN UNRELATED PAGE. [code, netlify.toml]
+    TRIGGER: ~30 retired festival posts (Onam, Durga Puja, Chuseok, Mid-Autumn and
+    others) 301 into eggless-cakes-eid-milad-un-nabi-sydney, an Eid page. Google treats
+    an irrelevant redirect target as a soft 404, so the 6,069 impressions and 58 clicks
+    still arriving at 128 retired blog URLs in w3mo are being wasted. Retarget them at
+    a topically relevant hub (/blog/eggless-cakes-diwali-indian-festivals-sydney or
+    /order). Largest: eggless-cake-troubleshooting 553 impressions,
+    eggless-cakes-sydney-olympic-park 308, multicultural-celebration-cake-sydney 265.
+
+R6. WIN BACK THE STRIKING-DISTANCE QUERIES WITH TITLE AND META WORK, NOT NEW POSTS.
+    TRIGGER: positions 5-20 with real impressions and poor CTR (w28):
+      query                      impr  clicks  ctr     pos   -> owner page
+      eggless cake near me       1069      36  3.37%  11.00  bakery hub / best-of
+      eggless cakes               299       3  1.00%  18.30  best-of listicle
+      cake shop near me           265       5  1.89%   7.30  / (homepage)
+      kids birthday cakes         149       1  0.67%  15.70  kids-birthday-cake-sydney
+      photo cake                  111       2  1.80%  14.90  photo-cake-sydney
+      bakery near me              101       3  2.97%   8.30  /
+      egg free cakes sydney        80       2  2.50%  13.80  eggless-cake-sydney
+      riverstone bakery            74       2  2.70%   7.80  /
+      kids birthday cake sydney    73       1  1.37%  17.90  kids-birthday-cake-sydney
+      harris park cake shop        62       2  3.23%   5.90  bakery hub
+      cake shop harris park        61       1  1.64%   5.10  bakery hub / locations
+      cake shop in harris park     50       1  2.00%   5.50  bakery hub
+    "kids birthday cakes" at 0.67% CTR on 149 impressions and "eggless cakes" at 1.00%
+    on 299 are the two worst CTR-to-impression ratios on the site. Both are title and
+    meta problems, not content problems — the pages already rank.
+    ALSO: only ONE query has 25+ impressions and zero clicks ("bakery", 31 impressions,
+    position 12.2, head term, not worth chasing). So there is no meaningful
+    high-impression-zero-click list this month. That is a good sign.
+
+R7. GET /locations INDEXED. [code + human]
+    TRIGGER: URL Inspection reports /locations as "Discovered - currently not indexed"
+    and NEVER CRAWLED, while it is in the sitemap. It earned zero impressions in 12
+    months. Meanwhile "cake shop harris park" / "harris park cake shop" /
+    "cake shop in harris park" carry 173 combined impressions at positions 5.1-5.9,
+    served by a blog post instead. CAUSE: locations.html and
+    blog/eggless-cake-bakery-harris-park-riverstone-sydney.html carry effectively the
+    SAME title; the blog post takes the traffic. Retitle the blog post, give
+    locations.html distinct per-store sections (it is only 515 words with no question
+    headings and no visible pickup-only statement), and request indexing in GSC.
+
+R8. RAISE ANSWER-FIRST OPENINGS ON THE TOP 10 EARNING PAGES. [code, 10 pages]
+    TRIGGER: AI Assistant is 5.2% of sessions at 76.9% engagement — the most engaged
+    channel on the site — and growing 27.6% month over month. Yet only 41 of 232 posts
+    put both "eggless" and "Sydney" in their first 50 words, 208 have a first paragraph
+    over 60 words, and only 22 H1s are questions. Rewrite the first 50 words of the ten
+    pages that actually earn (start with bakery hub, best-of listicle, photo-cake,
+    eggless-cake-sydney, eggless-cakes-near-me-sydney, indian-sweets-harris-park) as a
+    40-60 word direct answer naming the shop, both suburbs, "100% eggless" and the
+    price range. Do the remaining 93 scene-setter openings in GSC-traffic order later.
+    Do NOT blanket-bump dateModified — that is a freshness-manipulation signal.
+
+R9. ADD A PRICE/SIZE TABLE TO /order AND /indian-sweet. [code, 2 pages]
+    TRIGGER: /indian-sweet has 1,266 impressions at position 11.90 and 0.63% CTR in
+    w28 — 1,266 people shown it, 8 clicked. Comparison tables exist on only 43 of 234
+    posts (18.4%), the weakest AI-citability dimension measured. Prices currently live
+    only in llms.txt and in H2 text, not as a real <table>. Source them from
+    ops/catalog.mjs so they cannot drift, and add Product/Offer markup to
+    /indian-sweet.
+
+R10. NO NEW SUBURB POSTS. [explicitly a non-recommendation]
+    `ls blog/` was run first. 66-67 suburb posts already exist, including Parramatta,
+    Harris Park, Westmead, Auburn, Blacktown, Seven Hills, Quakers Hill, Schofields,
+    Riverstone, Rouse Hill, Mount Druitt, Richmond and Pitt Town. 59+ URLs already
+    compete for "eggless cake near me" (see R4) and the Harris Park suburb cluster
+    earns 0.6 clicks per page per year. blog/topic-ledger.md permanently rejects new
+    suburb pages. Suburbs with demand but no page (Granville, Merrylands, Guildford,
+    Greystanes, Kellyville, Stanhope Gardens, Glenwood, Rooty Hill, Windsor, Castle
+    Hill and others) are listed in the local findings file for completeness, but adding
+    them would worsen R4, not help. The gap worth filling is CTR on existing pages.
+    This stays consistent with the blog-writer routine's own topic-selection gate.
+
+--------------------------------------------------------------------------------
+FAILURES
+--------------------------------------------------------------------------------
+F1. CrUX (Chrome UX Report) API: HTTP 403 on every call, via both the API key
+    (API_KEY_SERVICE_BLOCKED) and a service-account bearer token (400). crux_history.py
+    and lcp_subparts.py both failed with SERVICE_DISABLED: "Chrome UX Report API has
+    not been used in project 96266000644 before or it is disabled". PSI v5's own
+    embedded CrUX lookup also returned originLoadingExperience: null and empty
+    field_metrics for all 8 URLs. CONSEQUENCE: no p75 LCP/INP/CLS/FCP/TTFB, and
+    Core Web Vitals pass/fail is UNASSESSABLE. Performance was scored from PSI LAB
+    data only and labelled as such. No lab figure was presented as field data.
+    Note google_auth.py --check reported CrUX [OK], which is misleading — it does not
+    actually exercise the API. FIX: N2.
+F2. Backlink data: unobtainable. backlinks_auth.py reports "Backlink Tier: 0 -- Basic
+    (Common Crawl + Verify only)"; Moz and Bing Webmaster credentials MISSING.
+    Common Crawl (cc-main-2026-jan-feb-mar) has in_crawl=true, in_rankings=false and
+    null PageRank/harmonic-centrality (domain below the ranking threshold). whois
+    unavailable, so domain_history.py returned nothing. BACKLINKS_SCORE: N/A rather
+    than a guessed number. FIX: N11.
+F3. seo-visual agent, the screenshots/ output and the PDF report: SKIPPED BY DESIGN.
+    This routine is data-only and that override is intentional, not a failure.
+F4. Six specialist agents hit their per-agent turn limits before delivering and had to
+    be resumed with a narrowed brief: seo-content, seo-local, seo-performance, seo-geo,
+    seo-image-gen, seo-cluster. All six then delivered in full. No findings were lost,
+    but it cost roughly a third of the run's agent budget. For next run: give each
+    specialist a shorter required-output list up front.
+F5. Four agents declined to write their findings file (a standing instruction of
+    theirs) and returned the report in-message instead. The sitemap/on-page findings
+    were transcribed to disk by the coordinator; the rest are summarised in this file.
+    Not a data loss, but the per-category findings files are incomplete on disk.
+F6. `node verify-blog.mjs` initially failed with ERR_MODULE_NOT_FOUND for `stripe` and
+    `@supabase/supabase-js`. Sandbox-only: both are declared in package.json, so the
+    Netlify build is unaffected. Installed locally to obtain a real gate run, then the
+    package.json / package-lock.json / node_modules changes were reverted. The gate
+    passes on the committed tree.
+F7. sitemap_discovery.py failed in the sandbox (seo-technical fell back to a direct GET
+    of sitemap.xml, which succeeded). foodauthority.nsw.gov.au returned connection
+    failure (000) from this sandbox, so it could not be verified as a replacement
+    target and was not used; health.nsw.gov.au/Infectious/foodborne/ was used instead
+    after verifying it 200.
+F8. One URL Inspection batch entry was corrupted by a newline in the agent's URL list,
+    so blog/eggless-cake-vs-ice-cream-cake-sydney was not inspected. 49 of an intended
+    50 URLs completed. No quota was hit.
+F9. The `frontend-design` skill named in CLAUDE.md's "Always Do First" does not exist
+    in this sandbox's skill set (the nearest available is ui-ux-pro-max). No layout,
+    CSS, component or visual-design code was written this run — the changes are text,
+    JSON-LD, meta tags and netlify.toml headers only — so no design pass was bypassed
+    in substance. Recorded for transparency.
+
+================================================================================
+END OF FILE — 01-10-2026
+================================================================================

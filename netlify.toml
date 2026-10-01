@@ -3248,6 +3248,103 @@
 
 # ── Headers ───────────────────────────────────────────────────────────────────
 
+# ── Internal files must never be indexed ─────────────────────────────────────
+# `publish = "."` serves the repo root, so every internal document is fetchable
+# by exact URL: /CLAUDE.md, /plans/*.md, /GBP/*.md, /blog-gsc-per-page.md,
+# /package.json, /verify-blog.mjs and the rest all answer 200 in production
+# (verified 2026-10-01). These are process and strategy documents, not pages.
+#
+# noindex, nofollow keeps them out of search results while leaving them
+# crawlable, which is what lets Google DROP anything already indexed — a
+# robots.txt Disallow would do the opposite, because a blocked URL can never be
+# re-crawled to see the noindex.
+#
+# This closes the SEO leak, NOT the public readability. Serving these files at
+# all is a publish-directory question (move the site into a build output dir),
+# which is an architecture change and is listed for the owner instead.
+#
+# ops/ is deliberately absent: the ops app is a SEPARATE Netlify site with its
+# own ops/netlify.toml, and this file is the public marketing site only.
+[[headers]]
+  for = "/*.md"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/*.mjs"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/plans/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/GBP/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/SEO/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/skills/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/docs/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/netlify/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/tests/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/src/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/scripts/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/seo-baseline/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/supabase-email-templates/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/shop-app/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/reviews-app/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
 [[headers]]
   for = "/*.html"
   [headers.values]

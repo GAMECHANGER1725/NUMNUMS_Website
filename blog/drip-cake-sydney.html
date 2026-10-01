@@ -106,100 +106,202 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @media(max-width:640px){#footer-grid{grid-template-columns:1fr!important;gap:2rem!important;}}
   </style>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
-          {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://numnumsbakery.com.au/blog"},
-          {"@type": "ListItem", "position": 3, "name": "Drip Cakes in Sydney", "item": "https://numnumsbakery.com.au/blog/drip-cake-sydney"}
-        ]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://numnumsbakery.com.au/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://numnumsbakery.com.au/blog/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Drip Cakes in Sydney",
+          "item": "https://numnumsbakery.com.au/blog/drip-cake-sydney"
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "Drip Cakes in Sydney: The Trend Everyone's Ordering for 2026",
+      "description": "100% eggless drip cakes in Sydney — 15 flavours, custom drip colours, 48 hr notice. Order online or via WhatsApp +61 425 697 725.",
+      "datePublished": "2026-07-26",
+      "dateModified": "2026-07-26",
+      "author": {
+        "@type": "Person",
+        "name": "Tarun Patel",
+        "url": "https://numnumsbakery.com.au/about"
       },
-      {
-        "@type": "Article",
-        "headline": "Drip Cakes in Sydney: The Trend Everyone's Ordering for 2026",
-        "description": "100% eggless drip cakes in Sydney — 15 flavours, custom drip colours, 48 hr notice. Order online or via WhatsApp +61 425 697 725.",
-        "datePublished": "2026-07-26",
-        "dateModified": "2026-07-26",
-        "author": {"@type": "Person", "name": "Tarun Patel", "url": "https://numnumsbakery.com.au/about"},
-        "mainEntityOfPage": {"@type": "WebPage", "@id": "https://numnumsbakery.com.au/blog/drip-cake-sydney"},
-        "publisher": {"@id": "https://numnumsbakery.com.au/#organization"},
-        "url": "https://numnumsbakery.com.au/blog/drip-cake-sydney",
-        "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Chocolate.webp",
-        "inLanguage": "en-AU"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://numnumsbakery.com.au/blog/drip-cake-sydney"
       },
-      {
-        "@type": "Organization",
-        "@id": "https://numnumsbakery.com.au/#organization",
-        "name": "Num Num's Bakery",
-        "url": "https://numnumsbakery.com.au/",
-        "logo": "https://numnumsbakery.com.au/brand_assets/Logo_TParent.png",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+      "publisher": {
+        "@id": "https://numnumsbakery.com.au/#organization"
       },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#harrispark",
-        "name": "Num Num's Bakery — Harris Park",
-        "description": "100% eggless cake bakery in Harris Park, Sydney, specialising in custom drip cakes and celebration cakes for Greater Sydney.",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "address": {"@type": "PostalAddress", "streetAddress": "Shop 1, 96–98 Wigram Street", "addressLocality": "Harris Park", "addressRegion": "NSW", "postalCode": "2150", "addressCountry": "AU"},
-        "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "11:00", "closes": "22:00"}],
-        "servesCuisine": "Bakery",
-        "areaServed": "Greater Sydney",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+      "url": "https://numnumsbakery.com.au/blog/drip-cake-sydney",
+      "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Chocolate.webp",
+      "inLanguage": "en-AU"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://numnumsbakery.com.au/#organization",
+      "name": "Num Num's Bakery",
+      "url": "https://numnumsbakery.com.au/",
+      "logo": "https://numnumsbakery.com.au/brand_assets/Logo_TParent.png",
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ]
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#harrispark",
+      "name": "Num Num's Bakery — Harris Park",
+      "description": "100% eggless cake bakery in Harris Park, Sydney, specialising in custom drip cakes and celebration cakes for Greater Sydney.",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 1, 96–98 Wigram Street",
+        "addressLocality": "Harris Park",
+        "addressRegion": "NSW",
+        "postalCode": "2150",
+        "addressCountry": "AU"
       },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#riverstone",
-        "name": "Num Num's Bakery — Riverstone",
-        "description": "100% eggless cake bakery in Riverstone, Sydney, specialising in custom drip cakes and celebration cakes for Greater Sydney.",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "address": {"@type": "PostalAddress", "streetAddress": "Shop 8, Riverstone Shopping Centre", "addressLocality": "Riverstone", "addressRegion": "NSW", "postalCode": "2765", "addressCountry": "AU"},
-        "openingHoursSpecification": [
-          {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "06:00", "closes": "20:00"},
-          {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "07:00", "closes": "19:00"}
-        ],
-        "servesCuisine": "Bakery",
-        "areaServed": "Greater Sydney",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is a drip cake?",
-            "acceptedAnswer": {"@type": "Answer", "text": "A drip cake is a celebration cake finished with a glossy ganache, chocolate, or glaze that's poured over the top edge so it cascades down the sides in individual streaks. At Num Num's Bakery, every drip cake is built on a 100% eggless sponge in any of our 15 flavours, with a custom drip colour to match your event."}
-          },
-          {
-            "@type": "Question",
-            "name": "Can drip cakes be made 100% eggless?",
-            "acceptedAnswer": {"@type": "Answer", "text": "Yes — every cake at Num Num's Bakery, drip style included, is 100% eggless as standard, not a special request. Our eggless sponges are formulated with a firmer crumb specifically so they hold a ganache drip without cracking, a detail most standard bakeries don't need to consider. Order any flavour with any drip colour."}
-          },
-          {
-            "@type": "Question",
-            "name": "How much does a custom drip cake cost in Sydney?",
-            "acceptedAnswer": {"@type": "Answer", "text": "Pricing depends on size, flavour, and drip colour complexity, with most custom drip cakes starting from a similar base to our standard custom celebration cakes. See our full cake price guide for size-by-size figures, or message us on WhatsApp with your guest count and preferred flavour for an exact quote."}
-          },
-          {
-            "@type": "Question",
-            "name": "How far in advance do I need to order a drip cake?",
-            "acceptedAnswer": {"@type": "Answer", "text": "Standard drip cakes need a minimum of 48 hours notice. For multi-colour drips, tiered designs, or orders during NSW school holidays and festival periods like Diwali or Christmas, we recommend 4–5 days notice to guarantee your preferred pickup time at Harris Park or Riverstone."}
-          },
-          {
-            "@type": "Question",
-            "name": "Which drip cake colours and flavours are most popular right now?",
-            "acceptedAnswer": {"@type": "Answer", "text": "From our internal order data across both shops in 2026, gold and caramel drips paired with Chocolate or Butterscotch sponges are the most requested combination, followed by pastel pink drips on Vanilla or Red Velvet. Any of our 15 flavours can be paired with any drip colour on request."}
-          }
-        ]
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "11:00",
+          "closes": "22:00"
+        }
+      ],
+      "servesCuisine": "Bakery",
+      "areaServed": "Greater Sydney",
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.8206078,
+        "longitude": 151.0089521
       }
-    ]
-  }
-  </script>
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#riverstone",
+      "name": "Num Num's Bakery — Riverstone",
+      "description": "100% eggless cake bakery in Riverstone, Sydney, specialising in custom drip cakes and celebration cakes for Greater Sydney.",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 8, Riverstone Shopping Centre",
+        "addressLocality": "Riverstone",
+        "addressRegion": "NSW",
+        "postalCode": "2765",
+        "addressCountry": "AU"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "18:30"
+        }
+      ],
+      "servesCuisine": "Bakery",
+      "areaServed": "Greater Sydney",
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.6785397,
+        "longitude": 150.8610698
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a drip cake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A drip cake is a celebration cake finished with a glossy ganache, chocolate, or glaze that's poured over the top edge so it cascades down the sides in individual streaks. At Num Num's Bakery, every drip cake is built on a 100% eggless sponge in any of our 15 flavours, with a custom drip colour to match your event."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can drip cakes be made 100% eggless?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — every cake at Num Num's Bakery, drip style included, is 100% eggless as standard, not a special request. Our eggless sponges are formulated with a firmer crumb specifically so they hold a ganache drip without cracking, a detail most standard bakeries don't need to consider. Order any flavour with any drip colour."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does a custom drip cake cost in Sydney?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pricing depends on size, flavour, and drip colour complexity, with most custom drip cakes starting from a similar base to our standard custom celebration cakes. See our full cake price guide for size-by-size figures, or message us on WhatsApp with your guest count and preferred flavour for an exact quote."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How far in advance do I need to order a drip cake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Standard drip cakes need a minimum of 48 hours notice. For multi-colour drips, tiered designs, or orders during NSW school holidays and festival periods like Diwali or Christmas, we recommend 4–5 days notice to guarantee your preferred pickup time at Harris Park or Riverstone."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which drip cake colours and flavours are most popular right now?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "From our internal order data across both shops in 2026, gold and caramel drips paired with Chocolate or Butterscotch sponges are the most requested combination, followed by pastel pink drips on Vanilla or Red Velvet. Any of our 15 flavours can be paired with any drip colour on request."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
   <!-- menu-style-fix -->
   <style>
     #mobile-menu > a {
@@ -715,7 +817,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div style="margin-bottom:1rem;">
             <div style="font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;color:#2C1A0E;margin-bottom:2px;">Riverstone</div>
-            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 8, Riverstone Shopping Centre<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div>
+            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 8, Riverstone Shopping Centre<br>Daily 9 am – 6:30 pm</div>
           </div>
           <a href="/locations" style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#C85478;text-decoration:none;display:flex;align-items:center;gap:4px;">View on map <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
         </div>
@@ -793,7 +895,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
         <div>
-          <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin-bottom:1.25rem;">Visit Us</div><div style="display:flex;flex-direction:column;gap:14px;"><div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.55;">Shop 1, 96–98 Wigram Street, Harris Park NSW 2150<br>Daily 11 am – 10 pm</div></div><div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.55;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765<br>Mon–Fri 6 am – 8 pm · Sat–Sun 7 am – 7 pm</div></div></div>
+          <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin-bottom:1.25rem;">Visit Us</div><div style="display:flex;flex-direction:column;gap:14px;"><div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Harris Park</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.55;">Shop 1, 96–98 Wigram Street, Harris Park NSW 2150<br>Daily 11 am – 10 pm</div></div><div><div style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,248,242,0.85);margin-bottom:3px;">Riverstone</div><div style="font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.55;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765<br>Daily 9 am – 6:30 pm</div></div></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1.75rem;flex-wrap:wrap;gap:1rem;">
