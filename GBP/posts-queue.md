@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-02
+
+```yaml
+id: post-rs-2026-10-02
+status: published
+published_at: 2026-10-02
+location: riverstone
+post_type: "Call to action"
+title: "How big a cake for 25 guests? Eggless 12-inch from $89.99 near Schofields"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1911.jpg"
+keywords_baited:
+  - 12-inch eggless cake Schofields
+  - cake size for 25 guests Marsden Park
+  - custom eggless cake Riverstone pickup
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-02
 
 ```yaml
