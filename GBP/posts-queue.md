@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-02
+
+```yaml
+id: post-hp-2026-10-02
+status: published
+published_at: 2026-10-02
+location: harris-park
+post_type: "Call to action"
+title: "Eggless farewell cakes for Westmead and Parramatta teams, pickup till 10pm"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1781.jpg"
+keywords_baited:
+  - eggless farewell cake Westmead
+  - custom cake Parramatta Harris Park
+  - office cake no egg allergy safe for vegetarian colleagues
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-01
 
 ```yaml
