@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-03
+
+```yaml
+id: post-hp-2026-10-03
+status: published
+published_at: 2026-10-03
+location: harris-park
+post_type: "Call to action"
+title: "Cake for 20 guests near Merrylands? Eggless 10-inch from $74.99"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1627.jpg"
+keywords_baited:
+  - 10-inch eggless cake Merrylands
+  - cake size for 20 guests Granville
+  - custom eggless cake Harris Park pickup
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-02
 
 ```yaml
