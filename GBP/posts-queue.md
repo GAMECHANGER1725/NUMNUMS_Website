@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-03
+
+```yaml
+id: post-rs-2026-10-03
+status: published
+published_at: 2026-10-03
+location: riverstone
+post_type: "Call to action"
+title: "Photo cake with their face on it? 100% eggless, from Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1641.jpg"
+keywords_baited:
+  - eggless photo cake Riverstone
+  - photo cake Stanhope Gardens
+  - custom eggless cake Marsden Park
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-03
 
 ```yaml
