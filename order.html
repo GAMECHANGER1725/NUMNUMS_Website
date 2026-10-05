@@ -611,6 +611,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <a href="/cakes#flavour-size-guide" style="font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;color:#C85478;text-decoration:none;margin-top:2px;">See the full flavour &amp; size guide &rarr;</a>
           </div>
 
+          <!-- PICKUP LOCATION -->
+          <div style="margin-bottom:0.85rem;">
+            <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.5rem;">Pickup Location</label>
+            <div style="display:flex;gap:0.5rem;">
+              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
+                <input type="radio" name="pickup-location" id="loc-harris" value="Harris Park" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
+                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
+                Harris Park
+              </label>
+              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
+                <input type="radio" name="pickup-location" id="loc-riverstone" value="Riverstone" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
+                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
+                Riverstone
+              </label>
+            </div>
+            <div id="location-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
+          </div>
+
           <!-- DATE PICKER -->
           <div style="margin-bottom:0.85rem;">
             <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Pickup Date</label>
@@ -640,27 +658,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <!-- TIME PICKER -->
           <div style="margin-bottom:0.85rem;">
             <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Pickup Time</label>
+            <!-- Filled from the chosen shop's collection hours by fillTimes(). -->
             <div style="display:flex;align-items:center;gap:5px;">
               <span class="material-symbols-outlined" style="font-size:1.05rem;color:rgba(92,58,34,0.4);font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;flex-shrink:0;">schedule</span>
-              <div style="position:relative;">
-                <select id="ord-hour" data-dd="compact" data-dd-label="Pickup hour" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option selected>10</option><option>11</option><option>12</option>
-                </select>
-                <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
-              <span style="font-family:'Jost',sans-serif;font-size:0.9rem;color:#5C3A22;font-weight:500;line-height:1;">:</span>
-              <div style="position:relative;">
-                <select id="ord-min" data-dd="compact" data-dd-label="Pickup minute" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <option>00</option><option>15</option><option>30</option><option>45</option>
-                </select>
-                <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
-              <div style="position:relative;">
-                <select id="ord-ampm" data-dd="compact" data-dd-label="AM or PM" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
-                  <option>AM</option><option>PM</option>
-                </select>
-                <svg style="position:absolute;right:5px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
+              <div id="ord-time-wrap" style="position:relative;"></div>
             </div>
           </div>
 
@@ -733,24 +734,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div id="price-hint" style="display:flex;align-items:flex-start;gap:0.5rem;padding:0.65rem 0.85rem;background:rgba(200,84,120,0.06);border-left:3px solid #C85478;border-radius:0.5rem;margin-bottom:0.85rem;">
             <span class="material-symbols-outlined" style="font-size:1rem;color:#C85478;flex-shrink:0;line-height:1.5;">info</span>
             <p style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:400;color:#5C3A22;margin:0;line-height:1.55;"><span id="price-hint-amt" style="font-weight:600;color:#2C1A0E;"></span><span id="price-hint-txt">Pick a size and we'll show your starting price.</span></p>
-          </div>
-
-          <!-- PICKUP LOCATION -->
-          <div style="margin-bottom:0.85rem;">
-            <label style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.5rem;">Pickup Location</label>
-            <div style="display:flex;gap:0.5rem;">
-              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
-                <input type="radio" name="pickup-location" id="loc-harris" value="Harris Park" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
-                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
-                Harris Park
-              </label>
-              <label class="loc-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;color:#2C1A0E;transition:background 0.15s ease,border-color 0.15s ease,color 0.15s ease;user-select:none;">
-                <input type="radio" name="pickup-location" id="loc-riverstone" value="Riverstone" style="position:absolute;opacity:0;pointer-events:none;" onchange="document.querySelectorAll('.loc-btn').forEach(function(b){b.style.background='#fff';b.style.borderColor='rgba(200,84,120,0.18)';b.style.color='#2C1A0E';}); this.closest('.loc-btn').style.background='rgba(200,84,120,0.09)'; this.closest('.loc-btn').style.borderColor='#C85478'; this.closest('.loc-btn').style.color='#C85478'; document.getElementById('location-error').style.display='none';">
-                <span class="material-symbols-outlined" style="font-size:0.95rem;font-variation-settings:'FILL' 0,'wght' 300,'OPSZ' 20,'GRAD' 0;">location_on</span>
-                Riverstone
-              </label>
-            </div>
-            <div id="location-error" style="display:none;color:#A03D5E;font-family:'Jost',sans-serif;font-size:0.72rem;margin-top:0.25rem;">Required.</div>
           </div>
 
           <!-- NOTES -->
@@ -1254,6 +1237,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         // Smart default: pre-select Harris Park (longest opening hours) so the
         // location step is already done unless the customer wants Riverstone.
+        // Each shop's collection window, minutes from midnight — the same
+        // windows main's order.html and ops/catalog.mjs COLLECTION hold.
+        var WINDOWS = { 'Harris Park': [660, 1320], 'Riverstone': [540, 1110] };
+        function fillTimes() {
+          var r = document.querySelector('[name="pickup-location"]:checked');
+          var w = WINDOWS[r ? r.value : 'Harris Park'];
+          var old = document.getElementById('ord-time');
+          var keep = old ? old.value : '';
+          var html = '<select id="ord-time" data-dd="compact" data-dd-label="Pickup time" style="padding:7px 22px 7px 9px;border:1px solid rgba(200,84,120,0.18);border-radius:0.55rem;background:#fff;font-family:\'Jost\',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">';
+          for (var m = w[0]; m <= w[1]; m += 30) {
+            var h = Math.floor(m / 60), lbl = ((h + 11) % 12 + 1) + ':' + ('0' + m % 60).slice(-2) + ' ' + (h < 12 ? 'AM' : 'PM');
+            html += '<option value="' + m + '"' + (String(m) === keep ? ' selected' : '') + '>' + lbl + '</option>';
+          }
+          var wrap = document.getElementById('ord-time-wrap');
+          wrap.className = ''; wrap.innerHTML = html + '</select>';
+          // The dropdown enhancer below dresses it on first load; after that it is re-dressed here.
+          if (window.ndDress) window.ndDress(document.getElementById('ord-time'));
+        }
+        document.querySelectorAll('[name="pickup-location"]').forEach(function(el) { el.addEventListener('change', fillTimes); });
+
         var defaultLoc = document.getElementById('loc-harris');
         if (defaultLoc) { defaultLoc.checked = true; defaultLoc.dispatchEvent(new Event('change', { bubbles: true })); }
 
@@ -1317,10 +1320,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           if (!selDate) { dtErr.textContent='Please select a pickup date.'; dtErr.style.display='block'; ok=false; } else { dtErr.style.display='none'; }
 
           if (selDate) {
-            var hr24   = parseInt(document.getElementById('ord-hour').value, 10) % 12
-                         + (document.getElementById('ord-ampm').value === 'PM' ? 12 : 0);
             var selDT  = new Date(selDate.getFullYear(), selDate.getMonth(), selDate.getDate(),
-                                  hr24, parseInt(document.getElementById('ord-min').value, 10));
+                                  0, parseInt(document.getElementById('ord-time').value, 10));
             var cutoff = new Date(Date.now() + 48 * 60 * 60 * 1000);
             if (selDT < cutoff) {
               dtErr.textContent = 'Most orders need 48 hours notice — please choose a later time.';
@@ -1345,9 +1346,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           if (!locEl) { if(locErr) locErr.style.display='block'; ok=false; } else { if(locErr) locErr.style.display='none'; }
           if (!ok) return;
 
-          var hour    = document.getElementById('ord-hour').value;
-          var min     = document.getElementById('ord-min').value;
-          var ampm    = document.getElementById('ord-ampm').value;
+          var timeSel = document.getElementById('ord-time');
+          var pickupTime = timeSel.options[timeSel.selectedIndex].textContent;
           var flavour = document.getElementById('cake-flavour').value;
           var occasion= document.getElementById('cake-occasion').value;
           var size    = document.getElementById('cake-size').value;
@@ -1365,7 +1365,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             (est ? 'Starting price shown on site: ' + est + '\n' : '') +
             'Pickup location: '  + locEl.value                    + '\n' +
             'Date needed: '      + fmtDate(selDate)               + '\n' +
-            'Pickup time: '      + hour + ':' + min + ' ' + ampm  + '\n' +
+            'Pickup time: '      + pickupTime                     + '\n' +
             'Notes: '            + (notes||'None')                + '\n' +
             'If you have a reference image for your desired design, please attach it to this message.\n' +
             'Custom cake pricing: the price above is the starting price for this size — your final quote depends on the design and will be confirmed here on WhatsApp before payment.';
@@ -1752,6 +1752,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       document.addEventListener('click', function() { if (open) open(false); });
 
+      window.ndDress = dress;
       document.querySelectorAll('select').forEach(dress);
     })();
   </script>
