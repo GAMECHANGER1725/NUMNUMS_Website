@@ -756,17 +756,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </script>
 
   <script src="/promo.js" defer></script>
-  <!-- Reading progress bar, native scroll. -->
-  <script>
-    (function() {
-      var bar = document.createElement('div');
-      bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0%;background:#C85478;z-index:99999;pointer-events:none;transform-origin:left;will-change:width;border-radius:0 999px 999px 0;';
-      document.body.prepend(bar);
-      window.addEventListener('scroll', function() {
-        var total = document.body.scrollHeight - window.innerHeight;
-        if (total > 0) bar.style.width = (window.scrollY / total * 100) + '%';
-      }, { passive: true });
-    })();
-  </script>
 </body>
 </html>

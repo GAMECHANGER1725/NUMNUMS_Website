@@ -1187,10 +1187,10 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   browser's, and anchor links smooth-scroll through the `scroll-smooth` class —
   the old `html { scroll-behavior: auto !important }` override existed only so
   the library could own scrolling, and went with it.
-  The **pink reading progress bar stays** and is not part of the library: it is
-  a `<script>` before `</body>` that builds a 3px `#C85478` bar and drives it
-  off a passive `scroll` listener. It had already worked that way on phones;
-  that path is now the only one. Four posts never had a bar and still do not.
+  The **pink reading progress bar was removed too** (Vaidik, 2026-10-06) — the
+  3px `#C85478` fixed bar at the top of every static page and blog post. Do not
+  add it back, and do not copy it from an old post into a new one. (The `/order`
+  form's own completion bar is a different thing and stays.)
   ⚠️ Do not reintroduce a scroll library. It brought a CSP entry, a CDN
   request, and a class of bug where an overlay could not scroll unless it
   carried `data-lenis-prevent` — the popup needed exactly that hack, and it is
