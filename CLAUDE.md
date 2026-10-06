@@ -8,6 +8,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   other sessions/routines push directly to `main`. Skip this for read-only questions that involve
   no file changes.
 
+## Log Everything — CLAUDE.md and the AI Brain
+**Every fix, decision and brainstorm gets written down in two places, in the same
+response it happens** (Vaidik, 2026-10-06):
+1. **This file** — the rule or the reason, in the section it belongs to, so the
+   next session and the cloud routines cannot undo it.
+2. **The AI Brain** (`/Users/vaidikpatel/Downloads/Home/My AI Brain/`) — the
+   outcome, in the note that owns it: shop/checkout work goes in
+   `projects/Shop Checkout Build.md` (checklist + dated timeline), business-wide
+   calls in `companies/Num Nums Bakery/`. Follow that vault's own house rules
+   (outcomes not activity, every number sourced, undecided things under
+   "Open questions").
+A brainstorm that was rejected is still logged, with why — that is what stops it
+being proposed again. The AI Brain is outside this repo, so cloud routines
+cannot reach it; they log to this file only.
+
 ## Verify Before Deciding
 - **Every big decision, plan, or action gets verified with deep contextual online research first** —
   not answered from memory or training-data assumptions. "Big" means anything that changes strategy,
@@ -107,10 +122,16 @@ is the binding source — read it before designing anything.
 
 ### Email
 They all share **one** shell — `netlify/lib/email-shell.mjs`. Restyle there,
-never in one message. Today there are two (the coupon email was deleted with
+never in one message. Today there are three (the coupon email was deleted with
 the 10% offer on 2026-10-06; any future newsletter is built from the same shell
 and must carry its `unsubscribe` slot):
-1. **Confirm signup** and 2. **Reset password** — Supabase templates, which are
+1. **Newsletter welcome** — `netlify/lib/welcome-email.mjs`, sent once by
+   `subscribe.mjs` via Resend to a *new* subscriber only (not a resubmit). It is
+   a note **from Tarun Patel, founder**, so every fact in it must already be on
+   `about.html` — no new claims under a real person's name. From
+   `orders@numnumsbakery.com.au` as "Tarun at Num Num's Bakery", **reply-to
+   info.numnumsbakery@gmail.com**. A failed send never fails the signup.
+2. **Confirm signup** and 3. **Reset password** — Supabase templates, which are
    *not* sent by our code. Generate them with `node scripts/build-auth-emails.mjs`
    into `supabase-email-templates/`, then **paste each into the Supabase
    dashboard** (Authentication → Emails). `verify-blog.mjs` fails the build if
@@ -1187,7 +1208,7 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **The popup is a newsletter signup and nothing else.** It asks for a first name
   and an email and posts to `/api/subscribe` → `netlify/functions/subscribe.mjs`,
   which upserts `marketing_contacts` with the **service role** (RLS, no write
-  policy) and sends no email. It deliberately does **not** call
+  policy) and sends the welcome email once (see **Email**). It deliberately does **not** call
   `MAKE_ORDER_HOOK_URL`: that hook feeds the web-order scenario, which emails the
   shop "New web order" for every payload it receives.
 - **Env vars (public site only, never on the ops site, never in a file)**:

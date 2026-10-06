@@ -1,5 +1,8 @@
 /**
- * The unsubscribe token, and which host email links point at.
+ * The welcome email, the unsubscribe token, and which host email links point at.
+ *
+ * **The welcome goes out under Tarun's name,** so a customer-supplied name must
+ * be escaped and the unsubscribe link must be in both parts (Spam Act).
  *
  * **The unsubscribe token is a signature.** A forged one must not unsubscribe
  * somebody else, and a link we generated must keep working.
@@ -12,8 +15,26 @@ const { siteFor } = await import('../netlify/lib/email-shell.mjs');
 const { unsubscribeToken, unsubscribeUrl, emailFromToken } =
   await import('../netlify/lib/unsubscribe.mjs');
 
+const { welcomeEmail } = await import('../netlify/lib/welcome-email.mjs');
+
 let bad = 0;
 const ok = (cond, what) => { if (!cond) { bad++; console.error(`FAIL ${what}`); } };
+
+// ---- the welcome ------------------------------------------------------------
+
+const UNSUB = 'https://numnumsbakery.com.au/unsubscribe?t=abc.def';
+const w = welcomeEmail({ name: 'Priya Shah', unsubscribeUrl: UNSUB });
+ok(w.html.includes('Hi Priya,') && w.text.startsWith('Hi Priya,'), 'greets by first name in both parts');
+ok(w.html.includes('Tarun Patel') && w.text.includes('Tarun Patel'), 'signed by Tarun');
+ok(w.html.includes('100% eggless'), 'says 100% eggless');
+ok(w.html.includes(UNSUB) && w.text.includes(UNSUB), 'unsubscribe link in html and text');
+ok(!/halal/i.test(w.html), 'makes no claim the brief did not ask for');
+const anonW = welcomeEmail({ name: '', unsubscribeUrl: UNSUB });
+ok(anonW.html.includes('Hi there,'), 'a blank name still reads naturally');
+const evilW = welcomeEmail({ name: '<script>alert(1)</script>', unsubscribeUrl: UNSUB });
+ok(!evilW.html.includes('<script>alert'), 'a hostile name is escaped');
+const prevW = welcomeEmail({ name: 'A', unsubscribeUrl: UNSUB, site: 'https://abc123--numnumstest.netlify.app' });
+ok(!prevW.html.includes('numnumsbakery.com.au/brand_assets'), 'a preview email does not point its logo at production');
 
 // ---- the unsubscribe token -------------------------------------------------
 
@@ -58,4 +79,4 @@ if (bad) {
   console.error(`email: ${bad} failure(s)`);
   process.exit(1);
 }
-console.log('email: unsubscribe token and link host OK');
+console.log('email: welcome message, unsubscribe token and link host OK');
