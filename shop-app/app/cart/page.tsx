@@ -150,13 +150,14 @@ export default function CartPage() {
     setPicked([]);
   };
 
-  // Fri–Sun is 81% of every order placed. It is here because it is true; a
-  // fabricated "2 slots left" would read the same and be worth less than nothing.
-  const busyDay = (() => {
-    if (!cart.dueDate || dateStale) return false;
-    const d = new Date(`${cart.dueDate}T12:00:00`).getDay();
-    return d === 0 || d === 5 || d === 6;
-  })();
+  /*
+   * There used to be a "four in five of our cakes go out Friday to Sunday.
+   * Weekends book out first" banner here. Its only source was this comment —
+   * the one order-book figure in the repo is 74% Fri–Sat over 19 orders — and
+   * "book out" claims a ceiling nothing enforces (MAX_WEB_ORDERS_PER_DAY is
+   * optional and unset). Removed 2026-10-06. Real scarcity goes back here the
+   * day it is computed from a real cap and the live order count.
+   */
 
   /*
    * A full load paints the static export before the app runs, and that export
@@ -403,12 +404,6 @@ export default function CartPage() {
               <p className="mt-2 text-[0.76rem] text-muted-foreground">
                 Baked to order, so the earliest we can have it ready is {prettyDate(minDueDate())}.
               </p>
-              {busyDay && (
-                <p className="mt-2 rounded-lg bg-[#FDF3F6] px-3 py-2 text-[0.78rem] text-[#96355A]">
-                  Heads up — four in five of our cakes go out Friday to Sunday. Weekends
-                  book out first, so it&rsquo;s worth locking this in.
-                </p>
-              )}
             </section>
           </section>
 
