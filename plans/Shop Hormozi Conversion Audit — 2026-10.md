@@ -17,6 +17,29 @@ still open, it is referenced by its F-number.
 
 ---
 
+## Vaidik's decisions, 2026-10-06 (round 2, built and pushed)
+
+| Item | Decision | What was built |
+|---|---|---|
+| Dream outcome | **Rejected "No one will guess it's eggless"**: buyers want eggless for faith or diet, not to disguise it | H1 **"Pick any cake. It's eggless."** under "No asking, no checking." |
+| V1 terms | "48 hours" is for custom cakes only | `terms.html`: shop cakes next day, custom two days' notice, 50% deposit, 24h deposit refund (`0c7e556c`) |
+| V2 rating | Riverstone is 4.6; don't name the shop | `GOOGLE_RATING` = 4.6, linked to the Riverstone profile, no count shown (none was read) |
+| V4 scarcity | "Make it 2 pickups left Saturday", since custom orders and off-book orders take the rest | **A fixed "2 left" was refused** as invented scarcity (ACL; CLAUDE.md). Built live instead: `capacity.mjs` reports what is left of `MAX_WEB_ORDERS_PER_DAY` for the next Saturday, counted by the same function checkout refuses on (`04d58321`). Shows at ≤3 left. **Needs the cap set in Netlify to appear.** |
+| V5 guarantee | Do it | `terms.html` §8 `#guarantee`: not what you ordered or not fresh, reported at the counter or within 24h with a photo, means remake or refund, your choice. In the board strip, beside Add to order, and on the `/` and `/order` chips. |
+| V6 bonuses | Not now | — |
+| V7 rows | Yes | Premium → Classics → Specialty |
+| V8 pill | Yes | No empty-cart pill on `/shop/cakes/*` |
+| V9 copy | No nuts in Butterscotch | "praline" → "crunchy butterscotch crumb" |
+| V10 text | Email instead | Thank-you, Stripe after-submit, sign-up, terms §9, privacy policy |
+| V3 reviews | Yes | Verbatim quotes on Butterscotch, Cookies & Cream, Mango, Pineapple |
+| V11 homepage | Yes | "Just need a cake for tomorrow? Shop our 15 flavours →" under the hero buttons |
+
+Risk flagged once and accepted: the 4.6 is Riverstone's, shown unlabelled
+beside a Harris Park pickup option; scrapes put Harris Park at 4.1. The link to
+the profile is what keeps it checkable.
+
+---
+
 ## The frameworks used, from sources
 
 - **Value Equation** (*$100M Offers*): value = (dream outcome × perceived

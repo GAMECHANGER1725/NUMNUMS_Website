@@ -629,8 +629,11 @@ main site.
   Internally the DB still says `kind: 'normal'` and that stays — renaming an
   enum across ~15 call sites and the `customers` view buys nothing.
 - **The mobile is required, at sign-up and on Stripe's page.**
-  It is how the shop says a cake is ready and the only way to reach somebody
-  about their own order, so a web order without one is one nobody can chase.
+  It is the only way to reach somebody about their own order by phone, so a
+  web order without one is one nobody can chase. (The "your cake is ready"
+  message goes by **email**, not text — Vaidik, 2026-10-06. Copy on the
+  thank-you page, Stripe's after-submit message, sign-up, terms §9 and the
+  privacy policy all say email; do not write "we'll text you" again.)
   Since 2026-09-24 checkout is **Stripe's hosted page, straight from the cart**
   (Vaidik's call — our own `/shop/checkout` details page is deleted; it was
   never published, so no redirect — adding one in `netlify.toml` coincided
@@ -788,7 +791,12 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   `BLOCKED_DATES`, the real lead-time cut-off, a real one-off batch. Such a
   claim must be rendered at runtime from that data (never typed into a static
   string), and when the first one ships, scope the gate's pattern list to
-  allow that component rather than deleting the gate. That is not caution
+  allow that component rather than deleting the gate. **The first one
+  shipped 2026-10-06** — `SaturdayLeft`, see the `/shop` Hormozi section. It
+  renders only at runtime, so the static HTML the gate scans never contains
+  the number and the gate needed no change. Vaidik asked for a fixed
+  "2 pickups left Saturday"; that was refused as written and built as the
+  live count instead. That is not caution
   for its own sake: the ACCC fined three retailers in June 2025 over misleading
   sale claims and the ceiling is **$100m** per breach — doubled from $50m by the
   Treasury Laws Amendment (Doubling Penalties for ACCC Enforcement) Act 2026, and
@@ -813,9 +821,11 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   onto a premium flavour. The two badges live in different files, so the
   mistake is otherwise invisible.
 - **The board is three named rows, not one wall of fifteen** (2026-09-21).
-  **Premium** (Rasmalai, Ferrero Rocher) → **Specialty flavours** (Butterscotch,
-  Cookies & Cream, Tiramisu, Red Velvet, Mango, Lychee) → **Classics** (the
-  rest). Rows answer "what kind of cake am I after" before "which flavour",
+  **Premium** (Rasmalai, Ferrero Rocher) → **Classics** (the rest) →
+  **Specialty flavours** (Butterscotch, Cookies & Cream, Tiramisu, Red Velvet,
+  Mango, Lychee). Classics moved above Specialty on 2026-10-06 (Vaidik):
+  Chocolate, 41% of orders, lives there and sat ~1.4 phone screens down as
+  the third row. Rows answer "what kind of cake am I after" before "which flavour",
   which is the order people decide in; one grid made a $49.99 Rasmalai and a
   $39.99 Vanilla look like the same kind of thing. Within a row it is
   popularity order, which below the first position or two decides nothing.
@@ -918,8 +928,12 @@ in the footer only, and lead the homepage with products before any story.
   shop's, from its own `- 4` offset arithmetic. Invisible at 8% opacity, and
   correcting it means editing 242 inline scripts.
   The one deliberate difference: `/shop` hides the pill entirely when the cart
-  is empty (`showCart = n > 0 || path !== "/"`), because "Order Now" on the
-  shop's own landing page points at the page you are standing on.
+  is empty, because "Order Now" on the shop's own landing page points at the
+  page you are standing on — and since 2026-10-06 (Vaidik) so does every
+  `/shop/cakes/*` page, where the empty pill was the loudest button on screen
+  and led away from the cake being looked at (`showCart = n > 0 || (path !==
+  "/" && !path.startsWith("/cakes/"))`). Static pages have no product pages,
+  so `promo.js` has no matching rule; add one the day they do.
 - **`/cakes` no longer exists — it is a 301 to `/order`.** Its H1 was
   "100% Eggless Custom Cakes in Sydney", competing with `/order` for the same
   queries on a site that has already paid once for cannibalising itself, so
@@ -984,6 +998,10 @@ in the footer only, and lead the homepage with products before any story.
 Normal cakes are bought online and paid for in full; custom cakes are still quoted
 by a person through `/order`. `/order` is the **single fork** between the two — do not
 add a second entry point to the shop elsewhere, or the two have to be kept in step.
+**One sanctioned exception (Vaidik, 2026-10-06):** a text link under the homepage
+hero buttons, "Just need a cake for tomorrow? Shop our 15 flavours →" (`.hero-shop-link`
+in `index.html`). Both hero buttons go to the quote form and the homepage had no
+content link to the shop at all. It stays a text link, never a third button.
 
 - **`netlify/functions/` holds deployable functions and nothing else.** Netlify bundles
   **every** file in there as a function, so a test file fails the deploy twice over — a v1
@@ -1430,12 +1448,18 @@ could not see from outside the repo. The research and the parked items are in
 Full audit, Needs-Vaidik list and rejected ideas:
 `plans/Shop Hormozi Conversion Audit — 2026-10.md`.
 
-- **The board leads with the outcome, not the chore.** H1 is "No one will
-  guess it's eggless", the homepage hero's own line, so the two pages never
-  argue. It replaced "Pick your cake". `/shop` is `noindex`, so no SEO cost.
+- **The board leads with the outcome, not the chore.** H1 is **"Pick any cake.
+  It's eggless."**, under "No asking, no checking." The people buying want
+  eggless because of faith or how their family eats; the dream outcome is not
+  having to ask every bakery "does it have egg?". `/shop` is `noindex`, so no
+  SEO cost.
+  ⚠️ **"No one will guess it's eggless" was tried and rejected the same day
+  (Vaidik, 2026-10-06):** nobody here is hiding that the cake is eggless,
+  they came for it. Do not use that framing on the shop. (The homepage hero
+  still carries it; that was not part of the decision.)
 - **The promise strip and the product-page promise list state only what every
-  order already gets**: eggless, writing piped at no charge, ready tomorrow,
-  and the deposit refunded in full if cancelled 24h+ before. They mirror
+  order already gets**: eggless, ready tomorrow, the deposit refunded in full
+  if cancelled 24h+ before, and the remake-or-refund guarantee. They mirror
   `DEPOSIT_RATE` and the window the cart and Stripe's button already state.
   **Do not add an item that is not already true of every order**, and never
   put a dollar "value" beside one: an invented reference value is the same ACL
@@ -1451,21 +1475,51 @@ Full audit, Needs-Vaidik list and rejected ideas:
   in would promise a date that has passed.
 - **Per-serve price is a range** ("$3.57–$4.17 a serve") because servings are
   a range. Rounding to one flattering figure is not allowed.
-- **No star rating until it is real.** The shop printed "4.6 · 50+ Google
-  reviews" with no source; the 2026-09-02 GBP audit found Harris Park at 4.1
-  over 358–609 reviews. ACCC/Bloomex: $1m for misleading star ratings.
-  `GOOGLE_RATING` in `shop-app/lib/badges.ts` stays `null` until Vaidik fills
-  rating, count, date and the profile URL from the GBP dashboard. It then
-  renders linked to Google so anyone can check it. `index.html` schema still
-  carries 4.6/50 and needs the same fix.
+- **The star rating is Riverstone's 4.6, always linked to that profile.**
+  Vaidik read it on 2026-10-06 and chose not to name the shop on the page.
+  The link is the condition for showing it: anyone can check it in one tap.
+  It replaced an unsourced "4.6 · 50+" (ACCC/Bloomex: $1m for misleading star
+  ratings). Known and accepted: third-party scrapes put Harris Park at 4.1.
+  `GOOGLE_RATING.count` is optional and is shown only once it has been read
+  off the profile, never estimated. The homepage hero still prints "50+
+  Google reviews" with no source for the count.
+- **Verbatim Google reviews on four product pages** (Butterscotch, Cookies &
+  Cream, Mango, Pineapple), from the Review schema text in `index.html`,
+  confirmed by Vaidik. They live in `flavour-copy.ts` as `review`. Never
+  paraphrase or trim mid-sentence, and never write one.
+- **"N online pickups left for Saturday" is computed, never typed.**
+  `netlify/functions/capacity.mjs` returns the next bookable Saturday and
+  what is left of `MAX_WEB_ORDERS_PER_DAY` across both shops. It counts with
+  `webOrdersOn` in `netlify/lib/shared.mjs`, **the same function
+  `create-checkout` refuses a full day on**, so the number shown and the rule
+  enforced cannot disagree. **Never give the page its own count.**
+  `SaturdayLeft` shows it only at 3 or fewer, says "fully booked online" at
+  0, and shows nothing when no cap is set, the day is in `BLOCKED_DATES`, the
+  count fails, or under `serve.mjs`. The cap is per shop and counts web
+  orders only, which is why Vaidik sets it low: custom orders and walk-ins
+  take the rest of the day's capacity. Vaidik asked for a fixed "2 pickups
+  left Saturday"; that was refused as invented scarcity and built this way.
+- **The remake-or-refund guarantee is written in `terms.html` §8
+  (`#guarantee`)**: not what you ordered (flavour, size, writing, or a custom
+  cake that does not match the confirmed design) or not fresh, reported at the
+  counter or within 24 hours with a photo, means a remake or a refund of what
+  was paid, the customer's choice. It sits right after the ACL mandatory text
+  (Competition and Consumer Regulations reg 90), because a promise to remake
+  or refund defective goods is likely a warranty against defects. The
+  homepage and `/order` chips say "Not right? Remade or refunded" and link to
+  it. "Love it or we'll make it right" is gone: it promised a remedy written
+  nowhere. Any shop surface that mentions the guarantee links to
+  `/terms#guarantee`.
+- **Butterscotch has no nuts** (Vaidik, 2026-10-06). "Praline" is gone from its
+  copy because the word implies nuts. Do not bring it back.
 - **"Weekends book out first" and the cart's "four in five… book out" banner
-  were removed.** Their only source was a code comment, and no cap is
-  enforced. Scarcity comes back as a computed "N pickups left" once
-  `MAX_WEB_ORDERS_PER_DAY` holds a real cap from the kitchen.
+  were removed.** Their only source was a code comment.
 - **Size chips are three across until `lg`.** Six across overflowed at 820.
-- ⚠️ **`terms.html` still says 48 hours, paid in full, and a 48h refund**,
-  while the shop says next day, 50% deposit, 24h. The cart says paying accepts
-  those terms. Vaidik must fix the legal text before live keys.
+- **`terms.html` matches the shop since 2026-10-06**: standard cakes next day,
+  custom cakes two days' notice ("48 hours" is custom only, Vaidik), 50%
+  deposit, deposit refunded in full more than 24h before collection. If any
+  of those rules change, change the terms in the same commit, because the cart
+  says paying accepts them.
 - **Rejected 2026-10-06, do not re-propose:** a countdown to the midnight
   cut-off (the named date already carries it); dollar values beside included
   items; the 21st.dev listing card (built on strikethrough pricing); 21st.dev's
@@ -1473,7 +1527,9 @@ Full audit, Needs-Vaidik list and rejected ideas:
   carousel (no verified testimonials, and it hides content on phones; Easy UI
   has no ecommerce templates at all); renaming "Signature Cakes" via MAGIC
   (decided 2026-09-21, and it is the GA4 key); a sticky CTA or quick-add on
-  the board.
+  the board; a hardcoded "2 pickups left" (built live instead); "No one will
+  guess it's eggless" as the shop H1. **Bonuses (candle, knife, box): not
+  now** (Vaidik, 2026-10-06); revisit only when he raises it.
 
 ## Anti-Repetition (blog + GBP)
 Repetition is the #1 recurring failure on this project. Before writing anything:
