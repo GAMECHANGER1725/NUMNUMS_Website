@@ -11,7 +11,7 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { flavourSlug } from '../../ops/catalog.mjs';
 import { siteFor } from '../lib/email-shell.mjs';
-import { BadRequest, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey } from '../lib/shared.mjs';
+import { BadRequest, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey, dailyCap, webOrdersOn } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
 
@@ -66,16 +66,10 @@ const payMethods = () => {
 
 /** The kill switch for the morning somebody buys twenty Saturday cakes. */
 async function capReached(db, dueAt, store) {
-  const cap = Number(process.env.MAX_WEB_ORDERS_PER_DAY ?? '');
-  if (!Number.isFinite(cap) || cap <= 0) return false;
-  const day = dueDayKey(dueAt);
-  const { count } = await db.from('orders')
-    .select('id', { count: 'exact', head: true })
-    .eq('store', store)
-    .not('stripe_session_id', 'is', null)
-    .gte('due_at', `${day}T00:00:00+10:00`)
-    .lte('due_at', `${day}T23:59:59+10:00`);
-  return (count ?? 0) >= cap;
+  const cap = dailyCap();
+  if (!cap) return false;
+  // Same count the shop page shows as "N left" — see webOrdersOn.
+  return ((await webOrdersOn(db, dueDayKey(dueAt), store)) ?? 0) >= cap;
 }
 
 export default async (req) => {
@@ -207,7 +201,7 @@ export default async (req) => {
           message: `This is a ${Math.round(DEPOSIT_RATE * 100)}% deposit. The remaining ${aud(netTotal - depositTotal)} is payable when you collect your cake. Cancel more than 24 hours before collection and the deposit is refunded in full.`,
         },
         after_submit: {
-          message: `${collect}. We'll text you the moment it's ready.`,
+          message: `${collect}. We'll email you the moment it's ready.`,
         },
       },
     }, BRANDED);
