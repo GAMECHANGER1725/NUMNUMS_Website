@@ -482,6 +482,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .cta-badges{display:flex;flex-wrap:wrap;gap:7px 16px;margin-bottom:0.85rem;max-width:540px;}
     .cta-badges span{display:inline-flex;align-items:center;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.01em;color:rgba(255,255,255,0.82);white-space:nowrap;}
     .cta-badges span::before{content:'\2713';margin-right:5px;color:#E8A4B5;font-weight:700;}
+    .cta-badges a{color:inherit;text-decoration:underline;text-decoration-color:rgba(232,164,181,0.6);text-underline-offset:2px;}
+    .cta-badges a:hover{color:#fff;}
+    .cta-badges a:focus-visible{outline:2px solid #E8A4B5;outline-offset:2px;border-radius:2px;}
+    .hero-shop-link{margin:0.15rem 0 0;font-family:'Jost',sans-serif;font-size:0.84rem;color:rgba(255,255,255,0.78);text-align:center;}
+    .hero-shop-link a{color:#E8A4B5;font-weight:500;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(232,164,181,0.55);}
+    .hero-shop-link a:hover{color:#fff;}
+    .hero-shop-link a:focus-visible{outline:2px solid #E8A4B5;outline-offset:2px;border-radius:2px;}
     .hero-proof{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 11px;padding:0.6rem 0.95rem;border-radius:12px;border:1px solid rgba(232,164,181,0.35);background:rgba(20,8,2,0.35);box-shadow:0 0 18px rgba(200,84,120,0.18),inset 0 1px 0 rgba(255,255,255,0.06);max-width:540px;}
     .hero-proof .hp-stars{color:#F4B400;font-size:0.82rem;letter-spacing:1px;}
     .hero-proof .hp-rating{font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:600;color:#fff;}
@@ -1112,6 +1119,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </a>
       </div>
 
+      <!-- The one content link from the homepage to the shop (Vaidik,
+           2026-10-06). Both hero buttons go to the custom quote form; a parent
+           who just wants a cake for tomorrow had no way in except the
+           hamburger. A text link, not a third button: custom stays the hero's
+           main job, and this catches the shopper it would otherwise lose. -->
+      <p class="hero-shop-link">Just need a cake for tomorrow? <a href="/shop">Shop our 15 flavours &rarr;</a></p>
+
       <!-- Pickup-only, in the homepage's own trust-row vocabulary.
            The hero subline already names the two shops; what it never said is
            that collecting is the ONLY option. A visitor who needs delivery
@@ -1128,7 +1142,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>100% Eggless, every cake</span>
         <span>Fresh, made in 2 days</span>
         <span>We match your photo</span>
-        <span>Love it or we'll make it right</span>
+        <span><a href="/terms#guarantee">Not right? Remade or refunded</a></span>
       </div>
 
       <!-- Rotating social proof — cycles through real reviews every 3 s -->

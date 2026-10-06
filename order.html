@@ -84,6 +84,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .cta-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px 16px; margin-top: 0.9rem; }
     .cta-badges span { display: inline-flex; align-items: center; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 500; color: #5C3A22; }
     .cta-badges span::before { content: '\2713'; margin-right: 5px; color: #C85478; font-weight: 700; }
+    .cta-badges a { color: inherit; text-decoration: underline; text-decoration-color: rgba(200,84,120,0.45); text-underline-offset: 2px; }
+    .cta-badges a:hover { color: #C85478; }
+    .cta-badges a:focus-visible { outline: 2px solid #C85478; outline-offset: 2px; border-radius: 2px; }
     .hero-proof { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px; margin: 1.5rem auto 0; padding: 0.6rem 1rem; border-radius: 12px; border: 1px solid rgba(232,164,181,0.35); background: rgba(20,8,2,0.30); box-shadow: 0 0 18px rgba(200,84,120,0.18), inset 0 1px 0 rgba(255,255,255,0.06); }
     .hero-proof .hp-stars { color: #F4B400; font-size: 0.82rem; letter-spacing: 1px; }
     .hero-proof .hp-rating { font-family: 'Jost', sans-serif; font-size: 0.74rem; font-weight: 600; color: #fff; }
@@ -841,7 +844,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="cta-badges">
             <span>100% Eggless</span>
             <span>We match your photo</span>
-            <span>Love it or we'll make it right</span>
+            <span><a href="/terms#guarantee">Not right? Remade or refunded</a></span>
           </div>
         </form>
 
