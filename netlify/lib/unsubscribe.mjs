@@ -31,7 +31,7 @@ export const unsubscribeToken = (email) => {
 };
 
 /**
- * `site` is resolved by `siteFor()` in coupon-email.mjs, which allowlists it —
+ * `site` is resolved by `siteFor()` in email-shell.mjs, which allowlists it —
  * never pass a raw request host in here.
  */
 export const unsubscribeUrl = (email, site = 'https://numnumsbakery.com.au') =>

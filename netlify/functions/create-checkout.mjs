@@ -11,7 +11,7 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { flavourSlug } from '../../ops/catalog.mjs';
 import { siteFor } from '../lib/email-shell.mjs';
-import { BadRequest, couponFor, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey } from '../lib/shared.mjs';
+import { BadRequest, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
 
@@ -103,9 +103,7 @@ export default async (req) => {
   try {
     // Name, email and mobile are collected on Stripe's own page, not ours.
     // An email arrives here only when it is already known — a signed-in
-    // customer, or a guest who typed it to apply a coupon — and it then LOCKS
-    // Stripe's email field, because a coupon is bound to one address and a
-    // customer who changed it on Stripe's page would carry the discount off.
+    // customer — and it pre-fills Stripe's email field.
     const email = String(body?.email ?? '').trim().toLowerCase();
     if (email && !/^[^\s@]+@[^\s@.]+\.[^\s@]+$/.test(email)) {
       throw new BadRequest('That email address does not look right.');
@@ -117,20 +115,8 @@ export default async (req) => {
       throw new BadRequest('We are fully booked for that day. Please pick another date.');
     }
 
-    // The problem is deliberately dropped: a mistyped code quotes no discount
-    // and still sells the cake. The cart's coupon box already told them why.
-    // No email means no coupon — couponFor refuses without one. The mobile is
-    // not known yet, so the one-per-person rule matches on email alone here.
-    // ponytail: phone half of personStatus skipped pre-payment; re-check it in
-    // the webhook if people start reusing codes across emails.
-    const { coupon } = await couponFor(db, body?.coupon, email);
-    const discountTotal = coupon?.percent
-      ? Math.round((cart.subtotalCents * coupon.percent) / 100)
-      : 0;
-    const shares = splitCents(cart.lines.map((l) => l.cents), discountTotal);
-
-    // What each cake actually costs, after its share of the coupon.
-    const netPerLine = cart.lines.map((l, i) => l.cents - shares[i]);
+    // There are no web discounts, so each cake's net price is its list price.
+    const netPerLine = cart.lines.map((l) => l.cents);
     const netTotal = netPerLine.reduce((a, b) => a + b, 0);
 
     // Half today, half at the counter. The deposit is worked on the CART total
@@ -170,7 +156,6 @@ export default async (req) => {
     const metadata = {
       store: cart.store,
       due_at: cart.dueAt,
-      coupon: coupon?.code ?? '',
       lines: String(cart.lines.length),
     };
     cart.lines.forEach((l, i) => {
@@ -179,7 +164,7 @@ export default async (req) => {
       // payment would write a deposit that disagrees with the card, and the
       // difference would surface months later as an unexplained balance.
       metadata[`l${i}`] = JSON.stringify({
-        s: l.size, f: l.flavour, w: l.wording, c: l.cents, d: shares[i], p: deposits[i],
+        s: l.size, f: l.flavour, w: l.wording, c: l.cents, d: 0, p: deposits[i],
       }).slice(0, 500);
     });
 

@@ -6,8 +6,8 @@
  */
 import assert from 'node:assert/strict';
 import {
-  priceLine, priceCart, splitDiscount, splitCents, depositCents, DEPOSIT_RATE,
-  resolveDueAt, cleanWording, couponFor, collectionSlots, slotLabel,
+  priceLine, priceCart, splitCents, depositCents, DEPOSIT_RATE,
+  resolveDueAt, cleanWording, collectionSlots, slotLabel,
   earliestDueDay, BadRequest, MAX_LINES, MAX_WORDING,
 } from '../netlify/lib/shared.mjs';
 import { listPriceCents, SIZES, FLAVOURS } from '../ops/catalog.mjs';
@@ -54,7 +54,7 @@ test('a price sent by the browser is ignored', () => {
   assert.equal(l.cents, 4999);
 });
 
-// ── discount splitting reconciles to the cent ───────────────────────────────
+// ── splitting an amount reconciles to the cent ───────────────────────────────
 test('a multi-line discount sums back to exactly the discount', () => {
   const cases = [
     [[3999, 4999, 7499], 1649],            // 10% of a 3-cake cart
@@ -64,24 +64,24 @@ test('a multi-line discount sums back to exactly the discount', () => {
     [[3999, 4999, 7499, 8999, 11499], 3699],
   ];
   for (const [lines, total] of cases) {
-    const shares = splitDiscount(lines, total);
+    const shares = splitCents(lines, total);
     assert.equal(shares.reduce((a, b) => a + b, 0), total, `lines ${lines} discount ${total}`);
     shares.forEach((s, i) => assert.ok(s >= 0 && s <= lines[i], 'a share must not exceed its line'));
   }
 });
 
-test('10% off a three-cake cart reconciles line by line', () => {
+test('a 10% reduction on a three-cake cart reconciles line by line', () => {
   const lines = [3999, 4999, 7499];
   const subtotal = lines.reduce((a, b) => a + b, 0);
   const discount = Math.round((subtotal * 10) / 100);
-  const shares = splitDiscount(lines, discount);
+  const shares = splitCents(lines, discount);
   const charged = lines.map((c, i) => c - shares[i]).reduce((a, b) => a + b, 0);
   assert.equal(charged, subtotal - discount, 'what Stripe charges must equal sum(price - discount)');
 });
 
 test('no discount, and a discount larger than the cart', () => {
-  assert.deepEqual(splitDiscount([3999, 4999], 0), [0, 0]);
-  const all = splitDiscount([3999, 4999], 999999);
+  assert.deepEqual(splitCents([3999, 4999], 0), [0, 0]);
+  const all = splitCents([3999, 4999], 999999);
   assert.equal(all.reduce((a, b) => a + b, 0), 8998, 'a discount cannot exceed the cart');
 });
 
@@ -209,7 +209,7 @@ test('wording is bounded and stripped of control characters', () => {
 
 // ── quantities ──────────────────────────────────────────────────────────────
 // A quantity is not a display detail: every cake it stands for becomes its own
-// orders row, docket and share of the coupon. If expansion and the kitchen ever
+// orders row, docket and share of the deposit. If expansion and the kitchen ever
 // disagree, somebody pays for three cakes and collects one.
 test('a quantity expands into one priced line per cake', () => {
   const now = new Date('2026-09-14T02:00:00Z');
@@ -244,58 +244,9 @@ test('a discount over expanded cakes still reconciles to the cent', () => {
   const { lines, subtotalCents } = priceCart(cart, now);
   // 10% of 3 x $69.99 is 2099.7c — the third of a cent that has to land somewhere.
   const total = Math.round((subtotalCents * 10) / 100);
-  const shares = splitDiscount(lines.map((l) => l.cents), total);
+  const shares = splitCents(lines.map((l) => l.cents), total);
   assert.equal(shares.reduce((a, b) => a + b, 0), total);
   assert.equal(shares.length, 3);
-});
-
-// ── coupons ─────────────────────────────────────────────────────────────────
-// One set of rules for both the checkout box and what is actually charged. A
-// code the box says is good and create-checkout silently ignores is a total
-// that goes UP on Stripe's page, which is the worst version of this bug.
-// `orders` answers a count because the discount is for a customer's NEXT order:
-// it unlocks once they have actually bought something. These cases are about
-// the code itself, so the fake customer has ordered before; the eligibility
-// rule has its own file in tests/coupon.test.mjs.
-const fakeDb = (row, orders = 1) => ({
-  from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: row }) }) }) }),
-  // `coupon_person_status` answers both halves of eligibility in one call:
-  // has this person ordered, and have they already had their one discount.
-  rpc: async () => ({ data: [{ has_ordered: orders > 0, has_redeemed: false }], error: null }),
-});
-const live = {
-  code: 'NN-A1B2C3', email: 'Sam@Example.com', percent: 10,
-  expires_at: '2099-01-01T00:00:00Z', redeemed_at: null,
-};
-const atest = async (name, fn) => { await fn(); n++; };
-
-await atest('a live code bound to this email applies', async () => {
-  const { coupon, problem } = await couponFor(fakeDb(live), ' nn-a1b2c3 ', 'SAM@example.com');
-  assert.equal(problem, null);
-  assert.equal(coupon.percent, 10);
-  // The binding is not the customer's business and not ours to echo back.
-  assert.equal(coupon.email, undefined);
-});
-
-await atest('somebody else\'s code is not recognised, not "wrong email"', async () => {
-  const { coupon, problem } = await couponFor(fakeDb(live), 'NN-A1B2C3', 'thief@example.com');
-  assert.equal(coupon, null);
-  assert.equal(problem, "We don't recognise that code.");
-});
-
-await atest('spent and expired codes say which', async () => {
-  const spent = await couponFor(fakeDb({ ...live, redeemed_at: '2026-01-01T00:00:00Z' }), 'NN-A1B2C3', 'sam@example.com');
-  assert.match(spent.problem, /already been used/);
-  assert.equal(spent.coupon, null);
-  const old = await couponFor(fakeDb({ ...live, expires_at: '2020-01-01T00:00:00Z' }), 'NN-A1B2C3', 'sam@example.com');
-  assert.match(old.problem, /expired/);
-  assert.equal(old.coupon, null);
-});
-
-await atest('no code, no email and no row each answer without throwing', async () => {
-  assert.match((await couponFor(fakeDb(live), '', 'sam@example.com')).problem, /Enter a code/);
-  assert.match((await couponFor(fakeDb(live), 'NN-A1B2C3', '')).problem, /email/);
-  assert.match((await couponFor(fakeDb(null), 'NN-ZZZZZZ', 'sam@example.com')).problem, /recognise/);
 });
 
 // ── the mobile number ───────────────────────────────────────────────────────
@@ -353,8 +304,8 @@ test('per-line deposits sum to the charge exactly', () => {
   }
 });
 
-test('deposit and coupon compose without losing a cent', () => {
-  // A 10% coupon on three cakes, then half of what is left.
+test('a reduced total and a deposit compose without losing a cent', () => {
+  // 10% off three cakes, then half of what is left — splitCents twice.
   const lines = [3999, 4999, 7499];
   const gross = lines.reduce((a, b) => a + b, 0);
   const discountTotal = Math.round((gross * 10) / 100);
@@ -370,11 +321,6 @@ test('deposit and coupon compose without losing a cent', () => {
   assert.equal(deposits.reduce((a, b) => a + b, 0), depositTotal);
   // Every cake owes a non-negative balance at the counter.
   net.forEach((c, i) => assert.ok(c - deposits[i] >= 0, `line ${i} owes negative`));
-});
-
-test('splitDiscount is still the same function', () => {
-  assert.equal(splitDiscount, splitCents);
-  assert.deepEqual(splitDiscount([3999, 4999], 500), splitCents([3999, 4999], 500));
 });
 
 console.log(`checkout: ${n} checks pass`);

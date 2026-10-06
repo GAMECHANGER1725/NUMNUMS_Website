@@ -50,7 +50,8 @@ const firstName = (full) => String(full ?? '').trim().split(/\s+/)[0] || null;
 /**
  * What a paid session says, before the webhook has turned it into rows. Read
  * from the same metadata the webhook reads — `p` is what was charged per cake,
- * `c − d` its price after the coupon — so the two answers cannot disagree.
+ * `c − d` its price after any discount (always 0 on the web) — so the two
+ * answers cannot disagree.
  */
 function fromSession(session) {
   const m = session.metadata ?? {};

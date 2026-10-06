@@ -160,36 +160,6 @@
 }
 
 @layer components {
-  /* The voucher silhouette. The notches are cut with a mask rather than filled
-     circles, because the card sits on a photo and a filled notch would need to
-     know the colour behind it. Shadow is drop-shadow, not box-shadow: a mask
-     clips box-shadow, but drop-shadow follows the cut shape. */
-  .coupon {
-    --notch: 13px;
-    font-variant-numeric: lining-nums;
-    position: relative;
-    overflow: hidden;
-    border-radius: 14px;
-    background:
-      linear-gradient(115deg, #96355A 0%, #C85478 34%, #DB5F7C 58%, #E89A72 84%, #E3B664 104%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
-    filter: drop-shadow(0 10px 22px rgba(44, 26, 14, 0.38));
-    -webkit-mask:
-      radial-gradient(circle var(--notch) at 0 50%, transparent 98%, #000 100%),
-      radial-gradient(circle var(--notch) at 100% 50%, transparent 98%, #000 100%);
-    -webkit-mask-composite: source-in;
-    mask:
-      radial-gradient(circle var(--notch) at 0 50%, transparent 98%, #000 100%),
-      radial-gradient(circle var(--notch) at 100% 50%, transparent 98%, #000 100%);
-    mask-composite: intersect;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .coupon { transform: none !important; }
-}
-
-@layer components {
   /* The site's dark surface, reused verbatim from order.html:113-114 so the
      panel is the same object as every other hero on the site. Deliberately not
      a cake photo: every product shot is on a white background and goes muddy
@@ -209,7 +179,7 @@
     pointer-events: none;
   }
   /* Vertical light ribs — the one nod to the reference artwork, kept faint so the
-     coupon stays the thing you look at. */
+     panel's content stays the thing you look at. */
   .panel-dark::before {
     content: '';
     position: absolute;

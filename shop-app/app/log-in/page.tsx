@@ -27,7 +27,7 @@ export default function LogInPage() {
   return (
     <AuthCard
       title="Welcome back"
-      lede="Sign in to use your coupons and check out faster."
+      lede="Sign in to check out faster."
       footer={<>New here? <InlineLink href="/sign-up">Create an account</InlineLink></>}
     >
       <form onSubmit={submit} noValidate className="flex flex-col gap-3.5">

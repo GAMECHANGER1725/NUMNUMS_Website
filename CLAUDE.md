@@ -106,10 +106,11 @@ is the binding source — read it before designing anything.
   say **100% eggless**. Never "Adult Cakes".
 
 ### Email
-There are three, and they all share **one** shell — `netlify/lib/email-shell.mjs`.
-Restyle there, never in one message.
-1. **Coupon code** — `netlify/lib/coupon-email.mjs`, sent by `subscribe.mjs` via Resend.
-2. **Confirm signup** and 3. **Reset password** — Supabase templates, which are
+They all share **one** shell — `netlify/lib/email-shell.mjs`. Restyle there,
+never in one message. Today there are two (the coupon email was deleted with
+the 10% offer on 2026-10-06; any future newsletter is built from the same shell
+and must carry its `unsubscribe` slot):
+1. **Confirm signup** and 2. **Reset password** — Supabase templates, which are
    *not* sent by our code. Generate them with `node scripts/build-auth-emails.mjs`
    into `supabase-email-templates/`, then **paste each into the Supabase
    dashboard** (Authentication → Emails). `verify-blog.mjs` fails the build if
@@ -124,7 +125,7 @@ Email is not the web, and these differences are load-bearing:
   block images by default, so a code baked into a picture is a dead end.
 - **Always send a plain-text part** alongside the HTML.
 - **An email cannot run JavaScript.** Every client strips `<script>`, so a
-  "copy to clipboard" button has to be a link to a page that can — `/coupon`.
+  "copy to clipboard" button has to be a link to a page that can.
 - **Never hardcode the production host.** Links go through `siteFor(req)`, which
   allowlists the request origin, so a preview send is actually testable. A raw
   `Host` echoed into a link is a phishing vector.
@@ -958,7 +959,7 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   Reproduce a deploy's bundling locally with
   `npx @netlify/zip-it-and-ship-it netlify/functions /tmp/out` before pushing function changes.
 - **The two function generations do not share a return shape, and mixing them is a
-  silent 502.** `subscribe`, `check-coupon`, `create-checkout` and `order-status` are
+  silent 502.** `subscribe`, `create-checkout`, `order-status`, `receipt`, `calendar` and `unsubscribe` are
   **v2** (`export default async (req)`) and must return a **`Response`** or `undefined`;
   `stripe-webhook.mjs` and `submit-review.js` are **v1**
   (`export const handler = async (event)`) and must return `{ statusCode, body }`.
@@ -976,7 +977,7 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
 - **Files**: `shop-app/` is a Next.js app (`output: "export"`, `basePath: "/shop"`) whose
   export is committed as `shop/`. Rebuild it with `cd shop-app && npm run build`, then
   `rm -rf shop && cp -R shop-app/out shop`. The Netlify Functions are
-  `netlify/functions/{create-checkout,check-coupon,stripe-webhook,order-status,subscribe}.mjs`,
+  `netlify/functions/{create-checkout,stripe-webhook,order-status,subscribe}.mjs`,
   sharing `netlify/lib/shared.mjs`.
 - **`ops/catalog.mjs` is the only place a price is written down**, now including
   `SURCHARGE` (premium flavour → size → **cents**) and `listPriceCents`. It used to live
@@ -1006,8 +1007,6 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   - The deposit is worked on the **cart** total and split back over the lines with
     `splitCents`, never halved line by line: halving three odd-cent lines loses
     cents and `sum(deposit)` stops equalling the charge, which is unrecoverable.
-    `splitDiscount` is now an alias of `splitCents` — one implementation, so the
-    coupon split and the deposit split cannot disagree about the odd cent.
   - It is **floored**, so the balance is always the larger half ($49.99 → $24.99
     now, $25.00 later) and is clamped to `[1, total−1]` — a customer is never
     asked for more up front than they owe at the counter, and never handed a
@@ -1048,14 +1047,10 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   `readCart` also folds duplicates it finds, since carts written before
   quantities existed hold one row per cake and two identical rows would
   otherwise collide as React keys — silently, not as a warning anyone sees.
-- **The applied coupon lives in the cart, not in a component.** It survives
-  Back and a reload, and there is never a second copy to keep in step; the
-  checkout page reads it from there. Display only — `create-checkout`
-  re-validates the code and re-prices every line.
 - **The cart's conversion rules** (2026-09-25, from Baymard's checkout research):
-  - **The coupon box is folded** behind "Have a discount code?" — an open code
-    field made 30-60% of Baymard's test users stop and hunt for one, and some
-    left. An applied code keeps it open so it can be seen and removed.
+  - **There is no discount-code box.** Web orders carry no discount at all
+    since 2026-10-06 (see **No discount codes** below), and an empty code field
+    makes 30-60% of Baymard's test users stop and hunt for a code.
   - **The shop is two radio cards, not a dropdown** — a menu hid the only two
     answers there are. Real `<input type="radio">`, `sr-only`, drawn circle.
   - **The pay button is never greyed out for a missing answer.** `go()` scrolls
@@ -1080,9 +1075,10 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   be a choice of something that does not exist.
 - **A cart becomes one `orders` row per cake**, sharing `order_group_id` and
   `stripe_session_id`, differing by `cart_line` — one job per cake is how the kitchen
-  works. The coupon discount is split proportionally with remainder cents on the first
-  line, so `sum(price − discount)` equals the Stripe charge **exactly**; a naive split
-  loses a cent and the books never balance again.
+  works. The deposit is split proportionally with remainder cents on the first
+  line, so `sum(deposit)` equals the Stripe charge **exactly**; a naive split
+  loses a cent and the books never balance again. `discount` is always 0 on a
+  web order; the column exists for discounts staff key in through ops.
 - **An order is written from two doors, through one function.** `fulfilSession`
   in `netlify/lib/fulfil.mjs` is called by `stripe-webhook` AND by
   `order-status` — the latter only after fetching the session from Stripe with
@@ -1091,8 +1087,7 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   page covers a late webhook — and a **deploy preview**, whose per-build
   address no webhook can be registered to. Before this, a preview checkout took
   the money and the page waited forever for an order number. The duplicate
-  guard returns before any side effect (coupon claim, next coupon, contact,
-  Make hook), so a race has one winner. A sandbox (`livemode: false`) order is
+  guard returns before any side effect (contact, Make hook), so a race has one winner. A sandbox (`livemode: false`) order is
   written with **TEST ORDER** at the head of its notes, because it lands in the
   same order book the kitchen bakes from.
 - **Idempotency is a unique index**, `(stripe_session_id, cart_line)`. A retried webhook
@@ -1129,7 +1124,7 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   - **Account sign-up** (`/shop/sign-up`): the primary action is creating an account, so
     marketing is secondary and needs its own **unticked** box naming the channels and the
     benefit. The Privacy Policy tick is separate and required.
-  - **The offer popup** (`promo.js`): the primary action *is* subscribing — the heading,
+  - **The newsletter popup** (`promo.js`): the primary action *is* subscribing — the heading,
     the button and the notice all say so — which makes submitting the form **express
     consent**, no tickbox needed. This is the same pattern the big AU chains use. It is
     not a loophole and it is not a licence to drop the box on the sign-up form.
@@ -1180,28 +1175,21 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   carried `data-lenis-prevent` — the popup needed exactly that hack, and it is
   no longer necessary. Earlier notes in this file and in memory required Lenis
   on every blog post; that requirement is withdrawn.
-- **A coupon is validated server-side, never through RLS.** `coupons` is
-  read-own-by-email (`auth.jwt() ->> 'email'`), so a popup subscriber — who by
-  design has no account — reads nothing and is told their own code is not
-  recognised. The rules live once, in `couponFor` in `netlify/lib/shared.mjs`:
-  `check-coupon` shows the customer the reason, `create-checkout` reads the
-  coupon and **ignores** the reason (a mistyped code must not block buying a
-  cake), and the webhook claims it a third time. A code bound to somebody
-  else's email answers *"we don't recognise that code"*, the same as one that
-  does not exist, so it is not an oracle. Checkout **clears an applied coupon
-  when the email changes** — the binding is to one address, and a stale
-  discount is a total that goes UP on Stripe's page. With Stripe collecting
-  the email, a guest applying a code types their email in the cart's coupon
-  card; that email is sent to `create-checkout` and becomes `customer_email`,
-  which **locks** Stripe's email field so the code cannot move to another
-  address. Without an email no coupon is applied. The mobile is not known
-  before payment, so the one-per-person rule matches on email alone there.
-- **The popup is a newsletter signup, not a sign-in.** It asks for a first name and an
-  email and mints a 10% coupon through `/api/subscribe` → `netlify/functions/subscribe.mjs`.
-  It writes `marketing_contacts` and `coupons` with the **service role**, because both are
-  RLS with no write policy at all — nothing holding the publishable key gets to mint a
-  discount. It returns one live coupon per email rather than minting on every submit, or
-  clearing a cookie and resubmitting is an unlimited discount printer.
+- **No discount codes. Vaidik's call, 2026-10-06.** The 10% welcome code is gone
+  end to end: the popup, the coupon email, the `/coupon` copy page,
+  `check-coupon`, `couponFor`, the cart's discount box, the next-order code
+  minted after each sale, and the terms clause. Do not bring any of it back as a
+  "quick conversion win" — a first-order code was researched the same day and
+  refused (it mostly discounts high-intent local buyers who would order anyway,
+  and Stripe collects the mobile after the code is applied, so one-per-person
+  can only match on email). The `coupons` table and `coupon_person_status()`
+  are still in Supabase, unused; dropping them is a separate decision.
+- **The popup is a newsletter signup and nothing else.** It asks for a first name
+  and an email and posts to `/api/subscribe` → `netlify/functions/subscribe.mjs`,
+  which upserts `marketing_contacts` with the **service role** (RLS, no write
+  policy) and sends no email. It deliberately does **not** call
+  `MAKE_ORDER_HOOK_URL`: that hook feeds the web-order scenario, which emails the
+  shop "New web order" for every payload it receives.
 - **Env vars (public site only, never on the ops site, never in a file)**:
   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_URL`,
   `SUPABASE_SERVICE_ROLE_KEY`, `ONLINE_ORDERS_USER_ID`, `MAKE_ORDER_HOOK_URL`, and the
@@ -1265,8 +1253,9 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   curling PostgREST with **only** its token — the UI proves nothing. A customer must read
   `[]` from every table, be refused every write, and be refused a `cake-photos` upload
   **with a valid mime type** (an invalid one is rejected by a content-type check in front
-  of the policy, which is a false pass). `coupons` is the one exception: read-own via
-  `lower(email) = lower(auth.jwt() ->> 'email')`, and no write policy at all.
+  of the policy, which is a false pass). `coupons` (unused since 2026-10-06) is the
+  one exception: read-own via `lower(email) = lower(auth.jwt() ->> 'email')`, and
+  no write policy at all.
 
 ## Conversion work — what is measured, and what must not come back
 
@@ -1346,9 +1335,9 @@ could not see from outside the repo. The research and the parked items are in
   CTAs that reloaded the page to the top, and the pricing widget's green
   "WhatsApp to Order". The nav pill needs fixing in **`promo.js`** as well as
   the markup — `paintCart` overwrites that href on every load.
-- **The offer popup does not open on `/order`.** It locks body scroll and fires
+- **The newsletter popup does not open on `/order`.** It locks body scroll and fires
   at 50% scroll depth, which a half-filled form reaches easily, so it was
-  covering somebody mid-order to sell them a discount on a later one.
+  covering somebody mid-order to sell them a newsletter.
 
 ### Pickup-only, and the marketplace link
 

@@ -5,7 +5,7 @@
  * the dashboard (Authentication → Emails), so without this they would be the
  * one place the brand silently doesn't apply, and the only copy of the design
  * would live in a textarea nobody can diff. Generating them from
- * `netlify/lib/email-shell.mjs` means the coupon email and these two cannot
+ * `netlify/lib/email-shell.mjs` means these two and any newsletter cannot
  * drift apart.
  *
  *   node scripts/build-auth-emails.mjs

@@ -26,9 +26,6 @@ export const MAX_QTY = 10;
 
 export type CartLine = { size: string; flavour: string; wording: string; qty: number };
 
-/** Display only. `create-checkout` re-validates the code and re-prices. */
-export type CartCoupon = { code: string; percent: number };
-
 export type Cart = {
   store: string;
   /** Sydney wall-clock date, YYYY-MM-DD. The server resolves the real instant. */
@@ -40,11 +37,10 @@ export type Cart = {
    */
   dueMin: number;
   lines: CartLine[];
-  coupon: CartCoupon | null;
 };
 
 export const emptyCart = (): Cart =>
-  ({ store: "", dueDate: "", dueMin: 0, lines: [], coupon: null });
+  ({ store: "", dueDate: "", dueMin: 0, lines: [] });
 
 /** Cakes in the cart, which is not the same as rows in the cart. */
 export const cartCount = (cart: Cart) => cart.lines.reduce((n, l) => n + l.qty, 0);
@@ -120,7 +116,6 @@ export function readCart(): Cart {
     const c = JSON.parse(raw) as Partial<Cart> & { dueHour?: number };
     // Anything unexpected is treated as no cart rather than crashing the page.
     if (!Array.isArray(c.lines)) return emptyCart();
-    const coupon = c.coupon;
     // Carts written before 2026-09-21 hold `dueHour` (an integer hour, when
     // both shops shared one 9–18 window). Read as minutes, `dueHour: 12`
     // would mean 00:12 — a valid-looking number that is silently the wrong
@@ -143,9 +138,6 @@ export function readCart(): Cart {
             qty: clampQty(l.qty),
           }))),
       ),
-      coupon: coupon && typeof coupon.code === "string" && Number.isFinite(coupon.percent)
-        ? { code: coupon.code, percent: Number(coupon.percent) }
-        : null,
     };
   } catch {
     return emptyCart();

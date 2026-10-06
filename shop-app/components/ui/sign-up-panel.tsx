@@ -137,10 +137,6 @@ export function SignUpPanel({ className }: { className?: string }) {
               <h1 className="font-display text-[1.75rem] font-light leading-tight tracking-tight">
                 Create your account
               </h1>
-              {/* No 10% here on purpose: the coupon is minted by the newsletter
-                  popup's /api/subscribe, and nothing mints one on account
-                  creation. Promising it on this page was a discount nobody
-                  ever sent. */}
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                 Order online and collect in store.
               </p>

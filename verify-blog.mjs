@@ -401,7 +401,7 @@ const FACTS = {
 {
   try {
     execFileSync(process.execPath, ['tests/checkout.test.mjs'], { cwd: ROOT, stdio: 'pipe' });
-    notes.push('checkout: price table, discount splitting and the next-day/DST boundary all hold');
+    notes.push('checkout: price table, deposit splitting and the next-day/DST boundary all hold');
   } catch (e) {
     fail(`checkout tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
@@ -440,27 +440,17 @@ const FACTS = {
     fail(`function response-shape tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
-  // The 10% offer is "your next order", and that word is the only thing standing
-  // between the discount and an unlimited one: a new email is a new code.
-  try {
-    const out = execFileSync(process.execPath, ['tests/coupon.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
-    notes.push(out.trim());
-  } catch (e) {
-    fail(`coupon eligibility tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
-  }
-
-  // The coupon email is the only place the code ever appears, so an email that
-  // goes out without it is a dead end for the customer — and the unsubscribe
-  // signature is what stops one person taking another off the list.
+  // The unsubscribe signature is what stops one person taking another off the
+  // list, and the link host check stops a raw Host header reaching an email.
   try {
     const out = execFileSync(process.execPath, ['tests/email.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
     notes.push(out.trim());
   } catch (e) {
-    fail(`coupon email tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+    fail(`email tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
-  // The Supabase auth templates are generated from the same shell as the
-  // coupon email, so restyling the shell silently leaves them behind. This
+  // The Supabase auth templates are generated from the shared email shell,
+  // so restyling the shell silently leaves them behind. This
   // catches the checked-in copies drifting; nothing can detect that the
   // Supabase DASHBOARD is stale, so re-paste after any change.
   try {

@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, Lock, Ticket, Trash2 } from "lucide-react";
+import { ArrowRight, Loader2, Lock, Trash2 } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
 import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { QtyStepper } from "@/components/ui/qty-stepper";
-import { CouponField } from "@/components/ui/coupon-field";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
   money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, SHOP_PHONE, type Cart,
@@ -25,8 +24,6 @@ import { cakeFraming } from "@/lib/cake-framing";
 import { supabase } from "@/lib/supabase";
 import { beginCheckout } from "@/lib/analytics";
 
-/** Typo catcher, not a validator — create-checkout checks it again. */
-const EMAIL_RE = /^[^\s@]+@[^\s@.]+\.[^\s@]+$/;
 
 /**
  * Changing shop can invalidate the time already chosen — Riverstone has no
@@ -47,12 +44,8 @@ export default function CartPage() {
   const loaded = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [picked, setPicked] = useState<number[]>([]);
   const [email, setEmail] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Collapsed by default. Baymard: a visible coupon box sends 30-60% of
-  // shoppers off hunting for a code, and some never come back.
-  const [showCoupon, setShowCoupon] = useState(false);
   // The summary's pay button; when it is off screen on a phone, the sticky
   // bar takes over. It sat 1,718px down a 390px-wide cart.
   const payRef = useRef<HTMLButtonElement>(null);
@@ -68,20 +61,17 @@ export default function CartPage() {
   }, [loaded]);
 
   useEffect(() => {
-    // A coupon is bound to the email it was issued to. Signed in, we know it;
-    // a guest types it into the coupon box. Everything else — name, mobile,
-    // card — is asked for on Stripe's page, which is the next step.
+    // Signed in, we already know the email and pre-fill Stripe's page with it.
+    // Everything else — name, mobile, card — is asked for there.
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
   }, []);
-  const couponEmail = email || guestEmail.trim();
 
   const update = (next: Cart) => writeCart(next);
   const lineUnit = cart.lines.map((l) => listPriceCents(l.size, l.flavour) ?? 0);
   const lineTotal = cart.lines.map((l, i) => l.qty * lineUnit[i]);
   const subtotal = lineTotal.reduce((a, b) => a + b, 0);
   const count = cartCount(cart);
-  const discount = cart.coupon ? Math.round((subtotal * cart.coupon.percent) / 100) : 0;
-  const total = subtotal - discount;
+  const total = subtotal;
   const deposit = depositCents(total);
 
   /**
@@ -99,8 +89,7 @@ export default function CartPage() {
     && slots.includes(cart.dueMin) && !dateStale;
   /**
    * Straight to Stripe's hosted page. The email goes along only when we
-   * already have it: signed in, or typed for a coupon — Stripe then locks it,
-   * so a code bound to one address cannot be carried to another.
+   * already have it, because the customer is signed in.
    */
   async function pay() {
     setBusy(true);
@@ -110,8 +99,7 @@ export default function CartPage() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          email: cart.coupon ? couponEmail : email,
-          coupon: cart.coupon?.code ?? "",
+          email,
           cart,
         }),
       });
@@ -426,48 +414,6 @@ export default function CartPage() {
 
           {/* ── the money ─────────────────────────────────────────────── */}
           <aside className="flex flex-col gap-4 lg:sticky lg:top-[84px]">
-            {/* Folded until asked for: an open code box sends people off to
-                find a code. An applied code keeps it open, so it can be seen
-                and removed. */}
-            {/* On a desktop the open coupon box pushed the pay button below a 900px fold
-                (and lg:sticky cannot lift an aside taller than the screen), so there it
-                sits after the summary. On a phone the sticky bar covers it. */}
-            <div className="lg:order-last">
-            {!showCoupon && !cart.coupon ? (
-              <button type="button" onClick={() => setShowCoupon(true)} aria-expanded={false}
-                className="inline-flex min-h-[40px] items-center gap-2 self-start rounded-full px-1 text-[0.86rem] font-medium text-[#C85478] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C85478] active:scale-[0.98]">
-                <Ticket className="h-4 w-4" aria-hidden />Have a discount code?
-              </button>
-            ) : (
-            <div className="animate-in fade-in-0 slide-in-from-top-1 duration-300 motion-reduce:animate-none">
-            <CouponField
-              applied={cart.coupon}
-              email={EMAIL_RE.test(couponEmail) ? couponEmail : ""}
-              noEmailNote="Codes are issued to one address, so add the email yours was sent to."
-              onApply={(c) =>
-                update({ ...cart, coupon: c ? { code: c.code, percent: c.percent } : null })
-              }
-            >
-              {!email && (
-                <div className="mt-3">
-                  <label htmlFor="c-email" className="field-label">Email your code was sent to</label>
-                  <input id="c-email" type="email" autoComplete="email" inputMode="email"
-                    placeholder="you@example.com" className="field-input"
-                    value={guestEmail}
-                    onChange={(e) => {
-                      setGuestEmail(e.target.value);
-                      // The code is bound to the address it was checked
-                      // against. Keep it after an edit and the server refuses
-                      // it — a total that goes UP on Stripe's page.
-                      if (cart.coupon) update({ ...cart, coupon: null });
-                    }} />
-                </div>
-              )}
-            </CouponField>
-            </div>
-            )}
-            </div>
-
             <section className="rounded-xl border border-border bg-card p-4" aria-labelledby="sum-h">
               <h2 id="sum-h" className="text-[0.95rem] font-semibold">Order summary</h2>
               <dl className="mt-3 flex flex-col gap-2 text-[0.88rem]">
@@ -477,12 +423,6 @@ export default function CartPage() {
                   </dt>
                   <dd className="tabular-nums">{money(subtotal)}</dd>
                 </div>
-                {discount > 0 && (
-                  <div className="flex justify-between text-[#C85478]">
-                    <dt>Coupon {cart.coupon?.code}</dt>
-                    <dd className="tabular-nums">−{money(discount)}</dd>
-                  </div>
-                )}
                 <div className="flex justify-between">
                   {/* Not a delivery fee, because there is no delivery. "Free
                       delivery" for a shop you drive to is the kind of small

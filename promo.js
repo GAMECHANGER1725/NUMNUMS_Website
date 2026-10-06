@@ -1,10 +1,10 @@
 /*
  * The offer popup: a newsletter signup, and nothing else.
  *
- * It takes a first name and an email, hands back a 10% code, and never asks
- * for a password or an account. Signing in is a separate decision made
- * somewhere else — this exists to grow the list and to put a code in someone's
- * hand on their first visit.
+ * It takes a first name and an email and never asks for a password or an
+ * account. Signing in is a separate decision made somewhere else — this exists
+ * to grow the list. There is no discount attached (Vaidik, 2026-10-06): the 10%
+ * code it used to promise was dropped, so nothing here may offer one.
  *
  * Consent is express: the heading, the button and the notice under the form
  * all say the purpose is marketing email. That is what makes it lawful without
@@ -373,7 +373,7 @@
   if (safeGet('sessionStorage', SEEN_KEY)) return;
   if (signedIn()) return;                                 // already a member
   // A cake already in the cart means somebody is mid-order — the same reason
-  // /order is excluded below. The code could not be used on this order anyway.
+  // /order is excluded below.
   if (cartCakes() > 0) return;
   if (location.pathname.indexOf('/shop') === 0) return;   // already in the shop
   // The legal pages are where this very form SENDS people. Covering the
@@ -383,7 +383,7 @@
   // /order is here for the same reason, one step further on: it is the custom
   // cake form. This popup locks body scroll and can fire on a 50% scroll depth
   // that a half-filled form reaches easily, so it covers somebody mid-order to
-  // sell them a discount on a later one. The shop is already excluded above;
+  // sell them a newsletter. The shop is already excluded above;
   // the other page that takes an order deserves the same.
   if (/^\/(terms|privacy-policy|order)\/?$/.test(location.pathname)) return;
 
@@ -416,7 +416,6 @@
     '@media(min-width:768px){.nnp-left{padding:52px 44px}}',
     '.nnp-h{font-family:Jost,system-ui,sans-serif;font-weight:300;font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;text-align:center;text-wrap:balance;margin:0}',
     '@media(min-width:768px){.nnp-h{font-size:2.2rem}}',
-    '.nnp-fn{vertical-align:super;line-height:0;font-size:.55em;font-weight:500;margin-left:1px}',
     '.nnp-sub{font-size:.92rem;font-weight:300;line-height:1.6;color:#5C3A22;text-align:center;margin:14px 0 0}',
     '.nnp-field{margin:22px 0 0}',
     '.nnp-input{width:100%;border:1px solid #D9C7BA;border-radius:.5rem;background:#fff;padding:13px 16px;font:inherit;font-size:.95rem;color:#2C1A0E;transition:border-color .15s ease,box-shadow .15s ease}',
@@ -437,23 +436,19 @@
     '.nnp-alt{margin:18px 0 0;text-align:center;font-size:.8rem;color:#7A5A44}',
     '.nnp-alt a{display:inline-flex;align-items:center;min-height:32px;margin:-8px;padding:8px;color:#C85478;font-weight:600;text-decoration:none}',
     '.nnp-alt a:hover{text-decoration:underline}',
-    /* Offer side — the sign-up page's own coupon, not a second design.
-       `.panel-dark` and `.coupon` are ported verbatim from
-       shop-app/app/globals.css so the popup and /shop/sign-up show the same
-       object; if you restyle one, restyle both. The notches are a MASK, not
-       filled circles, because this card sits on a gradient and a filled notch
-       would have to know the colour behind it — which is also why the shadow
-       is drop-shadow: a mask clips box-shadow, drop-shadow follows the cut. */
+    /* Brand side: a dark panel carrying one line, so the popup is still
+       recognisably ours without promising anything. */
     '.nnp-pic{position:relative;overflow:hidden;order:-1;min-height:164px;display:flex;align-items:center;justify-content:center;padding:22px 18px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
     '@media(min-width:768px){.nnp-pic{order:0;height:auto;padding:36px 28px}}',
     // A short phone (320x568) held 852px of popup in a 523px card: the email field sat under the fold and the button under an inner scroll.
-    "@media(max-width:767px) and (max-height:620px){.nnp-pic{min-height:0;padding:12px 16px}.nnp-left{padding:22px 22px}.nnp-h{font-size:1.5rem}.nnp-sub{margin-top:8px;font-size:.86rem}.nnp-field{margin-top:14px}.nnp-note{margin-top:14px}}",
+    "@media(max-width:767px) and (max-height:620px){.nnp-pic{min-height:0;padding:12px 16px}.nnp-left{padding:22px 22px}.nnp-h{font-size:1.5rem}.nnp-sub{margin-top:8px;font-size:.86rem}.nnp-field{margin-top:14px}.nnp-note{margin-top:14px}.nnp-pic .nnp-line{font-size:.95rem;padding:0 34px}}",
     '.nnp-pic::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 22% 42%,rgba(200,84,120,.30) 0%,transparent 62%),radial-gradient(ellipse at 82% 88%,rgba(227,182,100,.16) 0%,transparent 58%)}',
     '.nnp-pic::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,248,242,.085) 0 1px,transparent 1px 34px);-webkit-mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%);mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%)}',
     '.nnp-offer{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}',
-    '.nnp-tilt{position:relative;width:min(330px,100%);perspective:900px}',
+    '.nnp-line{margin:0;max-width:300px;font-family:Jost,system-ui,sans-serif;font-weight:300;font-size:1.45rem;line-height:1.25;letter-spacing:-.02em;color:#FFF8F2;text-align:center;text-wrap:balance}',
+    '@media(min-width:768px){.nnp-offer{width:min(330px,100%);align-items:flex-start}.nnp-line{font-size:2rem;text-align:left}}',
     /* Eyebrow and perks are DESKTOP ONLY. On mobile the panel is a ~164px band
-       stacked above the form, and anything more than the coupon pushes the
+       stacked above the form, and anything more than the line pushes the
        email field off the first screen. */
     '.nnp-eyebrow,.nnp-perks{display:none}',
     '@media(min-width:768px){',
@@ -463,31 +458,12 @@
       '.nnp-perks li:last-child{margin-bottom:0}',
       '.nnp-perks li::before{content:"";position:absolute;left:0;top:.42em;width:11px;height:6px;border-left:1.5px solid #E8A4B5;border-bottom:1.5px solid #E8A4B5;transform:rotate(-45deg)}',
     '}',
-    '.nnp-coupon{--notch:13px;position:relative;overflow:hidden;border-radius:14px;color:#fff;font-variant-numeric:lining-nums;-webkit-user-select:none;user-select:none;background:linear-gradient(115deg,#96355A 0%,#C85478 34%,#DB5F7C 58%,#E89A72 84%,#E3B664 104%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);filter:drop-shadow(0 10px 22px rgba(44,26,14,.38));transform-style:preserve-3d;transition:transform 220ms cubic-bezier(.34,1.56,.64,1);'
-      + '-webkit-mask:radial-gradient(circle var(--notch) at 0 50%,transparent 98%,#000 100%),radial-gradient(circle var(--notch) at 100% 50%,transparent 98%,#000 100%);-webkit-mask-composite:source-in;'
-      + 'mask:radial-gradient(circle var(--notch) at 0 50%,transparent 98%,#000 100%),radial-gradient(circle var(--notch) at 100% 50%,transparent 98%,#000 100%);mask-composite:intersect}',
-    '.nnp-c-row{position:relative;display:flex;align-items:stretch;gap:14px;padding:16px}',
-    '@media(min-width:768px){.nnp-c-row{gap:20px;padding:20px 24px}}',
-    '.nnp-c-amt{display:flex;flex-direction:column;justify-content:center;padding-right:14px}',
-    '@media(min-width:768px){.nnp-c-amt{padding-right:20px}}',
-    '.nnp-c-big{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;font-size:2.9rem;line-height:.82;letter-spacing:-.02em}',
-    '@media(min-width:768px){.nnp-c-big{font-size:3.75rem}}',
-    '.nnp-c-off{margin-top:4px;font-size:.7rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.9)}',
-    '.nnp-c-perf{width:1px;flex-shrink:0;align-self:stretch;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.9) 0 6px,transparent 6px 12px)}',
-    '.nnp-c-for{display:flex;flex-direction:column;justify-content:center;gap:6px}',
-    '.nnp-c-lbl{font-size:.66rem;font-weight:600;line-height:1.2;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9)}',
-    '.nnp-c-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem;font-weight:600;letter-spacing:.16em;color:#fff}',
-    '@media(min-width:768px){.nnp-c-code{font-size:1rem;letter-spacing:.2em}}',
-    '.nnp-c-sheen{pointer-events:none;position:absolute;inset:0;opacity:0;transition:opacity .3s ease}',
-    '@media(prefers-reduced-motion:reduce){.nnp-coupon{transform:none!important;transition:none}}',
     /* A 40px opaque white disc was the heaviest thing on a dark panel and
-       outweighed the coupon it sits beside. Translucent and smaller: still a
+       outweighed everything beside it. Translucent and smaller: still a
        32px tap target with a hairline to hold its edge. */
     '.nnp-x{position:absolute;top:14px;right:14px;z-index:3;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1px solid rgba(255,248,242,.28);border-radius:9999px;background:rgba(255,248,242,.14);color:#FFF8F2;font-size:16px;line-height:1;cursor:pointer;transition:background .2s ease,border-color .2s ease}',
     '.nnp-x:hover{background:rgba(255,248,242,.26);border-color:rgba(255,248,242,.45)}',
     '.nnp-btn:focus-visible,.nnp-x:focus-visible,.nnp-alt a:focus-visible,.nnp-note a:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
-    /* success */
-    '.nnp-code{display:block;margin:20px auto 0;padding:16px 20px;max-width:280px;border:2px dashed #C85478;border-radius:.75rem;background:#FDF3F6;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.5rem;font-weight:700;letter-spacing:.12em;color:#96355A;text-align:center;font-variant-numeric:lining-nums}',
     '@media(prefers-reduced-motion:reduce){.nnp-backdrop,.nnp-card,.nnp-btn{transition:none!important}}',
   ].join('');
 
@@ -508,9 +484,9 @@
         '<div class="nnp-grid">' +
           '<div class="nnp-left">' +
             '<div class="nnp-form-wrap">' +
-              '<h2 class="nnp-h" id="nnp-h">Subscribe and save 10%<sup class="nnp-fn">1</sup> on your next order</h2>' +
-              '<p class="nnp-sub">Join us for new flavours, seasonal specials and ' +
-                'festival pre-order dates. We&rsquo;ll email your code.</p>' +
+              '<h2 class="nnp-h" id="nnp-h">Join the Num Num&rsquo;s newsletter</h2>' +
+              '<p class="nnp-sub">New flavours, seasonal specials and festival ' +
+                'pre-order dates, straight to your inbox.</p>' +
               '<form novalidate>' +
                 '<div class="nnp-field">' +
                   '<label class="nnp-sr" for="nnp-name">First name</label>' +
@@ -521,10 +497,8 @@
                   '<input class="nnp-input" id="nnp-email" type="email" autocomplete="email" inputmode="email" placeholder="Email">' +
                 '</div>' +
                 '<p class="nnp-err" role="alert" hidden></p>' +
-                '<button type="submit" class="nnp-btn">Get my 10% off</button>' +
+                '<button type="submit" class="nnp-btn">Subscribe</button>' +
               '</form>' +
-              '<p class="nnp-note"><sup class="nnp-fn">1</sup> For Signature Cakes ordered through our ' +
-                'online shop — custom cakes quoted through our order form are not included.</p>' +
               '<p class="nnp-note">By submitting, you agree to receive marketing communications ' +
                 'from Num Num’s Bakery via email and confirm that you’ve read and understood our ' +
                 '<a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</p>' +
@@ -533,26 +507,9 @@
           '</div>' +
           '<div class="nnp-pic">' +
             '<button type="button" class="nnp-x" aria-label="Close">&times;</button>' +
-            // Decorative: the heading beside it already states the offer, so a
-            // screen reader hearing this twice would just be noise.
             '<div class="nnp-offer">' +
-              '<span class="nnp-eyebrow">Your welcome gift</span>' +
-              '<div class="nnp-tilt" aria-hidden="true">' +
-              '<div class="nnp-coupon">' +
-                '<div class="nnp-c-row">' +
-                  '<div class="nnp-c-amt">' +
-                    '<span class="nnp-c-big">10%</span>' +
-                    '<span class="nnp-c-off">off</span>' +
-                  '</div>' +
-                  '<div class="nnp-c-perf"></div>' +
-                  '<div class="nnp-c-for">' +
-                    '<span class="nnp-c-lbl">Your next order</span>' +
-                    '<span class="nnp-c-code">NN-\u2022\u2022\u2022\u2022\u2022\u2022</span>' +
-                  '</div>' +
-                '</div>' +
-                '<span class="nnp-c-sheen"></span>' +
-              '</div>' +
-              '</div>' +
+              '<span class="nnp-eyebrow">From our kitchen</span>' +
+              '<p class="nnp-line">Sweet news, once in a while.</p>' +
               '<ul class="nnp-perks">' +
                 '<li>100% eggless &mdash; every cake, every time</li>' +
                 '<li>Collect from Harris Park or Riverstone</li>' +
@@ -563,54 +520,7 @@
         '</div>' +
       '</div>';
     document.body.appendChild(back);
-    wireCoupon(back);
     return back;
-  }
-
-  /**
-   * The coupon's tilt and cursor sheen, ported from `CouponCard` in the shop
-   * app so both surfaces behave identically.
-   *
-   * Mouse only: touch has no hover, so a tilt with nothing to reset it just
-   * looks broken. rAF-throttled because pointermove fires far faster than the
-   * screen refreshes, and reduced-motion drops the tilt but keeps the sheen —
-   * it is an opacity fade, not movement.
-   */
-  function wireCoupon(back) {
-    var tiltBox = back.querySelector('.nnp-tilt');
-    var card = back.querySelector('.nnp-coupon');
-    var sheen = back.querySelector('.nnp-c-sheen');
-    if (!tiltBox || !card || !sheen) return;
-
-    var MAX_TILT = 8;   // past ~10deg the notches read as a folded ticket
-    var frame = 0;
-    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    tiltBox.addEventListener('pointermove', function (e) {
-      if (e.pointerType !== 'mouse') return;
-      cancelAnimationFrame(frame);
-      var r = card.getBoundingClientRect();
-      var px = (e.clientX - r.left) / r.width;
-      var py = (e.clientY - r.top) / r.height;
-      frame = requestAnimationFrame(function () {
-        if (!still) {
-          card.style.transform =
-            'rotateX(' + ((0.5 - py) * 2 * MAX_TILT).toFixed(2) + 'deg) ' +
-            'rotateY(' + ((px - 0.5) * 2 * MAX_TILT).toFixed(2) + 'deg)';
-        }
-        sheen.style.background =
-          'radial-gradient(circle 180px at ' + (px * 100).toFixed(1) + '% ' +
-          (py * 100).toFixed(1) + '%, rgba(255,255,255,0.28) 0%, ' +
-          'rgba(255,255,255,0.10) 40%, transparent 70%)';
-        sheen.style.opacity = '1';
-      });
-    });
-
-    tiltBox.addEventListener('pointerleave', function () {
-      cancelAnimationFrame(frame);
-      card.style.transform = '';
-      sheen.style.opacity = '0';
-    });
   }
 
   /* ------------------------------------------------------------- behaviour */
@@ -648,7 +558,7 @@
                    colors: ['#C85478', '#E8A4B5', '#E3B664', '#A03D5E', '#FFF8F2'] };
       fire(Object.assign({}, base, { particleCount: 55, origin: { x: 0, y: 1 }, angle: 60 }));
       fire(Object.assign({}, base, { particleCount: 55, origin: { x: 1, y: 1 }, angle: 120 }));
-    }).catch(function () { /* celebration is optional; the code still works */ });
+    }).catch(function () { /* celebration is optional */ });
   }
 
   function open() {
@@ -678,14 +588,11 @@
     }
     email.addEventListener('input', function () { validate(); err.hidden = true; });
 
-    // The code is emailed, never shown here — printing it on screen is what made
-    // the offer free to mint with a throwaway address.
     function done() {
       root.querySelector('.nnp-form-wrap').innerHTML =
-        '<h2 class="nnp-h" id="nnp-h">Check your email</h2>' +
-        '<p class="nnp-sub">Your 10% code is on its way. It applies to your next ' +
-          'order, so it unlocks once you’ve ordered with us — enter it at checkout ' +
-          'with this same email address.</p>' +
+        '<h2 class="nnp-h" id="nnp-h">You&rsquo;re on the list</h2>' +
+        '<p class="nnp-sub">Thanks for joining us. We&rsquo;ll be in touch with ' +
+          'new flavours and festival pre-order dates.</p>' +
         '<a class="nnp-btn" href="/shop">Browse the cakes</a>';
       celebrate();
     }
@@ -696,7 +603,7 @@
       // explains nothing. Say what is wrong and put the cursor there.
       if (!validate()) {
         email.setAttribute('aria-invalid', 'true');
-        err.textContent = 'Enter your email so we can send your code.';
+        err.textContent = 'Enter your email to subscribe.';
         err.hidden = false;
         email.focus();
         return;
@@ -719,7 +626,7 @@
       }).catch(function (e2) {
         err.textContent = (e2 && e2.message) || 'Could not sign you up just then. Try again.';
         err.hidden = false;
-        btn.textContent = 'Get my 10% off';
+        btn.textContent = 'Subscribe';
         btn.disabled = false;
       });
     });

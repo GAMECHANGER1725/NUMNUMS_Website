@@ -3,7 +3,7 @@
  *
  * A commercial electronic message to an Australian address must carry a
  * working unsubscribe facility (Spam Act 2003), so this is not optional
- * furniture — the coupon email cannot go out without it.
+ * furniture — no newsletter can go out without it.
  *
  * **v2 function** (`export default async (req)`): it must return a `Response`.
  * See the v1/v2 note in CLAUDE.md before touching the return shape.

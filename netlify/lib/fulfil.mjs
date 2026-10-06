@@ -14,15 +14,12 @@
  *
  * Running twice is safe by construction, not by care: the rows go in as ONE
  * insert against the unique (stripe_session_id, cart_line) index, and a
- * duplicate returns before any side effect — coupon claim, next coupon,
- * contact, staff hook. Two callers racing get one winner and one 23505.
+ * duplicate returns before any side effect — contact, staff hook. Two callers racing get one winner and one 23505.
  *
  * The caller must have established `payment_status === 'paid'` from Stripe.
  * Throws on any other failure, so the webhook can answer 500 and be retried.
  */
 const DUPLICATE = '23505';
-
-const code = () => 'NN-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
 export async function fulfilSession(db, session) {
   const m = session.metadata ?? {};
@@ -85,31 +82,6 @@ export async function fulfilSession(db, session) {
   if (error && error.code !== DUPLICATE) throw error;
   if (error?.code === DUPLICATE) return 'already recorded';
 
-  // Claim the coupon. A 0-row update means somebody spent it in another tab
-  // between pricing and paying; we wear the discount once and log it, which
-  // is cheaper than holding a lock across a hosted checkout.
-  if (m.coupon) {
-    const { data: claimed } = await db.from('coupons')
-      .update({ redeemed_at: new Date().toISOString() })
-      .eq('code', m.coupon).is('redeemed_at', null).select('code');
-    if (!claimed?.length) console.warn('coupon already redeemed:', m.coupon, session.id);
-  }
-
-  // Issue the next one. Unique on issued_for_order, so a retry cannot mint
-  // a second code for the same order.
-  let nextCoupon = null;
-  if (email) {
-    const expires = new Date(Date.now() + 90 * 86_400_000).toISOString();
-    const newCode = code();
-    const { error: cErr } = await db.from('coupons').insert({
-      code: newCode, email, percent: 10, expires_at: expires,
-    });
-    if (cErr && cErr.code !== DUPLICATE) console.error('coupon issue failed', cErr);
-    // Only hand it to Make if the insert actually landed — a retry that hits
-    // the duplicate guard must not re-announce a code nobody wrote twice.
-    else if (!cErr) nextCoupon = { code: newCode, expires_at: expires };
-  }
-
   if (email) {
     await db.from('marketing_contacts').upsert({
       email, name, phone: phone || null, updated_at: new Date().toISOString(),
@@ -128,11 +100,6 @@ export async function fulfilSession(db, session) {
         phone, email, cakes: count,
         order_nos: (inserted ?? []).map((r) => r.order_no),
         total: (session.amount_total ?? 0) / 100,
-        // The whole reason this field exists: it is what a Make scenario
-        // needs to email the customer their next-order code. Before this it
-        // was minted in the database and never told to anyone.
-        coupon_code: nextCoupon?.code ?? null,
-        coupon_expires_at: nextCoupon?.expires_at ?? null,
       }),
     }).catch((e) => console.error('make hook failed', e));
   }

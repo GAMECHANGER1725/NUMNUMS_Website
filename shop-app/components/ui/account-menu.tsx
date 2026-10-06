@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Popover } from "@base-ui/react/popover";
-import { LogOut, Ticket, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 
 /**
  * The account menu behind the person icon.
@@ -19,7 +19,6 @@ import { LogOut, Ticket, User } from "lucide-react";
  */
 export function AccountMenu() {
   const [email, setEmail] = useState<string | null>(null);
-  const [coupons, setCoupons] = useState(0);
 
   // The Supabase client (gotrue + realtime, ~64KB gzipped) is pulled in after
   // hydration rather than with the page, so "Add to order" is not waiting on
@@ -39,22 +38,6 @@ export function AccountMenu() {
     });
     return () => { live = false; unsub(); };
   }, []);
-
-  useEffect(() => {
-    let live = true;
-    if (email) {
-      // RLS scopes this to their own email; an error is simply no coupons.
-      import("@/lib/supabase").then(({ supabase }) =>
-        supabase.from("coupons").select("code", { count: "exact", head: true })
-          .is("redeemed_at", null)
-          .then(({ count }) => { if (live) setCoupons(count ?? 0); }));
-    }
-    return () => { live = false; };
-  }, [email]);
-
-  // Signing out has to clear the count in the same breath as the email, or the
-  // menu says "2 coupons ready" to nobody.
-  const couponCount = email ? coupons : 0;
 
   return (
     <Popover.Root>
@@ -77,12 +60,6 @@ export function AccountMenu() {
               <>
                 <p className="truncate border-b border-[rgba(200,84,120,0.15)] px-2 pb-2.5 text-[0.84rem] font-medium">
                   {email}
-                </p>
-                <p className="flex items-center gap-2 px-2 py-2.5 text-[0.84rem] text-muted-foreground">
-                  <Ticket className="h-4 w-4 text-[#C85478]" />
-                  {couponCount > 0
-                    ? `${couponCount} coupon${couponCount === 1 ? "" : "s"} ready to use`
-                    : "No coupons right now"}
                 </p>
                 <button
                   type="button"
