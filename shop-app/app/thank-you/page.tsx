@@ -242,7 +242,7 @@ export default function ThankYouPage() {
 
             <div className={`mx-auto mt-6 max-w-md text-center ${REVEAL}`} style={after(250)}>
               <p className="text-[0.9rem] leading-relaxed text-[#5C3A22]">
-                We&rsquo;ll bake it fresh and text you the moment it&rsquo;s ready.
+                We&rsquo;ll bake it fresh and email you the moment it&rsquo;s ready.
               </p>
               {/* The day is the thing most likely to be forgotten, so the page
                   offers to put it where they already look. */}

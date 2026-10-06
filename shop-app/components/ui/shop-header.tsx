@@ -103,7 +103,11 @@ export function ShopHeader() {
   // On the board itself with nothing chosen, "Order Now" would point at the
   // page you are already reading. Nothing is better than a button that does
   // nothing; the moment a cake goes in, the cart takes its place.
-  const showCart = n > 0 || path !== "/";
+  // Same on a cake's own page (Vaidik, 2026-10-06): the empty pill there was
+  // the loudest button on screen and it led AWAY from the cake being looked
+  // at, back to the board. Static pages have no product pages, so promo.js
+  // needs no matching rule until they do.
+  const showCart = n > 0 || (path !== "/" && !path.startsWith("/cakes/"));
 
   return (
     <>

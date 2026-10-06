@@ -31,17 +31,22 @@ export const ORDER_BOOK = {
 /**
  * The Google rating, shown on the board and every product page — or nowhere.
  *
- * ⚠️ NEEDS VAIDIK: null until somebody reads the real figure off the GBP
- * dashboard. The shop used to print "4.6 · 50+ Google reviews", a number with
- * no source anywhere in the repo, and the 2026-09-02 GBP audit found every
- * third-party scrape of Harris Park at 4.1 across 358–609 reviews. A star
- * rating presented as customer feedback that is not is exactly what Bloomex
- * paid $1m over (ACCC). Fill all four fields and it renders, linked to the
- * profile so anyone can check it; leave it null and the line stays off.
+ * Riverstone's profile, 4.6, as read by Vaidik on 2026-10-06. He chose not to
+ * name the shop on the page ("the customer doesn't need to know it is for
+ * Riverstone"). It always LINKS to that profile, so anyone can check the
+ * figure in one tap — that is the condition for showing it at all, after the
+ * shop once printed an unsourced "4.6 · 50+" (ACCC/Bloomex: $1m for misleading
+ * star ratings). Known and accepted: third-party scrapes put Harris Park at
+ * 4.1 (seo-baseline/2026-09-02). `count` is optional and shown only when it
+ * has been read off the profile too — never estimated.
  */
 export const GOOGLE_RATING: {
-  rating: number; count: number; countedOn: string; url: string;
-} | null = null;
+  rating: number; count?: number; countedOn: string; url: string;
+} | null = {
+  rating: 4.6,
+  countedOn: "2026-10-06",
+  url: "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698",
+};
 
 export type Badge = { label: string; kind: "fact" | "ours" };
 

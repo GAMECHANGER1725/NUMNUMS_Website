@@ -211,7 +211,7 @@ export function SignUpPanel({ className }: { className?: string }) {
                 className="mt-1 text-[0.72rem] leading-snug text-muted-foreground"
               >
                 {phoneShown
-                  ? "We'll text you when your cake's ready."
+                  ? "So we can reach you if anything about your order changes."
                   : "That doesn't look like an Australian mobile."}
               </p>
             </div>

@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, CalendarCheck, EggOff, PenLine, ShieldCheck, Star } from "lucide-react";
+import { ArrowRight, CalendarCheck, EggOff, RotateCcw, ShieldCheck, Star } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
 import { CakeRow } from "@/components/ui/cake-row";
 import { EarliestPickup } from "@/components/ui/earliest-pickup";
+import { SaturdayLeft } from "@/components/ui/saturday-left";
 import { SELLABLE_FLAVOURS, SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { money, DEPOSIT_RATE } from "@/lib/cart";
 import { cakeFraming } from "@/lib/cake-framing";
@@ -93,17 +94,19 @@ const ROWS = [
     blurb: "More goes into these than any other cake we make, and they are priced that way.",
     items: premium,
   },
-  {
-    id: "row-specialty",
-    title: "Specialty flavours",
-    blurb: "Something other than the usual, without going custom.",
-    items: specialty,
-  },
+  // Classics before Specialty (Vaidik, 2026-10-06): Chocolate — 41% of every
+  // cake sold — lives here, and as the third row it sat ~1.4 phone screens down.
   {
     id: "row-classics",
     title: "Classics",
     blurb: "The flavours everyone knows — every one of them 100% eggless.",
     items: classics,
+  },
+  {
+    id: "row-specialty",
+    title: "Specialty flavours",
+    blurb: "Something other than the usual, without going custom.",
+    items: specialty,
   },
 ];
 
@@ -112,21 +115,25 @@ export default function ShopPage() {
     <>
       <ShopHeader />
       <main className="mx-auto w-full max-w-[72rem] px-4 pb-20 pt-8 sm:px-6">
-        {/* The outcome first, then the deal (Hormozi's value equation, read
-            honestly). "Pick your cake" named the customer's chore; the reason
-            anyone is on this page is a cake for a room that includes somebody
-            who cannot eat egg, and the fear is that it will taste like it.
-            The headline answers that fear — the same line the homepage hero
-            has always used, so the two do not argue. */}
+        {/* The outcome first, then the deal (Hormozi's value equation).
+            The people who come here want an eggless cake because of their
+            faith or how their family eats — Jain, Hindu vegetarian, or simply
+            no egg in the house. The job they are tired of is checking: asking
+            every bakery "does it have egg?", reading labels, trusting an
+            "eggless option" made beside everything else. The dream outcome is
+            not having to ask. (Vaidik, 2026-10-06 — he rejected "No one will
+            guess it's eggless": nobody here is hiding that it is eggless,
+            they came for it.) */}
         <header>
           <p className="section-label">Signature Cakes</p>
           <h1 className="font-display mt-2 text-[2.6rem] font-light leading-[1.05] tracking-tight sm:text-[3.4rem]">
-            No one will guess it&rsquo;s eggless
+            Pick any cake. It&rsquo;s eggless.
           </h1>
-          <p className="mt-2 max-w-[48ch] text-[0.95rem] leading-relaxed text-muted-foreground">
-            Fifteen flavours we bake to order and decorate by hand. Order today,
-            collect <b className="font-semibold text-foreground"><EarliestPickup /></b>.
-            Want one designed to your own brief?{" "}
+          <p className="mt-2 max-w-[50ch] text-[0.95rem] leading-relaxed text-muted-foreground">
+            No asking, no checking. All fifteen flavours are 100% eggless, baked to
+            order and decorated by hand. Order today, collect{" "}
+            <b className="font-semibold text-foreground"><EarliestPickup /></b>.
+            Want your own design?{" "}
             <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
               That&rsquo;s a custom cake
             </a>
@@ -139,25 +146,23 @@ export default function ShopPage() {
                 {[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}
               </span>
               <b className="font-semibold text-foreground">{GOOGLE_RATING.rating}</b>
-              · {GOOGLE_RATING.count} Google reviews ↗
+              {GOOGLE_RATING.count ? ` · ${GOOGLE_RATING.count} Google reviews` : " on Google"} ↗
             </a>
           )}
 
-          {/* What every cake comes with, stated where the choosing starts.
-              These were scattered: "ready tomorrow" in the intro, eggless in
-              a footer strip under the board, the deposit only on the product
-              page, and the refund window nowhere before the cart — which is
-              where hesitation turns into a closed tab, not where it starts.
-              Nothing here is a bonus invented to look generous: each is
-              already true of every order, and each mirrors a rule in
-              lib/cart.ts (DEPOSIT_RATE, the 24-hour window the cart and
-              Stripe's button already state). */}
+          {/* What every cake comes with, stated where the choosing starts —
+              eggless, the date, the refundable deposit and the remake-or-refund
+              guarantee (terms.html §8). Nothing here is a bonus invented to
+              look generous: each is already true of every order and mirrors a
+              rule written down elsewhere (DEPOSIT_RATE, the 24-hour window the
+              cart and Stripe's button state, the guarantee in the terms). */}
           <ul className="promise-strip mt-5" aria-label="Included with every cake">
             <li><EggOff aria-hidden /><span><b>100% eggless</b> Every cake, every flavour</span></li>
-            <li><PenLine aria-hidden /><span><b>Your words, piped</b> By hand, no extra charge</span></li>
             <li><CalendarCheck aria-hidden /><span><b>Ready tomorrow</b> Harris Park or Riverstone</span></li>
             <li><ShieldCheck aria-hidden /><span><b>Refundable deposit</b> Until 24h before pickup</span></li>
+            <li><RotateCcw aria-hidden /><span><b>Remade or refunded</b> If it isn&rsquo;t as ordered</span></li>
           </ul>
+          <SaturdayLeft className="mt-3" />
         </header>
 
         {ROWS.map((row) => (

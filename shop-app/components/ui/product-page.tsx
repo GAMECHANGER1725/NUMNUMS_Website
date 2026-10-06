@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CalendarCheck, Check, ChevronLeft, ShieldCheck, Star, Wallet } from "lucide-react";
+import { CalendarCheck, Check, ChevronLeft, RotateCcw, ShieldCheck, Star, Wallet } from "lucide-react";
 import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES, depositCents } from "@/lib/cart";
 import { EarliestPickup } from "@/components/ui/earliest-pickup";
+import { SaturdayLeft } from "@/components/ui/saturday-left";
 import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug, sizeLabel, sizeServes } from "@/lib/catalog";
 import { copyFor } from "@/lib/flavour-copy";
 import { cakeFraming } from "@/lib/cake-framing";
@@ -142,7 +143,8 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
                   <span className="inline-flex text-[#E3B664]" aria-hidden>
                     {[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-3 w-3 fill-current" />)}
                   </span>
-                  {GOOGLE_RATING.rating} · {GOOGLE_RATING.count} Google reviews ↗
+                  {GOOGLE_RATING.rating}
+                  {GOOGLE_RATING.count ? ` · ${GOOGLE_RATING.count} Google reviews` : " on Google"} ↗
                 </a>
                 <span aria-hidden className="text-border">|</span>
               </>
@@ -153,6 +155,16 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
           <p className="mt-4 text-[0.98rem] leading-relaxed">{copy.blurb}</p>
           {copy.note && (
             <p className="mt-2 text-[0.88rem] leading-relaxed text-muted-foreground">{copy.note}</p>
+          )}
+          {/* A real customer on this exact flavour, word for word from their
+              Google review (the text in index.html's Review schema). Proof
+              that is about THIS cake beats a generic star line — and only the
+              flavours someone has actually written about get one. */}
+          {copy.review && (
+            <figure className="cake-review mt-4">
+              <blockquote>&ldquo;{copy.review.quote}&rdquo;</blockquote>
+              <figcaption>{copy.review.name} · Google review</figcaption>
+            </figure>
           )}
 
           <h2 className="section-label mt-7">How big?</h2>
@@ -244,19 +256,26 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               <a href="/order" className="font-semibold text-[#C85478]">talk to us directly</a>.
             </p>
           ) : (
-            /* The three things a buyer hesitates over, answered beside the
+            <>
+            <SaturdayLeft className="mt-3 justify-center" />
+            {/* The three things a buyer hesitates over, answered beside the
                button rather than first in the cart: when (a real date, not
                "soon"), how much today (in dollars — "50%" made people do sums),
                and what if plans change. Baymard: 60% of shoppers look for the
                returns position on the product page; this cake's equivalent is
                the deposit refund window, which until now first appeared one
                page later. Same amounts the cart and Stripe will show —
-               depositCents floors exactly as the server does. */
+               depositCents floors exactly as the server does. */}
             <ul className="promise-list mt-4" aria-label="Before you order">
               <li><CalendarCheck aria-hidden /><span><b>Ready <EarliestPickup /></b>Collect from Harris Park or Riverstone</span></li>
               <li><Wallet aria-hidden /><span><b>Pay {money(depositCents(cents))} today</b>{money(cents - depositCents(cents))} when you collect it</span></li>
               <li><ShieldCheck aria-hidden /><span><b>Plans change? Deposit back in full</b>Cancel more than 24 hours before collection</span></li>
+              {/* The written guarantee (terms.html §8), linked so the conditions
+                  are one tap away rather than implied. */}
+              <li><RotateCcw aria-hidden /><span><b>Not what you ordered? Remade or refunded</b>
+                <a href="/terms#guarantee" target="_blank" rel="noopener" className="underline underline-offset-2 hover:text-[#C85478]">Our guarantee</a></span></li>
             </ul>
+            </>
           )}
 
           {inCart > 0 && (

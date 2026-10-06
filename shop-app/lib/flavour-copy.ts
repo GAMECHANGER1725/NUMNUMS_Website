@@ -12,7 +12,15 @@
  * base recipe is internal, and the allergen position lives in one place —
  * /terms section 6 — so it cannot drift across fifteen descriptions.
  */
-export const FLAVOUR_COPY: Record<string, { blurb: string; note?: string }> = {
+/**
+ * `review` is a customer's own words about THIS flavour, verbatim from their
+ * Google review — the same text as the Review schema in index.html, confirmed
+ * by Vaidik 2026-10-06. Never paraphrase one, never write one: a quote in
+ * quotation marks that the customer did not say is a fake review (ACL).
+ */
+type FlavourCopy = { blurb: string; note?: string; review?: { quote: string; name: string } };
+
+export const FLAVOUR_COPY: Record<string, FlavourCopy> = {
   "Chocolate": {
     blurb:
       "Our most ordered cake, and not by a small margin. Layers of eggless chocolate sponge under a dark chocolate finish, topped with cream.",
@@ -20,12 +28,22 @@ export const FLAVOUR_COPY: Record<string, { blurb: string; note?: string }> = {
   },
   "Butterscotch": {
     blurb:
-      "Golden butterscotch through and through, with a caramel-toned glaze and a crunch of praline around the sides.",
+      "Golden butterscotch through and through, with a caramel-toned glaze and a crunchy butterscotch crumb around the sides.",
+    // "Praline" was here and is normally nut-based; there are no nuts in
+    // this cake (Vaidik, 2026-10-06), so the word is gone.
+    review: {
+      quote: "I ordered a 14\" Butterscotch Cake and pickup was perfectly on time. The cake was so delicious that everyone at the party complimented it.",
+      name: "Karunesh S.",
+    },
   },
   "Pineapple": {
     blurb:
       "Light, fresh and not too sweet. Pineapple through soft eggless sponge with cream and a bright glaze on top.",
     note: "A favourite for warm afternoons and older guests.",
+    review: {
+      quote: "I always order from Num Nums and the cakes are so yum and eggless, always fresh and juicy. My personal favourites are pineapple and mango flavours.",
+      name: "Varuni B.",
+    },
   },
   "Vanilla": {
     blurb:
@@ -43,6 +61,10 @@ export const FLAVOUR_COPY: Record<string, { blurb: string; note?: string }> = {
   "Cookies & Cream": {
     blurb:
       "Cream cake through crushed cookie, with a chocolate drip and whole cookies on top.",
+    review: {
+      quote: "We ordered a cookies and cream cake for my son's 5th birthday. It looked so beautiful, was nicely presented, and tasted amazing. Exactly what we wanted.",
+      name: "Patel H.",
+    },
   },
   "White Forest": {
     blurb:
@@ -51,6 +73,10 @@ export const FLAVOUR_COPY: Record<string, { blurb: string; note?: string }> = {
   "Mango": {
     blurb:
       "Mango through soft sponge and cream under a glossy mango glaze. Sweet, bright and unmistakable.",
+    review: {
+      quote: "Excellent Mango flavour cake, great customer service, and value for money. Thank you for making our day.",
+      name: "Nilesh P.",
+    },
   },
   "Strawberry": {
     blurb: "Strawberry cream and sponge under a soft pink finish. Simple and popular with kids.",
@@ -79,5 +105,5 @@ export const FLAVOUR_COPY: Record<string, { blurb: string; note?: string }> = {
   },
 };
 
-export const copyFor = (name: string) =>
+export const copyFor = (name: string): FlavourCopy =>
   FLAVOUR_COPY[name] ?? { blurb: "A 100% eggless cake, made fresh to order." };
