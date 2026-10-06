@@ -1425,6 +1425,56 @@ could not see from outside the repo. The research and the parked items are in
   — no isolated link-vs-no-link study exists for local food sites — so it gets
   judged on incremental gross profit, not on clicks.
 
+### `/shop` — the offer, said where the choosing happens (Hormozi audit, 2026-10-06)
+
+Full audit, Needs-Vaidik list and rejected ideas:
+`plans/Shop Hormozi Conversion Audit — 2026-10.md`.
+
+- **The board leads with the outcome, not the chore.** H1 is "No one will
+  guess it's eggless", the homepage hero's own line, so the two pages never
+  argue. It replaced "Pick your cake". `/shop` is `noindex`, so no SEO cost.
+- **The promise strip and the product-page promise list state only what every
+  order already gets**: eggless, writing piped at no charge, ready tomorrow,
+  and the deposit refunded in full if cancelled 24h+ before. They mirror
+  `DEPOSIT_RATE` and the window the cart and Stripe's button already state.
+  **Do not add an item that is not already true of every order**, and never
+  put a dollar "value" beside one: an invented reference value is the same ACL
+  problem as was/now.
+- **The refund window sits beside Add to order** because Baymard finds 60% of
+  shoppers look for the returns position on the product page. Before this it
+  first appeared one page later. Keep it there.
+- **The deposit is shown in dollars** (`depositCents`, which floors exactly as
+  the server does), never as "50%" alone.
+- **The earliest date is named** ("collect Wednesday 7 October") by
+  `EarliestPickup`, from the same `minDueDate()` the cart calendar uses. It
+  renders after mount: the export is built on another day, and baking that day
+  in would promise a date that has passed.
+- **Per-serve price is a range** ("$3.57–$4.17 a serve") because servings are
+  a range. Rounding to one flattering figure is not allowed.
+- **No star rating until it is real.** The shop printed "4.6 · 50+ Google
+  reviews" with no source; the 2026-09-02 GBP audit found Harris Park at 4.1
+  over 358–609 reviews. ACCC/Bloomex: $1m for misleading star ratings.
+  `GOOGLE_RATING` in `shop-app/lib/badges.ts` stays `null` until Vaidik fills
+  rating, count, date and the profile URL from the GBP dashboard. It then
+  renders linked to Google so anyone can check it. `index.html` schema still
+  carries 4.6/50 and needs the same fix.
+- **"Weekends book out first" and the cart's "four in five… book out" banner
+  were removed.** Their only source was a code comment, and no cap is
+  enforced. Scarcity comes back as a computed "N pickups left" once
+  `MAX_WEB_ORDERS_PER_DAY` holds a real cap from the kitchen.
+- **Size chips are three across until `lg`.** Six across overflowed at 820.
+- ⚠️ **`terms.html` still says 48 hours, paid in full, and a 48h refund**,
+  while the shop says next day, 50% deposit, 24h. The cart says paying accepts
+  those terms. Vaidik must fix the legal text before live keys.
+- **Rejected 2026-10-06, do not re-propose:** a countdown to the midnight
+  cut-off (the named date already carries it); dollar values beside included
+  items; the 21st.dev listing card (built on strikethrough pricing); 21st.dev's
+  rating group (Ark UI, a second primitives library); Easy UI's testimonial
+  carousel (no verified testimonials, and it hides content on phones; Easy UI
+  has no ecommerce templates at all); renaming "Signature Cakes" via MAGIC
+  (decided 2026-09-21, and it is the GA4 key); a sticky CTA or quick-add on
+  the board.
+
 ## Anti-Repetition (blog + GBP)
 Repetition is the #1 recurring failure on this project. Before writing anything:
 - **Blog:** `ls blog/` first. Never write a post for a suburb that already has one. Read `blog/topic-ledger.md` before picking a topic — it replaces the old "check the last 10 posts" grep as of 2026-09-01, after the prior calendar-driven process produced 359 posts with no demand validation and real cannibalization (see `blog-cluster-report.md` / `blog-gsc-per-page.md` in the repo root). Topic selection rules live in `skills/blog-write/SKILL.md`'s "Topic selection" checklist item — a topic must come from an open ledger gap or a GSC-validated query, never a fixed calendar.
