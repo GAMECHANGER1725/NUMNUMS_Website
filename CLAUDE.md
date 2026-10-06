@@ -1221,6 +1221,44 @@ add a second entry point to the shop elsewhere, or the two have to be kept in st
   `SUPABASE_SERVICE_ROLE_KEY`, `ONLINE_ORDERS_USER_ID`, `MAKE_ORDER_HOOK_URL`, and the
   optional kill switches `BLOCKED_DATES`, `MAX_WEB_ORDERS_PER_DAY` and
   `STRIPE_ENABLE_PAYTO`.
+- **Stripe account settings (opened 2026-10-06, GNT Ventures Pty Ltd, AU).** Every one
+  was a deliberate choice, so do not "tidy" them:
+  - **Statement descriptor `NUM NUMS BAKERY`, shortened `NUMNUMS`.** Customers must
+    recognise the charge or they dispute it; "GNT VENTURES" would be a stranger's
+    name. Stripe bans the apostrophe (`< > \ ' " *`), so it is "NUMS", not "NUM'S".
+    One descriptor for both shops.
+  - **Radar is on Lite, which is free.** Standard is from about A$16/month and Stripe
+    rolled existing accounts onto a free Standard trial that **ends 22 January 2027,
+    then bills automatically** — switch back to Lite in the dashboard if it appears.
+    The shop takes cards only (Apple Pay, Google Pay and Link ride the same rails), so
+    Standard's cover for other payment methods buys nothing. Revisit only if fraud or
+    disputes actually appear.
+  - **Stripe Tax is OFF and must stay off.** Prices are GST-inclusive and `receipt.mjs`
+    works GST out as 1/11 itself; automatic tax would add GST on top of prices that
+    already contain it. If the onboarding form forces a product tax category, accept
+    the pre-filled one and **never add a tax registration**. Indian sweets may fall on
+    the other side of the GST line from cakes — confirm with the accountant before
+    they are sold online.
+  - **The account representative's email is the named person's own,** not the shared
+    `info@` inbox: Stripe uses it for identity checks, security alerts and recovery, so
+    it must be a mailbox one person controls. `info@` belongs in the public support
+    email field instead.
+  - **Test and live are separate worlds.** The webhook signing secret differs between
+    them, so going live means a **new** webhook in live mode, not editing the test one.
+    Test webhook `we_1UNLvVIa9RLenwWC0GmI24Y3`, events `checkout.session.completed` and
+    `checkout.session.async_payment_succeeded`, URL
+    `https://numnumsbakery.com.au/.netlify/functions/stripe-webhook`. Live keys go
+    straight into Netlify and are never pasted into chat or a file.
+- **Order emails run through Make (`MAKE_ORDER_HOOK_URL`).** Scenario **7790457**
+  ("Num Nums — new web order alert", EU1, team 3066367) is webhook → shop alert → customer
+  confirmation, both sent **from and to `info.numnumsbakery@gmail.com`** through a Gmail
+  connection. The customer email is branded, has no coupon, says the balance is due on
+  collection, and is skipped when no email was given. Three Make operations per order, so
+  check the plan's monthly limit. The webhook URL is a bearer credential — anyone holding
+  it can send fake alerts — so it lives in Netlify only. **Nothing else may post to that
+  hook:** the scenario emails the shop for every payload, which is why `subscribe.mjs`
+  does not call it. The `total` in the payload is the **deposit charged**, not the cake's
+  full price, which is why the email says "Deposit paid".
 - **Payment rails, and why the array in `create-checkout` is short.** `card` covers
   Visa/Mastercard/Amex/eftpos **and** Apple Pay, Google Pay and Stripe Link — those
   three are dashboard toggles riding the card rails at the same 1.7% + A$0.30, not
