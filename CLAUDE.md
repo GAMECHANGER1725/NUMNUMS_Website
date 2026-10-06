@@ -779,7 +779,16 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   because it was 41% of everything sold; "Most ordered" on the 8" size chip is
   47% of orders. `verify-blog.mjs` scans the built `shop/` for urgency language
   a static page cannot know is true — *selling fast*, *only N left*, *ends in*,
-  *N people viewing* — and fails the deploy on any of it. That is not caution
+  *N people viewing* — and fails the deploy on any of it. **Scarcity and
+  urgency are not banned (Vaidik, 2026-10-06: "I don't ban fake scarcity") —
+  a claim that is not true is the only thing refused**, and Claude will not
+  write or wire one that is made up. Scarcity built from real data is
+  welcome and is the Hormozi-compatible route: remaining pickup capacity for
+  a day computed from `MAX_WEB_ORDERS_PER_DAY` and the live order count,
+  `BLOCKED_DATES`, the real lead-time cut-off, a real one-off batch. Such a
+  claim must be rendered at runtime from that data (never typed into a static
+  string), and when the first one ships, scope the gate's pattern list to
+  allow that component rather than deleting the gate. That is not caution
   for its own sake: the ACCC fined three retailers in June 2025 over misleading
   sale claims and the ceiling is **$100m** per breach — doubled from $50m by the
   Treasury Laws Amendment (Doubling Penalties for ACCC Enforcement) Act 2026, and
