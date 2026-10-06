@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Check, ChevronLeft, Star } from "lucide-react";
-import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES, DEPOSIT_RATE } from "@/lib/cart";
+import { CalendarCheck, Check, ChevronLeft, ShieldCheck, Star, Wallet } from "lucide-react";
+import { cartStore, writeCart, money, addLine, cartCount, MAX_CAKES, depositCents } from "@/lib/cart";
+import { EarliestPickup } from "@/components/ui/earliest-pickup";
 import { SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug, sizeLabel, sizeServes } from "@/lib/catalog";
 import { copyFor } from "@/lib/flavour-copy";
 import { cakeFraming } from "@/lib/cake-framing";
-import { badgeFor, ORDER_BOOK } from "@/lib/badges";
+import { badgeFor, ORDER_BOOK, GOOGLE_RATING } from "@/lib/badges";
 import { viewItem, addToCart } from "@/lib/analytics";
 import { useSyncExternalStore } from "react";
 
@@ -43,6 +44,12 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
   const cents = listPriceCents(size, flavour) ?? 0;
   const inCart = cartCount(cart);
   const full = inCart >= MAX_CAKES;
+  // "12–14" → "$3.57–$4.17". Null if a size ever has no serving count.
+  const perServe = (() => {
+    const [lo, hi] = String(sizeServes(size) ?? "").split("–").map(Number);
+    if (!lo || !cents) return null;
+    return `${money(Math.round(cents / (hi || lo)))}–${money(Math.round(cents / lo))}`;
+  })();
 
   // One view_item per flavour per visit, not per size tap: changing the size
   // chip is still the same product being considered, and firing again would
@@ -126,13 +133,20 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
             {flavour}
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.82rem] text-muted-foreground">
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-flex text-[#E3B664]" aria-hidden>
-                {[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-3 w-3 fill-current" />)}
-              </span>
-              4.6 · 50+ reviews
-            </span>
-            <span aria-hidden className="text-border">|</span>
+            {/* Only a rating somebody read off the real profile, linked to it
+                — see GOOGLE_RATING. */}
+            {GOOGLE_RATING && (
+              <>
+                <a href={GOOGLE_RATING.url} target="_blank" rel="noopener"
+                  className="inline-flex items-center gap-1 underline-offset-2 hover:underline">
+                  <span className="inline-flex text-[#E3B664]" aria-hidden>
+                    {[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-3 w-3 fill-current" />)}
+                  </span>
+                  {GOOGLE_RATING.rating} · {GOOGLE_RATING.count} Google reviews ↗
+                </a>
+                <span aria-hidden className="text-border">|</span>
+              </>
+            )}
             <span>100% eggless</span>
           </div>
 
@@ -142,7 +156,7 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
           )}
 
           <h2 className="section-label mt-7">How big?</h2>
-          <ul className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">
+          <ul className="mt-2 grid grid-cols-3 gap-2 lg:grid-cols-6">
             {SELLABLE_SIZES.map((s) => (
               <li key={s.code}>
                 <button
@@ -154,14 +168,14 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
                   <span className="block text-[0.95rem] font-semibold">{s.label}</span>
                   {/* Larger only where the chips are three to a row; six to
                       a row has no room for it. */}
-                  <span className="block text-[0.72rem] leading-tight text-muted-foreground sm:text-[0.64rem]">
+                  <span className="block text-[0.72rem] leading-tight text-muted-foreground lg:text-[0.64rem]">
                     serves {s.serves}
                   </span>
                   <span className="mt-0.5 block text-[0.7rem] font-medium tabular-nums">
                     {money(listPriceCents(s.code, flavour) ?? 0)}
                   </span>
                   {s.code === ORDER_BOOK.topSize && (
-                    <span className="mt-1 block text-[0.62rem] font-bold uppercase leading-[1.15] tracking-[0.04em] text-[#A03D5E] sm:text-[0.56rem]">
+                    <span className="mt-1 block text-[0.62rem] font-bold uppercase leading-[1.15] tracking-[0.04em] text-[#A03D5E] lg:text-[0.56rem]">
                       Most ordered
                     </span>
                   )}
@@ -169,6 +183,18 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               </li>
             ))}
           </ul>
+          {/* Price per serve, as a range because the serving count is one.
+              The question behind "how big?" is "is it enough, and is it worth
+              it" — this answers the second half in the unit a party is
+              planned in, and shows honestly that a bigger cake costs less a
+              head (Baymard: most sites omit per-unit price, and users abandon
+              suitable items over it). */}
+          {perServe && (
+            <p className="mt-2 text-[0.78rem] text-muted-foreground">
+              {sizeLabel(size)} works out at{" "}
+              <span className="font-medium tabular-nums text-foreground">{perServe}</span> a serve.
+            </p>
+          )}
 
           <div className="mt-5">
             <label htmlFor="wording" className="field-label">
@@ -218,12 +244,19 @@ export function ProductPage({ flavour, premium, related }: ProductPageProps) {
               <a href="/order" className="font-semibold text-[#C85478]">talk to us directly</a>.
             </p>
           ) : (
-            <p className="mt-3 text-center text-[0.78rem] text-muted-foreground">
-              {/* The deposit is said here, not first in the cart: "Pay online"
-                  read as paying the whole price now. */}
-              <span className="block">Pay {Math.round(DEPOSIT_RATE * 100)}% now, the rest on collection</span>
-              <span className="block">Harris Park or Riverstone · ready tomorrow</span>
-            </p>
+            /* The three things a buyer hesitates over, answered beside the
+               button rather than first in the cart: when (a real date, not
+               "soon"), how much today (in dollars — "50%" made people do sums),
+               and what if plans change. Baymard: 60% of shoppers look for the
+               returns position on the product page; this cake's equivalent is
+               the deposit refund window, which until now first appeared one
+               page later. Same amounts the cart and Stripe will show —
+               depositCents floors exactly as the server does. */
+            <ul className="promise-list mt-4" aria-label="Before you order">
+              <li><CalendarCheck aria-hidden /><span><b>Ready <EarliestPickup /></b>Collect from Harris Park or Riverstone</span></li>
+              <li><Wallet aria-hidden /><span><b>Pay {money(depositCents(cents))} today</b>{money(cents - depositCents(cents))} when you collect it</span></li>
+              <li><ShieldCheck aria-hidden /><span><b>Plans change? Deposit back in full</b>Cancel more than 24 hours before collection</span></li>
+            </ul>
           )}
 
           {inCart > 0 && (

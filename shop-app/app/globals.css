@@ -653,6 +653,79 @@
     .nn-time-row { transition: none; }
   }
 
+  /* What every cake comes with — the board's promise strip and the product
+     page's list under the button. Same family as the cake plaque below (warm
+     dough well, one rose-to-gold hairline) because both say the same kind of
+     thing: what you will actually get, confirmed. Quiet on purpose — it sits
+     above the cakes and must not outshout them. */
+  .promise-strip,
+  .promise-list {
+    position: relative;
+    border-radius: 0.9rem;
+    background: linear-gradient(168deg, #FBF3EA 0%, #F5EBE0 100%);
+    border: 1px solid #EBD9C8;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 10px 22px -18px rgba(44, 26, 14, 0.28);
+  }
+  .promise-strip::before,
+  .promise-list::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 1.1rem;
+    width: 5.5rem;
+    height: 2px;
+    border-radius: 0 0 2px 2px;
+    background: linear-gradient(90deg, #C85478, #E3B664);
+  }
+  .promise-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem 0.9rem;
+    padding: 0.95rem 1rem;
+  }
+  @media (min-width: 768px) {
+    .promise-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; padding: 1rem 0; }
+    .promise-strip > li { padding: 0 1.1rem; }
+    .promise-strip > li + li { border-left: 1px solid #E6D3C1; }
+  }
+  .promise-strip > li,
+  .promise-list > li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .promise-strip svg,
+  .promise-list svg {
+    flex: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-top: 0.1rem;
+    color: #C85478;
+    stroke-width: 1.75;
+  }
+  .promise-strip span,
+  .promise-list span {
+    font-size: 0.76rem;
+    line-height: 1.4;
+    color: #7A5A44;
+  }
+  .promise-strip b,
+  .promise-list b {
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 500;          /* Jost never above 500 */
+    color: #2C1A0E;
+  }
+  .promise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1rem 1.1rem;
+  }
+
   /* The writing, quoted back under the cake.
      Reads as a little enamel plaque rather than a form field echo: the words
      are the thing being confirmed, so they get the script face and the room,

@@ -28,6 +28,21 @@ export const ORDER_BOOK = {
   topSize: "8 inch",
 } as const;
 
+/**
+ * The Google rating, shown on the board and every product page — or nowhere.
+ *
+ * ⚠️ NEEDS VAIDIK: null until somebody reads the real figure off the GBP
+ * dashboard. The shop used to print "4.6 · 50+ Google reviews", a number with
+ * no source anywhere in the repo, and the 2026-09-02 GBP audit found every
+ * third-party scrape of Harris Park at 4.1 across 358–609 reviews. A star
+ * rating presented as customer feedback that is not is exactly what Bloomex
+ * paid $1m over (ACCC). Fill all four fields and it renders, linked to the
+ * profile so anyone can check it; leave it null and the line stays off.
+ */
+export const GOOGLE_RATING: {
+  rating: number; count: number; countedOn: string; url: string;
+} | null = null;
+
 export type Badge = { label: string; kind: "fact" | "ours" };
 
 /**

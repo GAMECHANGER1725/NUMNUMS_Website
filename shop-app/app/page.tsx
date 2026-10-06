@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, CalendarCheck, EggOff, PenLine, ShieldCheck, Star } from "lucide-react";
 import { ShopHeader } from "@/components/ui/shop-header";
 import { CakeRow } from "@/components/ui/cake-row";
-import { SELLABLE_FLAVOURS, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
-import { money } from "@/lib/cart";
+import { EarliestPickup } from "@/components/ui/earliest-pickup";
+import { SELLABLE_FLAVOURS, SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
+import { money, DEPOSIT_RATE } from "@/lib/cart";
 import { cakeFraming } from "@/lib/cake-framing";
-import { badgeFor, assertPickIsNotPremium } from "@/lib/badges";
+import { badgeFor, assertPickIsNotPremium, GOOGLE_RATING } from "@/lib/badges";
 
 export const metadata = {
   title: "Signature Cakes — order eggless cakes online | Num Num's Bakery",
@@ -52,6 +53,11 @@ const classics = SELLABLE_FLAVOURS
   .filter((f) => !f.premium && !SPECIALTY.includes(f.name)).sort(byPopularity);
 
 assertPickIsNotPremium(SELLABLE_FLAVOURS.filter((f) => f.premium).map((f) => f.name));
+
+/** The cheapest cake on the board, read from the catalogue — never typed in. */
+const FROM_CENTS = Math.min(
+  ...SELLABLE_FLAVOURS.map((f) => listPriceCents(SELLABLE_SIZES[0].code, f.name) ?? Infinity),
+);
 
 /*
  * A flavour that matches no row would simply not render, and a board quietly
@@ -106,29 +112,52 @@ export default function ShopPage() {
     <>
       <ShopHeader />
       <main className="mx-auto w-full max-w-[72rem] px-4 pb-20 pt-8 sm:px-6">
+        {/* The outcome first, then the deal (Hormozi's value equation, read
+            honestly). "Pick your cake" named the customer's chore; the reason
+            anyone is on this page is a cake for a room that includes somebody
+            who cannot eat egg, and the fear is that it will taste like it.
+            The headline answers that fear — the same line the homepage hero
+            has always used, so the two do not argue. */}
         <header>
           <p className="section-label">Signature Cakes</p>
           <h1 className="font-display mt-2 text-[2.6rem] font-light leading-[1.05] tracking-tight sm:text-[3.4rem]">
-            Pick your cake
+            No one will guess it&rsquo;s eggless
           </h1>
-          <p className="mt-2 max-w-[46ch] text-[0.95rem] leading-relaxed text-muted-foreground">
-            Fifteen flavours we bake and decorate ourselves, 100% eggless, ready
-            tomorrow. Want one designed to your own brief instead?{" "}
+          <p className="mt-2 max-w-[48ch] text-[0.95rem] leading-relaxed text-muted-foreground">
+            Fifteen flavours we bake to order and decorate by hand. Order today,
+            collect <b className="font-semibold text-foreground"><EarliestPickup /></b>.
+            Want one designed to your own brief?{" "}
             <a href="/order" className="font-semibold text-[#C85478] underline-offset-2 hover:underline">
               That&rsquo;s a custom cake
             </a>
             .
           </p>
-          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.84rem] text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
+          {GOOGLE_RATING && (
+            <a href={GOOGLE_RATING.url} target="_blank" rel="noopener"
+              className="mt-3 inline-flex items-center gap-1.5 text-[0.84rem] text-muted-foreground underline-offset-2 hover:underline">
               <span className="inline-flex text-[#E3B664]" aria-hidden>
                 {[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}
               </span>
-              <b className="font-semibold text-foreground">4.6</b> · 50+ Google reviews
-            </span>
-            <span aria-hidden className="hidden text-border sm:inline">|</span>
-            <span>Collect from Harris Park or Riverstone</span>
-          </div>
+              <b className="font-semibold text-foreground">{GOOGLE_RATING.rating}</b>
+              · {GOOGLE_RATING.count} Google reviews ↗
+            </a>
+          )}
+
+          {/* What every cake comes with, stated where the choosing starts.
+              These were scattered: "ready tomorrow" in the intro, eggless in
+              a footer strip under the board, the deposit only on the product
+              page, and the refund window nowhere before the cart — which is
+              where hesitation turns into a closed tab, not where it starts.
+              Nothing here is a bonus invented to look generous: each is
+              already true of every order, and each mirrors a rule in
+              lib/cart.ts (DEPOSIT_RATE, the 24-hour window the cart and
+              Stripe's button already state). */}
+          <ul className="promise-strip mt-5" aria-label="Included with every cake">
+            <li><EggOff aria-hidden /><span><b>100% eggless</b> Every cake, every flavour</span></li>
+            <li><PenLine aria-hidden /><span><b>Your words, piped</b> By hand, no extra charge</span></li>
+            <li><CalendarCheck aria-hidden /><span><b>Ready tomorrow</b> Harris Park or Riverstone</span></li>
+            <li><ShieldCheck aria-hidden /><span><b>Refundable deposit</b> Until 24h before pickup</span></li>
+          </ul>
         </header>
 
         {ROWS.map((row) => (
@@ -243,19 +272,6 @@ export default function ShopPage() {
           </ul>
         </section>
 
-        <section className="mt-12 grid gap-4 border-t border-border pt-8 sm:grid-cols-3">
-          {[
-            ["100% eggless", "Every cake we make, without exception. It is the whole reason the bakery exists."],
-            ["Ready tomorrow", "Every cake is baked to order, so we need a day. Weekends book out first."],
-            ["Collect in store", "Harris Park or Riverstone. We text you the moment it's ready."],
-          ].map(([h, p]) => (
-            <div key={h}>
-              <h2 className="text-[0.92rem] font-semibold">{h}</h2>
-              <p className="mt-1 text-[0.84rem] leading-relaxed text-muted-foreground">{p}</p>
-            </div>
-          ))}
-        </section>
-
         {/* Two ways to order, side by side.
             This replaced a paragraph that said the same thing in prose. A
             customer who wants a themed cake does not read a notice at the
@@ -282,7 +298,7 @@ export default function ShopPage() {
                 </div>
                 <div className="flex gap-2">
                   <dt className="w-[4.6rem] flex-none text-muted-foreground">Price</dt>
-                  <dd>From $39.99, shown up front</dd>
+                  <dd>From {money(FROM_CENTS)}, shown up front</dd>
                 </div>
                 <div className="flex gap-2">
                   <dt className="w-[4.6rem] flex-none text-muted-foreground">Ready</dt>
@@ -290,7 +306,7 @@ export default function ShopPage() {
                 </div>
                 <div className="flex gap-2">
                   <dt className="w-[4.6rem] flex-none text-muted-foreground">Paying</dt>
-                  <dd>50% now, the rest on collection</dd>
+                  <dd>{Math.round(DEPOSIT_RATE * 100)}% now, the rest on collection</dd>
                 </div>
               </dl>
             </div>
