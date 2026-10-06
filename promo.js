@@ -414,7 +414,7 @@
     '.nnp-left{display:flex;flex-direction:column;padding:36px 28px}',
     '.nnp-form-wrap{margin:auto 0}',
     '@media(min-width:768px){.nnp-left{padding:52px 44px}}',
-    '.nnp-h{font-family:Jost,system-ui,sans-serif;font-weight:300;font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;text-align:center;text-wrap:balance;margin:0}',
+    '.nnp-h{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:1.9rem;line-height:1.15;letter-spacing:-.02em;text-align:center;text-wrap:balance;margin:0}',
     '@media(min-width:768px){.nnp-h{font-size:2.2rem}}',
     '.nnp-sub{font-size:.92rem;font-weight:300;line-height:1.6;color:#5C3A22;text-align:center;margin:14px 0 0}',
     '.nnp-field{margin:22px 0 0}',

@@ -102,15 +102,21 @@ is the binding source — read it before designing anything.
   **Soft Dough `#F5EBE0`** (sections), **Bitter Cocoa `#4A2518`**.
 - **Riverstone Teal `#4EC4D8` is Riverstone-only.** Never in global material —
   not on the main site, not in an email, not on Harris Park content.
-- **Jost for headings and everything else.** ⚠️ This **overrides** the brand
-  guide's "Cormorant Garamond for display" line — Vaidik's call 2026-09-20:
-  the serif reads decorative, not modern, at heading sizes. Headings are Jost
-  **300** with tight tracking (`-0.02em`); the light weight is what stops a
-  geometric sans looking shouty. **Jost is never set above weight 500.**
-- **Cormorant Garamond is ornament only** — a one-line flourish such as the
-  email footer's *"100% eggless. Made fresh daily."* or the email masthead
-  wordmark. **Never a page, section or hero heading.** In the shop app it is
-  `--font-ornament` / `.font-ornament`; `--font-display` is Jost.
+- **Customer-facing headings are Cormorant Garamond; body text and UI are Jost.**
+  ⚠️ **Vaidik reversed the Jost-headings call on 2026-10-06** ("on the hero it
+  doesn't look traditional") and restored the font the live site always had.
+  This is the brand guide's own rule again. Do **not** re-apply Jost to headings
+  on the public site, the shop, the popup or the review form on the strength of
+  the 2026-09-20 / 2026-09-29 commits (`4de1ca12`, `44ce036c`, `09b857bd`,
+  `bed270d2`) — they were undone on purpose.
+  - Static pages: `.font-display` = Cormorant, hero `<h1>` included
+    (Cormorant 600, `-0.03em`). Shop: `--font-display` is Cormorant again.
+  - **`ops/` is the exception and stays Jost** (Vaidik: "leave OPS") — staff
+    app headings are Jost 300, `-0.02em`. Emails were not part of the reversal
+    and still use the Jost/ornament split in `email-shell.mjs`; ask before
+    touching them.
+  - Jost stays the body/UI face and **is never set above weight 500**.
+  - `.font-ornament` in the shop is still Cormorant; it now matches `.font-display`.
 - **Prioritise `brand_assets/Logo_TParent.png` whenever you need the logo.** It
   has real alpha, so it sits on any background with no white plate to hide and
   no badge to wrap it in. `Logo_wName.png` is RGB with a baked-in near-white
@@ -831,8 +837,7 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
     two standard tiles left a half-empty shelf that read as a row which had
     failed to load; capped at 33% on desktop, because 46% turned two cakes
     into a full screen and pushed the most-ordered flavour two rows down.
-    The heading stays **Jost** — Cormorant is ornament only and is never a
-    section heading, however much a serif suits the word "premium".
+    The heading uses the site's heading face (Cormorant, since 2026-10-06).
 - **The cakes are cut-outs on white and need a shadow we add ourselves.**
   `.cake-ground` is an ellipse that deliberately **overlaps** the plate rather
   than sitting under it: six of the fifteen stand on a white board whose lower
