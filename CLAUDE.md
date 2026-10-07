@@ -791,12 +791,14 @@ like another app. `order.html` replaced its own long ago; the shop now does too.
   `BLOCKED_DATES`, the real lead-time cut-off, a real one-off batch. Such a
   claim must be rendered at runtime from that data (never typed into a static
   string), and when the first one ships, scope the gate's pattern list to
-  allow that component rather than deleting the gate. **The first one
-  shipped 2026-10-06** — `SaturdayLeft`, see the `/shop` Hormozi section. It
-  renders only at runtime, so the static HTML the gate scans never contains
-  the number and the gate needed no change. Vaidik asked for a fixed
-  "2 pickups left Saturday"; that was refused as written and built as the
-  live count instead. That is not caution
+  allow that component rather than deleting the gate. **One was built on
+  2026-10-06 and removed on 2026-10-07**: a live "N online pickups left for
+  Saturday" line. Vaidik decided **he does not want a daily cap**, and without
+  a cap there is nothing true to count, so it was deleted rather than left
+  fetching a function that always answered nothing. **There is currently no
+  scarcity claim anywhere on the shop, and none should be added**; the named
+  earliest date is the only honest time pressure there is. If he ever wants
+  one, it needs a real cap first. That is not caution
   for its own sake: the ACCC fined three retailers in June 2025 over misleading
   sale claims and the ceiling is **$100m** per breach — doubled from $50m by the
   Treasury Laws Amendment (Doubling Penalties for ACCC Enforcement) Act 2026, and
@@ -1487,18 +1489,16 @@ Full audit, Needs-Vaidik list and rejected ideas:
   Cream, Mango, Pineapple), from the Review schema text in `index.html`,
   confirmed by Vaidik. They live in `flavour-copy.ts` as `review`. Never
   paraphrase or trim mid-sentence, and never write one.
-- **"N online pickups left for Saturday" is computed, never typed.**
-  `netlify/functions/capacity.mjs` returns the next bookable Saturday and
-  what is left of `MAX_WEB_ORDERS_PER_DAY` across both shops. It counts with
-  `webOrdersOn` in `netlify/lib/shared.mjs`, **the same function
-  `create-checkout` refuses a full day on**, so the number shown and the rule
-  enforced cannot disagree. **Never give the page its own count.**
-  `SaturdayLeft` shows it only at 3 or fewer, says "fully booked online" at
-  0, and shows nothing when no cap is set, the day is in `BLOCKED_DATES`, the
-  count fails, or under `serve.mjs`. The cap is per shop and counts web
-  orders only, which is why Vaidik sets it low: custom orders and walk-ins
-  take the rest of the day's capacity. Vaidik asked for a fixed "2 pickups
-  left Saturday"; that was refused as invented scarcity and built this way.
+- **There is no "N pickups left" line, and no daily cap (Vaidik, 2026-10-07).**
+  It was built 2026-10-06 (`capacity.mjs`, `SaturdayLeft`) from a request for
+  a fixed "2 pickups left Saturday", which was refused as invented scarcity
+  and built as a live count instead. He then said he does not want a cap, so
+  it was removed (it could never render without one). `create-checkout`'s older
+  `MAX_WEB_ORDERS_PER_DAY` kill switch is untouched and **stays off unless the
+  env var is set**; leave it unset. It counts web orders by **pickup day**,
+  per shop, and counts cancelled web orders too. `dailyCap`/`webOrdersOn` stay
+  in `shared.mjs` for it; any future "N left" display must use that same
+  function, never its own count.
 - **The remake-or-refund guarantee is written in `terms.html` §8
   (`#guarantee`)**: not what you ordered (flavour, size, writing, or a custom
   cake that does not match the confirmed design) or not fresh, reported at the
@@ -1527,7 +1527,7 @@ Full audit, Needs-Vaidik list and rejected ideas:
   carousel (no verified testimonials, and it hides content on phones; Easy UI
   has no ecommerce templates at all); renaming "Signature Cakes" via MAGIC
   (decided 2026-09-21, and it is the GA4 key); a sticky CTA or quick-add on
-  the board; a hardcoded "2 pickups left" (built live instead); "No one will
+  the board; a hardcoded "2 pickups left" (built live, then removed with the cap); "No one will
   guess it's eggless" as the shop H1. **Bonuses (candle, knife, box): not
   now** (Vaidik, 2026-10-06); revisit only when he raises it.
 

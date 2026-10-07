@@ -24,7 +24,7 @@ still open, it is referenced by its F-number.
 | Dream outcome | **Rejected "No one will guess it's eggless"**: buyers want eggless for faith or diet, not to disguise it | H1 **"Pick any cake. It's eggless."** under "No asking, no checking." |
 | V1 terms | "48 hours" is for custom cakes only | `terms.html`: shop cakes next day, custom two days' notice, 50% deposit, 24h deposit refund (`0c7e556c`) |
 | V2 rating | Riverstone is 4.6; don't name the shop | `GOOGLE_RATING` = 4.6, linked to the Riverstone profile, no count shown (none was read) |
-| V4 scarcity | "Make it 2 pickups left Saturday", since custom orders and off-book orders take the rest | **A fixed "2 left" was refused** as invented scarcity (ACL; CLAUDE.md). Built live instead: `capacity.mjs` reports what is left of `MAX_WEB_ORDERS_PER_DAY` for the next Saturday, counted by the same function checkout refuses on (`04d58321`). Shows at ≤3 left. **Needs the cap set in Netlify to appear.** |
+| V4 scarcity | "Make it 2 pickups left Saturday"; **then, 2026-10-07: "I don't want a cap"** | A fixed "2 left" was refused as invented scarcity; a live count of a daily cap was built (`04d58321`), then **removed** (it could never show without a cap). No scarcity claim remains on the shop. |
 | V5 guarantee | Do it | `terms.html` §8 `#guarantee`: not what you ordered or not fresh, reported at the counter or within 24h with a photo, means remake or refund, your choice. In the board strip, beside Add to order, and on the `/` and `/order` chips. |
 | V6 bonuses | Not now | — |
 | V7 rows | Yes | Premium → Classics → Specialty |
