@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import {
   priceLine, priceCart, splitCents, depositCents, DEPOSIT_RATE,
   resolveDueAt, cleanWording, collectionSlots, slotLabel,
-  earliestDueDay, nextSaturday, BadRequest, MAX_LINES, MAX_WORDING,
+  earliestDueDay, BadRequest, MAX_LINES, MAX_WORDING,
 } from '../netlify/lib/shared.mjs';
 import { listPriceCents, SIZES, FLAVOURS } from '../ops/catalog.mjs';
 
@@ -321,18 +321,6 @@ test('a reduced total and a deposit compose without losing a cent', () => {
   assert.equal(deposits.reduce((a, b) => a + b, 0), depositTotal);
   // Every cake owes a non-negative balance at the counter.
   net.forEach((c, i) => assert.ok(c - deposits[i] >= 0, `line ${i} owes negative`));
-});
-
-// The "N pickups left for Saturday" line names a date; a wrong one is a false claim.
-test('nextSaturday is the first bookable Saturday, in Sydney days', () => {
-  // Tue 6 Oct 2026, 10am Sydney -> earliest Wed 7 -> Sat 10.
-  assert.equal(nextSaturday(new Date('2026-10-05T23:00:00Z')), '2026-10-10');
-  // Fri 9 Oct, 2pm Sydney -> earliest Sat 10 itself.
-  assert.equal(nextSaturday(new Date('2026-10-09T03:00:00Z')), '2026-10-10');
-  // Sat 10 Oct, 11pm Sydney (still Sat 10 Oct in UTC midday terms) -> earliest Sun 11 -> Sat 17.
-  assert.equal(nextSaturday(new Date('2026-10-10T12:00:00Z')), '2026-10-17');
-  // Year rollover: Thu 31 Dec 2026 -> earliest Fri 1 Jan -> Sat 2 Jan 2027.
-  assert.equal(nextSaturday(new Date('2026-12-30T22:00:00Z')), '2027-01-02');
 });
 
 console.log(`checkout: ${n} checks pass`);

@@ -3,7 +3,6 @@ import { ArrowRight, CalendarCheck, EggOff, RotateCcw, ShieldCheck, Star } from 
 import { ShopHeader } from "@/components/ui/shop-header";
 import { CakeRow } from "@/components/ui/cake-row";
 import { EarliestPickup } from "@/components/ui/earliest-pickup";
-import { SaturdayLeft } from "@/components/ui/saturday-left";
 import { SELLABLE_FLAVOURS, SELLABLE_SIZES, listPriceCents, flavourSlug, urlSlug } from "@/lib/catalog";
 import { money, DEPOSIT_RATE } from "@/lib/cart";
 import { cakeFraming } from "@/lib/cake-framing";
@@ -162,7 +161,6 @@ export default function ShopPage() {
             <li><ShieldCheck aria-hidden /><span><b>Refundable deposit</b> Until 24h before pickup</span></li>
             <li><RotateCcw aria-hidden /><span><b>Remade or refunded</b> If it isn&rsquo;t as ordered</span></li>
           </ul>
-          <SaturdayLeft className="mt-3" />
         </header>
 
         {ROWS.map((row) => (
