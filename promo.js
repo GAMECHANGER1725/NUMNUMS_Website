@@ -401,6 +401,17 @@
     }
   }
 
+  // Flavour = file name in /popup-cakes/ = product page slug in /shop/cakes/.
+  // 360px square crops of the shop photos (15 files, ~156KB, only fetched once
+  // the popup opens). No price or "most ordered" claim rides on the order.
+  var CAKES = [
+    ['Chocolate', 'chocolate'], ['Vanilla', 'vanilla'], ['Mango', 'mango'],
+    ['Red Velvet', 'red-velvet'], ['Butterscotch', 'butterscotch'], ['Strawberry', 'strawberry'],
+    ['Rasmalai', 'rasmalai'], ['Ferrero Rocher', 'ferrero-rocher'], ['Cookies & Cream', 'cookies-and-cream'],
+    ['Tiramisu', 'tiramisu'], ['Black Forest', 'black-forest'], ['White Forest', 'white-forest'],
+    ['Lychee', 'lychee'], ['Pineapple', 'pineapple'], ['Blueberry', 'blueberry']
+  ];
+
   /* ---------------------------------------------------------------- styles */
 
   var CSS = [
@@ -438,15 +449,46 @@
     '.nnp-alt a:hover{text-decoration:underline}',
     /* Brand side: a dark panel carrying one line, so the popup is still
        recognisably ours without promising anything. */
-    '.nnp-pic{position:relative;overflow:hidden;order:-1;min-height:164px;display:flex;align-items:center;justify-content:center;padding:22px 18px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
+    '.nnp-pic{position:relative;overflow:hidden;order:-1;display:flex;align-items:center;justify-content:center;padding:18px 0 12px;background:linear-gradient(135deg,#2C1A0E 0%,#5C3A22 60%,#2C1A0E 100%)}',
     '@media(min-width:768px){.nnp-pic{order:0;height:auto;padding:36px 28px}}',
     // A short phone (320x568) held 852px of popup in a 523px card: the email field sat under the fold and the button under an inner scroll.
-    "@media(max-width:767px) and (max-height:620px){.nnp-pic{min-height:0;padding:12px 16px}.nnp-left{padding:22px 22px}.nnp-h{font-size:1.5rem}.nnp-sub{margin-top:8px;font-size:.86rem}.nnp-field{margin-top:14px}.nnp-note{margin-top:14px}.nnp-pic .nnp-line{font-size:.95rem;padding:0 34px}}",
+    "@media(max-width:767px) and (max-height:620px){.nnp-pic{padding:10px 0 6px}.nnp-chip{width:48px;height:48px}.nnp-left{padding:22px 22px}.nnp-h{font-size:1.5rem}.nnp-sub{margin-top:8px;font-size:.86rem}.nnp-field{margin-top:14px}.nnp-note{margin-top:14px}}",
     '.nnp-pic::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 22% 42%,rgba(200,84,120,.30) 0%,transparent 62%),radial-gradient(ellipse at 82% 88%,rgba(227,182,100,.16) 0%,transparent 58%)}',
     '.nnp-pic::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,248,242,.085) 0 1px,transparent 1px 34px);-webkit-mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%);mask-image:linear-gradient(105deg,#000 0%,rgba(0,0,0,.35) 45%,transparent 78%)}',
     '.nnp-offer{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}',
     '.nnp-line{margin:0;max-width:300px;font-family:Jost,system-ui,sans-serif;font-weight:300;font-size:1.45rem;line-height:1.25;letter-spacing:-.02em;color:#FFF8F2;text-align:center;text-wrap:balance}',
     '@media(min-width:768px){.nnp-offer{width:min(330px,100%);align-items:flex-start}.nnp-line{font-size:2rem;text-align:left}}',
+    /* The flavour picker. Phones are ~70% of sessions (GA4, 90 days to 2026-10-08:
+       3,264 of 4,671), so the band above the form is a swipe strip first: native
+       scroll-snap, 56px tap targets, and it is shorter than the old 164px band so
+       the email field still lands on the first screen. Desktop gets a stage and a
+       wrapped grid instead, because a mouse cannot swipe. */
+    '.nnp-line{display:none}',
+    '.nnp-pick{display:flex;flex-direction:column;align-items:center;width:100%;min-width:0}',
+    '.nnp-stage{display:none}',
+    '.nnp-cap{display:flex;flex-direction:column;align-items:center;gap:1px;margin:0 0 8px;padding:0 46px;text-align:center}',
+    '.nnp-cap-k{font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#E8A4B5}',
+    '.nnp-cap-n{font-size:1.2rem;font-weight:300;line-height:1.3;letter-spacing:-.01em;color:#FFF8F2}',
+    '.nnp-strip{display:flex;gap:10px;width:100%;box-sizing:border-box;overflow-x:auto;padding:8px 22px;scroll-snap-type:x proximity;scroll-padding:0 22px;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 30px),transparent)}',
+    '.nnp-strip::-webkit-scrollbar{display:none}',
+    '.nnp-chip{flex:none;width:56px;height:56px;padding:0;border:2px solid rgba(255,248,242,.22);border-radius:9999px;overflow:hidden;background:#fff;cursor:pointer;scroll-snap-align:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-color .2s ease}',
+    '.nnp-chip img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}',
+    '@media(hover:hover){.nnp-chip:hover{border-color:rgba(232,164,181,.7)}}',
+    '.nnp-chip:active{transform:scale(.94)}',
+    '.nnp-chip[aria-pressed="true"]{border-color:#E8A4B5;transform:scale(1.1)}',
+    '.nnp-chip:focus-visible{outline:2px solid #E8A4B5;outline-offset:3px}',
+    '@media(min-width:768px){',
+      '.nnp-line{display:block}',
+      '.nnp-pick{align-items:flex-start;margin-top:24px}',
+      '.nnp-stage{display:block;position:relative;width:170px;height:170px;margin:0 0 16px;border-radius:9999px;overflow:hidden;background:#fff;box-shadow:0 0 0 6px rgba(255,248,242,.10),0 18px 40px -12px rgba(0,0,0,.55)}',
+      '.nnp-hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .2s ease,transform .4s cubic-bezier(.34,1.56,.64,1)}',
+      '.nnp-hero.nnp-out{opacity:0;transform:scale(.94)}',
+      '.nnp-cap{align-items:flex-start;margin:0 0 12px;padding:0;text-align:left}',
+      '.nnp-cap-n{font-size:1.35rem}',
+      '.nnp-strip{flex-wrap:wrap;gap:8px;overflow:visible;padding:4px;scroll-snap-type:none;-webkit-mask-image:none;mask-image:none}',
+      '.nnp-chip{width:44px;height:44px}',
+    '}',
+    '@media(min-width:768px) and (max-height:780px){.nnp-stage{display:none}}',
     /* Eyebrow and perks are DESKTOP ONLY. On mobile the panel is a ~164px band
        stacked above the form, and anything more than the line pushes the
        email field off the first screen. */
@@ -464,7 +506,7 @@
     '.nnp-x{position:absolute;top:14px;right:14px;z-index:3;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1px solid rgba(255,248,242,.28);border-radius:9999px;background:rgba(255,248,242,.14);color:#FFF8F2;font-size:16px;line-height:1;cursor:pointer;transition:background .2s ease,border-color .2s ease}',
     '.nnp-x:hover{background:rgba(255,248,242,.26);border-color:rgba(255,248,242,.45)}',
     '.nnp-btn:focus-visible,.nnp-x:focus-visible,.nnp-alt a:focus-visible,.nnp-note a:focus-visible{outline:2px solid #C85478;outline-offset:3px}',
-    '@media(prefers-reduced-motion:reduce){.nnp-backdrop,.nnp-card,.nnp-btn{transition:none!important}}',
+    '@media(prefers-reduced-motion:reduce){.nnp-backdrop,.nnp-card,.nnp-btn,.nnp-chip,.nnp-hero{transition:none!important}}',
   ].join('');
 
   /* ---------------------------------------------------------------- markup */
@@ -510,6 +552,17 @@
             '<div class="nnp-offer">' +
               '<span class="nnp-eyebrow">From our kitchen</span>' +
               '<p class="nnp-line">Sweet news, once in a while.</p>' +
+              '<div class="nnp-pick">' +
+                '<div class="nnp-stage"><img class="nnp-hero" alt="" width="170" height="170"></div>' +
+                '<p class="nnp-cap"><span class="nnp-cap-k">Pick a flavour</span>' +
+                  '<span class="nnp-cap-n" aria-live="polite"></span></p>' +
+                '<div class="nnp-strip" role="group" aria-label="Cake flavours">' +
+                  CAKES.map(function (c, i) {
+                    return '<button type="button" class="nnp-chip" data-i="' + i + '" aria-pressed="false" aria-label="' +
+                      c[0].replace('&', '&amp;') + '"><img src="/popup-cakes/' + c[1] + '.webp" alt="" width="56" height="56" loading="lazy" decoding="async"></button>';
+                  }).join('') +
+                '</div>' +
+              '</div>' +
               '<ul class="nnp-perks">' +
                 '<li>100% eggless &mdash; every cake, every time</li>' +
                 '<li>Collect from Harris Park or Riverstone</li>' +
@@ -588,12 +641,50 @@
     }
     email.addEventListener('input', function () { validate(); err.hidden = true; });
 
+    // Tapping a flavour is only a pick: nothing is stored or sent. It just
+    // carries through to the thank-you button, so the one thing a visitor
+    // told us goes somewhere. Untouched, the button stays "Browse the cakes".
+    var strip = root.querySelector('.nnp-strip');
+    var chips = strip.querySelectorAll('.nnp-chip');
+    var capName = root.querySelector('.nnp-cap-n');
+    var hero = root.querySelector('.nnp-hero');
+    var wide = window.matchMedia('(min-width:768px)');
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var picked = null;
+
+    function pick(i, byUser) {
+      var c = CAKES[i];
+      for (var k = 0; k < chips.length; k++) chips[k].setAttribute('aria-pressed', k === i ? 'true' : 'false');
+      capName.textContent = c[0];
+      if (wide.matches) { // the stage is display:none on phones, so don't fetch for it
+        var src = '/popup-cakes/' + c[1] + '.webp';
+        if (!byUser) hero.src = src;
+        else {
+          hero.classList.add('nnp-out');
+          setTimeout(function () {
+            hero.onload = hero.onerror = function () { hero.classList.remove('nnp-out'); };
+            hero.src = src;
+          }, 140);
+        }
+      } else if (byUser) {
+        chips[i].scrollIntoView({ inline: 'center', block: 'nearest', behavior: calm.matches ? 'auto' : 'smooth' });
+      }
+      if (byUser) picked = c;
+    }
+    strip.addEventListener('click', function (e) {
+      var b = e.target.closest('.nnp-chip');
+      if (b) pick(+b.getAttribute('data-i'), true);
+    });
+    pick(0, false);
+
     function done() {
       root.querySelector('.nnp-form-wrap').innerHTML =
         '<h2 class="nnp-h" id="nnp-h">You&rsquo;re on the list</h2>' +
         '<p class="nnp-sub">Thanks for joining us. We&rsquo;ll be in touch with ' +
           'new flavours and festival pre-order dates.</p>' +
-        '<a class="nnp-btn" href="/shop">Browse the cakes</a>';
+        (picked
+          ? '<a class="nnp-btn" href="/shop/cakes/' + picked[1] + '">See the ' + picked[0].replace('&', '&amp;') + ' cake</a>'
+          : '<a class="nnp-btn" href="/shop">Browse the cakes</a>');
       celebrate();
     }
 
