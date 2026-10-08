@@ -1254,16 +1254,26 @@ content link to the shop at all. It stays a text link, never a third button.
   sessions (70%)**, desktop 1,388, tablet 19 (service account; Supermetrics' trial
   expired 2026-07-09). Phone = swipe strip of date tiles above the form; desktop =
   the same buttons as rows.
-  - "**Diwali is N days away.**" plus up to four upcoming festivals to tap. `FESTIVALS`
-    in `promo.js` is the only list: Navratri 11 Oct, Karwa Chauth 29 Oct, Diwali 8 Nov,
-    Bhai Dooj 11 Nov, Christmas 25 Dec, **all 2026**. Dates come from web sources read
-    2026-10-08 that disagree by a day on some; Diwali 8 Nov is the majority. Days are
-    counted from **Sydney's** today (`Intl`, never UTC). **Add next year's dates before
-    25 Dec 2026**; when none is left the panel falls back to the old static "Sweet news /
-    perks" one, which is correct but less useful.
+  - **It rolls on its own.** The headline is the nearest festival and the rows are the
+    next four, from the `FESTIVALS` calendar in `promo.js` (20 dates, Karwa Chauth 2026 to
+    Christmas 2028). **A festival within `CUTOFF_DAYS = 5` drops off** (headline and rows):
+    there is no time left to pre-order, so the panel moves to the next one (Vaidik,
+    2026-10-08: "keep regulating once the nearest festival is 5 days or earlier"). Beyond
+    `HORIZON_DAYS = 120` nothing headlines, and with nothing in range the old static
+    "Sweet news / perks" panel shows. Days are counted from **Sydney's** today (`Intl`,
+    never UTC). Checked by faking the date at twelve points from 8 Oct 2026 to Dec 2028.
+  - **Date sources, read 2026-10-08**: Raksha Bandhan, Karwa Chauth, Diwali and Bhai Dooj from
+    Drik Panchang pages set to **Noble Park, Victoria** (Australian dates, not India's);
+    Valentine's, Mother's Day (2nd Sunday of May) and Christmas are fixed rules; Holi from
+    the `holidays` Python package (matched web sources for 2027, **2028's 11 Mar is
+    package-only and unverified**). Navratri and Dussehra were dropped: no Australian
+    source found, and Navratri's start can only be inferred. Lunar dates can sit a day
+    either side between communities. **Extend the list before it runs out**:
+    `verify-blog.mjs` prints a WARNING note under 150 days of calendar left (it never
+    fails the deploy; a stale calendar degrades to the static panel).
   - **Taps are stored.** `marketing_contacts.festival_interests text[]` (migration
     `marketing_contacts_festival_interests`, applied 2026-10-08) takes the ids
-    `subscribe.mjs` allowlists; it is a union across signups and a resubmit with nothing
+    `subscribe.mjs` accepts as slugs (`[a-z0-9-]`, 12 at most, not a fixed list, so adding a festival to the calendar needs no server change); it is a union across signups and a resubmit with nothing
     tapped never clears it. Only the signup sends them.
   - ⚠️ **The panel promises "We'll email you when pre-orders open for each".** That is a
     promise to Vaidik's own marketing, so it has to be kept: when a festival pre-order
