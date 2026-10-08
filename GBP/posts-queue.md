@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-08
+
+```yaml
+id: post-hp-2026-10-08
+status: published
+published_at: 2026-10-08
+location: harris-park
+post_type: "Call to action"
+title: "Navratri and Dussehra cake near Wentworthville? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0930.jpg"
+keywords_baited:
+  - Navratri eggless cake Wentworthville
+  - Dussehra family gathering cake Pendle Hill
+  - custom eggless cake Harris Park pickup
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-03
 
 ```yaml
