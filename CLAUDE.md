@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Every fix, decision and brainstorm gets written down in two places, in the same
 response it happens** (Vaidik, 2026-10-06):
 1. **This file** — the rule or the reason, in the section it belongs to, so the
-   next session and the cloud routines cannot undo it.
+   next session and the claude routines cannot undo it.
 2. **The AI Brain** (`/Users/vaidikpatel/Downloads/Home/My AI Brain/`) — the
    outcome, in the note that owns it: shop/checkout work goes in
    `projects/Shop Checkout Build.md` (checklist + dated timeline), business-wide
@@ -20,7 +20,7 @@ response it happens** (Vaidik, 2026-10-06):
    (outcomes not activity, every number sourced, undecided things under
    "Open questions").
 A brainstorm that was rejected is still logged, with why — that is what stops it
-being proposed again. The AI Brain is outside this repo, so cloud routines
+being proposed again. The AI Brain is outside this repo, so claude routines
 cannot reach it; they log to this file only.
 
 ## Verify Before Deciding
@@ -83,7 +83,7 @@ deployed as the `review/` directory; treat it as an independent subproject, not 
   Its own Netlify site, its own `ops/netlify.toml`, its own CSP. See the dedicated section below.
 - **Skills**: project-local skills live in `skills/<name>/`, symlinked into `.claude/skills/<name>/`
   for auto-discovery — see "Skill Resolution" below before editing any skill.
-- Content workflows (blog, GBP, SEO audit) are largely cloud-routine-driven — the rest of this file
+- Content workflows (blog, GBP, SEO audit) are largely claude-routine-driven — the rest of this file
   is their non-negotiable rule set.
 - **`plans/`**: business/strategy plans (quarterly plans, roadmaps, decision docs — not code plans
   or PR descriptions). See **Business plans** under Deployment Workflow below for where these live
@@ -161,25 +161,25 @@ Email is not the web, and these differences are load-bearing:
 
 ## Always Do First
 - **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
-- **Invoke the `blog-write` skill** before writing any blog post, every session, no exceptions — including scheduled/cloud routine runs. Never hand-write a post by copying an existing one from `blog/`.
+- **Invoke the `blog-write` skill** before writing any blog post, every session, no exceptions — including scheduled/claude routine runs. Never hand-write a post by copying an existing one from `blog/`.
 - **Invoke the GBP rules file** before writing any Google Business Profile post: read `GBP/gbp-posts-harris-park.md` or `GBP/gbp-posts-riverstone.md` and complete its **Anti-repetition check** before drafting.
 
 ## Skill Resolution — read this before writing content
 Project skills live as real, git-tracked files under **`skills/<name>/`**. Each is symlinked from
 `.claude/skills/<name>` so it is auto-discovered and invocable by name. **Both the real file and
-the symlink are tracked**, so cloud routines get the skill too.
+the symlink are tracked**, so claude routines get the skill too.
 
 `.gitignore` ignores `.claude/*` but negates `!.claude/skills/`. It must be `.claude/*`, not
 `.claude/` — git will not descend into an excluded directory, so a negation under it never fires.
 Do not "simplify" that back to `.claude/`; it silently un-tracks every project skill.
 
 - ✅ Edit `skills/<name>/SKILL.md` (or via the symlink — same file).
-- ❌ Never edit `~/.claude/plugins/cache/…` — version-pinned, wiped on plugin update, absent in the cloud.
+- ❌ Never edit `~/.claude/plugins/cache/…` — version-pinned, wiped on plugin update, absent in the claude.
 - ⚠️ Symlinking a skill under `.claude/skills/` is now **correct and required**. (Older guidance here
   forbade it because `.claude/` was fully ignored. That is fixed — see the negation above.)
 
 ### `blog-write`
-Source of truth: `skills/blog-write/SKILL.md`. The cloud routine reads it and appends new checklist
+Source of truth: `skills/blog-write/SKILL.md`. The claude routine reads it and appends new checklist
 patterns after every post. If the loaded skill does **not** contain a section titled *"Num Nums
 Bakery HTML Project — Non-negotiable Pre-publish Checklist"*, you have the generic plugin version.
 **Stop and read `skills/blog-write/SKILL.md` directly before writing.**
@@ -187,7 +187,7 @@ Bakery HTML Project — Non-negotiable Pre-publish Checklist"*, you have the gen
 ### `seo-audit`
 Source of truth: `skills/seo-audit/`. A **verbatim, byte-for-byte vendored copy** of the `claude-seo`
 plugin v2.0.0 (`agricidaniel-claude-seo`), used by the NumNums-SEO-Weekly routine because plugins
-are not installed in the cloud sandbox. See `skills/seo-audit/VENDORED.md`.
+are not installed in the claude sandbox. See `skills/seo-audit/VENDORED.md`.
 
 - ❌ **Never edit anything under `skills/seo-audit/`.** It must stay identical to upstream so the
   0–100 health score is comparable week over week and against upstream.
@@ -1245,6 +1245,21 @@ content link to the shop at all. It stays a text link, never a third button.
   policy) and sends the welcome email once (see **Email**). It deliberately does **not** call
   `MAKE_ORDER_HOOK_URL`: that hook feeds the web-order scenario, which emails the
   shop "New web order" for every payload it receives.
+- **The popup's right panel is a flavour picker, built phone-first (2026-10-08).**
+  GA4 for the 90 days to 2026-10-08: **mobile 3,264 of 4,671 sessions (70%)**,
+  desktop 1,388, tablet 19 (pulled with the service account; Supermetrics' trial
+  expired 2026-07-09 and returns `TRIAL_EXPIRED`). So on a phone the band above
+  the form is a swipe strip of 15 flavour photos (native scroll-snap, 56px chips),
+  shorter than the old 164px band; desktop gets a 170px stage plus the same chips
+  wrapped into a grid (a mouse cannot swipe), and the stage hides under 780px of
+  height. Photos are 360px square crops in `popup-cakes/` (15 files, 156KB,
+  `loading="lazy"`), made from `shop/cakes/*.webp` with `cake-framing.ts`
+  offsets: re-cut them if a shop photo changes. A pick is **never stored or
+  sent**; it only turns the success button into "See the Rasmalai cake" →
+  `/shop/cakes/<slug>` (untouched, it stays "Browse the cakes"). No price, "most
+  ordered" or scarcity claim is on it. The old "Sweet news" line is desktop-only
+  now. Storing the pick as an interest would need a `subscribe.mjs` + column
+  change and its own consent wording: not done.
 - **Env vars (public site only, never on the ops site, never in a file)**:
   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_URL`,
   `SUPABASE_SERVICE_ROLE_KEY`, `ONLINE_ORDERS_USER_ID`, `MAKE_ORDER_HOOK_URL`, and the
@@ -1595,7 +1610,7 @@ Repetition is the #1 recurring failure on this project. Before writing anything:
 Every strategy/roadmap/decision-plan markdown file (e.g. quarterly plans like
 `Next Big Project — 2026 Q4.md`) gets saved to **both**:
 1. `My AI Brain/projects/` (the source of truth — where it's read and updated from), and
-2. `plans/` in this repo (so it travels with the codebase and cloud routines can read it).
+2. `plans/` in this repo (so it travels with the codebase and claude routines can read it).
 
 When a plan is exported to PDF, save the PDF alongside the `.md` in **both** locations
 too. When a plan is revised, update both copies in the same pass — don't let one drift
