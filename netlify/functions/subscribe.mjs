@@ -21,8 +21,12 @@ import { siteFor } from '../lib/email-shell.mjs';
 import { unsubscribeUrl } from '../lib/unsubscribe.mjs';
 import { welcomeEmail } from '../lib/welcome-email.mjs';
 
-/** Festival ids the popup may send. Anything else is dropped, never stored. */
-const FESTIVALS = ['navratri', 'karwa-chauth', 'diwali', 'bhai-dooj', 'christmas'];
+/**
+ * Festival ids from the popup: slugs only, at most a dozen. A fixed allowlist
+ * here would have to be kept in step with the calendar in promo.js, and the
+ * calendar grows every year. The column is text, so a slug is all it can hold.
+ */
+const FESTIVAL_ID = /^[a-z0-9-]{1,40}$/;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -82,7 +86,7 @@ export default async (req) => {
   if (!EMAIL_RE.test(email)) return json(400, { error: 'That email address does not look right.' });
   const name = String(body?.name ?? '').trim().slice(0, 80);
   const picked = Array.isArray(body?.festivals)
-    ? [...new Set(body.festivals.filter((f) => FESTIVALS.includes(f)))]
+    ? [...new Set(body.festivals.filter((f) => typeof f === 'string' && FESTIVAL_ID.test(f)))].slice(0, 12)
     : [];
 
   const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {

@@ -787,6 +787,15 @@ const FACTS = {
 // ---------- Report ----------
 const n = posts.length;
 console.log(`posts ${n} | cards ${cardSlugs.length} | sitemap ${sitemapSlugs.length} | llms ${llmsSlugs.length} | redirects ${redirectSlugs.length} (= posts + 1)`);
+// Popup festival calendar: never fails a deploy (a stale calendar is a quiet
+// degrade, the panel falls back), but says so before it gets there.
+{
+  const src = readFileSync('promo.js', 'utf8');
+  const dates = [...src.matchAll(/\['[a-z-]+', '[^']+', (\d{4}), (\d{1,2}), (\d{1,2})\]/g)]
+    .map((m) => Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  const left = dates.length ? Math.round((Math.max(...dates) - Date.now()) / 864e5) : 0;
+  notes.push(`popup festivals: ${dates.length} dates, ${left} days of calendar left${left < 150 ? ' — WARNING: add next year\'s dates to FESTIVALS in promo.js' : ''}`);
+}
 for (const note of notes) console.log(`note: ${note}`);
 
 if (failures.length) {

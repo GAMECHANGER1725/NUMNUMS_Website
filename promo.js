@@ -401,31 +401,58 @@
     }
   }
 
-  // Festival dates, [id, name, y, m, d, headline?]. Verified against web
-  // sources 2026-10-08 (they disagree by a day on some, Diwali's 8 Nov is the
-  // majority). Add next year's before the last one passes: once none is left
-  // the panel falls back to the static "Sweet news" one, which is fine, only
-  // less useful. `id` is what subscribe.mjs allowlists and stores.
+  // Festival calendar, [id, name, y, m, d]. Order does not matter: upcoming()
+  // sorts. Sources, read 2026-10-08:
+  //   - Raksha Bandhan, Karwa Chauth, Diwali, Bhai Dooj: Drik Panchang pages
+  //     for Noble Park, Victoria (so Australian dates, not India's), 2026-28.
+  //   - Valentine's Day, Mother's Day (2nd Sunday of May, AU), Christmas: fixed rules.
+  //   - Holi: the `holidays` Python package, which matched web sources for 2027;
+  //     2028 (11 Mar) is package-only and UNVERIFIED.
+  // Lunar dates can sit a day either side between sources and communities.
+  // Extend this list before the last date nears: verify-blog.mjs prints a
+  // warning when fewer than 150 days of calendar remain. Ids are year-less on
+  // purpose (they are stored as interests); subscribe.mjs accepts any slug.
   var FESTIVALS = [
-    ['navratri', 'Navratri begins', 2026, 10, 11],
     ['karwa-chauth', 'Karwa Chauth', 2026, 10, 29],
-    ['diwali', 'Diwali', 2026, 11, 8, 1],
+    ['diwali', 'Diwali', 2026, 11, 8],
     ['bhai-dooj', 'Bhai Dooj', 2026, 11, 11],
-    ['christmas', 'Christmas', 2026, 12, 25, 1]
+    ['christmas', 'Christmas', 2026, 12, 25],
+    ['valentines-day', 'Valentine’s Day', 2027, 2, 14],
+    ['holi', 'Holi', 2027, 3, 22],
+    ['mothers-day', 'Mother’s Day', 2027, 5, 9],
+    ['raksha-bandhan', 'Raksha Bandhan', 2027, 8, 17],
+    ['karwa-chauth', 'Karwa Chauth', 2027, 10, 19],
+    ['diwali', 'Diwali', 2027, 10, 29],
+    ['bhai-dooj', 'Bhai Dooj', 2027, 10, 31],
+    ['christmas', 'Christmas', 2027, 12, 25],
+    ['valentines-day', 'Valentine’s Day', 2028, 2, 14],
+    ['holi', 'Holi', 2028, 3, 11],
+    ['mothers-day', 'Mother’s Day', 2028, 5, 14],
+    ['raksha-bandhan', 'Raksha Bandhan', 2028, 8, 5],
+    ['karwa-chauth', 'Karwa Chauth', 2028, 10, 7],
+    ['diwali', 'Diwali', 2028, 10, 17],
+    ['bhai-dooj', 'Bhai Dooj', 2028, 10, 19],
+    ['christmas', 'Christmas', 2028, 12, 25]
   ];
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // A festival inside CUTOFF_DAYS has no time left for a pre-order, so it drops
+  // off (headline and rows) and the panel moves on to the next. HORIZON_DAYS
+  // stops a far-off date headlining; with nothing in range the static panel shows.
+  var CUTOFF_DAYS = 5;
+  var HORIZON_DAYS = 120;
 
-  // Whole days from today in Sydney to the festival. Sydney wall-clock parts,
+  // Whole days from today in Sydney to each festival. Sydney wall-clock parts,
   // never UTC or +86400000ms, for the same reason the shop's lead time is.
   function upcoming() {
     var t = new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney', year: 'numeric', month: '2-digit', day: '2-digit' })
       .format(new Date()).split('-');
     var today = Date.UTC(+t[0], +t[1] - 1, +t[2]);
     return FESTIVALS.map(function (f) {
-      return { id: f[0], name: f[1], m: f[3], d: f[4], hero: !!f[5], days: Math.round((Date.UTC(f[2], f[3] - 1, f[4]) - today) / 864e5) };
-    }).filter(function (f) { return f.days >= 0; });
+      return { id: f[0], name: f[1], m: f[3], d: f[4], days: Math.round((Date.UTC(f[2], f[3] - 1, f[4]) - today) / 864e5) };
+    }).filter(function (f) { return f.days > CUTOFF_DAYS && f.days <= HORIZON_DAYS; })
+      .sort(function (x, y) { return x.days - y.days; });
   }
-  function inDays(n) { return n > 1 ? 'in ' + n + ' days' : n === 1 ? 'tomorrow' : 'today'; }
+  function inDays(n) { return 'in ' + n + ' days'; }
   var PROMPT = 'Tap the ones you want pre-order dates for.';
 
   /* ---------------------------------------------------------------- styles */
@@ -533,10 +560,10 @@
   /* ---------------------------------------------------------------- markup */
 
   function festPanel(fests) {
-    var head = fests.filter(function (f) { return f.hero; })[0] || fests[0];
+    var head = fests[0];
     return '<div class="nnp-offer nnp-offer--fest">' +
       '<span class="nnp-fe">Festival pre-orders</span>' +
-      '<h3 class="nnp-fh">' + head.name + ' is ' + (head.days > 1 ? head.days + ' days away.' : head.days === 1 ? 'tomorrow.' : 'today.') + '</h3>' +
+      '<h3 class="nnp-fh">' + head.name + ' is ' + head.days + ' days away.</h3>' +
       '<div class="nnp-fests" role="group" aria-label="Festivals">' +
         fests.slice(0, 4).map(function (f) {
           return '<button type="button" class="nnp-fest" aria-pressed="false" data-id="' + f.id + '" data-name="' + f.name + '">' +
@@ -551,7 +578,7 @@
     '</div>';
   }
 
-  // Once every date above has passed: the original panel, so nothing is blank.
+  // Nothing in range (see HORIZON_DAYS): the original panel, so nothing is blank.
   function staticPanel() {
     return '<div class="nnp-offer">' +
       '<span class="nnp-eyebrow">From our kitchen</span>' +
