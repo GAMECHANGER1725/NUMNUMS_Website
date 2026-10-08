@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-08
+
+```yaml
+id: post-rs-2026-10-08
+status: published
+published_at: 2026-10-08
+location: riverstone
+post_type: "Call to action"
+title: "Eggless team morning tea cake for Rouse Hill and Stanhope Gardens offices"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0670.jpg"
+keywords_baited:
+  - eggless office birthday cake Rouse Hill
+  - eggless cake for team morning tea Stanhope Gardens
+  - 10 inch eggless cake serves 20 Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-08
 
 ```yaml
