@@ -1379,6 +1379,19 @@ could not see from outside the repo. The research and the parked items are in
   with a 1200ms cap as a safety net rather than the normal path. Measured
   after: `/order` 3475ms → 754ms on fast 4G, `/` 4369ms → 2126ms on slow 4G.
   `verify-blog.mjs` fails the deploy on any page that reintroduces it.
+- **The homepage hero's poster is the video's own first frame (2026-10-08).**
+  `brand_assets/hero-poster.webp` (1920px, 47KB) is frame 0 of
+  `Hero_Section_compressed.mp4`. It used to be `num_nums_HPphoto.jpeg`, a blurry
+  518×388 photo of the **shopfront**, so every visitor saw the shopfront for
+  200–500ms (the video is `preload="none"`) and then the hero **jumped to a
+  cake** — Vaidik's report, present on the live site and the new build alike.
+  A poster must show what the video will show first, or the swap reads as a
+  glitch. If `Hero_Section*` is ever re-cut, re-extract it:
+  `ffmpeg -i Hero_Section_compressed.mp4 -vf "select=eq(n\,0),scale=1920:-1"
+  -frames:v 1 poster.png && cwebp -q 78 poster.png -o brand_assets/hero-poster.webp`
+  (this ffmpeg has no WebP encoder; `cwebp` is on the machine). The shopfront
+  photo stays in use on `about.html`, schema and blog cards; only the hero poster
+  and its preload `<link>` in `index.html` changed.
 - **The shop fires the GA4 funnel now.** It fired *nothing* before — no
   container, no events — so the only part of the site that can take money was
   the only part reporting nothing. `shop-app/lib/analytics.ts` owns
