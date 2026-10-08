@@ -642,6 +642,17 @@ main site.
   custom field — the docket name, not the cardholder's. The webhook reads them
   off the session and rewrites `+61` as `0`. What was lost: nothing can insist
   it is a *mobile* rather than a landline before payment.
+- **The code box accepts a paste, separators and all (2026-10-08, Vaidik).** It had
+  `maxLength={CODE_LEN}`, which the browser applies to a pasted string *before*
+  `onChange` strips non-digits, so `1234 5678` or `123-456-78` was cut to six digits
+  and sat there. `maxLength` is gone; `onChange` strips non-digits and slices to 8,
+  and the eighth digit auto-submits as before.
+- **Marketing tick stays UNTICKED — Vaidik asked for it on by default (2026-10-08) and
+  it was not built.** The Spam Act needs express consent (an active step; the sender
+  carries the burden of proof, and `subscribe`/sign-up store the consent as a record),
+  and law-firm guidance reads a pre-ticked box as not that. A pre-ticked box would
+  also write `marketing_email/sms = true` for people who never chose it. Compliant
+  ways to lift opt-in are listed in the AI Brain note; ask before revisiting.
 - **Sign-up flags a bad email or short password inline, on blur.** The button is
   disabled until every field is valid, and with only the mobile field explaining
   itself a customer with `not-an-email` or a 5-character password saw a dead button

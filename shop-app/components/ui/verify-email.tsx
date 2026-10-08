@@ -94,8 +94,11 @@ export function VerifyEmail({
           // and iOS offer to fill it straight from the message.
           inputMode="numeric"
           autoComplete="one-time-code"
-          maxLength={CODE_LEN}
-          placeholder="000000"
+          // No maxLength: the browser would cut a pasted "1234 5678" or
+          // "123-456-78" to eight characters *before* onChange strips the
+          // separators, leaving six digits and a box that looks broken.
+          // onChange does the trimming.
+          placeholder="00000000"
           value={code}
           aria-invalid={error != null}
           aria-describedby={error ? "vf-error" : undefined}
@@ -103,7 +106,7 @@ export function VerifyEmail({
             const next = e.target.value.replace(/\D/g, "").slice(0, CODE_LEN);
             setCode(next);
             setError(null);
-            // Six digits is the whole answer — asking them to press a button
+            // Eight digits is the whole answer — asking them to press a button
             // after the last one is a step that carries no information.
             if (next.length === CODE_LEN) verify(next);
           }}
