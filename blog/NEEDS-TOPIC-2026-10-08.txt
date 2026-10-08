@@ -1,0 +1,18 @@
+NumNums-Blog-Writer run: 2026-10-08
+Outcome: NO POST PUBLISHED, NO PAGE IMPROVED. Every path checked; none yielded work.
+This is an exhausted ledger plus a clean GSC result. It is NOT a broken credential:
+google_auth.py --check reported Tier 2, Search Console API [OK].
+
+1. Ledger gap: none open. The only Tier 3 row (rasmalai-cake-sydney) was claimed 2026-09-03.
+2. Live GSC (28d, 300 queries) - every unbranded query with real volume is already owned:
+   eggless cake near me 1057 / eggless cake sydney 483 / eggless cakes sydney 428 /
+   eggless cake shop 399 / eggless cakes near me 314 / cake shop near me 265 /
+   eggless cakes 227 / kids birthday cakes 129 (owners exist; ranking, not coverage, is the issue).
+   photo cake (84) -> blog/photo-cake-sydney; best chocolate cake sydney (77) ->
+   blog/eggless-chocolate-cake-sydney; gender reveal cake sydney (33) ->
+   blog/eggless-cakes-gender-reveal-sydney; birthday cake and smash cake (29) ->
+   blog/cake-smash-cakes-sydney; barfi near me (92) -> /indian-sweet (local-pack issue, see ledger).
+   The rest is branded navigational traffic. A new page would cannibalise an owner.
+3. Improve rows: Dairy-free, Halal, Number cakes, Indian sweets were DONE earlier.
+   Nut-free: defect gone (owner now has "nut free cake", 43 impr, pos 9.5), marked DONE.
+   Gluten-free: 7 impressions in 90d and the bakery does not make gluten-free cakes; closed, no action.
