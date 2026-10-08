@@ -1245,21 +1245,33 @@ content link to the shop at all. It stays a text link, never a third button.
   policy) and sends the welcome email once (see **Email**). It deliberately does **not** call
   `MAKE_ORDER_HOOK_URL`: that hook feeds the web-order scenario, which emails the
   shop "New web order" for every payload it receives.
-- **The popup's right panel is a flavour picker, built phone-first (2026-10-08).**
-  GA4 for the 90 days to 2026-10-08: **mobile 3,264 of 4,671 sessions (70%)**,
-  desktop 1,388, tablet 19 (pulled with the service account; Supermetrics' trial
-  expired 2026-07-09 and returns `TRIAL_EXPIRED`). So on a phone the band above
-  the form is a swipe strip of 15 flavour photos (native scroll-snap, 56px chips),
-  shorter than the old 164px band; desktop gets a 170px stage plus the same chips
-  wrapped into a grid (a mouse cannot swipe), and the stage hides under 780px of
-  height. Photos are 360px square crops in `popup-cakes/` (15 files, 156KB,
-  `loading="lazy"`), made from `shop/cakes/*.webp` with `cake-framing.ts`
-  offsets: re-cut them if a shop photo changes. A pick is **never stored or
-  sent**; it only turns the success button into "See the Rasmalai cake" →
-  `/shop/cakes/<slug>` (untouched, it stays "Browse the cakes"). No price, "most
-  ordered" or scarcity claim is on it. The old "Sweet news" line is desktop-only
-  now. Storing the pick as an interest would need a `subscribe.mjs` + column
-  change and its own consent wording: not done.
+- **The popup's right panel is a festival countdown (2026-10-08).** Vaidik rejected
+  the first version, a flavour-photo picker (built earlier the same day, deleted: it
+  repeated what the cake photos already said), and chose option A of three concepts
+  designed on a canvas (the others, **spin for a flavour** and **how many are you
+  feeding** with a size slider, were not chosen and can be built from that canvas).
+  Built phone-first: GA4 for the 90 days to 2026-10-08 is **mobile 3,264 of 4,671
+  sessions (70%)**, desktop 1,388, tablet 19 (service account; Supermetrics' trial
+  expired 2026-07-09). Phone = swipe strip of date tiles above the form; desktop =
+  the same buttons as rows.
+  - "**Diwali is N days away.**" plus up to four upcoming festivals to tap. `FESTIVALS`
+    in `promo.js` is the only list: Navratri 11 Oct, Karwa Chauth 29 Oct, Diwali 8 Nov,
+    Bhai Dooj 11 Nov, Christmas 25 Dec, **all 2026**. Dates come from web sources read
+    2026-10-08 that disagree by a day on some; Diwali 8 Nov is the majority. Days are
+    counted from **Sydney's** today (`Intl`, never UTC). **Add next year's dates before
+    25 Dec 2026**; when none is left the panel falls back to the old static "Sweet news /
+    perks" one, which is correct but less useful.
+  - **Taps are stored.** `marketing_contacts.festival_interests text[]` (migration
+    `marketing_contacts_festival_interests`, applied 2026-10-08) takes the ids
+    `subscribe.mjs` allowlists; it is a union across signups and a resubmit with nothing
+    tapped never clears it. Only the signup sends them.
+  - ⚠️ **The panel promises "We'll email you when pre-orders open for each".** That is a
+    promise to Vaidik's own marketing, so it has to be kept: when a festival pre-order
+    opens, email the contacts whose `festival_interests` contains its id (marketing mail
+    needs the signed unsubscribe, see **Email**). If that is not going to happen, change
+    the copy in `festPanel`/`done()` rather than leave it.
+  - Phone band is ~220px (the old static one was 164px); the email field still lands on
+    the first screen at 390x844 and 320x568.
 - **Env vars (public site only, never on the ops site, never in a file)**:
   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_URL`,
   `SUPABASE_SERVICE_ROLE_KEY`, `ONLINE_ORDERS_USER_ID`, `MAKE_ORDER_HOOK_URL`, and the
