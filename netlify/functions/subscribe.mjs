@@ -21,6 +21,9 @@ import { siteFor } from '../lib/email-shell.mjs';
 import { unsubscribeUrl } from '../lib/unsubscribe.mjs';
 import { welcomeEmail } from '../lib/welcome-email.mjs';
 
+/** Festival ids the popup may send. Anything else is dropped, never stored. */
+const FESTIVALS = ['navratri', 'karwa-chauth', 'diwali', 'bhai-dooj', 'christmas'];
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** The exact words the subscriber agreed to, stored with the consent. */
@@ -78,6 +81,9 @@ export default async (req) => {
   const email = String(body?.email ?? '').trim().toLowerCase();
   if (!EMAIL_RE.test(email)) return json(400, { error: 'That email address does not look right.' });
   const name = String(body?.name ?? '').trim().slice(0, 80);
+  const picked = Array.isArray(body?.festivals)
+    ? [...new Set(body.festivals.filter((f) => FESTIVALS.includes(f)))]
+    : [];
 
   const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },
@@ -90,7 +96,7 @@ export default async (req) => {
     // (written by fulfil.mjs) has no opt-in, and an unsubscribed one is
     // re-joining — both count as new. Resubmitting the popup does not.
     const { data: before } = await db.from('marketing_contacts')
-      .select('email_opt_in,unsubscribed_at').eq('email', email).maybeSingle();
+      .select('email_opt_in,unsubscribed_at,festival_interests').eq('email', email).maybeSingle();
     const isNew = !before || !before.email_opt_in || !!before.unsubscribed_at;
 
     const { error } = await db.from('marketing_contacts').upsert({
@@ -104,6 +110,9 @@ export default async (req) => {
       consent_source: `promo-popup: ${CONSENT_WORDING}`,
       unsubscribed_at: null,
       updated_at: now,
+      // Union with what they picked before, and only written when they picked
+      // something: resubmitting the popup with nothing tapped must not wipe it.
+      ...(picked.length && { festival_interests: [...new Set([...(before?.festival_interests ?? []), ...picked])] }),
     }, { onConflict: 'email' });
     // supabase-js reports a failed write in `error`, it does not throw — so
     // without this a refused upsert answered "subscribed" to someone who was not.
