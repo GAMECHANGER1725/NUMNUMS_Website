@@ -22,6 +22,8 @@ export function SignUpPanel({ className }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [terms, setTerms] = useState(false);
+  // Flag a field once it has been left, not while it is still being typed.
+  const [seen, setSeen] = useState({ email: false, password: false });
   // "done" splits three ways. A Google sign-in is already verified, so sending
   // that customer off to confirm an email that will never arrive is a dead end;
   // an email sign-up goes through "verify" and comes out the other side already
@@ -39,6 +41,8 @@ export function SignUpPanel({ className }: { className?: string }) {
   // can serve. `create-checkout` enforces the same rule server-side.
   const phoneValid = MOBILE_RE.test(normalisePhone(phone));
   const phoneShown = phone.trim() === "" || phoneValid;
+  const emailBad = seen.email && email !== "" && !emailValid;
+  const passwordBad = seen.password && password !== "" && !passwordValid;
   const canSubmit = emailValid && passwordValid && phoneValid && terms && status === "idle";
 
   useEffect(() => {
@@ -160,8 +164,16 @@ export function SignUpPanel({ className }: { className?: string }) {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="field-input"
+                onBlur={() => setSeen((v) => ({ ...v, email: true }))}
+                aria-invalid={emailBad}
+                aria-describedby={emailBad ? "su-email-err" : undefined}
+                className={cn("field-input", emailBad && "border-destructive")}
               />
+              {emailBad && (
+                <p id="su-email-err" className="mt-1 text-[0.72rem] leading-snug text-destructive">
+                  Enter an email like name@example.com.
+                </p>
+              )}
             </div>
 
             <div>
@@ -176,7 +188,10 @@ export function SignUpPanel({ className }: { className?: string }) {
                   placeholder={`At least ${MIN_PASSWORD} characters`}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="field-input pr-11"
+                  onBlur={() => setSeen((v) => ({ ...v, password: true }))}
+                  aria-invalid={passwordBad}
+                  aria-describedby={passwordBad ? "su-password-err" : undefined}
+                  className={cn("field-input pr-11", passwordBad && "border-destructive")}
                 />
                 <button
                   type="button"
@@ -187,6 +202,11 @@ export function SignUpPanel({ className }: { className?: string }) {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              {passwordBad && (
+                <p id="su-password-err" className="mt-1 text-[0.72rem] leading-snug text-destructive">
+                  Use at least {MIN_PASSWORD} characters.
+                </p>
+              )}
             </div>
 
             <div>

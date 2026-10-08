@@ -642,6 +642,12 @@ main site.
   custom field — the docket name, not the cardholder's. The webhook reads them
   off the session and rewrites `+61` as `0`. What was lost: nothing can insist
   it is a *mobile* rather than a landline before payment.
+- **Sign-up flags a bad email or short password inline, on blur.** The button is
+  disabled until every field is valid, and with only the mobile field explaining
+  itself a customer with `not-an-email` or a 5-character password saw a dead button
+  and no reason (found by the live browser test, 2026-10-08). `/shop/log-in` has its
+  own `layout.tsx` for the title because the page is a client component and cannot
+  export `metadata`; it had inherited the homepage's title.
 - **Verification is an eight-digit code, not a link, and it signs them in.** A
   link opens a *different tab*, so the tab they filled the form in never learns
   they confirmed and sits on "check your email" forever; they come back, find
