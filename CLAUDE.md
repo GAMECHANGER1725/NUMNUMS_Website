@@ -1051,6 +1051,7 @@ content link to the shop at all. It stays a text link, never a third button.
   `rm -rf shop && cp -R shop-app/out shop`. The Netlify Functions are
   `netlify/functions/{create-checkout,stripe-webhook,order-status,subscribe}.mjs`,
   sharing `netlify/lib/shared.mjs`.
+- **The shop's tab icon is the TP chef, not Next's triangle (2026-10-09, Vaidik).** `shop-app/app/favicon.ico` was Next's placeholder, so every `/shop` page showed a black triangle. The icon is now `shop-app/app/icon.png`, a lossless PNG of `brand_assets/Logo_TParent_56.webp` (112px, the file Vaidik named). `apple-icon.png` is the 180px `icons/apple-touch-icon.png` the rest of the site uses, because the 112px file scaled up to an iPhone home screen goes soft. Next writes the `<link>` tags from these two files, so keep a `favicon.ico` out of `app/`: that file was the triangle. If the logo changes, re-cut `icon.png` from the new file and re-run the build-and-copy above, since `shop/` is what is deployed.
 - **`ops/catalog.mjs` is the only place a price is written down**, now including
   `SURCHARGE` (premium flavour → size → **cents**) and `listPriceCents`. It used to live
   only in `order.html`'s inline script, gated by nothing, and the checkout charges off it.
