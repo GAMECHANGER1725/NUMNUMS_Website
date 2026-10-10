@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-10
+
+```yaml
+id: post-hp-2026-10-10
+status: published
+published_at: 2026-10-10
+location: harris-park
+post_type: "Call to action"
+title: "Mango cake near Guildford or Pendle Hill? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_2168.jpeg"
+keywords_baited:
+  - eggless mango cake Guildford
+  - custom eggless cake Pendle Hill
+  - mango cake with no eggs Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-09
 
 ```yaml
