@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-10
+
+```yaml
+id: post-rs-2026-10-10
+status: published
+published_at: 2026-10-10
+location: riverstone
+post_type: "Call to action"
+title: "Weekday cake pickup from 6am for Box Hill and Riverstone commuters"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1643.jpg"
+keywords_baited:
+  - early morning cake pickup Riverstone
+  - eggless birthday cake Box Hill
+  - office birthday cake Riverstone Shopping Centre
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-10
 
 ```yaml
