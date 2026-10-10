@@ -280,6 +280,16 @@ main site.
   starting `= + - @` is executed as a formula by Excel and Sheets. Do not "simplify" that escaping.
 - **The staff page is read-only.** Roles and store scoping are what RLS enforces; they get changed
   in Supabase so the change is deliberate, not by an admin mis-tapping their own row.
+- **A website order tags itself: `orders.from_website`** (Vaidik, 2026-10-10: "when orders
+  from the site come, it should be automatically tagged in the OPS"). `set_order_defaults()`
+  sets it on insert whenever `stripe_session_id` is present, so it holds for whichever build
+  of the public site is live and no person ever types it. The card shows an outline
+  **Website** tag (`.tag-web` — an outline because every fill colour already means a
+  state), the order shows "Came from", the export has a Website column, and the baker guard
+  refuses changes to it. **No human step, on purpose:** a staff Yes/No toggle was built and
+  rejected the same day ("no human required"), and an automatic match of `/order` WhatsApp
+  enquiries (a `web_enquiries` table fed by the form) was proposed and declined. Custom-cake
+  enquiries are therefore untagged; do not bring either back without asking.
 - **Every card shows Custom or Normal beside its pickup time** (`kindTag` in `app.mjs`, used by
   the order log, the baker's queue and the print board). A normal cake carrying no tag meant a
   blank had to be read as "normal", which is what an unloaded card also looks like.

@@ -245,6 +245,10 @@ button { background: none; border: 0; cursor: pointer; }
 .tag-normal { background: var(--dough); color: var(--taupe); }
 .tag-walkin { background: rgba(139,127,118,.16); color: var(--slate); }
 .tag-store  { background: var(--dough); color: var(--ink-soft); }
+/* Where an order came from, not a stage it is at — so an outline, not one of
+   the fills that each already mean a state (rose custom/unpaid, crust baked,
+   sage at store, slate done). */
+.tag-web    { background: transparent; box-shadow: inset 0 0 0 1px var(--dough-line); color: var(--ink-soft); }
 .docket-when {
   margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
   font-size: 13px; font-weight: 500;

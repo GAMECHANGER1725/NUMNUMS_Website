@@ -442,6 +442,7 @@ function docketHtml(o, now, { showStore = false, bakedDone = false } = {}) {
       <div class="docket-head">
         <span class="docket-no">${esc(o.order_no)}</span>
         ${o.walk_in ? '<span class="tag tag-walkin">In store</span>' : ''}
+        ${o.from_website ? '<span class="tag tag-web">Website</span>' : ''}
         ${showStore ? `<span class="tag tag-store">${esc(storeLabel(o.store))}</span>` : ''}
         <span class="docket-when">${kindTag(o)}${timeFmt.format(new Date(o.due_at))}</span>
       </div>
@@ -1762,6 +1763,7 @@ async function openOrder(id) {
       ${me.role === 'admin' ? field('Cost', o.cost != null ? money.format(o.cost) : '') : ''}
       ${field('Kind', o.kind === 'custom' ? 'Custom cake'
         : `${o.kind === 'pav' ? 'Pav' : 'Normal'} · ${o.walk_in ? 'bought in store' : 'ordered ahead'}`, 'span-2')}
+      ${o.from_website ? field('Came from', 'Website — bought and paid for online', 'span-2') : ''}
     </div>
 
     ${orderPrints.length ? `
@@ -2973,7 +2975,7 @@ const FIELD_LABEL = {
   ordered_at: 'Order time', flavour: 'Flavour', size: 'Size',
   wording: 'Wording', design_notes: 'Design notes', notes: 'Notes',
   price: 'Price', discount: 'Discount', deposit: 'Deposit', photo_path: 'Photos', photo_paths: 'Photos',
-  store: 'Store', kind: 'Cake type', walk_in: 'Walk-in',
+  store: 'Store', kind: 'Cake type', walk_in: 'Walk-in', from_website: 'From the website',
 };
 const fieldLabel = (k) => FIELD_LABEL[k] || k.replace(/_/g, ' ');
 
@@ -3631,6 +3633,7 @@ const CSV_COLUMNS = [
   ['Pickup',       (o) => csvDate(o.due_at)],
   ['Status',       (o) => STATUS_LABEL[o.status] || o.status],
   ['Kind',         (o) => (o.kind === 'custom' ? 'Custom' : o.walk_in ? 'Normal (in store)' : 'Normal (ordered)')],
+  ['Website',      (o) => (o.from_website ? 'Yes' : 'No')],
   ['Customer',     (o) => o.customer_name],
   ['Phone',        (o) => o.customer_phone],
   ['Flavour',      (o) => o.flavour],
