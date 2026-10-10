@@ -1649,6 +1649,12 @@ Repetition is the #1 recurring failure on this project. Before writing anything:
 - **Depth:** Surfaces should have a layering system (base → elevated → floating), not all sit at the same z-plane.
 
 ## Deployment Workflow
+- **Check what was *published* before blaming a commit for a GSC move.** Auto-publish is
+  off, so `main` and production can be weeks apart: nothing was published 14 Sep – 7 Oct
+  2026, and the late-September click dip happened with none of that period's commits live
+  (`seo-baseline/2026-10-10/CHECKPOINT-REVIEW.md`). Read publish times with
+  `netlify api listSiteDeploys` (site `7874621e-…`, page through, `published_at`).
+  Publishing one change at a time is what makes an SEO effect attributable.
 - GitHub → Netlify sync is automatic (Netlify builds on push), but **Netlify auto-publish is OFF** —
   the user publishes each build manually via the Netlify UI, so a push does not go live by itself.
 - **Auto-push every code edit.** At the end of any response where you edited code (not docs-only
