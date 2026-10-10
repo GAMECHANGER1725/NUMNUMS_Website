@@ -185,8 +185,12 @@ June–July and declined. They include pages with obvious commercial intent:
 `/blog/eggless-wedding-cakes-sydney`, `/blog/eggless-chocolate-cake-sydney`,
 `/blog/theme-cakes-sydney`, `/blog/indian-sweets-harris-park-riverstone-sydney`, plus
 15 suburb pages. This is Google's quality/duplication verdict on the bulk-written corpus.
-It **predates** the September dip and did not cause it, but it is the largest structural
-problem on the site. Do not request indexing for these one by one: a page Google
+**Correction (same day):** this does not simply predate the dip. The crawl dates are
+old, but the pages kept earning impressions until September: **30 live pages vanished
+from search during September, 14 of them on 22–27 Sep**, the opening days of the
+September 2026 spam update. Their combined click loss is small (~20 clicks in five
+weeks), so they still do not explain the dip, but Google is actively pruning the
+bulk-written pages. Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Do not request indexing for these one by one: a page Google
 crawled and declined needs to be merged into its owner or made distinct first.
 
 **Google Business Profile, interactions per month:**
