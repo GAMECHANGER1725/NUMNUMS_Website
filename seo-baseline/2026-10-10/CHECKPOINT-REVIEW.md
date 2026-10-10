@@ -162,3 +162,47 @@ lost clicks because its CTR fell (1.48% → 0.88%) on extra impressions, not ran
 - Query-level cuts cover named queries only; GSC anonymises the long tail.
 - The research was web-sourced; Pitru Paksha start and any demand effect from it or
   from school holidays are **not confirmed** by any source.
+
+---
+
+## Addendum — same day, done in the browser (info.numnumsbakery@gmail.com)
+
+**Done in Search Console:**
+- `sitemap.xml` submitted (read "Couldn't fetch" at submission, which is the normal
+  pending state; the live file returns 200, `application/xml`, 240 URLs, valid XML to a
+  Googlebot UA). **Re-check it reads Success before removing `sitemap_index.xml`**,
+  which is still working (Success, 241 pages, read 4 Oct) and was therefore kept.
+- `wp-sitemap.xml` removed.
+- Indexing requested: `/locations` (Google now reports it as *URL is unknown to
+  Google*), `/order`, `/cakes` (to pick up the 301), `/blog/number-cakes-sydney`.
+- No manual action. No spam or security message in the inbox.
+
+**New finding — 40 of the 240 sitemap URLs (17%) are not indexed** (URL Inspection API
+over every `<loc>`, raw result in `inspect_all.json`): 35 *Crawled – currently not
+indexed*, 3 *Discovered – not indexed*, 2 *unknown to Google*. Most were crawled once in
+June–July and declined. They include pages with obvious commercial intent:
+`/blog/eggless-cake-sydney`, `/blog/eggless-cakes-parramatta`,
+`/blog/eggless-wedding-cakes-sydney`, `/blog/eggless-chocolate-cake-sydney`,
+`/blog/theme-cakes-sydney`, `/blog/indian-sweets-harris-park-riverstone-sydney`, plus
+15 suburb pages. This is Google's quality/duplication verdict on the bulk-written corpus.
+It **predates** the September dip and did not cause it, but it is the largest structural
+problem on the site. Do not request indexing for these one by one: a page Google
+crawled and declined needs to be merged into its owner or made distinct first.
+
+**Google Business Profile, interactions per month:**
+
+| | Aug | Sep | Oct (≈7 days of data) |
+|---|---:|---:|---:|
+| Harris Park | 575 | 589 | 76 |
+| Riverstone | 380 | 387 | 56 |
+
+September held level with August on both profiles while website clicks fell, so total
+Google demand for the shops did not drop in September. The early-October dip on the
+profiles matches the school holidays and long weekend. Both profiles show **"Google
+updates (2)"** pending review; left untouched.
+
+**GA4 events (60 days):** `order_form_submit` 14, `enquiry_click` 24,
+`marketplace_click` 1, `form_start` 481. **None is a key event**, which is why organic
+key events read 0. Marking `order_form_submit` and `enquiry_click` as key events (and
+`purchase` once the first shop sale fires it) is a two-click change in GA4 Admin →
+Events. Awaiting Vaidik's go-ahead.
