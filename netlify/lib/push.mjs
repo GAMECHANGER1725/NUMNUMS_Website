@@ -3,7 +3,9 @@
  * Gmail every 2-3 days, so an emailed order can sit unseen until pickup).
  *
  * Who gets it: every phone that turned the bell on in ops (`push_subscriptions`)
- * whose owner can see the order's store (`profiles.stores`). A shared tablet
+ * whose owner is an admin or the baker (Vaidik, 2026-10-11: not counter staff)
+ * and can see the order's store (`profiles.stores`). The role check lives here,
+ * not only in the hidden bell, because this is the gate that sends. A shared tablet
  * signed up by two people rings once, so endpoints are deduped.
  *
  * Never allowed to fail the order: the row is already written and the emails
@@ -13,6 +15,7 @@ import webpush from 'web-push';
 import { PUSH_PUBLIC_KEY } from '../../ops/catalog.mjs';
 
 const SUBJECT = 'mailto:info.numnumsbakery@gmail.com';
+export const NOTIFY_ROLES = ['admin', 'baker'];
 
 export async function notifyStaff(db, store, message) {
   const key = process.env.VAPID_PRIVATE_KEY;
@@ -20,7 +23,8 @@ export async function notifyStaff(db, store, message) {
   webpush.setVapidDetails(SUBJECT, PUSH_PUBLIC_KEY, key);
 
   const { data, error } = await db.from('push_subscriptions')
-    .select('endpoint, p256dh, auth, profiles!inner(stores)')
+    .select('endpoint, p256dh, auth, profiles!inner(stores, role)')
+    .in('profiles.role', NOTIFY_ROLES)
     .contains('profiles.stores', [store]);
   if (error) { console.error('push: could not read subscriptions', error); return 0; }
 

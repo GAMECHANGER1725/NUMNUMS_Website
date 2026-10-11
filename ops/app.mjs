@@ -111,6 +111,9 @@ async function start() {
   buildTabs();
   view = homeView();
   if (!linked) await render();
+  // Admins and the baker only (push.mjs enforces the same list); staff never
+  // get the bell, so it cannot offer a notification that will not come.
+  $('bell-btn').classList.toggle('hidden', !['admin', 'baker'].includes(me.role));
   paintBell();
 
   if (linked) { await openLinked(location.hash); return; }

@@ -308,7 +308,9 @@ main site.
   - **The sender is `netlify/lib/push.mjs`, on the public site**, called from
     `fulfilSession` after the Make hook, so it fires once per paid order (the
     duplicate guard returns before side effects). It notifies every subscribed phone
-    whose owner's `profiles.stores` contains the order's store, deduped by endpoint,
+    whose owner is **an admin or the baker** (`NOTIFY_ROLES`; Vaidik, 2026-10-11:
+    not counter staff, whose bell is hidden) and whose `profiles.stores` contains
+    the order's store, deduped by endpoint,
     drops 404/410 endpoints, and never fails the order. **`VAPID_PRIVATE_KEY`** is a
     public-site Netlify env var; unset, nothing is sent and nothing breaks. The
     public half is `PUSH_PUBLIC_KEY` in `ops/catalog.mjs` — **replacing the pair
