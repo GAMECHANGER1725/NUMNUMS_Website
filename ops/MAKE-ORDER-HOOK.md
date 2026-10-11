@@ -25,14 +25,21 @@ is still one call):
   "kind": "web-order",
   "store": "harris-park",
   "due_at": "2026-09-20T04:00:00.000Z",
-  "name": "Priya Sharma",
+  "name": "Priya",
   "phone": "0412345678",
   "email": "priya@example.com",
   "cakes": 2,
   "order_nos": ["HP-1842", "HP-1843"],
-  "total": 229.98,
-  "coupon_code": "NN-A1B2C3",
-  "coupon_expires_at": "2026-12-11T09:20:00.000Z"
+  "total": 44.98,
+  "lines": [
+    { "order_no": "HP-1842", "flavour": "Chocolate", "size": "8 inch",
+      "wording": "Happy Birthday Priya",
+      "ops_url": "https://ops.numnumsbakery.com.au/#order=<uuid>&store=harris-park" }
+  ],
+  "cakes_text": "HP-1842: Chocolate, 8 inch\nWriting: \u201cHappy Birthday Priya\u201d\n\nHP-1843: ...",
+  "cakes_html": "<b>HP-1842</b>: Chocolate, 8 inch<br>Writing: ...<br><br>...",
+  "ops_links_html": "<a href=\"...\">Open HP-1842 in ops</a><br>...",
+  "ops_url": "https://ops.numnumsbakery.com.au/#order=<uuid>&store=harris-park"
 }
 ```
 
@@ -41,17 +48,13 @@ Notes on the fields:
 - **`due_at`** is UTC ISO — format it to Sydney local in Make before showing it
   to anyone (`due_at` formatted with timezone `Australia/Sydney`), or a
   midnight order reads an hour wrong depending on the DST flip.
-- **`phone`** is `""` if the customer left it blank — it's optional. Don't
-  send an SMS module a blank string.
-- **`coupon_code`** and **`coupon_expires_at`** are `null` if we somehow have
-  no email for the customer (shouldn't happen — Stripe Checkout always
-  collects one), or if the coupon insert failed. **Route on this being
-  non-null before sending the coupon email**, not on `kind` — a null coupon
-  with a webhook retry is a real state.
-- There is no `line_items` breakdown (size/flavour per cake) in this payload —
-  it only carries the count and the total. If you want per-cake detail in the
-  notification, that's a small addition to the webhook, not something to fake
-  in Make.
+- **`total`** is the **deposit charged**, not the cakes' full price.
+- **`cakes_html`** goes in both emails (flavour, size and the writing, one block
+  per cake; the customer's writing is already HTML-escaped). **`cakes_text`** is
+  the same for a plain-text field such as a phone notification.
+- **`ops_links_html`** goes at the bottom of the **shop** email only; each link
+  opens that order in ops after sign-in. **`ops_url`** is the first cake's link.
+- The coupon fields are gone (no discount codes since 2026-10-06).
 
 ## 3. Two routes off one trigger
 
@@ -67,6 +70,11 @@ alert. Suggested text:
 > {{order_nos}} · ${{total}}
 
 ### Route B — customer coupon email (filter: `coupon_code` is not empty)
+
+> ⚠️ **Out of date.** The coupon email was deleted on 2026-10-06. The live
+> scenario (7790457) sends a customer **order confirmation** instead, which should
+> show `{{cakes_html}}` and say the balance is due on collection. Kept below only
+> as history.
 
 Add a filter on this route: **coupon_code — Text operators — Exists**.
 
