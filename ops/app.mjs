@@ -97,11 +97,24 @@ async function start() {
   $('me-name').textContent = me.name;
   $('me-role').textContent = me.role;
 
-  store = me.stores[0] || 'harris-park';
+  // `#order=<id>&store=<code>` is the link the new-order email and phone
+  // notification carry. The hash survives the sign-in screen (it is the same
+  // page), and the store has to be switched first because the order log only
+  // holds the active store's orders.
+  const link = new URLSearchParams(location.hash.slice(1));
+  const linked = link.get('order');
+  store = (me.stores.includes(link.get('store')) && link.get('store')) || me.stores[0] || 'harris-park';
   buildStoreSwitch();
   buildTabs();
   view = homeView();
   await render();
+
+  if (linked) {
+    history.replaceState(null, '', location.pathname);
+    if (orders.some((o) => o.id === linked)) await openOrder(linked);
+    else toast('That order is not on this screen. It may be for a shop you cannot see, or it was deleted.', 'error');
+    return;
+  }
 
   // First sign-in for this person: walk them round the real buttons. Nobody
   // gets sat down with this app, so it has to introduce itself.

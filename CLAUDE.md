@@ -290,6 +290,11 @@ main site.
   rejected the same day ("no human required"), and an automatic match of `/order` WhatsApp
   enquiries (a `web_enquiries` table fed by the form) was proposed and declined. Custom-cake
   enquiries are therefore untagged; do not bring either back without asking.
+- **`#order=<id>&store=<code>` opens one order** (2026-10-11). It is the link in the
+  new-order email and the phone notification. `start()` reads it, switches to that
+  store first (the log only holds the active store's orders), opens the order and
+  clears the hash; the hash survives the sign-in screen because sign-in is the same
+  page. An order the reader cannot see says so in a toast rather than opening nothing.
 - **Every card shows Custom or Normal beside its pickup time** (`kindTag` in `app.mjs`, used by
   the order log, the baker's queue and the print board). A normal cake carrying no tag meant a
   blank had to be read as "normal", which is what an unloaded card also looks like.
@@ -1367,6 +1372,14 @@ content link to the shop at all. It stays a text link, never a third button.
   hook:** the scenario emails the shop for every payload, which is why `subscribe.mjs`
   does not call it. The `total` in the payload is the **deposit charged**, not the cake's
   full price, which is why the email says "Deposit paid".
+  Since 2026-10-11 the payload also carries **what each cake is** (`cakeLines` in
+  `fulfil.mjs`): `lines[]` (order_no, flavour, size, wording, ops_url), plus
+  ready-to-map `cakes_text`, `cakes_html`, `ops_links_html` and `ops_url`, so a
+  Make module maps one field instead of iterating. The wording is escaped in the
+  HTML fields because a stranger typed it. Customer email shows `cakes_html`; the
+  shop alert shows `cakes_html` and ends with `ops_links_html`. The Make templates
+  are edited in Make, not here, so adding a field here does nothing until the
+  scenario maps it.
 - **Payment rails, and why the array in `create-checkout` is short.** `card` covers
   Visa/Mastercard/Amex/eftpos **and** Apple Pay, Google Pay and Stripe Link — those
   three are dashboard toggles riding the card rails at the same 1.7% + A$0.30, not

@@ -78,7 +78,7 @@ export async function fulfilSession(db, session) {
   }
 
   // One array insert, so a three-cake cart cannot half-land.
-  const { data: inserted, error } = await db.from('orders').insert(rows).select('order_no');
+  const { data: inserted, error } = await db.from('orders').insert(rows).select('id, order_no, flavour, size, wording');
   if (error && error.code !== DUPLICATE) throw error;
   if (error?.code === DUPLICATE) return 'already recorded';
 
@@ -100,9 +100,35 @@ export async function fulfilSession(db, session) {
         phone, email, cakes: count,
         order_nos: (inserted ?? []).map((r) => r.order_no),
         total: (session.amount_total ?? 0) / 100,
+        ...cakeLines(inserted ?? [], m.store),
       }),
     }).catch((e) => console.error('make hook failed', e));
   }
 
   return 'ok';
+}
+
+const OPS = 'https://ops.numnumsbakery.com.au/';
+const escHtml = (t) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+/**
+ * What each cake is, for the two Make emails and the phone notification:
+ * `lines` for anything that wants to iterate, and ready-made text/HTML so a
+ * Make module can map one field. The ops link opens that exact order
+ * (`#order=` is read by `start()` in `ops/app.mjs`). The customer's wording is
+ * escaped in the HTML: it is text a stranger typed.
+ */
+export function cakeLines(rows, store) {
+  const lines = rows.map((r) => ({
+    order_no: r.order_no, flavour: r.flavour, size: r.size, wording: r.wording ?? '',
+    ops_url: `${OPS}#order=${r.id}&store=${store}`,
+  }));
+  const say = (l) => `${l.flavour}, ${l.size}${l.wording ? ` \u2014 \u201c${l.wording}\u201d` : ''}`;
+  return {
+    lines,
+    cakes_text: lines.map((l) => `${l.order_no}: ${say(l)}`).join('\n'),
+    cakes_html: lines.map((l) => `<b>${escHtml(l.order_no)}</b>: ${escHtml(say(l))}`).join('<br>'),
+    ops_links_html: lines.map((l) => `<a href="${escHtml(l.ops_url)}">Open ${escHtml(l.order_no)} in ops</a>`).join('<br>'),
+    ops_url: lines[0]?.ops_url ?? OPS,
+  };
 }

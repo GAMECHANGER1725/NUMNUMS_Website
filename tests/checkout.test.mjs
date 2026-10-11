@@ -11,6 +11,7 @@ import {
   earliestDueDay, BadRequest, MAX_LINES, MAX_WORDING,
 } from '../netlify/lib/shared.mjs';
 import { listPriceCents, SIZES, FLAVOURS } from '../ops/catalog.mjs';
+import { cakeLines } from '../netlify/lib/fulfil.mjs';
 
 let n = 0;
 const test = (name, fn) => { fn(); n++; };
@@ -323,6 +324,18 @@ test('a reduced total and a deposit compose without losing a cent', () => {
   assert.equal(deposits.reduce((a, b) => a + b, 0), depositTotal);
   // Every cake owes a non-negative balance at the counter.
   net.forEach((c, i) => assert.ok(c - deposits[i] >= 0, `line ${i} owes negative`));
+});
+
+// ── what the order emails and notification say ─────────────────────────────
+test('each cake reaches Make with its flavour, size and its own ops link', () => {
+  const out = cakeLines([
+    { id: 'a1', order_no: 'HP-1791', flavour: 'Chocolate', size: '8 inch', wording: 'Happy <b>Birthday</b>' },
+    { id: 'b2', order_no: 'HP-1792', flavour: 'Mango', size: '6 inch', wording: null },
+  ], 'harris-park');
+  assert.equal(out.cakes_text, 'HP-1791: Chocolate, 8 inch \u2014 \u201cHappy <b>Birthday</b>\u201d\nHP-1792: Mango, 6 inch');
+  assert.ok(!out.cakes_html.includes('<b>Birthday'), 'customer wording must be escaped in HTML');
+  assert.equal(out.ops_url, 'https://ops.numnumsbakery.com.au/#order=a1&store=harris-park');
+  assert.ok(out.ops_links_html.includes('#order=b2&#38;store=harris-park'));
 });
 
 console.log(`checkout: ${n} checks pass`);
