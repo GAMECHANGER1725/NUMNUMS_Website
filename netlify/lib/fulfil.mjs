@@ -19,6 +19,8 @@
  * The caller must have established `payment_status === 'paid'` from Stripe.
  * Throws on any other failure, so the webhook can answer 500 and be retried.
  */
+import { notifyStaff } from './push.mjs';
+
 const DUPLICATE = '23505';
 
 export async function fulfilSession(db, session) {
@@ -105,6 +107,10 @@ export async function fulfilSession(db, session) {
     }).catch((e) => console.error('make hook failed', e));
   }
 
+  // The phone notification (push.mjs). Same never-fail rule as the hook above.
+  await notifyStaff(db, m.store, newOrderMessage(inserted ?? [], m.store, m.due_at, name))
+    .catch((e) => console.error('push failed', e));
+
   return 'ok';
 }
 
@@ -132,5 +138,27 @@ export function cakeLines(rows, store) {
     cakes_html: lines.map((l) => `<b>${escHtml(l.order_no)}</b>: ${escHtml(`${l.flavour}, ${l.size}`)}<br>Writing: ${escHtml(writing(l))}`).join('<br><br>'),
     ops_links_html: lines.map((l) => `<a href="${escHtml(l.ops_url)}">Open ${escHtml(l.order_no)} in ops</a>`).join('<br>'),
     ops_url: lines[0]?.ops_url ?? OPS,
+  };
+}
+
+const STORE_LABEL = { 'harris-park': 'Harris Park', riverstone: 'Riverstone' };
+const pickupFmt = new Intl.DateTimeFormat('en-AU', {
+  timeZone: 'Australia/Sydney', weekday: 'short', day: 'numeric', month: 'short',
+  hour: 'numeric', minute: '2-digit', hour12: true,
+});
+
+/**
+ * What the lock screen says. First name and the cakes only: a phone number on
+ * a lock screen is readable by anyone at the counter. Everything else is one
+ * tap away in ops, including the WhatsApp copy.
+ */
+export function newOrderMessage(rows, store, dueAt, name) {
+  const { lines, ops_url } = cakeLines(rows, store);
+  const cakes = lines.map((l) => `${l.order_no}: ${l.flavour}, ${l.size}`).join('\n');
+  return {
+    title: `New web order \u00b7 ${STORE_LABEL[store] ?? store}`,
+    body: `${cakes}\nCollect ${pickupFmt.format(new Date(dueAt))} \u00b7 ${String(name || '').split(' ')[0]}`,
+    url: ops_url,
+    tag: lines[0]?.order_no,
   };
 }

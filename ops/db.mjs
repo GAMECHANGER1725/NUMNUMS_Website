@@ -117,6 +117,30 @@ export async function listProfiles() {
 }
 
 /**
+ * New-order notifications on this phone (netlify/lib/push.mjs sends them).
+ * The browser owns the subscription; this row says whose it is, so the sender
+ * can match it to the stores that person can see. RLS scopes every call to the
+ * signed-in person's own rows. Not order data, so no writeStamp bump: nothing
+ * caches it.
+ */
+export async function savePush(sub) {
+  const { endpoint, keys } = sub.toJSON();
+  const { error } = await sb.from('push_subscriptions')
+    .upsert({ endpoint, p256dh: keys.p256dh, auth: keys.auth }, { onConflict: 'user_id,endpoint' });
+  if (error) throw error;
+}
+
+export async function dropPush(endpoint) {
+  const { error } = await sb.from('push_subscriptions').delete().eq('endpoint', endpoint);
+  if (error) throw error;
+}
+
+export async function hasPush(endpoint) {
+  const { data } = await sb.from('push_subscriptions').select('endpoint').eq('endpoint', endpoint).maybeSingle();
+  return Boolean(data);
+}
+
+/**
  * Bumped by every write in this file.
  *
  * Anything caching a read can watch this and know its copy is stale without

@@ -242,3 +242,12 @@ export const BUSINESS = {
   email: 'info.numnumsbakery@gmail.com',
   site: 'numnumsbakery.com.au',
 };
+
+/**
+ * Public half of the web-push key pair (VAPID). Public by design: the ops app
+ * hands it to the browser when a phone turns notifications on, and
+ * netlify/lib/push.mjs signs with the private half, which lives only in the
+ * public site's Netlify env as VAPID_PRIVATE_KEY. Replacing this key orphans
+ * every phone already signed up — each would have to tap the bell again.
+ */
+export const PUSH_PUBLIC_KEY = 'BHkIYgVJ43SyNq-CQTixcUwzYp-FYGnky6c8fUXSEG-prEU4EW7kbSjKGQMdrJUdLx0wxLiB43uIA6afOFVs4XI';

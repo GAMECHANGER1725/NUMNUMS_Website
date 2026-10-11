@@ -13,7 +13,7 @@ import {
   invoiceUrl, deleteOrder, deletedOrders,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote, listReviewAsks, markReviewsAsked,
-  writeStamp,
+  writeStamp, savePush, dropPush, hasPush,
   listPrintJobs, listPrintFlags, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
 import {
@@ -25,7 +25,7 @@ import {
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm, reviewAsks,
 } from './stats.mjs';
-import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine, PAV, pavSize }
+import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine, PAV, pavSize, PUSH_PUBLIC_KEY }
   from './catalog.mjs';
 import { receiptPdf, receiptName } from './receipt.mjs';
 import { helpHtml, startTour, tourSeen, markTourSeen, printsSeenAt, markPrintsSeen } from './help.mjs';
@@ -82,6 +82,10 @@ $('login-form').addEventListener('submit', async (e) => {
 });
 
 $('signout').addEventListener('click', async () => {
+  // A signed-out phone must stop getting this person's order notifications.
+  // Only their row goes: the browser subscription is the device's, and on the
+  // shared tablet someone else may still be using it.
+  await pushEndpoint().then((ep) => ep && dropPush(ep)).catch(() => {});
   await signOut();
   me = null;
   $('app').classList.add('hidden');
@@ -101,25 +105,109 @@ async function start() {
   // notification carry. The hash survives the sign-in screen (it is the same
   // page), and the store has to be switched first because the order log only
   // holds the active store's orders.
-  const link = new URLSearchParams(location.hash.slice(1));
-  const linked = link.get('order');
-  store = (me.stores.includes(link.get('store')) && link.get('store')) || me.stores[0] || 'harris-park';
+  const linked = new URLSearchParams(location.hash.slice(1)).get('order');
+  store = me.stores[0] || 'harris-park';
   buildStoreSwitch();
   buildTabs();
   view = homeView();
-  await render();
+  if (!linked) await render();
+  paintBell();
 
-  if (linked) {
-    history.replaceState(null, '', location.pathname);
-    if (orders.some((o) => o.id === linked)) await openOrder(linked);
-    else toast('That order is not on this screen. It may be for a shop you cannot see, or it was deleted.', 'error');
-    return;
-  }
+  if (linked) { await openLinked(location.hash); return; }
 
   // First sign-in for this person: walk them round the real buttons. Nobody
   // gets sat down with this app, so it has to introduce itself.
   if (!tourSeen(me.id)) runTour();
 }
+
+/**
+ * Open `#order=<id>&store=<code>`: from start(), from a hash change, or from a
+ * notification tapped while the app was already open (sw.js posts the URL).
+ * The store is switched first because the order log only holds the active
+ * store's orders.
+ */
+async function openLinked(hash) {
+  const link = new URLSearchParams(String(hash).replace(/^[^#]*#?/, ''));
+  const id = link.get('order');
+  if (!id || !me) return;
+  history.replaceState(null, '', location.pathname);
+  const want = link.get('store');
+  if (me.stores.includes(want)) { store = want; buildStoreSwitch(); }
+  closeDrawer();
+  closeSheet();
+  view = homeView();
+  buildTabs();
+  await render();
+  if (orders.some((o) => o.id === id)) await openOrder(id);
+  else toast('That order is not on this screen. It may be for a shop you cannot see, or it was deleted.', 'error');
+}
+window.addEventListener('hashchange', () => openLinked(location.hash));
+navigator.serviceWorker?.addEventListener('message', (e) => e.data?.open && openLinked(e.data.open));
+
+// ── New-order notifications ────────────────────────────────────────────────
+// iOS delivers a web push only to an app added to the Home Screen (manifest +
+// sw.js), and only asks permission from a tap — hence a bell, not a prompt on
+// load. The sender is netlify/lib/push.mjs, on the public site.
+const PUSH_OK = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const swReady = PUSH_OK ? navigator.serviceWorker.register('./sw.js').then(() => navigator.serviceWorker.ready) : null;
+
+async function pushEndpoint() {
+  if (!swReady) return null;
+  const sub = await (await swReady).pushManager.getSubscription();
+  return sub?.endpoint ?? null;
+}
+
+async function paintBell(on) {
+  if (on === undefined) {
+    const ep = await pushEndpoint().catch(() => null);
+    on = Boolean(ep) && Notification.permission === 'granted' && await hasPush(ep).catch(() => false);
+  }
+  const b = $('bell-btn');
+  b.setAttribute('aria-pressed', String(on));
+  b.setAttribute('aria-label', on ? 'New-order notifications are on. Tap to turn off.' : 'Turn on new-order notifications');
+}
+
+const urlKey = (b64) => {
+  const raw = atob((b64 + '='.repeat((4 - b64.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+};
+
+$('bell-btn').addEventListener('click', async () => {
+  const iphone = /iPhone|iPad/.test(navigator.userAgent);
+  const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (!PUSH_OK) {
+    toast(iphone && !installed
+      ? 'On iPhone, add this app to your Home Screen first: tap Share, then Add to Home Screen. Open it from there and tap the bell again.'
+      : 'This browser cannot show notifications.', 'error');
+    return;
+  }
+  const b = $('bell-btn');
+  b.disabled = true;
+  try {
+    if (b.getAttribute('aria-pressed') === 'true') {
+      const ep = await pushEndpoint();
+      if (ep) await dropPush(ep);
+      paintBell(false);
+      toast('Notifications off on this phone.');
+      return;
+    }
+    if (await Notification.requestPermission() !== 'granted') {
+      toast('Notifications are blocked. Turn them on in Settings, Notifications, NN Ops, then tap the bell again.', 'error');
+      return;
+    }
+    const reg = await swReady;
+    const sub = await reg.pushManager.getSubscription()
+      || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlKey(PUSH_PUBLIC_KEY) });
+    await savePush(sub);
+    paintBell(true);
+    toast('Notifications on. This phone will buzz for every paid website order.');
+  } catch (err) {
+    console.warn('push setup failed', err);
+    toast(`Could not turn on notifications: ${err.message || err}`, 'error');
+  } finally {
+    b.disabled = false;
+  }
+});
 
 /** Where each role starts, and where the tour wants to be run from. */
 const homeView = () => (me.role === 'baker' ? 'bake' : 'log');
@@ -1698,6 +1786,39 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet
 const field = (k, v, cls = '') =>
   `<div class="${cls}"><div class="detail-k">${k}</div><div class="detail-v${v ? '' : ' quiet'}">${v ? esc(v) : '—'}</div></div>`;
 
+/**
+ * The order as one WhatsApp message, the way it used to be typed into the two
+ * shop groups by hand (Vaidik, 2026-10-11). *bold* is WhatsApp's own markup.
+ * Money lines follow the sheet's own rule: the baker does not see them.
+ */
+function whatsappText(o) {
+  const net = netPrice(o);
+  const paid = paidOn(o);
+  const kind = o.kind === 'custom' ? 'Custom cake' : o.kind === 'pav' ? 'Pav' : 'Normal cake';
+  const photos = orderPhotos(o).length;
+  const lines = [
+    `*${o.order_no}* · ${storeLabel(o.store)}${o.from_website ? ' · Website order' : ''}`,
+    `*Pick up:* ${dateTimeFmt.format(new Date(o.due_at))}`,
+    '',
+    `*Customer:* ${o.customer_name}`,
+    o.customer_phone ? `*Phone:* ${o.customer_phone}` : null,
+    o.customer_email ? `*Email:* ${o.customer_email}` : null,
+    '',
+    `*${kind}:* ${o.flavour}, ${o.size}`,
+    `*Writing:* ${o.wording ? `"${o.wording}"` : 'none'}`,
+    o.design_notes ? `*Design:* ${o.design_notes}` : null,
+    photos ? `*Photos:* ${photos} in ops` : null,
+    o.notes ? `*Notes:* ${o.notes}` : null,
+    ...(me.role === 'baker' ? [] : [
+      '',
+      `*Price:* ${money.format(net)}`,
+      `*Paid:* ${money.format(paid)}`,
+      `*To collect:* ${money.format(Math.max(0, net - paid))}`,
+    ]),
+  ];
+  return lines.filter((l) => l !== null).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 async function openOrder(id) {
   const o = orders.find((x) => x.id === id);
   if (!o) return;
@@ -1777,6 +1898,12 @@ async function openOrder(id) {
       ${field('Kind', o.kind === 'custom' ? 'Custom cake'
         : `${o.kind === 'pav' ? 'Pav' : 'Normal'} · ${o.walk_in ? 'bought in store' : 'ordered ahead'}`, 'span-2')}
       ${o.from_website ? field('Came from', 'Website — bought and paid for online', 'span-2') : ''}
+    </div>
+
+    <div class="row-2 wa-row">
+      <button type="button" class="btn btn-outline" id="wa-copy">Copy for WhatsApp</button>
+      <a class="btn btn-outline" id="wa-send" target="_blank" rel="noopener"
+         href="https://wa.me/?text=${encodeURIComponent(whatsappText(o))}">Send on WhatsApp</a>
     </div>
 
     ${orderPrints.length ? `
@@ -1929,6 +2056,15 @@ async function openOrder(id) {
       </p>
       <button type="button" class="btn btn-danger" id="order-delete" style="width:100%;">Delete order</button>` : ''}
   `);
+
+  $('wa-copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(whatsappText(o));
+      toast('Copied. Paste it into the WhatsApp group.');
+    } catch {
+      toast('Could not copy. Use Send on WhatsApp instead.', 'error');
+    }
+  });
 
   // Two taps, same as deleting a print job: this is not undoable from the app,
   // and it sits directly under a button people press all day.

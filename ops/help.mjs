@@ -1041,6 +1041,28 @@ export const HELP = [
       <p>Tap a row to open the cake it belongs to.</p>`,
   },
   {
+    title: 'Website orders on your phone, and WhatsApp',
+    sub: 'The bell, and Copy for WhatsApp',
+    roles: ALL,
+    body: `
+      <p>The <strong>bell</strong> at the top makes this phone buzz the moment a customer
+        pays for a cake on the website, for the shops you can see. Tap the notification and
+        the order opens.</p>
+      <ul class="help-list">
+        <li><strong>On iPhone, add the app to your Home Screen first</strong>: open it in
+          Safari or Chrome, tap Share, then <em>Add to Home Screen</em>. Open it from the new
+          icon, sign in, and tap the bell. iPhones only send notifications to an app on the
+          Home Screen.</li>
+        <li>Allow notifications when the phone asks. The bell turns rose when it is on.
+          Tap it again to turn it off.</li>
+        <li>Signing out stops this phone getting your notifications.</li>
+      </ul>
+      <p>Every order has <strong>Copy for WhatsApp</strong>: it copies the customer, the
+        pickup, the cake, the writing and what is still to pay as one message, ready to
+        paste into the shop group. <strong>Send on WhatsApp</strong> opens WhatsApp with the
+        message already in it, so you only pick the group.</p>`,
+  },
+  {
     title: 'Cancelling vs deleting',
     sub: 'They are not the same thing',
     roles: ['admin'],

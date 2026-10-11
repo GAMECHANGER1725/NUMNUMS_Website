@@ -290,6 +290,37 @@ main site.
   rejected the same day ("no human required"), and an automatic match of `/order` WhatsApp
   enquiries (a `web_enquiries` table fed by the form) was proposed and declined. Custom-cake
   enquiries are therefore untagged; do not bring either back without asking.
+- **Paid web orders buzz the phone: web push from ops, free** (Vaidik, 2026-10-11 —
+  Tarun reads Gmail every 2-3 days, so an emailed order could sit until pickup;
+  Pushover was refused because it costs, ntfy because order details would cross a
+  public server). The pieces, and why each is there:
+  - **The bell** (`#bell-btn`, top bar) turns it on for *this phone* — iOS only asks
+    permission from a tap, so there is no prompt on load. It writes a
+    `push_subscriptions` row (user_id, endpoint, keys; RLS: own rows only). Off and
+    sign-out delete only **that person's row**, never the browser subscription: on
+    the shared tablet somebody else may still be using it.
+  - **iOS needs the Home Screen.** `manifest.webmanifest` (standalone) + `sw.js` are
+    what make ops installable and able to receive a push; Safari in a tab never gets
+    one. The bell says so when tapped outside the installed app.
+  - **`sw.js` handles push and notificationclick only — no fetch handler, no cache.**
+    A caching worker is how an app gets stuck on last week's code. Do not add one.
+    The ops CSP allows it with `worker-src 'self'` (it was `'none'`).
+  - **The sender is `netlify/lib/push.mjs`, on the public site**, called from
+    `fulfilSession` after the Make hook, so it fires once per paid order (the
+    duplicate guard returns before side effects). It notifies every subscribed phone
+    whose owner's `profiles.stores` contains the order's store, deduped by endpoint,
+    drops 404/410 endpoints, and never fails the order. **`VAPID_PRIVATE_KEY`** is a
+    public-site Netlify env var; unset, nothing is sent and nothing breaks. The
+    public half is `PUSH_PUBLIC_KEY` in `ops/catalog.mjs` — **replacing the pair
+    orphans every phone**, each has to tap the bell again.
+  - **The lock screen shows first name and cakes only** (`newOrderMessage`), never
+    the phone number: a lock screen is readable by anyone at the counter.
+  - Only website orders notify. Orders typed into ops do not (whoever typed it knows).
+- **Every order has Copy for WhatsApp / Send on WhatsApp** (2026-10-11): the order as
+  one message for the shop groups, the way it used to be typed by hand
+  (`whatsappText` in `app.mjs`, WhatsApp `*bold*`). Money lines follow the sheet's
+  rule, so the baker's copy has none. Send uses `wa.me/?text=`, which opens WhatsApp
+  with the text filled in and lets them pick the group.
 - **`#order=<id>&store=<code>` opens one order** (2026-10-11). It is the link in the
   new-order email and the phone notification. `start()` reads it, switches to that
   store first (the log only holds the active store's orders), opens the order and

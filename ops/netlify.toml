@@ -36,7 +36,8 @@
     #   script-src  — jsdelivr only, for the pinned supabase-js ESM build
     #   connect-src — the Supabase project only (REST, auth and storage)
     #   img-src     — blob: covers the local preview before a photo uploads
-    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://stnmoxsojqbbtgjwkzrc.supabase.co https://numnumsbakery.com.au; connect-src 'self' https://stnmoxsojqbbtgjwkzrc.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'; worker-src 'none'"
+    #   worker-src  — sw.js, which exists only to receive new-order notifications
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://stnmoxsojqbbtgjwkzrc.supabase.co https://numnumsbakery.com.au; connect-src 'self' https://stnmoxsojqbbtgjwkzrc.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'; worker-src 'self'; manifest-src 'self'"
 
 # The camera is how a custom cake gets its design photo, so it stays allowed
 # here even though the blanket policy above turns off everything else.
