@@ -332,7 +332,9 @@ test('each cake reaches Make with its flavour, size and its own ops link', () =>
     { id: 'a1', order_no: 'HP-1791', flavour: 'Chocolate', size: '8 inch', wording: 'Happy <b>Birthday</b>' },
     { id: 'b2', order_no: 'HP-1792', flavour: 'Mango', size: '6 inch', wording: null },
   ], 'harris-park');
-  assert.equal(out.cakes_text, 'HP-1791: Chocolate, 8 inch \u2014 \u201cHappy <b>Birthday</b>\u201d\nHP-1792: Mango, 6 inch');
+  assert.equal(out.cakes_text,
+    'HP-1791: Chocolate, 8 inch\nWriting: \u201cHappy <b>Birthday</b>\u201d\n\nHP-1792: Mango, 6 inch\nWriting: none');
+  assert.ok(out.cakes_html.includes('Writing: &#8220;Happy &#60;b&#62;Birthday') || out.cakes_html.includes('Writing: \u201cHappy &#60;b&#62;Birthday'));
   assert.ok(!out.cakes_html.includes('<b>Birthday'), 'customer wording must be escaped in HTML');
   assert.equal(out.ops_url, 'https://ops.numnumsbakery.com.au/#order=a1&store=harris-park');
   assert.ok(out.ops_links_html.includes('#order=b2&#38;store=harris-park'));

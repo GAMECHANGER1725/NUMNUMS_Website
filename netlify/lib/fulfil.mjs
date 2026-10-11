@@ -123,11 +123,13 @@ export function cakeLines(rows, store) {
     order_no: r.order_no, flavour: r.flavour, size: r.size, wording: r.wording ?? '',
     ops_url: `${OPS}#order=${r.id}&store=${store}`,
   }));
-  const say = (l) => `${l.flavour}, ${l.size}${l.wording ? ` \u2014 \u201c${l.wording}\u201d` : ''}`;
+  // The writing gets its own line, and says "none" when there is none, so a
+  // blank reads as the customer's choice rather than as a field that failed.
+  const writing = (l) => (l.wording ? `\u201c${l.wording}\u201d` : 'none');
   return {
     lines,
-    cakes_text: lines.map((l) => `${l.order_no}: ${say(l)}`).join('\n'),
-    cakes_html: lines.map((l) => `<b>${escHtml(l.order_no)}</b>: ${escHtml(say(l))}`).join('<br>'),
+    cakes_text: lines.map((l) => `${l.order_no}: ${l.flavour}, ${l.size}\nWriting: ${writing(l)}`).join('\n\n'),
+    cakes_html: lines.map((l) => `<b>${escHtml(l.order_no)}</b>: ${escHtml(`${l.flavour}, ${l.size}`)}<br>Writing: ${escHtml(writing(l))}`).join('<br><br>'),
     ops_links_html: lines.map((l) => `<a href="${escHtml(l.ops_url)}">Open ${escHtml(l.order_no)} in ops</a>`).join('<br>'),
     ops_url: lines[0]?.ops_url ?? OPS,
   };
