@@ -11,7 +11,7 @@ import { badgeFor, assertPickIsNotPremium, GOOGLE_RATING } from "@/lib/badges";
 export const metadata = {
   title: "Signature Cakes — order eggless cakes online | Num Num's Bakery",
   description:
-    "Pick from 15 eggless cake flavours, choose your size, and collect from Harris Park or Riverstone tomorrow.",
+    "Pick from 15 eggless cake flavours, choose your size, and collect from Harris Park or Riverstone in 2 days.",
 };
 
 /**
@@ -157,7 +157,7 @@ export default function ShopPage() {
               cart and Stripe's button state, the guarantee in the terms). */}
           <ul className="promise-strip mt-5" aria-label="Included with every cake">
             <li><EggOff aria-hidden /><span><b>100% eggless</b> Every cake, every flavour</span></li>
-            <li><CalendarCheck aria-hidden /><span><b>Ready tomorrow</b> Harris Park or Riverstone</span></li>
+            <li><CalendarCheck aria-hidden /><span><b>Ready in 2 days</b> Harris Park or Riverstone</span></li>
             <li><ShieldCheck aria-hidden /><span><b>Refundable deposit</b> Until 24h before pickup</span></li>
             <li><RotateCcw aria-hidden /><span><b>Remade or refunded</b> If it isn&rsquo;t as ordered</span></li>
           </ul>
@@ -305,7 +305,7 @@ export default function ShopPage() {
                 </div>
                 <div className="flex gap-2">
                   <dt className="w-[4.6rem] flex-none text-muted-foreground">Ready</dt>
-                  <dd>Tomorrow</dd>
+                  <dd>In 2 days</dd>
                 </div>
                 <div className="flex gap-2">
                   <dt className="w-[4.6rem] flex-none text-muted-foreground">Paying</dt>

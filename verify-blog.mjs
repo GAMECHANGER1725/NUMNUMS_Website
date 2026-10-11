@@ -401,7 +401,7 @@ const FACTS = {
 {
   try {
     execFileSync(process.execPath, ['tests/checkout.test.mjs'], { cwd: ROOT, stdio: 'pipe' });
-    notes.push('checkout: price table, deposit splitting and the next-day/DST boundary all hold');
+    notes.push('checkout: price table, deposit splitting and the 2-day/DST boundary all hold');
   } catch (e) {
     fail(`checkout tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }

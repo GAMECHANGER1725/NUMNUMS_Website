@@ -1028,7 +1028,7 @@ Normal cakes are bought online and paid for in full; custom cakes are still quot
 by a person through `/order`. `/order` is the **single fork** between the two — do not
 add a second entry point to the shop elsewhere, or the two have to be kept in step.
 **One sanctioned exception (Vaidik, 2026-10-06):** a text link under the homepage
-hero buttons, "Just need a cake for tomorrow? Shop our 15 flavours →" (`.hero-shop-link`
+hero buttons, "Don't need a custom design? Shop our 15 flavours →" (`.hero-shop-link`; it said "a cake for tomorrow" until shop cakes went to 2 days on 2026-10-11)
 in `index.html`). Both hero buttons go to the quote form and the homepage had no
 content link to the shop at all. It stays a text link, never a third button.
 
@@ -1179,16 +1179,19 @@ content link to the shop at all. It stays a text link, never a third button.
 - **Verify the webhook signature on raw bytes, handling `isBase64Encoded`**, and answer
   **400** on a bad one. A 200 tells Stripe the forgery was accepted. Never `JSON.parse`
   before verifying. `netlify/functions/webhook.test.mjs` asserts all of that.
-- **A shop cake is NEXT DAY; a custom cake is 2 DAYS** (order today, collect
-  the day after tomorrow — Vaidik, 2026-09-23; it was 48 hours). They are
-  different products and the numbers are not interchangeable — the 2 days
-  quoted on `/order` and `index.html` is about a cake somebody draws, and must
-  not be "tidied" to match the shop. ~226 blog posts still say "48 hours";
+- **A shop cake is 2 DAYS, the same as a custom cake** (order today, collect
+  the day after tomorrow). Vaidik, 2026-10-11: "today I can order a cake for
+  Tuesday and not Monday". It was next day from 2026-09-23 to 2026-10-11, and
+  48 hours before that. The two rules now agree but live in different places
+  and stay separate products — a change to one is not a change to the other.
+  Every "ready tomorrow" / "next day" in the shop, `/order`'s fork and
+  comparison, `terms.html` §2, the homepage shop link and the server error was
+  rewritten in the same commit; grep for those words before shipping any copy. ~226 blog posts still say "48 hours";
   that copy is conservative, not wrong, and was left for a separate pass. The shop's rule lives in
   `LEAD_DAYS` in `netlify/lib/shared.mjs`, mirrored in `shop-app/lib/cart.ts`.
   `CUTOFF_HOUR` is the Sydney hour at or after which an order rolls to the day
-  after; **24 means no cut-off**, which is what "we do next day" says — an
-  order at 11pm still offers tomorrow. Lower it to 18 the day a late order
+  after; **24 means no cut-off** — an order at 11pm Sunday still offers
+  Tuesday. Lower it to 18 the day a late order
   arrives that the kitchen could not make.
 - **It is a calendar rule, so compare day strings, never instants.** Adding
   86_400_000ms to a `Date` lands on the wrong day on the two nights a year
@@ -1549,7 +1552,7 @@ Full audit, Needs-Vaidik list and rejected ideas:
   they came for it. Do not use that framing on the shop. (The homepage hero
   still carries it; that was not part of the decision.)
 - **The promise strip and the product-page promise list state only what every
-  order already gets**: eggless, ready tomorrow, the deposit refunded in full
+  order already gets**: eggless, ready in 2 days, the deposit refunded in full
   if cancelled 24h+ before, and the remake-or-refund guarantee. They mirror
   `DEPOSIT_RATE` and the window the cart and Stripe's button already state.
   **Do not add an item that is not already true of every order**, and never
@@ -1604,8 +1607,8 @@ Full audit, Needs-Vaidik list and rejected ideas:
 - **"Weekends book out first" and the cart's "four in five… book out" banner
   were removed.** Their only source was a code comment.
 - **Size chips are three across until `lg`.** Six across overflowed at 820.
-- **`terms.html` matches the shop since 2026-10-06**: standard cakes next day,
-  custom cakes two days' notice ("48 hours" is custom only, Vaidik), 50%
+- **`terms.html` matches the shop since 2026-10-06**: standard cakes two days'
+  notice (next day until 2026-10-11), custom cakes two days' notice, 50%
   deposit, deposit refunded in full more than 24h before collection. If any
   of those rules change, change the terms in the same commit, because the cart
   says paying accepts them.

@@ -86,35 +86,37 @@ test('no discount, and a discount larger than the cart', () => {
 });
 
 // ── lead time ───────────────────────────────────────────────────────────────
-// A shop cake is next day. The rule is a CALENDAR rule, so it is tested as
-// day strings — and the two nights a year Sydney shifts DST are in here
-// because that is when adding 86_400_000ms to an instant lands on the wrong
-// date and books a cake for the wrong day.
-test('next day, computed in Sydney parts', () => {
+// A shop cake is 2 days: order today, collect the day after tomorrow. The rule
+// is a CALENDAR rule, so it is tested as day strings — and the two nights a
+// year Sydney shifts DST are in here because that is when adding 86_400_000ms
+// to an instant lands on the wrong date and books a cake for the wrong day.
+test('2 days, computed in Sydney parts', () => {
   // 10:00 Sydney, mid-week.
-  assert.equal(earliestDueDay(new Date('2026-09-15T00:00:00Z')), '2026-09-16');
-  // 23:30 Sydney the same day — still tomorrow, because there is no cut-off.
-  assert.equal(earliestDueDay(new Date('2026-09-15T13:30:00Z')), '2026-09-16');
+  assert.equal(earliestDueDay(new Date('2026-09-15T00:00:00Z')), '2026-09-17');
+  // 23:30 Sydney the same day — still 2 days, because there is no cut-off.
+  assert.equal(earliestDueDay(new Date('2026-09-15T13:30:00Z')), '2026-09-17');
   // Month rollover.
-  assert.equal(earliestDueDay(new Date('2026-09-30T02:00:00Z')), '2026-10-01');
+  assert.equal(earliestDueDay(new Date('2026-09-30T02:00:00Z')), '2026-10-02');
   // Year rollover.
-  assert.equal(earliestDueDay(new Date('2026-12-31T02:00:00Z')), '2027-01-01');
+  assert.equal(earliestDueDay(new Date('2026-12-31T02:00:00Z')), '2027-01-02');
+  // Vaidik's example: ordering on Sunday 11 Oct 2026 offers Tuesday, not Monday.
+  assert.equal(earliestDueDay(new Date('2026-10-11T03:20:00Z')), '2026-10-13');
 });
 
 test('DST does not move the earliest day', () => {
   // Sydney gains an hour on the first Sunday of October (4 Oct 2026, 2am).
   // 2026-10-03 11:00 Sydney = 2026-10-03T00:00:00Z.
-  assert.equal(earliestDueDay(new Date('2026-10-03T00:00:00Z')), '2026-10-04');
+  assert.equal(earliestDueDay(new Date('2026-10-03T00:00:00Z')), '2026-10-05');
   // And loses it on the first Sunday of April (5 Apr 2026).
-  assert.equal(earliestDueDay(new Date('2026-04-04T01:00:00Z')), '2026-04-05');
+  assert.equal(earliestDueDay(new Date('2026-04-04T01:00:00Z')), '2026-04-06');
 });
 
-test('tomorrow is bookable and today is not', () => {
+test('the day after tomorrow is bookable and tomorrow is not', () => {
   const now = new Date('2026-09-15T00:00:00Z');                 // 10am Sydney
-  assert.ok(resolveDueAt('riverstone', '2026-09-16', 9 * 60, now));       // opening
-  assert.ok(resolveDueAt('riverstone', '2026-09-16', 18 * 60 + 30, now)); // closing
-  throws(() => resolveDueAt('riverstone', '2026-09-15', 18 * 60, now), /until tomorrow/);
-  throws(() => resolveDueAt('riverstone', '2026-09-14', 12 * 60, now), /until tomorrow/);
+  assert.ok(resolveDueAt('riverstone', '2026-09-17', 9 * 60, now));       // opening
+  assert.ok(resolveDueAt('riverstone', '2026-09-17', 18 * 60 + 30, now)); // closing
+  throws(() => resolveDueAt('riverstone', '2026-09-16', 18 * 60, now), /2 days/);
+  throws(() => resolveDueAt('riverstone', '2026-09-15', 12 * 60, now), /2 days/);
 });
 
 test('the horizon and a malformed date still hold', () => {
