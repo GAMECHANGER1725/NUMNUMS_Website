@@ -1343,6 +1343,17 @@ content link to the shop at all. It stays a text link, never a third button.
     `checkout.session.async_payment_succeeded`, URL
     `https://numnumsbakery.com.au/.netlify/functions/stripe-webhook`. Live keys go
     straight into Netlify and are never pasted into chat or a file.
+    Live destination **"Num Nums — web orders (live)"** created 2026-10-11, same two
+    events, same URL, API `2026-08-26.dahlia` (every session field `fulfil.mjs` reads
+    exists there). `async_payment_failed` is deliberately not subscribed: PayTo is off,
+    card failures never reach the webhook, and a failure writes no order to undo.
+  - **A published site on test keys takes real orders for free (2026-10-11).** Two
+    real customers (HP-1789, HP-1790) checked out on `cs_test_` sessions; a real card
+    in Apple/Google Pay *succeeds* in test mode and moves no money. `fulfil.mjs` then
+    labelled them "TEST ORDER … Delete once checked" with a deposit recorded, which is
+    wrong on both counts for a real customer. Before publishing any build that shows
+    the shop, confirm `STRIPE_SECRET_KEY` in Production is `sk_live_`. A guard that
+    refuses `sk_test_` on the production host was proposed and is not yet decided.
 - **Order emails run through Make (`MAKE_ORDER_HOOK_URL`).** Scenario **7790457**
   ("Num Nums — new web order alert", EU1, team 3066367) is webhook → shop alert → customer
   confirmation, both sent **from and to `info.numnumsbakery@gmail.com`** through a Gmail
