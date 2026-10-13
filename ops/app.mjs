@@ -13,7 +13,7 @@ import {
   invoiceUrl, deleteOrder, deletedOrders,
   listCustomers, allCustomers, ordersForCustomer, authTrail, ordersBetween, ordersWithPhotos,
   ordersDueBetween, searchOrdersRemote, listReviewAsks, markReviewsAsked,
-  writeStamp, savePush, dropPush, hasPush,
+  writeStamp, savePush, dropPush, hasPush, testPush,
   listPrintJobs, listPrintFlags, listOpenOrders, createPrintJob, updatePrintJob, setPrintStatus, deletePrintJob,
 } from './db.mjs';
 import {
@@ -199,11 +199,29 @@ $('bell-btn').addEventListener('click', async () => {
       return;
     }
     const reg = await swReady;
-    const sub = await reg.pushManager.getSubscription()
-      || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlKey(PUSH_PUBLIC_KEY) });
+    const fresh = () => reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlKey(PUSH_PUBLIC_KEY) });
+    let sub = await reg.pushManager.getSubscription() || await fresh();
     await savePush(sub);
+    // Prove it with a real send. "Allowed" in Settings only means the phone
+    // would show one; the first live order reached Android and not the iPhone,
+    // and nothing said why. A refused send gets one fresh subscription, since a
+    // stale one is the usual reason, and the push service's answer is shown.
+    const mine = (rs) => rs.find((r) => sub.endpoint.includes(r.host));
+    let r = mine(await testPush());
+    if (r?.status !== 201) {
+      await dropPush(sub.endpoint).catch(() => {});
+      await sub.unsubscribe().catch(() => {});
+      sub = await fresh();
+      await savePush(sub);
+      r = mine(await testPush());
+    }
+    if (r?.status !== 201) {
+      paintBell(true);
+      toast(`The notification service refused this phone (${r ? `${r.status} ${r.error || ''}` : 'no answer'}). Send Vaidik a screenshot of this.`, 'error');
+      return;
+    }
     paintBell(true);
-    toast('Notifications on. This phone will buzz for every paid website order.');
+    toast('Notifications on. A test one is on its way; if it does not buzz, check Settings, Notifications, NN Ops: Sounds on, and Focus off.');
   } catch (err) {
     console.warn('push setup failed', err);
     toast(`Could not turn on notifications: ${err.message || err}`, 'error');

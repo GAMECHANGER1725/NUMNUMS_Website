@@ -135,6 +135,21 @@ export async function dropPush(endpoint) {
   if (error) throw error;
 }
 
+/**
+ * Ask the public site to send this person a real test notification (the
+ * VAPID key lives there, not here) and return what FCM / Apple answered.
+ */
+export async function testPush() {
+  const { data: { session } } = await sb.auth.getSession();
+  const res = await fetch('https://numnumsbakery.com.au/.netlify/functions/push-test', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${session?.access_token ?? ''}` },
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
+  return body.results ?? [];
+}
+
 export async function hasPush(endpoint) {
   const { data } = await sb.from('push_subscriptions').select('endpoint').eq('endpoint', endpoint).maybeSingle();
   return Boolean(data);

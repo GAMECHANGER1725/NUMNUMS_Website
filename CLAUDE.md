@@ -318,6 +318,18 @@ main site.
   - **The lock screen shows first name and cakes only** (`newOrderMessage`), never
     the phone number: a lock screen is readable by anyone at the counter.
   - Only website orders notify. Orders typed into ops do not (whoever typed it knows).
+  - **Turning the bell on sends a real test push and shows the answer** (2026-10-13).
+    The first live order (RV-1823) buzzed Vaidik's Android and not Tarun's iPhone,
+    which *was* subscribed, and the only record of what Apple said was a
+    `console.error` nobody reads. Now `notifyStaff` writes `last_status` /
+    `last_error` / `last_sent_at` onto every `push_subscriptions` row (201 =
+    accepted), and the bell calls **`netlify/functions/push-test.mjs`** (public
+    site, v2, CORS for the ops origin, caller's Supabase token, sends only to the
+    caller's own rows). A non-201 gets one fresh subscription and a retry, then a
+    toast with the status. **Diagnose with SQL first**: `select last_status,
+    last_error from push_subscriptions` tells FCM/Apple refusing apart from a
+    phone that accepted it and stayed quiet (Focus, Sounds off). The ops CSP's
+    `connect-src` carries `https://numnumsbakery.com.au` for this call only.
 - **Every order has Copy for WhatsApp / Send on WhatsApp** (2026-10-11): the order as
   one message for the shop groups, the way it used to be typed by hand
   (`whatsappText` in `app.mjs`, WhatsApp `*bold*`). Money lines follow the sheet's

@@ -17,38 +17,47 @@ import { PUSH_PUBLIC_KEY } from '../../ops/catalog.mjs';
 const SUBJECT = 'mailto:info.numnumsbakery@gmail.com';
 export const NOTIFY_ROLES = ['admin', 'baker'];
 
-export async function notifyStaff(db, store, message) {
+export async function notifyStaff(db, store, message, { userId } = {}) {
   const key = process.env.VAPID_PRIVATE_KEY;
-  if (!key) return 0;
+  if (!key) return [];
   webpush.setVapidDetails(SUBJECT, PUSH_PUBLIC_KEY, key);
 
-  const { data, error } = await db.from('push_subscriptions')
+  let q = db.from('push_subscriptions')
     .select('endpoint, p256dh, auth, profiles!inner(stores, role)')
-    .in('profiles.role', NOTIFY_ROLES)
-    .contains('profiles.stores', [store]);
-  if (error) { console.error('push: could not read subscriptions', error); return 0; }
+    .in('profiles.role', NOTIFY_ROLES);
+  q = userId ? q.eq('user_id', userId) : q.contains('profiles.stores', [store]);
+  const { data, error } = await q;
+  if (error) { console.error('push: could not read subscriptions', error); return []; }
 
   const seen = new Set();
   const subs = (data ?? []).filter((s) => !seen.has(s.endpoint) && seen.add(s.endpoint));
   const body = JSON.stringify(message);
 
-  let sent = 0;
-  await Promise.all(subs.map(async (s) => {
+  // Every answer is written onto the row (last_status/last_error). An iPhone
+  // that stayed silent on the first live order left nothing behind but a
+  // console line nobody reads, so FCM and Apple could not be told apart.
+  return Promise.all(subs.map(async (s) => {
+    const host = new URL(s.endpoint).host;
+    let status, err = null;
     try {
       // A day of TTL: a phone that was off overnight still hears about it.
-      await webpush.sendNotification(
+      ({ statusCode: status } = await webpush.sendNotification(
         { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
-        body, { TTL: 86_400, urgency: 'high' });
-      sent++;
+        body, { TTL: 86_400, urgency: 'high' }));
     } catch (e) {
-      // 404/410 is the push service saying that phone unsubscribed or the app
-      // was deleted. Drop it, or every order retries a dead endpoint forever.
-      if (e.statusCode === 404 || e.statusCode === 410) {
-        await db.from('push_subscriptions').delete().eq('endpoint', s.endpoint);
-      } else {
-        console.error('push failed', e.statusCode, e.body);
-      }
+      status = e.statusCode ?? 0;
+      err = String(e.body || e.message || e).slice(0, 300);
+      console.error('push failed', host, status, err);
     }
+    // 404/410 is the push service saying that phone unsubscribed or the app
+    // was deleted. Drop it, or every order retries a dead endpoint forever.
+    if (status === 404 || status === 410) {
+      await db.from('push_subscriptions').delete().eq('endpoint', s.endpoint);
+    } else {
+      await db.from('push_subscriptions')
+        .update({ last_sent_at: new Date().toISOString(), last_status: status, last_error: err })
+        .eq('endpoint', s.endpoint);
+    }
+    return { host, status, error: err };
   }));
-  return sent;
 }
