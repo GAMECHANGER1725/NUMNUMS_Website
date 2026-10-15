@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-15
+
+```yaml
+id: post-rs-2026-10-15
+status: published
+published_at: 2026-10-15
+location: riverstone
+post_type: "Call to action"
+title: "Diwali family gathering near Quakers Hill? Order a 100% eggless cake"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/18105858-3825-4865-92bc-a2900026339f.jpg"
+keywords_baited:
+  - Diwali eggless cake Quakers Hill
+  - 100% eggless custom cake Kellyville Ridge
+  - egg-free cake for family gathering Colebee
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-15
 
 ```yaml
