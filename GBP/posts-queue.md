@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-16
+
+```yaml
+id: post-hp-2026-10-16
+status: published
+published_at: 2026-10-16
+location: harris-park
+post_type: "Call to action"
+title: "Ferrero Rocher cake near Northmead or Winston Hills? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1895.jpg"
+keywords_baited:
+  - Ferrero Rocher eggless cake Northmead
+  - 100% eggless custom cake Winston Hills
+  - egg-free hazelnut chocolate cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-15
 
 ```yaml
