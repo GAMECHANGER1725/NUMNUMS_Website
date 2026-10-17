@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-17
+
+```yaml
+id: post-hp-2026-10-17
+status: published
+published_at: 2026-10-17
+location: harris-park
+post_type: "Call to action"
+title: "Red Velvet cake near Greystanes or Smithfield? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1302.jpg"
+keywords_baited:
+  - Red Velvet eggless cake Greystanes
+  - 100% eggless custom cake Smithfield
+  - egg-free birthday cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-16
 
 ```yaml
