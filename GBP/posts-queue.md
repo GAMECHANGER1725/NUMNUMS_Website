@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-17
+
+```yaml
+id: post-rs-2026-10-17
+status: published
+published_at: 2026-10-17
+location: riverstone
+post_type: "Call to action"
+title: "Cake for 25 guests near Tallawong? A 12-inch eggless serves 25-30"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0691.jpg"
+keywords_baited:
+  - 12 inch eggless cake serves 25
+  - eggless cake Tallawong Stanhope Gardens
+  - what size cake for 25 guests
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-17
 
 ```yaml
