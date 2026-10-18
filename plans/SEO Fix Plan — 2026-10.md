@@ -119,6 +119,15 @@ Weekly, from the same scripts (`seo-baseline/2026-10-10/pull.py`, `inspect_all.p
 The only content work allowed: the weekly routine's one improve job, on a page that
 already earns clicks.
 
+## Status — 2026-10-18 (checkpoint, before the 3 Nov decision)
+
+Clicks are back (~209/week pace, 12–16 Oct), the index count is stable (201 of 240; no live
+page lost since 10 Oct) and `/locations` is indexed — so Phase 3's "index count stable and
+clicks back to ~200/week" branch is where this is heading. **Phase 1 has not been built**:
+no merges, redirects or sitemap removals exist in the repo. The 15 Oct improve job rewrote
+`eggless-chocolate-cake-sydney`, one of the six "leave alone" pages — it is no longer
+untouched. Full numbers: `seo-baseline/2026-10-18/CHECKPOINT-REVIEW.md`.
+
 ## Phase 3 — 3 Nov decision
 
 | If… | Then… |
