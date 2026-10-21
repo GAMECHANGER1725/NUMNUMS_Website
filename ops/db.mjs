@@ -34,6 +34,7 @@ export const PEOPLE = [
   { name: 'Jashan',         email: 'jashan@ops.numnumsbakery.com.au' },
   { name: 'Kirandeep Kaur', email: 'kirandeep@ops.numnumsbakery.com.au' },
   { name: 'Parita',         email: 'parita@ops.numnumsbakery.com.au' },
+  { name: 'Arpita',         email: 'arpita@ops.numnumsbakery.com.au' },
 ];
 
 // STORES and BUSINESS live in catalog.mjs, which has no imports, so the public
