@@ -282,7 +282,8 @@ main site.
   (created in the Supabase dashboard; Claude is not allowed to set passwords over SQL), a `profiles`
   row (name, role, stores), and an entry in `PEOPLE` in `db.mjs`, since the sign-in dropdown is
   built before anyone is signed in. **Arpita is temporary staff** (added 2026-10-21, for 1–2 months):
-  when she leaves, delete her auth user and take her out of `PEOPLE`.
+  when she leaves, block her sign-in in the dashboard rather than deleting the user (orders she
+  logged point at her id), and take her out of `PEOPLE`.
 - **The staff page is read-only.** Roles and store scoping are what RLS enforces; they get changed
   in Supabase so the change is deliberate, not by an admin mis-tapping their own row.
 - **A website order tags itself: `orders.from_website`** (Vaidik, 2026-10-10: "when orders
