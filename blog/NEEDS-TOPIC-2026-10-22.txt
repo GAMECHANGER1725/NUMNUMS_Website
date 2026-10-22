@@ -1,0 +1,19 @@
+NEEDS-TOPIC 2026-10-22 — no work published this run.
+
+Path 1 (ledger gap): FAILED. blog/topic-ledger.md has no open new-URL gap. The only
+  Tier 3 row (rasmalai-cake-sydney) was claimed 2026-09-03. Every Tier 1 and Tier 2
+  row is DONE or CLOSED. Chocolate (done 2026-10-15) says re-check GSC in ~4 weeks.
+Path 2 (live GSC gap): FAILED — credentials worked (Tier 2, Search Console [OK]); this is
+  NOT a credential problem. 28d query pull (300 rows). Every query >=15 impr is either
+  brand/navigational or already owned. Checked against the filesystem:
+    - "how long does fresh cream cake last" 70 impr, pos 8.3 -> eggless-cake-storage-freshness-guide
+    - "gender reveal cake sydney" 59 impr, pos 9.2 -> eggless-cakes-gender-reveal-sydney
+    - "birthday cake and smash cake" 39 impr, pos 20 -> first-birthday-cake-sydney
+    - "are eggless cakes really eggless" 26 impr, pos 5.7 -> eggless-cakes-soft-moist-myths-vs-facts
+    - "sugar free cake sydney" 22 impr, pos 9.0 -> eggless-cake-lower-sugar-options-sydney
+    - "eggless cake near me" 1,062 / "eggless cakes sydney" 574 / "eggless cake shop" 344:
+      owned by pillar pages (permanently rejected for new suburb/near-me URLs)
+Path 3 (improve): FAILED — no ledger Tier 1/2 row is open.
+
+Suggestion for the owner (not actioned: outside the gate): consider adding ledger rows for
+  CTR/title improves on the owned pages above, e.g. the storage guide at 70 impr / 1 click.
