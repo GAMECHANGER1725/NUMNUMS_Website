@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-23
+
+```yaml
+id: post-rs-2026-10-23
+status: published
+published_at: 2026-10-23
+location: riverstone
+post_type: "Call to action"
+title: "Eggless Black Forest cake near Rouse Hill or Vineyard? Ready in 2 days"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0901.jpg"
+keywords_baited:
+  - eggless Black Forest cake Rouse Hill
+  - custom eggless cake Vineyard Schofields
+  - cake for a vegetarian family no eggs North West Sydney
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-rs-2026-10-17
 
 ```yaml
