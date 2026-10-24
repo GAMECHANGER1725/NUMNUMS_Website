@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-24
+
+```yaml
+id: post-hp-2026-10-24
+status: published
+published_at: 2026-10-24
+location: harris-park
+post_type: "Call to action"
+title: "Year 12 finishing cake near Merrylands or Granville? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0662.jpg"
+keywords_baited:
+  - year 12 finishing cake Merrylands
+  - eggless graduation cake Granville
+  - eggless custom cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-24
 
 ```yaml
