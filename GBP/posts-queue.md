@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-29
+
+```yaml
+id: post-hp-2026-10-29
+status: published
+published_at: 2026-10-29
+location: harris-park
+post_type: "Call to action"
+title: "Diwali cake near Carlingford or Dundas? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1603.jpg"
+keywords_baited:
+  - Diwali cake Carlingford
+  - eggless custom cake Dundas
+  - Diwali cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-29
 
 ```yaml
