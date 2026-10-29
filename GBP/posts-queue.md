@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-29
+
+```yaml
+id: post-rs-2026-10-29
+status: published
+published_at: 2026-10-29
+location: riverstone
+post_type: "Call to action"
+title: "Mango cake near Rouse Hill or Stanhope Gardens? 100% eggless, from Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5609.jpeg"
+keywords_baited:
+  - eggless mango cake Rouse Hill
+  - eggless cake Stanhope Gardens
+  - custom eggless cake Riverstone pickup
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-24
 
 ```yaml
