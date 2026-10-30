@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-30
+
+```yaml
+id: post-rs-2026-10-30
+status: published
+published_at: 2026-10-30
+location: riverstone
+post_type: "Call to action"
+title: "Rasmalai cake near Schofields or Box Hill? 100% eggless, from Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/c0a6e876-ed22-4515-9c4f-da46315ed653.jpg"
+keywords_baited:
+  - eggless rasmalai cake Schofields
+  - eggless cake Box Hill
+  - Diwali cake Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-29
 
 ```yaml
