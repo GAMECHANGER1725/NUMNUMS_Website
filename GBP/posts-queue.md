@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-30
+
+```yaml
+id: post-hp-2026-10-30
+status: published
+published_at: 2026-10-30
+location: harris-park
+post_type: "Call to action"
+title: "Tiramisu cake near Westmead or Parramatta? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1914%202.jpg"
+keywords_baited:
+  - eggless tiramisu cake Westmead
+  - tiramisu cake without eggs Parramatta
+  - 100% eggless cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-30
 
 ```yaml
