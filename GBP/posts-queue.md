@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-10-31
+
+```yaml
+id: post-rs-2026-10-31
+status: published
+published_at: 2026-10-31
+location: riverstone
+post_type: "Call to action"
+title: "Pineapple cake near Vineyard or Marsden Park? 100% eggless, Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/5612b393-3aae-4d26-b680-b6433da1b83d.jpeg"
+keywords_baited:
+  - eggless pineapple cake Vineyard
+  - pineapple cake without eggs Marsden Park
+  - 100% eggless cake Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-10-30
 
 ```yaml
