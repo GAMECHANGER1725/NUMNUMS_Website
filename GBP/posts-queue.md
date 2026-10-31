@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-10-31
+
+```yaml
+id: post-hp-2026-10-31
+status: published
+published_at: 2026-10-31
+location: harris-park
+post_type: "Call to action"
+title: "Butterscotch cake near Wentworthville or Toongabbie? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1661.jpg"
+keywords_baited:
+  - eggless butterscotch cake Wentworthville
+  - butterscotch cake without eggs Toongabbie
+  - 100% eggless cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-10-31
 
 ```yaml
