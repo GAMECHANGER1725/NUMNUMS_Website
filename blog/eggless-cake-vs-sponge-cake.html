@@ -108,107 +108,213 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @media(max-width:640px){#footer-grid{grid-template-columns:1fr!important;gap:2rem!important;}}
   </style>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
-          {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://numnumsbakery.com.au/blog/"},
-          {"@type": "ListItem", "position": 3, "name": "Eggless Cake vs Sponge Cake", "item": "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake"}
-        ]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://numnumsbakery.com.au/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://numnumsbakery.com.au/blog/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Eggless Cake vs Sponge Cake",
+          "item": "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake"
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "Eggless Cake vs Sponge Cake: What's the Real Difference?",
+      "description": "Eggless cake vs sponge cake — why sponge is the hardest style to make egg-free. 100% eggless, 15 flavours, 2 Sydney locations. WhatsApp +61 425 697 725.",
+      "datePublished": "2026-08-02",
+      "dateModified": "2026-08-02",
+      "author": {
+        "@type": "Person",
+        "name": "Tarun Patel",
+        "url": "https://numnumsbakery.com.au/about"
       },
-      {
-        "@type": "Article",
-        "headline": "Eggless Cake vs Sponge Cake: What's the Real Difference?",
-        "description": "Eggless cake vs sponge cake — why sponge is the hardest style to make egg-free. 100% eggless, 15 flavours, 2 Sydney locations. WhatsApp +61 425 697 725.",
-        "datePublished": "2026-08-02",
-        "dateModified": "2026-08-02",
-        "author": {"@type": "Person", "name": "Tarun Patel", "url": "https://numnumsbakery.com.au/about"},
-        "mainEntityOfPage": {"@type": "WebPage", "@id": "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake"},
-        "publisher": {"@id": "https://numnumsbakery.com.au/#organization"},
-        "url": "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake",
-        "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Vanilla.webp",
-        "inLanguage": "en-AU"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake"
       },
-      {
-        "@type": "Organization",
-        "@id": "https://numnumsbakery.com.au/#organization",
-        "name": "Num Num's Bakery",
-        "url": "https://numnumsbakery.com.au/",
-        "logo": "https://numnumsbakery.com.au/brand_assets/Logo_TParent.png",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+      "publisher": {
+        "@id": "https://numnumsbakery.com.au/#organization"
       },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#harrispark",
-        "name": "Num Num's Bakery — Harris Park",
-        "description": "100% eggless cake bakery offering light, sponge-style cake flavours from Harris Park.",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "address": {"@type": "PostalAddress", "streetAddress": "Shop 1, 96–98 Wigram Street", "addressLocality": "Harris Park", "addressRegion": "NSW", "postalCode": "2150", "addressCountry": "AU"},
-        "geo": {"@type": "GeoCoordinates", "latitude": -33.8206078, "longitude": 151.0089521},
-        "openingHoursSpecification": [
-          {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "11:00", "closes": "22:00"}
-        ],
-        "servesCuisine": "Bakery",
-        "areaServed": "Greater Sydney",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+      "url": "https://numnumsbakery.com.au/blog/eggless-cake-vs-sponge-cake",
+      "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Vanilla.webp",
+      "inLanguage": "en-AU"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://numnumsbakery.com.au/#organization",
+      "name": "Num Num's Bakery",
+      "url": "https://numnumsbakery.com.au/",
+      "logo": "https://numnumsbakery.com.au/brand_assets/Logo_TParent.png",
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ]
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#harrispark",
+      "name": "Num Num's Bakery — Harris Park",
+      "description": "100% eggless cake bakery offering light, sponge-style cake flavours from Harris Park.",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 1, 96–98 Wigram Street",
+        "addressLocality": "Harris Park",
+        "addressRegion": "NSW",
+        "postalCode": "2150",
+        "addressCountry": "AU"
       },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#riverstone",
-        "name": "Num Num's Bakery — Riverstone",
-        "description": "100% eggless cake bakery offering light, sponge-style cake flavours from Riverstone.",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "address": {"@type": "PostalAddress", "streetAddress": "Shop 8, Riverstone Shopping Centre", "addressLocality": "Riverstone", "addressRegion": "NSW", "postalCode": "2765", "addressCountry": "AU"},
-        "geo": {"@type": "GeoCoordinates", "latitude": -33.6785397, "longitude": 150.8610698},
-        "openingHoursSpecification": [
-          {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-              "opens": "09:00",
-              "closes": "18:30"
-          }
-        ],
-        "servesCuisine": "Bakery",
-        "areaServed": "Greater Sydney",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.8206078,
+        "longitude": 151.0089521
       },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Is eggless cake the same as sponge cake?",
-            "acceptedAnswer": {"@type": "Answer", "text": "No. Eggless describes an ingredient absence and can apply to any cake style, while sponge cake specifically refers to a light, airy texture created by whipping eggs into a foam. Because sponge cake's whole structure depends on whipped eggs, it's the hardest style to reproduce eggless."}
-          },
-          {
-            "@type": "Question",
-            "name": "Can sponge cake be made without eggs?",
-            "acceptedAnswer": {"@type": "Answer", "text": "Yes, but it requires a different approach entirely. Rather than whipping eggs for aeration, an eggless sponge-style cake relies on chemical leaveners like baking powder and soda, plus careful creaming and buttermilk-style acidic liquid for tenderness. The result is closer to a light butter cake than a true whipped-egg genoise."}
-          },
-          {
-            "@type": "Question",
-            "name": "Does eggless cake taste different from a traditional sponge?",
-            "acceptedAnswer": {"@type": "Answer", "text": "Yes, more noticeably than with denser styles like mud cake. A traditional sponge has an extremely light, almost cloud-like crumb from whipped egg foam. An eggless version is still soft and moist but has a slightly denser, more velvety crumb, closer to a classic butter cake."}
-          },
-          {
-            "@type": "Question",
-            "name": "Which Num Num's flavours are closest to a sponge cake texture?",
-            "acceptedAnswer": {"@type": "Answer", "text": "Vanilla, Red Velvet, and the fruit flavours (Strawberry, Blueberry, Pineapple) are our lightest textures, closest to a sponge-style crumb. Chocolate and Ferrero Rocher lean denser and richer, closer to mud-cake territory. All 15 flavours are 100% eggless as standard, made in a dedicated egg-free kitchen."}
-          },
-          {
-            "@type": "Question",
-            "name": "Where can I order an eggless cake in Sydney?",
-            "acceptedAnswer": {"@type": "Answer", "text": "Num Num's Bakery has two pick-up locations: Harris Park (Shop 1, 96–98 Wigram Street, NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, NSW 2765). Order via WhatsApp at +61 425 697 725 with at least 48 hours notice, or 4-5 days ahead for a custom design."}
-          }
-        ]
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "11:00",
+          "closes": "22:00"
+        }
+      ],
+      "servesCuisine": "Bakery",
+      "areaServed": "Greater Sydney",
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "image": "https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg",
+      "priceRange": "$$",
+      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521",
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
       }
-    ]
-  }
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#riverstone",
+      "name": "Num Num's Bakery — Riverstone",
+      "description": "100% eggless cake bakery offering light, sponge-style cake flavours from Riverstone.",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 8, Riverstone Shopping Centre",
+        "addressLocality": "Riverstone",
+        "addressRegion": "NSW",
+        "postalCode": "2765",
+        "addressCountry": "AU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.6785397,
+        "longitude": 150.8610698
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "18:30"
+        }
+      ],
+      "servesCuisine": "Bakery",
+      "areaServed": "Greater Sydney",
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "image": "https://numnumsbakery.com.au/brand_assets/riverstone_store_img.webp",
+      "priceRange": "$$",
+      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698",
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is eggless cake the same as sponge cake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Eggless describes an ingredient absence and can apply to any cake style, while sponge cake specifically refers to a light, airy texture created by whipping eggs into a foam. Because sponge cake's whole structure depends on whipped eggs, it's the hardest style to reproduce eggless."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can sponge cake be made without eggs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, but it requires a different approach entirely. Rather than whipping eggs for aeration, an eggless sponge-style cake relies on chemical leaveners like baking powder and soda, plus careful creaming and buttermilk-style acidic liquid for tenderness. The result is closer to a light butter cake than a true whipped-egg genoise."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does eggless cake taste different from a traditional sponge?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, more noticeably than with denser styles like mud cake. A traditional sponge has an extremely light, almost cloud-like crumb from whipped egg foam. An eggless version is still soft and moist but has a slightly denser, more velvety crumb, closer to a classic butter cake."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which Num Num's flavours are closest to a sponge cake texture?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Vanilla, Red Velvet, and the fruit flavours (Strawberry, Blueberry, Pineapple) are our lightest textures, closest to a sponge-style crumb. Chocolate and Ferrero Rocher lean denser and richer, closer to mud-cake territory. All 15 flavours are 100% eggless as standard, made in a dedicated egg-free kitchen."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I order an eggless cake in Sydney?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Num Num's Bakery has two pick-up locations: Harris Park (Shop 1, 96–98 Wigram Street, Harris Park NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765). Order via WhatsApp at +61 425 697 725 with at least 48 hours notice, or 4-5 days ahead for a custom design."
+          }
+        }
+      ]
+    }
+  ]
+}
   </script>
   <!-- menu-style-fix -->
   <style>
@@ -354,7 +460,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div style="max-width:1280px;margin:0 auto;padding:0 1.5rem;">
       <div style="display:flex;align-items:center;justify-content:space-between;height:68px;">
         <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;" aria-label="Num Num's Bakery home">
-          <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="56" height="56" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
+          <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="56" height="56" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
         </a>
         <div id="nav-pill" style="display:flex;align-items:center;gap:0;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:9999px;padding:4px;position:relative;">
           <a href="/shop"        class="nav-link" data-page="shop">Shop Cakes</a>
@@ -628,7 +734,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div class="faq-item">
             <p class="faq-q">Where can I order an eggless cake in Sydney?</p>
-            <p class="faq-a">Num Num's Bakery has two pick-up locations: Harris Park (Shop 1, 96–98 Wigram Street, NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, NSW 2765). Order via <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener">WhatsApp at +61 425 697 725</a> with at least 48 hours notice, or 4-5 days ahead for a custom design.</p>
+            <p class="faq-a">Num Num's Bakery has two pick-up locations: Harris Park (Shop 1, 96–98 Wigram Street, Harris Park NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765). Order via <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener">WhatsApp at +61 425 697 725</a> with at least 48 hours notice, or 4-5 days ahead for a custom design.</p>
           </div>
         </div>
 
@@ -661,7 +767,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#C85478;margin-bottom:1rem;">Our Locations</div>
           <div style="margin-bottom:1rem;">
             <div style="font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;color:#2C1A0E;margin-bottom:2px;">Harris Park</div>
-            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 1, 96–98 Wigram Street, NSW 2150<br>Daily 11 am - 10 pm</div>
+            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 1, 96–98 Wigram Street, Harris Park NSW 2150<br>Daily 11 am - 10 pm</div>
           </div>
           <div style="margin-bottom:1rem;">
             <div style="font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;color:#2C1A0E;margin-bottom:2px;">Riverstone</div>
@@ -703,7 +809,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3rem;border-bottom:1px solid rgba(255,248,242,0.08);">
         <div>
           <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:1.25rem;">
-            <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="48" height="48" style="border-radius:50%;width:48px;height:48px;object-fit:cover;"></picture>
+            <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img loading="lazy" decoding="async" src="../brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="48" height="48" style="border-radius:50%;width:48px;height:48px;object-fit:cover;"></picture>
             <span style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:#FFF8F2;letter-spacing:-0.02em;">Num Num's Bakery</span>
           </a>
           <p style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.7;margin:0 0 1.5rem;max-width:280px;">Sydney's dedicated 100% eggless cake bakery. Two locations serving Greater Sydney, light sponge-style flavours to dense mud-cake styles.</p>

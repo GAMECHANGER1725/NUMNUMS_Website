@@ -112,71 +112,222 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @media(max-width:640px){#footer-grid{grid-template-columns:1fr!important;gap:2rem!important;}.cmp-table{font-size:0.82rem;}.cmp-table th,.cmp-table td{padding:0.65rem 0.7rem;}}
   </style>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
-          {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://numnumsbakery.com.au/blog/"},
-          {"@type": "ListItem", "position": 3, "name": "Eggless Cake vs Regular Cake", "item": "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake"}
-        ]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://numnumsbakery.com.au/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://numnumsbakery.com.au/blog/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Eggless Cake vs Regular Cake",
+          "item": "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake"
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "Eggless Cake vs Regular Cake: What's the Difference?",
+      "description": "What really changes when you take eggs out of a cake? A clear comparison of taste, texture, safety and who each cake suits — plus where to order eggless in Sydney.",
+      "datePublished": "2026-06-02",
+      "dateModified": "2026-06-02",
+      "author": {
+        "@type": "Person",
+        "name": "Tarun Patel",
+        "url": "https://numnumsbakery.com.au/about"
       },
-      {
-        "@type": "Article",
-        "headline": "Eggless Cake vs Regular Cake: What's the Difference?",
-        "description": "What really changes when you take eggs out of a cake? A clear comparison of taste, texture, safety and who each cake suits — plus where to order eggless in Sydney.",
-        "datePublished": "2026-06-02",
-        "dateModified": "2026-06-02",
-        "author": {"@type": "Person", "name": "Tarun Patel", "url": "https://numnumsbakery.com.au/about"},
-        "mainEntityOfPage": {"@type": "WebPage", "@id": "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake"},
-        "publisher": {"@type": "Organization", "@id": "https://numnumsbakery.com.au/#organization", "name": "Num Num's Bakery", "url": "https://numnumsbakery.com.au", "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]},
-        "url": "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake",
-        "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Chocolate.webp",
-        "inLanguage": "en-AU"
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake"
       },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#harrispark",
-        "name": "Num Num's Bakery — Harris Park",
-        "description": "100% eggless cake bakery serving Parramatta, Harris Park, Westmead, Merrylands and western Sydney.",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "address": {"@type": "PostalAddress", "streetAddress": "Shop 1, 96–98 Wigram Street", "addressLocality": "Harris Park", "addressRegion": "NSW", "postalCode": "2150", "addressCountry": "AU"},
-        "geo": {"@type": "GeoCoordinates", "latitude": -33.8206078, "longitude": 151.0089521},
-        "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "11:00", "closes": "22:00"}],
-        "servesCuisine": "Bakery",
-        "areaServed": ["Parramatta","Harris Park","Westmead","Merrylands","Sydney"],
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
-      },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#riverstone",
-        "name": "Num Num's Bakery — Riverstone",
-        "description": "100% eggless cake bakery serving Riverstone, Quakers Hill, Schofields, The Ponds and north-western Sydney.",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "address": {"@type": "PostalAddress", "streetAddress": "Shop 8, Riverstone Shopping Centre", "addressLocality": "Riverstone", "addressRegion": "NSW", "postalCode": "2765", "addressCountry": "AU"},
-        "geo": {"@type": "GeoCoordinates", "latitude": -33.6785397, "longitude": 150.8610698},
-        "openingHoursSpecification": [
-          {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-              "opens": "09:00",
-              "closes": "18:30"
-          }
+      "publisher": {
+        "@type": "Organization",
+        "@id": "https://numnumsbakery.com.au/#organization",
+        "name": "Num Num's Bakery",
+        "url": "https://numnumsbakery.com.au",
+        "sameAs": [
+          "https://www.instagram.com/numnumsbakery/",
+          "https://www.facebook.com/Numnumsbakeryharrispark/",
+          "https://www.wikidata.org/wiki/Q140076208"
         ],
-        "servesCuisine": "Bakery",
-        "areaServed": ["Riverstone","Quakers Hill","Schofields","The Ponds","Sydney"],
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+        "logo": "https://numnumsbakery.com.au/brand_assets/Logo_TParent.png"
       },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [{"@type": "Question", "name": "Does eggless cake taste different from regular cake?", "acceptedAnswer": {"@type": "Answer", "text": "Done properly, no. Flavour comes from chocolate, fruit, vanilla and cream, not from eggs, which are nearly flavourless. Many of our Sydney customers don't realise their cake is eggless until we tell them. The taste experience is the same."}}, {"@type": "Question", "name": "Is eggless cake as moist and soft as regular cake?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, when the recipe is built for it. Ingredients like oil, milk, yoghurt and condensed milk replace the moisture eggs provide and hold it well — sometimes keeping the crumb soft longer than a butter-and-egg cake. \"Dry\" is a recipe problem, not an eggless one."}}, {"@type": "Question", "name": "Is eggless cake safer for pregnancy and egg allergy?", "acceptedAnswer": {"@type": "Answer", "text": "It removes those risks. Eggless cake contains no raw egg, which NSW Health advises pregnant women to avoid, and it's safe for egg-allergic guests — egg affects around 9% of Australian infants."}}, {"@type": "Question", "name": "Is eggless the same as vegan cake?", "acceptedAnswer": {"@type": "Answer", "text": "No. Eggless means no eggs; vegan means no animal products at all. Our cakes are eggless but contain dairy such as milk and butter, so they're not vegan. For the full distinction, see our vegan vs eggless guide."}}, {"@type": "Question", "name": "Where can I buy a good eggless cake in Sydney?", "acceptedAnswer": {"@type": "Answer", "text": "Num Num's Bakery, a dedicated 100% eggless bakery, has two shops: Harris Park (Shop 1, 96–98 Wigram Street, NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, NSW 2765). Order 15 flavours via WhatsApp +61 425 697 725."}}]
+      "url": "https://numnumsbakery.com.au/blog/eggless-cake-vs-regular-cake",
+      "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Chocolate.webp",
+      "inLanguage": "en-AU"
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#harrispark",
+      "name": "Num Num's Bakery — Harris Park",
+      "description": "100% eggless cake bakery serving Parramatta, Harris Park, Westmead, Merrylands and western Sydney.",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 1, 96–98 Wigram Street",
+        "addressLocality": "Harris Park",
+        "addressRegion": "NSW",
+        "postalCode": "2150",
+        "addressCountry": "AU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.8206078,
+        "longitude": 151.0089521
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "11:00",
+          "closes": "22:00"
+        }
+      ],
+      "servesCuisine": "Bakery",
+      "areaServed": [
+        "Parramatta",
+        "Harris Park",
+        "Westmead",
+        "Merrylands",
+        "Sydney"
+      ],
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "image": "https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg",
+      "priceRange": "$$",
+      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521",
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
       }
-    ]
-  }
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#riverstone",
+      "name": "Num Num's Bakery — Riverstone",
+      "description": "100% eggless cake bakery serving Riverstone, Quakers Hill, Schofields, The Ponds and north-western Sydney.",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 8, Riverstone Shopping Centre",
+        "addressLocality": "Riverstone",
+        "addressRegion": "NSW",
+        "postalCode": "2765",
+        "addressCountry": "AU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.6785397,
+        "longitude": 150.8610698
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "18:30"
+        }
+      ],
+      "servesCuisine": "Bakery",
+      "areaServed": [
+        "Riverstone",
+        "Quakers Hill",
+        "Schofields",
+        "The Ponds",
+        "Sydney"
+      ],
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "image": "https://numnumsbakery.com.au/brand_assets/riverstone_store_img.webp",
+      "priceRange": "$$",
+      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698",
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does eggless cake taste different from regular cake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Done properly, no. Flavour comes from chocolate, fruit, vanilla and cream, not from eggs, which are nearly flavourless. Many of our Sydney customers don't realise their cake is eggless until we tell them. The taste experience is the same."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is eggless cake as moist and soft as regular cake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, when the recipe is built for it. Ingredients like oil, milk, yoghurt and condensed milk replace the moisture eggs provide and hold it well — sometimes keeping the crumb soft longer than a butter-and-egg cake. \"Dry\" is a recipe problem, not an eggless one."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is eggless cake safer for pregnancy and egg allergy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It removes those risks. Eggless cake contains no raw egg, which NSW Health advises pregnant women to avoid, and it's safe for egg-allergic guests — egg affects around 9% of Australian infants."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is eggless the same as vegan cake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Eggless means no eggs; vegan means no animal products at all. Our cakes are eggless but contain dairy such as milk and butter, so they're not vegan. For the full distinction, see our vegan vs eggless guide."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I buy a good eggless cake in Sydney?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Num Num's Bakery, a dedicated 100% eggless bakery, has two shops: Harris Park (Shop 1, 96–98 Wigram Street, Harris Park NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765). Order 15 flavours via WhatsApp +61 425 697 725."
+          }
+        }
+      ]
+    }
+  ]
+}
   </script>
   <!-- menu-style-fix -->
   <style>
@@ -322,7 +473,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div style="max-width:1280px;margin:0 auto;padding:0 1.5rem;">
       <div style="display:flex;align-items:center;justify-content:space-between;height:68px;">
         <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;" aria-label="Num Num's Bakery home">
-          <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="56" height="56" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
+          <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="56" height="56" style="border-radius:50%;width:56px;height:56px;object-fit:cover;flex-shrink:0;"></picture>
         </a>
         <div id="nav-pill" style="display:flex;align-items:center;gap:0;background:rgba(200,84,120,0.05);border:1px solid rgba(200,84,120,0.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:9999px;padding:4px;position:relative;">
           <a href="/shop"        class="nav-link" data-page="shop">Shop Cakes</a>
@@ -380,9 +531,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- MAIN CONTENT -->
       <div class="article-body">
 
-        <p>"Eggless cake vs regular cake" is one of the most-searched cake questions in Australia, and the honest answer surprises people: <strong>a well-made eggless cake and a regular cake are far more alike than they are different.</strong> Both can be soft, moist, rich and beautiful. The real difference isn't on the plate — it's in who can safely and happily eat it.</p>
+        <p><strong>Quick answer:</strong> An eggless cake and a regular cake look and taste very similar; the main difference is who can eat them. An eggless cake is safe for people with an egg allergy and suits vegetarian and Jain diets. Every cake at Num Num&rsquo;s Bakery in Sydney is 100% eggless, in 15 flavours, from Harris Park or Riverstone.</p>
+        <p>"Eggless cake vs regular cake" is one of the most-searched cake questions in Australia, and the honest answer surprises people: <strong>a well-made eggless cake and a regular cake are far more alike than they are different.</strong> Both can be soft, moist, rich and beautiful. The real difference isn't on the plate — it's in who can safely and happily eat it. Wondering <a href="/blog/best-eggless-cake-shops-sydney-2026">where to buy eggless cake in Sydney</a>? We compare ten bakeries.</p>
 
-        <p>This guide breaks down exactly what eggs do in a cake, whether removing them changes the taste or texture, what it means for safety and diet, and a clear side-by-side comparison. If you've been told eggless cake is "dry" or "not as good," the explanation below is for you — and so is the eggless cake you can <a href="/order">order in Sydney</a> to test the theory yourself.</p>
+        <p>This guide breaks down exactly what eggs do in a cake, whether removing them changes the taste or texture, what it means for safety and diet, and a clear side-by-side comparison. If you've been told eggless cake is "dry" or "not as good," the explanation below is for you — and so is the eggless cake you can <a href="/order">order in Sydney</a> to test the theory yourself. We also compare <a href="/blog/eggless-cake-vs-ice-cream-cake-sydney">eggless cake vs ice cream cake</a>.</p>
 
         <!-- KEY TAKEAWAYS -->
         <div class="takeaway-box">
@@ -558,11 +710,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>Num Num's Bakery is a dedicated 100% eggless cake bakery — not a general shop with one egg-free option, but a kitchen where every cake is eggless by design. That focus is why our eggless cakes stand up to the regular-cake comparison instead of apologising for it. We make from two Sydney shops:</p>
 
         <div class="suburb-card">
-          <div class="suburb-card-title">Harris Park — Shop 1, 96–98 Wigram Street, NSW 2150</div>
+          <div class="suburb-card-title">Harris Park — Shop 1, 96–98 Wigram Street, Harris Park NSW 2150</div>
           <div class="suburb-card-detail">Open daily 11 am – 10 pm. Closest for Parramatta, Westmead, Merrylands, Granville, Rydalmere and the western corridor.</div>
         </div>
         <div class="suburb-card">
-          <div class="suburb-card-title">Riverstone — Shop 8, Riverstone Shopping Centre, NSW 2765</div>
+          <div class="suburb-card-title">Riverstone — Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765</div>
           <div class="suburb-card-detail">Daily 9 am – 6:30 pm. Closest for Quakers Hill, Schofields, The Ponds and the north-west.</div>
         </div>
 
@@ -589,7 +741,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div class="faq-item">
             <p class="faq-q">Where can I buy a good eggless cake in Sydney?</p>
-            <p class="faq-a">Num Num's Bakery, a dedicated 100% eggless bakery, has two shops: Harris Park (Shop 1, 96–98 Wigram Street, NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, NSW 2765). Order 15 flavours via <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener">WhatsApp +61 425 697 725</a>.</p>
+            <p class="faq-a">Num Num's Bakery, a dedicated 100% eggless bakery, has two shops: Harris Park (Shop 1, 96–98 Wigram Street, Harris Park NSW 2150) and Riverstone (Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765). Order 15 flavours via <a href="https://wa.me/61425697725?text=Hi%20Num%20Num%27s%2C%20I%27d%20like%20a%20quote%20for%20a%20100%25%20eggless%20cake.%20Date%3A%20%2F%20Design%3A%20%2F%20Pickup%3A%20Harris%20Park%20or%20Riverstone" target="_blank" rel="noopener">WhatsApp +61 425 697 725</a>.</p>
           </div>
         </div>
 
@@ -622,11 +774,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#C85478;margin-bottom:1rem;">Our Two Shops</div>
           <div style="margin-bottom:1rem;">
             <div style="font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;color:#2C1A0E;margin-bottom:2px;">Harris Park</div>
-            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 1, 96–98 Wigram Street, NSW 2150<br>Open daily 11 am – 10 pm</div>
+            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 1, 96–98 Wigram Street, Harris Park NSW 2150<br>Open daily 11 am – 10 pm</div>
           </div>
           <div style="margin-bottom:1rem;">
             <div style="font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;color:#2C1A0E;margin-bottom:2px;">Riverstone</div>
-            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 8, Riverstone Shopping Centre, NSW 2765<br>Daily 9 am – 6:30 pm</div>
+            <div style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:300;color:rgba(44,26,14,0.6);line-height:1.55;">Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765<br>Daily 9 am – 6:30 pm</div>
           </div>
           <a href="/locations" style="font-family:'Jost',sans-serif;font-size:0.8rem;font-weight:600;color:#C85478;text-decoration:none;display:flex;align-items:center;gap:4px;">View on map <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
         </div>
@@ -670,7 +822,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3rem;border-bottom:1px solid rgba(255,248,242,0.08);">
         <div>
           <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:1.25rem;">
-            <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="../brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="48" height="48" style="border-radius:50%;width:48px;height:48px;object-fit:cover;"></picture>
+            <picture><source srcset="../brand_assets/Logo_TParent_56.webp" type="image/webp"><img loading="lazy" decoding="async" src="../brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="48" height="48" style="border-radius:50%;width:48px;height:48px;object-fit:cover;"></picture>
             <span style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:#FFF8F2;letter-spacing:-0.02em;">Num Num's Bakery</span>
           </a>
           <p style="font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.7;margin:0 0 1.5rem;max-width:280px;">Sydney's dedicated 100% eggless cake bakery. The same great cake as a regular bakery — just made without eggs, from Harris Park and Riverstone.</p>
@@ -705,8 +857,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <div>
           <div style="font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,248,242,0.35);margin-bottom:1.25rem;">Locations</div>
-          <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.65;margin:0 0 0.75rem;">Harris Park<br>Shop 1, 96–98 Wigram Street, NSW 2150<br>Daily 11 am – 10 pm</p>
-          <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.65;margin:0;">Riverstone<br>Shop 8, Riverstone Shopping Centre, NSW 2765<br>Daily 9 am – 6:30 pm</p>
+          <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.65;margin:0 0 0.75rem;">Harris Park<br>Shop 1, 96–98 Wigram Street, Harris Park NSW 2150<br>Daily 11 am – 10 pm</p>
+          <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:300;color:rgba(255,248,242,0.5);line-height:1.65;margin:0;">Riverstone<br>Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765<br>Daily 9 am – 6:30 pm</p>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1.75rem;flex-wrap:wrap;gap:1rem;">

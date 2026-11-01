@@ -1594,6 +1594,23 @@ could not see from outside the repo. The research and the parked items are in
   event because the report rated it the **thinnest-evidence** item of the seven
   — no isolated link-vs-no-link study exists for local food sites — so it gets
   judged on incremental gross profit, not on clicks.
+- **No page may say we deliver (SEO routine, 2026-11-01).** `blog/eggless-cake-delivery-sydney`
+  described a delivery service that never existed: delivery windows, a driver
+  ETA, $15-$25 fees, "two dispatch points", 0.5-2 kg sizes. `cake-delivery-areas-sydney`
+  said delivery "can be arranged". Both now say pickup only and keep their URLs
+  (the delivery query still deserves a truthful answer). Before writing about
+  delivery, grep for `we deliver|delivery window|delivery fee|dispatch`.
+- **We are not a halal-certified kitchen.** A post said "halal-certified
+  ingredients are used as standard" while another says the opposite; the claim
+  is gone (2026-11-01). Say "halal-friendly, ask about ingredients" unless Vaidik
+  confirms a certification.
+- **AggregateRating sits on the Riverstone Bakery node only.** 4.6 is
+  Riverstone's Google rating; it was also on the Harris Park node (2026-11-01).
+  The `reviewCount: 50` is unsourced: replace it with the number read off the
+  profile, never an estimate.
+- **Logos shown at 56px or less use `Logo_TParent_56.webp` (4KB), not
+  `Logo_TParent.png` (1.6MB).** Same artwork. Every page loaded the 1.6MB file
+  twice for a 48px circle until 2026-11-01. Keep the PNG for JSON-LD `logo` and large uses.
 
 ### `/shop` — the offer, said where the choosing happens (Hormozi audit, 2026-10-06)
 

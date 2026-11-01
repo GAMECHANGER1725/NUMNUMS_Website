@@ -105,94 +105,205 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- Schema.org JSON-LD -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://numnumsbakery.com.au/"},
-          {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://numnumsbakery.com.au/blog/"},
-          {"@type": "ListItem", "position": 3, "name": "Eggless Cake Flavour Pairing Guide", "item": "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide"}
-        ]
-      },
-      {
-        "@type": "Organization",
-        "@id": "https://numnumsbakery.com.au/#organization",
-        "name": "Num Num's Bakery",
-        "url": "https://numnumsbakery.com.au",
-        "logo": "https://numnumsbakery.com.au/brand_assets/Logo_TParent_56.webp",
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
-      },
-      {
-        "@type": "Article",
-        "@id": "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide#article",
-        "headline": "Eggless Cake Flavour Pairing Guide: Which Flavour for Which Occasion?",
-        "description": "How to match eggless cake flavour to occasion — toddler parties, milestone birthdays, weddings, cultural events, and corporate orders. 15 eggless flavours at Num Num's Bakery Sydney.",
-        "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Chocolate.webp",
-        "datePublished": "2026-06-23",
-        "dateModified": "2026-06-23",
-        "author": {"@type": "Person", "name": "Tarun Patel", "url": "https://numnumsbakery.com.au/about"},
-        "publisher": {"@id": "https://numnumsbakery.com.au/#organization"},
-        "mainEntityOfPage": "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide"
-      },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#harrispark",
-        "name": "Num Num's Bakery — Harris Park",
-        "image": "https://numnumsbakery.com.au/brand_assets/Logo_TParent_56.webp",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "priceRange": "$$",
-        "servesCuisine": "Eggless Cakes",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Shop 1, 96–98 Wigram Street",
-          "addressLocality": "Harris Park",
-          "addressRegion": "NSW",
-          "postalCode": "2150",
-          "addressCountry": "AU"
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://numnumsbakery.com.au/"
         },
-        "geo": {"@type": "GeoCoordinates", "latitude": -33.8206078, "longitude": 151.0089521},
-        "openingHoursSpecification": [
-          {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "11:00", "closes": "22:00"}
-        ],
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
-      },
-      {
-        "@type": "Bakery",
-        "@id": "https://numnumsbakery.com.au/#riverstone",
-        "name": "Num Num's Bakery — Riverstone",
-        "image": "https://numnumsbakery.com.au/brand_assets/Logo_TParent_56.webp",
-        "url": "https://numnumsbakery.com.au/locations",
-        "telephone": "+61425697725",
-        "priceRange": "$$",
-        "servesCuisine": "Eggless Cakes",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Shop 8, Riverstone Shopping Centre",
-          "addressLocality": "Riverstone",
-          "addressRegion": "NSW",
-          "postalCode": "2765",
-          "addressCountry": "AU"
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://numnumsbakery.com.au/blog/"
         },
-        "geo": {"@type": "GeoCoordinates", "latitude": -33.6785397, "longitude": 150.8610698},
-        "openingHoursSpecification": [
-          {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-              "opens": "09:00",
-              "closes": "18:30"
-          }
-        ],
-        "sameAs": ["https://www.instagram.com/numnumsbakery/", "https://www.facebook.com/Numnumsbakeryharrispark/", "https://www.wikidata.org/wiki/Q140076208"]
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Eggless Cake Flavour Pairing Guide",
+          "item": "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide"
+        }
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://numnumsbakery.com.au/#organization",
+      "name": "Num Num's Bakery",
+      "url": "https://numnumsbakery.com.au",
+      "logo": "https://numnumsbakery.com.au/brand_assets/Logo_TParent_56.webp",
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ]
+    },
+    {
+      "@type": "Article",
+      "@id": "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide#article",
+      "headline": "Eggless Cake Flavour Pairing Guide: Which Flavour for Which Occasion?",
+      "description": "How to match eggless cake flavour to occasion — toddler parties, milestone birthdays, weddings, cultural events, and corporate orders. 15 eggless flavours at Num Num's Bakery Sydney.",
+      "image": "https://numnumsbakery.com.au/cake_photos/Product%20Images/Chocolate.webp",
+      "datePublished": "2026-06-23",
+      "dateModified": "2026-06-23",
+      "author": {
+        "@type": "Person",
+        "name": "Tarun Patel",
+        "url": "https://numnumsbakery.com.au/about"
       },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [{"@type": "Question", "name": "Which eggless cake flavour is best for a kids' birthday party?", "acceptedAnswer": {"@type": "Answer", "text": "For toddlers and first birthdays: Vanilla (universal acceptance, simple ingredient profile). For school-age kids: Chocolate or Cookies &amp; Cream. For tweens: Red Velvet or Mango. Strawberry and Blueberry work well for warm-weather parties. All Num Num's flavours are 100% eggless as standard. Browse our Our Cakes page for photos."}}, {"@type": "Question", "name": "What eggless flavour works best for a large mixed-demographic gathering?", "acceptedAnswer": {"@type": "Answer", "text": "Chocolate. It bridges cultural backgrounds, age groups, and flavour preferences better than any other option in our menu. For events with a strong South Asian guest list, Butterscotch is a close second. For formal premium events, Ferrero Rocher reads as celebratory without being divisive. All 15 Num Num's flavours are 100% eggless — suitability is never in question."}}, {"@type": "Question", "name": "Which eggless flavours suit Indian cultural celebrations best?", "acceptedAnswer": {"@type": "Answer", "text": "Rasmalai is our most culturally specific South Asian flavour — saffron-fragrant and resonant for Diwali, naming ceremonies, and Hindu milestones. Butterscotch is widely loved across South Asian and Southeast Asian households. For weddings and engagements, Ferrero Rocher signals premium occasion across all guest demographics. All from our Our Cakes page."}}, {"@type": "Question", "name": "What is Num Num's Bakery's most popular eggless flavour?", "acceptedAnswer": {"@type": "Answer", "text": "Chocolate is consistently our most-ordered flavour across all event types, age groups, and communities. Butterscotch and Rasmalai rank second and third across our multicultural western Sydney customer base. Ferrero Rocher leads specifically for adult milestone birthdays. Visit our About page to learn more about how we developed our menu for Sydney's communities."}}, {"@type": "Question", "name": "Can I order different flavours per tier for a multi-tier eggless cake?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — multi-tier cakes can use different flavours per tier. This is a popular choice for weddings and large events where guests have different preferences. Common pairings: Chocolate base + Vanilla top, Rasmalai base + Butterscotch top, or Ferrero Rocher base + Red Velvet top. Message +61 425 697 725 on WhatsApp and we'll help you plan."}}]
+      "publisher": {
+        "@id": "https://numnumsbakery.com.au/#organization"
+      },
+      "mainEntityOfPage": "https://numnumsbakery.com.au/blog/eggless-cake-flavour-pairing-guide"
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#harrispark",
+      "name": "Num Num's Bakery — Harris Park",
+      "image": "https://numnumsbakery.com.au/brand_assets/Logo_TParent_56.webp",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "priceRange": "$$",
+      "servesCuisine": "Eggless Cakes",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 1, 96–98 Wigram Street",
+        "addressLocality": "Harris Park",
+        "addressRegion": "NSW",
+        "postalCode": "2150",
+        "addressCountry": "AU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.8206078,
+        "longitude": 151.0089521
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "11:00",
+          "closes": "22:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521",
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
       }
-    ]
-  }
+    },
+    {
+      "@type": "Bakery",
+      "@id": "https://numnumsbakery.com.au/#riverstone",
+      "name": "Num Num's Bakery — Riverstone",
+      "image": "https://numnumsbakery.com.au/brand_assets/Logo_TParent_56.webp",
+      "url": "https://numnumsbakery.com.au/locations",
+      "telephone": "+61425697725",
+      "priceRange": "$$",
+      "servesCuisine": "Eggless Cakes",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop 8, Riverstone Shopping Centre",
+        "addressLocality": "Riverstone",
+        "addressRegion": "NSW",
+        "postalCode": "2765",
+        "addressCountry": "AU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -33.6785397,
+        "longitude": 150.8610698
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "18:30"
+        }
+      ],
+      "sameAs": [
+        "https://www.instagram.com/numnumsbakery/",
+        "https://www.facebook.com/Numnumsbakeryharrispark/",
+        "https://www.wikidata.org/wiki/Q140076208"
+      ],
+      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698",
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Which eggless cake flavour is best for a kids' birthday party?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For toddlers and first birthdays: Vanilla (universal acceptance, simple ingredient profile). For school-age kids: Chocolate or Cookies &amp; Cream. For tweens: Red Velvet or Mango. Strawberry and Blueberry work well for warm-weather parties. All Num Num's flavours are 100% eggless as standard. Browse our Our Cakes page for photos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What eggless flavour works best for a large mixed-demographic gathering?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Chocolate. It bridges cultural backgrounds, age groups, and flavour preferences better than any other option in our menu. For events with a strong South Asian guest list, Butterscotch is a close second. For formal premium events, Ferrero Rocher reads as celebratory without being divisive. All 15 Num Num's flavours are 100% eggless — suitability is never in question."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which eggless flavours suit Indian cultural celebrations best?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Rasmalai is our most culturally specific South Asian flavour — saffron-fragrant and resonant for Diwali, naming ceremonies, and Hindu milestones. Butterscotch is widely loved across South Asian and Southeast Asian households. For weddings and engagements, Ferrero Rocher signals premium occasion across all guest demographics. All from our Our Cakes page."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Num Num's Bakery's most popular eggless flavour?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Chocolate is consistently our most-ordered flavour across all event types, age groups, and communities. Butterscotch and Rasmalai rank second and third across our multicultural western Sydney customer base. Ferrero Rocher leads specifically for adult milestone birthdays. Visit our About page to learn more about how we developed our menu for Sydney's communities."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I order different flavours per tier for a multi-tier eggless cake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — multi-tier cakes can use different flavours per tier. This is a popular choice for weddings and large events where guests have different preferences. Common pairings: Chocolate base + Vanilla top, Rasmalai base + Butterscotch top, or Ferrero Rocher base + Red Velvet top. Message +61 425 697 725 on WhatsApp and we'll help you plan."
+          }
+        }
+      ]
+    }
+  ]
+}
   </script>
 
   <!-- Meta Pixel Code -->
@@ -587,7 +698,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2.5rem;margin-bottom:2.5rem;">
         <div>
           <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:1rem;">
-            <img src="/brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="34" height="34" style="width:34px;height:34px;object-fit:contain;">
+            <img loading="lazy" decoding="async" src="/brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="34" height="34" style="width:34px;height:34px;object-fit:contain;">
             <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:rgba(255,248,242,0.90);">Num Num's Bakery</span>
           </a>
           <p style="font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:300;color:rgba(255,248,242,0.45);line-height:1.7;margin:0 0 1.25rem;">Sydney's dedicated 100% eggless cake bakery. Harris Park and Riverstone. Founded 2019.</p>

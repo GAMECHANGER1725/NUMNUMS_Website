@@ -87,6 +87,7 @@
   from = "/shop"
   to = "/shop/index.html"
   status = 200
+  force = true
 
 # Sitemap variant crawlers expect
 [[redirects]]
@@ -240,6 +241,12 @@
 [[redirects]]
   from = "/privacy-policy.html"
   to = "/privacy-policy"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/terms.html"
+  to = "/terms"
   status = 301
   force = true
 

@@ -23,15 +23,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <title>Eggless Custom Cakes Sydney | Num Num's Bakery NSW</title>
-  <meta name="description" content="Sydney's 100% eggless custom cake shop. Birthday, wedding &amp; celebration cakes made to order. Pick up Harris Park or Riverstone.">
+  <title>100% Eggless Cake Shop Sydney | Num Num's Bakery</title>
+  <meta name="description" content="Sydney's 100% eggless cake shop. Custom birthday &amp; celebration cakes from $39.99, 2 days' notice. Pickup only from Harris Park or Riverstone.">
   <link rel="canonical" href="https://numnumsbakery.com.au/">
   <link rel="alternate" hreflang="en-AU" href="https://numnumsbakery.com.au/">
   <link rel="alternate" hreflang="x-default" href="https://numnumsbakery.com.au/">
   <link rel="preload" as="image" href="brand_assets/hero-poster.webp" type="image/webp" fetchpriority="high">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Eggless Custom Cakes Sydney | Num Num's Bakery | Harris Park &amp; Riverstone">
-  <meta property="og:description" content="Order 100% eggless custom cakes in Sydney from Num Num's Bakery. Birthday, wedding and celebration cakes made fresh to order. Pick up from Harris Park or Riverstone.">
+  <meta property="og:title" content="100% Eggless Cake Shop Sydney | Num Num's Bakery">
+  <meta property="og:description" content="Sydney's 100% eggless cake shop. Custom birthday &amp; celebration cakes from $39.99, 2 days' notice. Pickup only from Harris Park or Riverstone.">
   <meta property="og:image" content="https://numnumsbakery.com.au/brand_assets/og-home.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -40,8 +40,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta property="og:site_name" content="Num Nums Bakery">
   <meta property="og:locale" content="en_AU">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Eggless Custom Cakes Sydney | Num Num's Bakery">
-  <meta name="twitter:description" content="Order 100% eggless custom cakes in Sydney. Birthday, wedding and celebration cakes made fresh to order. Pick up from Harris Park or Riverstone.">
+  <meta name="twitter:title" content="100% Eggless Cake Shop Sydney | Num Num's Bakery">
+  <meta name="twitter:description" content="Sydney's 100% eggless cake shop. Custom birthday &amp; celebration cakes from $39.99, 2 days' notice. Pickup only from Harris Park or Riverstone.">
   <meta name="twitter:image" content="https://numnumsbakery.com.au/brand_assets/og-home.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -573,6 +573,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     {
       "@type": "Bakery",
       "@id": "https://numnumsbakery.com.au/#harrispark",
+      "areaServed": ["Parramatta", "Harris Park", "Westmead", "Merrylands", "Granville", "Rosehill", "Sydney"],
       "name": "Num Num's Bakery — Harris Park",
       "url": "https://numnumsbakery.com.au/",
       "image": "https://numnumsbakery.com.au/brand_assets/num_nums_HPphoto.jpeg",
@@ -613,19 +614,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           "closes": "22:00"
         }
       ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": 4.6,
-        "reviewCount": 50,
-        "bestRating": 5,
-        "worstRating": 1
-      },
       "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery/@-33.8206078,151.0089521",
       "sameAs": [
         "https://www.instagram.com/numnumsbakery/",
         "https://www.facebook.com/Numnumsbakeryharrispark/",
         "https://www.wikidata.org/wiki/Q140076208"
-      ]
+      ],
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
+      }
     },
     {
       "sameAs": [
@@ -635,6 +632,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       ],
       "@type": "Bakery",
       "@id": "https://numnumsbakery.com.au/#riverstone",
+      "areaServed": ["Riverstone", "Quakers Hill", "Schofields", "The Ponds", "Rouse Hill", "Marsden Park", "Sydney"],
       "name": "Num Num's Bakery — Riverstone",
       "url": "https://numnumsbakery.com.au/",
       "image": "https://numnumsbakery.com.au/brand_assets/riverstone_store_img.webp",
@@ -682,7 +680,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         "bestRating": 5,
         "worstRating": 1
       },
-      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698"
+      "hasMap": "https://www.google.com/maps/place/Num+Nums+Bakery+Riverstone/@-33.6785397,150.8610698",
+      "parentOrganization": {
+        "@id": "https://numnumsbakery.com.au/#organization"
+      }
     },
     {
       "@type": "Review",
@@ -863,7 +864,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
   ]
 }
-</script>
+  </script>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -1038,7 +1039,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div style="display:flex; align-items:center; justify-content:space-between; height:68px;">
         <!-- Logo + Wordmark -->
         <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0;" aria-label="Num Num's Bakery home">
-          <picture><source srcset="brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="56" height="56"
+          <picture><source srcset="brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="56" height="56"
                style="border-radius:50%; overflow:hidden; width:56px; height:56px; object-fit:cover; flex-shrink:0;"></picture>
         </a>
         <!-- Desktop Links — Tubelight Pill -->
@@ -1815,7 +1816,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:4rem;">
         <div>
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;">
-            <picture><source srcset="brand_assets/Logo_TParent_56.webp" type="image/webp"><img src="brand_assets/Logo_TParent.png" alt="Num Num's Bakery" width="48" height="48" style="width:48px;height:48px;object-fit:cover;border-radius:50%;"></picture>
+            <picture><source srcset="brand_assets/Logo_TParent_56.webp" type="image/webp"><img loading="lazy" decoding="async" src="brand_assets/Logo_TParent_56.webp" alt="Num Num's Bakery" width="48" height="48" style="width:48px;height:48px;object-fit:cover;border-radius:50%;"></picture>
             <span style="font-family:'Jost',sans-serif;font-size:1.2rem;font-weight:600;color:#FFF8F2;letter-spacing:-0.01em;">Num Num's Bakery</span>
           </div>
           <p style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.875rem;color:rgba(255,248,242,0.55);line-height:1.75;margin:0 0 1.5rem;max-width:260px;">100% eggless cakes and sweets made fresh to order in Sydney. Pick up from Harris Park or Riverstone.</p>
