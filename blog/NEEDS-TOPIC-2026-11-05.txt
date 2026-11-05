@@ -1,0 +1,24 @@
+NEEDS-TOPIC 2026-11-05 — no work selected, nothing published.
+
+Credentials: OK. GOOGLE_SA_JSON_B64 decoded; google_auth.py --check = Tier 2, GSC [OK].
+(Note: `pip install --user` put the libs where /usr/local/bin/python3 can't see them;
+ gsc_query.py only worked under /usr/bin/python3 after a plain `pip install`.)
+
+Path 1 (ledger new-URL gap): none. Tier 3 rasmalai-cake-sydney already claimed 2026-09-03.
+Path 2 (live GSC gap, 28d, 300 queries + query/page rows): none. Every query with real
+  volume maps to an existing owner page: eggless cake near me / cakes near me / cake shop
+  near me (suburb pillars, locations), indian sweets near me + barfi (/indian-sweet, GBP/local-pack
+  issue), photo cakes (photo-cake-sydney), gender reveal (eggless-cakes-gender-reveal-sydney),
+  sugar free (eggless-cake-lower-sugar-options-sydney), fresh cream cake storage
+  (eggless-cake-storage-freshness-guide, 63 impr, pos 7.8), halal cake (halal-friendly-cakes-eggless-sydney),
+  1st birthday cakes (first-birthday-cake-sydney). Remaining high-impression rows are brand/navigational.
+Path 3 (ledger improve rows): every Tier 1 / Tier 2 row is already marked DONE or CLOSED.
+Path 4: ledger exhausted for new work AND improve rows. This is an exhausted ledger, not a
+  broken credential and not an empty GSC result.
+
+Candidate improve rows for a human to add to the ledger (not actioned — outside the gate):
+  - first-birthday-cake-sydney: "1st birthday cakes" 50 impr pos 12.3, "1st birthday cake" 28 impr pos 23.1, 0 clicks.
+  - eggless-cakes-soft-moist-myths-vs-facts: "are eggless cakes really eggless" 34 impr pos 5.4, 0 clicks (title/meta CTR).
+  - eggless-cake-storage-freshness-guide: "how long does fresh cream cake last" 63 impr pos 7.8, 1 click.
+
+Also: HOW-TO-ADD-BLOG-POSTS.md listed in the routine's LOAD step does not exist in the repo.
