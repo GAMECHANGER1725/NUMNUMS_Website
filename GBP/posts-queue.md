@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-06
+
+```yaml
+id: post-hp-2026-11-06
+status: published
+published_at: 2026-11-06
+location: harris-park
+post_type: "Call to action"
+title: "Blueberry cake near Rydalmere or Ermington? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5588.jpeg"
+keywords_baited:
+  - eggless blueberry cake Rydalmere
+  - blueberry cake without eggs Ermington
+  - 100% eggless cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-06
 
 ```yaml
