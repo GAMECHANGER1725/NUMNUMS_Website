@@ -680,7 +680,11 @@ main site.
 the shop line (0425 697 725). Its prices, flavours, hours and addresses are
 copied from `ops/catalog.mjs` and `locations.html`, so **a price, flavour or
 hours change must be made in that prompt too**. Nothing gates it yet.
-- **Calls only. No SMS and no Twilio** (Vaidik, 2026-11-07). At ~4.3
+- **Twilio (or any best provider) is allowed for the voice line; SMS is not
+  wanted** (Vaidik, 2026-11-07, correcting an earlier "no Twilio"). **Two
+  numbers in total for both shops, never one per shop:** the current
+  0425 697 725 and one new staff transfer number.
+- **Calls only, no SMS** (Vaidik, 2026-11-07). At ~4.3
   orders/day (30 days to 2026-11-07) plus 5–10 other calls, a text sender
   is not worth running. Custom-cake callers are told staff will message
   them on WhatsApp; staff work from the call note. Do not add a
