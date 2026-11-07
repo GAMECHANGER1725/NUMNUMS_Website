@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-07
+
+```yaml
+id: post-hp-2026-11-07
+status: published
+published_at: 2026-11-07
+location: harris-park
+post_type: "Call to action"
+title: "Cookies & Cream cake near Guildford or Auburn? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1900.jpg"
+keywords_baited:
+  - eggless Cookies & Cream cake Guildford
+  - Cookies and Cream cake without eggs Auburn
+  - 100% eggless cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-07
 
 ```yaml
