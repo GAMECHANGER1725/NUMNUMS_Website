@@ -674,6 +674,25 @@ main site.
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
+## Phone assistant (`phone-agent/`) — planned, not live
+
+`phone-agent/prompt.md` is the system prompt for an AI voice agent answering
+the shop line (0425 697 725). Its prices, flavours, hours and addresses are
+copied from `ops/catalog.mjs` and `locations.html`, so **a price, flavour or
+hours change must be made in that prompt too**. Nothing gates it yet.
+- **Calls only. No SMS and no Twilio** (Vaidik, 2026-11-07). At ~4.3
+  orders/day (30 days to 2026-11-07) plus 5–10 other calls, a text sender
+  is not worth running. Custom-cake callers are told staff will message
+  them on WhatsApp; staff work from the call note. Do not add a
+  `send_whatsapp_link` tool back without asking.
+- **One staff transfer number for both shops** (to be bought).
+- **No stock lookups**: nothing records stock, so "cake today or
+  tomorrow" calls go to a person. Don't invent a `check_stock` answer.
+- Order status uses the real `order_status` enum (placed, baked, arrived,
+  picked_up, cancelled). There is no "ready".
+- `privacy-policy.html` describes the assistant (§1 Phone calls, §5) and
+  names ElevenLabs. If the provider changes, change that page.
+
 ## Accounts — the category name, the mobile, and the second sign-in
 
 - **The online range is named "Signature Cakes"; the nav link to it says
