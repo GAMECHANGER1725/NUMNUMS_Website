@@ -674,12 +674,53 @@ main site.
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
 
-## Phone assistant (`phone-agent/`) — planned, not live
+## Phone assistant (`phone-agent/`) — built, not live
 
 `phone-agent/prompt.md` is the system prompt for an AI voice agent answering
 the shop line (a new Twilio number, not yet bought). Its prices, flavours, hours and addresses are
 copied from `ops/catalog.mjs` and `locations.html`, so **a price, flavour or
-hours change must be made in that prompt too**. Nothing gates it yet.
+hours change must be made in that prompt too, and re-sent to the ElevenLabs
+agent** (the file is not read by ElevenLabs; the agent holds its own copy).
+Nothing gates it yet.
+- **ElevenLabs agent `agent_6601m6t68y1jfazb59p3d30maf49`** (2026-11-07):
+  timezone `Australia/Sydney` (that is how it knows today's date), patient
+  turn-taking, 30-day retention with recordings on (shortest that still lets
+  staff review a mistake; default was 2 years), max 3 concurrent / 60 calls a
+  day / **bursting off** (bursting bills double), parallel tool calls **off**
+  (with them on, `log_call` and the transfer fired together and the log could
+  lose the race). Warm (conference) transfer to +61425697725. Voice is a
+  placeholder until Vaidik picks one.
+- **The three tools are one v2 function**, `netlify/functions/phone-agent.mjs`
+  `?tool=order_status|log_request|log_call`, called at its function path (no
+  `netlify.toml` route, like receipt). Rules live in `netlify/lib/phone.mjs`,
+  gated by `tests/phone.test.mjs` from `verify-blog.mjs`.
+  - **Every request needs header `x-phone-agent-secret` = `PHONE_AGENT_SECRET`**
+    (public-site env var). Unset refuses everything, by design.
+  - `caller_id` and `conversation_id` are filled by ElevenLabs from
+    `system__caller_id` / `system__conversation_id`, never by the model, so the
+    rate limit keys on something a caller cannot talk around.
+  - **`order_status` answers status, shop, date and time and nothing else**,
+    only when the first word of `customer_name` matches. A wrong name, wrong
+    number and a rate-limited caller get the **identical** answer. Limit: 3
+    misses per caller per hour, 60 lookups an hour across the line, counted in
+    `phone_lookups` (service role only). An unlogged lookup is an unlimited
+    one, so a failed insert fails the lookup.
+  - **`log_request` enforces the custom-cake rule itself** (`pickupProblem`:
+    `earliestDueDay` + `COLLECTION`), instead of trusting the model with date
+    arithmetic, and returns a `problem` without logging. A change is forced
+    urgent when it is a cancellation or the order is due within 24h.
+  - **A connected transfer ends the agent's part of the call**, so the prompt
+    logs *before* transferring, and logs as soon as a callback is agreed
+    (callers hang up first; test NN03 caught it). ElevenLabs documents no ring
+    timeout and no return-to-agent on an unanswered transfer.
+- **Call notes**: `phone_notes` (admin read only; RLS checked as admin, staff,
+  baker, customer and anon, section 6 of `verify-rls.sql`), plus an email to
+  info.numnumsbakery@gmail.com through `email-shell.mjs` (transactional, no
+  unsubscribe) and a **push to admins only** (`notifyStaff` gained a `roles`
+  option), because Gmail is read every 2-3 days. Lock screen: first name, shop
+  and kind only. A resolved call is stored but not notified; a call that
+  already produced a brief/change does not notify twice. An ops view of the
+  notes is not built.
 - **Twilio (or any best provider) is allowed for the voice line; SMS is not
   wanted** (Vaidik, 2026-11-07, correcting an earlier "no Twilio"). **Two
   numbers in total for both shops, never one per shop:** 0425 697 725 is
