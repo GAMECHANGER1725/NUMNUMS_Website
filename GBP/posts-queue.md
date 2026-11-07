@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-07
+
+```yaml
+id: post-rs-2026-11-07
+status: published
+published_at: 2026-11-07
+location: riverstone
+post_type: "Call to action"
+title: "Farewell cake near Schofields or Marsden Park? 100% eggless, ready in 2 days"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1592.jpg"
+keywords_baited:
+  - eggless farewell cake Schofields
+  - eggless cake Marsden Park
+  - office cake Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-06
 
 ```yaml
