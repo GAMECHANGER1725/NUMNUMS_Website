@@ -689,7 +689,7 @@ hours change must be made in that prompt too**. Nothing gates it yet.
   is not worth running. Custom-cake callers are told staff will message
   them on WhatsApp; staff work from the call note. Do not add a
   `send_whatsapp_link` tool back without asking.
-- **One staff transfer number for both shops** (to be bought).
+- **Transfers ring one person (the owner), for both shops** — no new transfer number needed.
 - **No stock lookups**: nothing records stock, so "cake today or
   tomorrow" calls go to a person. Don't invent a `check_stock` answer.
 - Order status uses the real `order_status` enum (placed, baked, arrived,
