@@ -28,7 +28,7 @@ Pull from GitHub before editing. Commit and push code edits when done (per CLAUD
 
 ## ElevenLabs agent
 - Create the agent with the prompt from `phone-agent/prompt.md` and the opening line it specifies (it includes the "calls may be recorded" notice, which is a legal requirement, so keep it).
-- Pick an Australian-accented, warm, calm voice. Say which you picked.
+- **Voice: Indian-accented English, warm and calm, so it sounds like part of the Indian community the shop serves** (Vaidik, 2026-11-07). Search the ElevenLabs voice library (`creative_list_voices`, shared voices) for Indian-English voices, ideally an Indian-Australian sound, and shortlist 3 with their voice IDs. Generate a short sample of the same greeting and one price read-back ("thirty-nine ninety-nine") in each, so Vaidik can hear them and choose. Check each one reads prices, order numbers and Indian words (Rasmalai, Diwali, Raksha Bandhan, Karwa Chauth, Bhai Dooj) correctly; a voice that mangles those is out. Do not pick for him: give him the shortlist.
 - Turn-taking tuned for phone calls: short turns, interruption allowed, a sensible silence timeout.
 - Check ElevenLabs' data retention and recording settings and set them to the shortest that still lets staff review mistakes. `privacy-policy.html` already says recordings are kept only as long as needed.
 - Before choosing anything expensive or hard to reverse (voice plan, concurrency, telephony setup), check current ElevenLabs and Twilio pricing and docs online; do not answer from memory.
