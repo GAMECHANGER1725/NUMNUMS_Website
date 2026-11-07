@@ -677,13 +677,16 @@ main site.
 ## Phone assistant (`phone-agent/`) — planned, not live
 
 `phone-agent/prompt.md` is the system prompt for an AI voice agent answering
-the shop line (0425 697 725). Its prices, flavours, hours and addresses are
+the shop line (a new Twilio number, not yet bought). Its prices, flavours, hours and addresses are
 copied from `ops/catalog.mjs` and `locations.html`, so **a price, flavour or
 hours change must be made in that prompt too**. Nothing gates it yet.
 - **Twilio (or any best provider) is allowed for the voice line; SMS is not
   wanted** (Vaidik, 2026-11-07, correcting an earlier "no Twilio"). **Two
-  numbers in total for both shops, never one per shop:** the current
-  0425 697 725 and one new staff transfer number.
+  numbers in total for both shops, never one per shop:** 0425 697 725 is
+  the owner's own mobile and the WhatsApp number (transfers ring it), and a
+  new Twilio number becomes the public line the assistant answers.
+  **0425 697 725 must never be forwarded to the assistant:** it is also the
+  transfer destination, so that would loop the call.
 - **Calls only, no SMS** (Vaidik, 2026-11-07). At ~4.3
   orders/day (30 days to 2026-11-07) plus 5–10 other calls, a text sender
   is not worth running. Custom-cake callers are told staff will message
