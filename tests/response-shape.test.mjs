@@ -50,6 +50,8 @@ const CASES = [
   ['unsubscribe', '../netlify/functions/unsubscribe.mjs', 'https://x.test/unsubscribe?t=bogus'],
   // The ops bell's test send; a 502 here reads on the phone as "could not reach the site".
   ['push-test', '../netlify/functions/push-test.mjs', 'https://x.test/.netlify/functions/push-test'],
+  // ElevenLabs reads a 502 as a tool error and the caller hears silence.
+  ['phone-agent', '../netlify/functions/phone-agent.mjs', 'https://x.test/.netlify/functions/phone-agent?tool=order_status'],
 ];
 
 for (const [name, path, url] of CASES) {
@@ -86,6 +88,16 @@ for (const [name, path, url] of CASES) {
 
   if (typeof res.status !== 'number') {
     bad++; realError(`FAIL ${name} -> Response has no numeric status`);
+  }
+}
+
+/** The phone webhooks are public: a POST without the shared secret must be refused before any lookup. */
+{
+  delete process.env.PHONE_AGENT_SECRET;
+  const { default: phone } = await import('../netlify/functions/phone-agent.mjs');
+  const res = await phone(req('https://x.test/.netlify/functions/phone-agent?tool=order_status', 'POST', '{"first_name":"a","order_number":"HP-1831"}'));
+  if (!(res instanceof Response) || res.status !== 401) {
+    bad++; realError(`FAIL phone-agent -> POST without the secret answered ${res?.status}, not 401`);
   }
 }
 

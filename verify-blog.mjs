@@ -440,6 +440,15 @@ const FACTS = {
     fail(`function response-shape tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
   }
 
+  // The phone assistant's webhooks are a public phone line into the order book:
+  // the secret check, the lookup rules and the 2-day rule must hold.
+  try {
+    const out = execFileSync(process.execPath, ['tests/phone.test.mjs'], { cwd: ROOT, encoding: 'utf8' });
+    notes.push(out.trim());
+  } catch (e) {
+    fail(`phone assistant tests failed:\n${(e.stdout || '') + (e.stderr || '')}`.trim());
+  }
+
   // The unsubscribe signature is what stops one person taking another off the
   // list, and the link host check stops a raw Host header reaching an email.
   try {
