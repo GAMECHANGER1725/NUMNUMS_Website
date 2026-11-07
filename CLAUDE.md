@@ -693,6 +693,10 @@ hours change must be made in that prompt too**. Nothing gates it yet.
   them on WhatsApp; staff work from the call note. Do not add a
   `send_whatsapp_link` tool back without asking.
 - **Transfers ring one person (the owner), for both shops** — no new transfer number needed.
+- **Transfers are rare: the owner's mobile is also his work phone.** Live
+  transfer only for an upset caller, someone insisting on a person, or an
+  allergy question. Everything else is a logged callback, and an unanswered
+  transfer falls back to a callback after ~25 seconds (2026-11-07).
 - **No stock lookups**: nothing records stock, so "cake today or
   tomorrow" calls go to a person. Don't invent a `check_stock` answer.
 - Order status uses the real `order_status` enum (placed, baked, arrived,
