@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-12
+
+```yaml
+id: post-rs-2026-11-12
+status: published
+published_at: 2026-11-12
+location: riverstone
+post_type: "Call to action"
+title: "End-of-term cake for a Riverstone or Tallawong class? 100% eggless"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1624.jpg"
+keywords_baited:
+  - eggless teacher thank-you cake Riverstone
+  - eggless cake Tallawong
+  - class party cake no egg Term 4
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-07
 
 ```yaml
