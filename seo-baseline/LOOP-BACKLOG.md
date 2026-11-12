@@ -50,7 +50,7 @@ pages go to `tiered-cakes-sydney`.
 
 ### D. Internal links into the pages that earn
 - [x] D1 2026-11-12 `/locations` (28 days to 10 Nov: 1,423 impr, 12 clicks, pos 4.8): **in-body links from the 10 blog pages with the most impressions** (`d1_pages_28d.json`). All 10 already linked it from the nav, which every page carries; what was missing was a link in the article. Added one, anchored on the shop names, to the six that had none: cake-serving-size-guide ("our Harris Park or Riverstone shop"), indian-sweets hub ("two Sydney shops"), are-eggless-cakes-healthy ("our two shops"), best-eggless-cake-shops ("Harris Park and Riverstone"), myths post (CTA "Harris Park or Riverstone") and schofields (one new sentence, "our Harris Park and Riverstone shops"). Re-anchored two that said "Locations page" (photo-cake, eggless-cake-vs-regular). storage-guide and same-day already had descriptive anchors.
-- [ ] D2 The location hub (the top-earning blog page): check that the surviving suburb pages link to it, not to merged URLs.
+- [x] D2 2026-11-12 Location hub (`eggless-cake-bakery-harris-park-riverstone-sydney`, 5,012 impr / 77 clicks in 90 days). **0 links anywhere on the site point at a merged or missing blog URL** (all 201 posts + top-level pages scanned after rounds 3/3b/C3). But 33 of 55 surviving suburb pages did not link to the hub at all, including Dean Park (2,710 impr) and Quakers Hill (313). Added the hub as the first entry of the "Related Posts" sidebar on the 32 suburb pages missing it (same card markup, the hub's own title). The 33rd hit was the myths post, not a suburb.
 
 ### E. Technical
 - [ ] E1 Re-check `/cakes` with URL Inspection. If it still shows the 19 Sep crawl, note it for Vaidik (manual Request indexing). Do not change code for it.
