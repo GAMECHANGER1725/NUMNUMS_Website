@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-12
+
+```yaml
+id: post-hp-2026-11-12
+status: published
+published_at: 2026-11-12
+location: harris-park
+post_type: "Call to action"
+title: "An eggless Christmas cake for North Parramatta and Oatlands tables"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/e82e7e7e-0f93-4534-ae31-9daf2fde4a96.jpg"
+keywords_baited:
+  - eggless Christmas cake North Parramatta
+  - Christmas cake without eggs Oatlands
+  - vegetarian Christmas dessert Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-12
 
 ```yaml
