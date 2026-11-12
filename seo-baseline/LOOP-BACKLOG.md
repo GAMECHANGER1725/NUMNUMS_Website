@@ -53,7 +53,7 @@ pages go to `tiered-cakes-sydney`.
 - [x] D2 2026-11-12 Location hub (`eggless-cake-bakery-harris-park-riverstone-sydney`, 5,012 impr / 77 clicks in 90 days). **0 links anywhere on the site point at a merged or missing blog URL** (all 201 posts + top-level pages scanned after rounds 3/3b/C3). But 33 of 55 surviving suburb pages did not link to the hub at all, including Dean Park (2,710 impr) and Quakers Hill (313). Added the hub as the first entry of the "Related Posts" sidebar on the 32 suburb pages missing it (same card markup, the hub's own title). The 33rd hit was the myths post, not a suburb.
 
 ### E. Technical
-- [ ] E1 Re-check `/cakes` with URL Inspection. If it still shows the 19 Sep crawl, note it for Vaidik (manual Request indexing). Do not change code for it.
+- [x] E1 2026-11-12 URL Inspection (`e1_cakes_inspect.json`): `/cakes` is still "Submitted and indexed", **last crawl 2026-09-19**, Google canonical = itself, so Google has not yet seen the 301 to `/order` that went live on 8 Oct. `/cakes` is not in our sitemap (the "Submitted" label is Google's stale record). `/order` was crawled on 9 Nov and is indexed. No code change; the Request-indexing ask under Needs Vaidik stands, now confirmed on 12 Nov.
 - [ ] E2 Run the netlify.toml redirect resolver after every merge round: no chains, no dead targets.
 
 ## Needs Vaidik
