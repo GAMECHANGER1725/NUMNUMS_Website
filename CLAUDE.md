@@ -1728,7 +1728,8 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
   Same for the serving-size guide (A2): its title answers "how many does an 8 inch cake feed" with the
   catalogue's numbers; do not put the old label title back.
   Indian sweets (A3): the blog hub owns the local "near me / Harris Park sweet shop" queries, so its
-  title names the shop and suburbs; `/indian-sweet` is the product/online page.
+  title names the shop and suburbs; `/indian-sweet` is the product page (A4: its title names kaju katli
+  and gulab jamun, its top product queries). Neither page should be retargeted at the other's queries.
   The SEO loop works `seo-baseline/LOOP-BACKLOG.md` one item at a time; per-page GSC pulls use
   `seo-baseline/2026-11-12/page_queries.py <path>`.
 - **Google still has the old `/cakes` page indexed** (last crawl 19 Sep, before the
