@@ -1717,6 +1717,8 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
   The merge script does not touch the Topics chip counts in `blog/index.html`; fix them after any merge or verify-blog fails.
   Round 3b (C2, same day) merged 11 topic pages (`merge_round3b.py`). verify-blog does not check the **All** chip, so set
   it to the post count by hand after a merge.
+  The Mother's Day page was merged into `best-cake-sydney` (C3): no "mother" query reached the site in Mar–May 2026.
+  Answer Mother's Day there; do not write a new page for it.
 - **A merge target must be a blog post.** `verify-blog.mjs` only accepts
   `/blog/<slug>` survivors; a redirect to `/about` reads as an orphan.
 - **The nav-count gate follows the post count** (`posts + 1`), not a fixed 230.
