@@ -17,7 +17,7 @@ Rules every item obeys (from `plans/SEO Fix Plan — 2026-10.md` and CLAUDE.md):
 ### A. Snippets on page-1 pages with weak CTR (highest leverage: they already rank)
 Title ≤ 60 chars, meta ≤ 160 with two concrete numbers, answer the query in the first
 sentence. Use the page's own top queries (pull them per page from the GSC API).
-- [ ] A1 `/blog/eggless-cake-storage-freshness-guide`: 2,730 impr, pos 5.6, 23 clicks (0.8%). Queries are "how long does fresh cream cake last (in the fridge)".
+- [x] A1 2026-11-12 `/blog/eggless-cake-storage-freshness-guide`. Before (GSC 14 Oct–10 Nov): 2,744 impr, 25 clicks (0.91%), pos 5.6. The 31 "fresh cream cake" queries are 510 impr at pos 5–9 with **0 clicks**: the old title/meta led with "eggless" and the meta said "~5 days in the fridge", which is the buttercream figure and contradicted the body's 2–3 days for fresh cream. Changed: title → "How Long Does Fresh Cream Cake Last in the Fridge? 2–3 Days" (59), meta/og/twitter/Article description lead with 2–3 days at 5°C and the 2-hour out-of-fridge limit (both already sourced on the page to NSW Food Authority), Quick answer now opens with the fresh-cream answer. H1 and body unchanged. Evidence: `seo-baseline/2026-11-12/blog__eggless-cake-storage-freshness-guide.json` (re-pull with `page_queries.py`). Re-check from ~10 Dec, after it is published.
 - [ ] A2 `/blog/cake-serving-size-guide-sydney`: 2,662 impr, pos 6.4, 16 clicks (0.6%).
 - [ ] A3 `/blog/indian-sweets-harris-park-riverstone-sydney`: 1,633 impr, pos 7.0, 12 clicks. Newly indexed. "indian sweets near me" 297 impr, pos 8.9.
 - [ ] A4 `/indian-sweet`: 1,997 impr, pos 9.9, 21 clicks. Check that A3 and A4 do not compete for the same queries; pick an owner per query.
