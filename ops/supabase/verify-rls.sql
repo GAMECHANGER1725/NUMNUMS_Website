@@ -178,3 +178,19 @@ select c.relname,
 from pg_class c join pg_namespace n on n.oid=c.relnamespace
 where n.nspname='public' and c.relkind='v';
 -- EXPECT: security_invoker = true.
+
+
+-- ── 6. PHONE ASSISTANT ─ phone_notes admin-read, phone_lookups nobody ───────
+-- Written only by netlify/functions/phone-agent.mjs with the service role.
+-- A note holds a caller's name and mobile, so only admins may read it; the
+-- lookup log is the rate limit's memory and nobody reads it over the API.
+-- Last run 2026-11-07: admin read 1 probe row, staff/baker/customer/anon 0;
+-- every role refused INSERT with 42501 (the policy, not a type error).
+begin;
+  set local role authenticated;
+  select set_config('request.jwt.claims',
+    '{"sub":"11111111-2222-4333-8444-555555555555","role":"authenticated"}', true);
+  select count(*) as customer_sees_notes   from phone_notes;    -- EXPECT 0
+  select count(*) as customer_sees_lookups from phone_lookups;  -- EXPECT 0
+  insert into phone_notes (kind, summary) values ('call', 'forged');  -- EXPECT 42501
+rollback;

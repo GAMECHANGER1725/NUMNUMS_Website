@@ -17,15 +17,21 @@ import { PUSH_PUBLIC_KEY } from '../../ops/catalog.mjs';
 const SUBJECT = 'mailto:info.numnumsbakery@gmail.com';
 export const NOTIFY_ROLES = ['admin', 'baker'];
 
-export async function notifyStaff(db, store, message, { userId } = {}) {
+/**
+ * `roles` narrows who hears it: phone-assistant notes go to admins only, since
+ * they are callbacks for the owner and not the baker's work. A null `store`
+ * (a caller who never said which shop) skips the store filter.
+ */
+export async function notifyStaff(db, store, message, { userId, roles = NOTIFY_ROLES } = {}) {
   const key = process.env.VAPID_PRIVATE_KEY;
   if (!key) return [];
   webpush.setVapidDetails(SUBJECT, PUSH_PUBLIC_KEY, key);
 
   let q = db.from('push_subscriptions')
     .select('endpoint, p256dh, auth, profiles!inner(stores, role)')
-    .in('profiles.role', NOTIFY_ROLES);
-  q = userId ? q.eq('user_id', userId) : q.contains('profiles.stores', [store]);
+    .in('profiles.role', roles);
+  if (userId) q = q.eq('user_id', userId);
+  else if (store) q = q.contains('profiles.stores', [store]);
   const { data, error } = await q;
   if (error) { console.error('push: could not read subscriptions', error); return []; }
 

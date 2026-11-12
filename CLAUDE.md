@@ -278,6 +278,12 @@ main site.
 - **Export** writes CSV in the browser via `toCsv`/`csvCell` in `stats.mjs`. Both hazards it closes
   are tested: a comma or quote in a cake's wording would shift every later column, and a value
   starting `= + - @` is executed as a formula by Excel and Sheets. Do not "simplify" that escaping.
+- **Adding a person takes three things**: an auth user `<name>@ops.numnumsbakery.com.au`
+  (created in the Supabase dashboard; Claude is not allowed to set passwords over SQL), a `profiles`
+  row (name, role, stores), and an entry in `PEOPLE` in `db.mjs`, since the sign-in dropdown is
+  built before anyone is signed in. **Arpita is temporary staff** (added 2026-10-21, for 1–2 months):
+  when she leaves, block her sign-in in the dashboard rather than deleting the user (orders she
+  logged point at her id), and take her out of `PEOPLE`.
 - **The staff page is read-only.** Roles and store scoping are what RLS enforces; they get changed
   in Supabase so the change is deliberate, not by an admin mis-tapping their own row.
 - **A website order tags itself: `orders.from_website`** (Vaidik, 2026-10-10: "when orders
@@ -667,6 +673,86 @@ main site.
 - **Times are Sydney-local everywhere** via `stats.mjs`. Never bucket dates in UTC: it moves evening
   pickups into the wrong day and week. `node ops/stats.test.mjs` guards this.
 - `verify-blog.mjs` does not cover `ops/`, and `ops/` never belongs in `sitemap.xml` or `llms.txt`.
+
+## Phone assistant (`phone-agent/`) — built, not live
+
+`phone-agent/prompt.md` is the system prompt for an AI voice agent answering
+the shop line (a new Twilio number, not yet bought). Its prices, flavours, hours and addresses are
+copied from `ops/catalog.mjs` and `locations.html`, so **a price, flavour or
+hours change must be made in that prompt too, and re-sent to the ElevenLabs
+agent** (the file is not read by ElevenLabs; the agent holds its own copy).
+Nothing gates it yet.
+- **ElevenLabs agent `agent_6601m6t68y1jfazb59p3d30maf49`** (2026-11-07):
+  timezone `Australia/Sydney` (that is how it knows today's date), patient
+  turn-taking, 30-day retention with recordings on (shortest that still lets
+  staff review a mistake; default was 2 years), max 3 concurrent / 60 calls a
+  day / **bursting off** (bursting bills double), parallel tool calls **off**
+  (with them on, `log_call` and the transfer fired together and the log could
+  lose the race). Warm (conference) transfer to +61425697725. Voice is a
+  placeholder until Vaidik picks one.
+- **The three tools are one v2 function**, `netlify/functions/phone-agent.mjs`
+  `?tool=order_status|log_request|log_call`, called at its function path (no
+  `netlify.toml` route, like receipt). Rules live in `netlify/lib/phone.mjs`,
+  gated by `tests/phone.test.mjs` from `verify-blog.mjs`.
+  - **Every request needs header `x-phone-agent-secret` = `PHONE_AGENT_SECRET`**
+    (public-site env var). Unset refuses everything, by design.
+  - `caller_id` and `conversation_id` are filled by ElevenLabs from
+    `system__caller_id` / `system__conversation_id`, never by the model, so the
+    rate limit keys on something a caller cannot talk around.
+  - **`order_status` answers status, shop, date and time and nothing else**,
+    only when the first word of `customer_name` matches. A wrong name, wrong
+    number and a rate-limited caller get the **identical** answer. Limit: 3
+    misses per caller per hour, 60 lookups an hour across the line, counted in
+    `phone_lookups` (service role only). An unlogged lookup is an unlimited
+    one, so a failed insert fails the lookup.
+  - **`log_request` enforces the custom-cake rule itself** (`pickupProblem`:
+    `earliestDueDay` + `COLLECTION`), instead of trusting the model with date
+    arithmetic, and returns a `problem` without logging. A change is forced
+    urgent when it is a cancellation or the order is due within 24h.
+  - **A connected transfer ends the agent's part of the call**, so the prompt
+    logs *before* transferring, and logs as soon as a callback is agreed
+    (callers hang up first; test NN03 caught it). ElevenLabs documents no ring
+    timeout and no return-to-agent on an unanswered transfer.
+- **Call notes**: `phone_notes` (admin read only; RLS checked as admin, staff,
+  baker, customer and anon, section 6 of `verify-rls.sql`), plus an email to
+  info.numnumsbakery@gmail.com through `email-shell.mjs` (transactional, no
+  unsubscribe) and a **push to admins only** (`notifyStaff` gained a `roles`
+  option), because Gmail is read every 2-3 days. Lock screen: first name, shop
+  and kind only. A resolved call is stored but not notified; a call that
+  already produced a brief/change does not notify twice. An ops view of the
+  notes is not built.
+- **Twilio (or any best provider) is allowed for the voice line; SMS is not
+  wanted** (Vaidik, 2026-11-07, correcting an earlier "no Twilio"). **Two
+  numbers in total for both shops, never one per shop:** 0425 697 725 is
+  the owner's own mobile and the WhatsApp number (transfers ring it), and a
+  new Twilio number becomes the public line the assistant answers.
+  **0425 697 725 must never be forwarded to the assistant:** it is also the
+  transfer destination, so that would loop the call.
+- **Calls only, no SMS** (Vaidik, 2026-11-07). At ~4.3
+  orders/day (30 days to 2026-11-07) plus 5–10 other calls, a text sender
+  is not worth running. Custom-cake callers are told staff will message
+  them on WhatsApp; staff work from the call note. Do not add a
+  `send_whatsapp_link` tool back without asking.
+- **Transfers ring one person (the owner), for both shops** — no new transfer number needed.
+- **Transfers are rare: the owner's mobile is also his work phone.** Live
+  transfer only for an upset caller, someone insisting on a person, or an
+  allergy question. Everything else is a logged callback, and an unanswered
+  transfer falls back to a callback after ~25 seconds (2026-11-07).
+- **No stock lookups**: nothing records stock, so "cake today or
+  tomorrow" calls go to a person. Don't invent a `check_stock` answer.
+- **Alternatives to ElevenLabs researched 2026-11-07 and not adopted** (Vaidik asked
+  for cheaper with great Indian voices). Vapi ($0.05/min hosting + STT/LLM/TTS/telephony
+  at cost, realistic all-in $0.13-0.22), Retell ($0.07-0.31, own-Twilio no extra fee),
+  Bolna (India-focused, $0.04-0.10 claimed, telephony via Exotel, prices unconfirmed) and
+  Sarvam Bulbul (Indian TTS, ~INR 3/1k chars, no documented Indian-*English*/Australian
+  accent) were checked. Retell's own docs say ElevenLabs handles niche accents best, and
+  at ~600-1,200 min/month the saving is tens of dollars while a move costs the built
+  agent, tests and native Twilio warm transfer. Sources were mostly vendor blogs; revisit
+  only if the bill actually hurts or the voice shortlist fails by ear.
+- Order status uses the real `order_status` enum (placed, baked, arrived,
+  picked_up, cancelled). There is no "ready".
+- `privacy-policy.html` describes the assistant (§1 Phone calls, §5) and
+  names ElevenLabs. If the provider changes, change that page.
 
 ## Accounts — the category name, the mobile, and the second sign-in
 
@@ -1611,6 +1697,35 @@ could not see from outside the repo. The research and the parked items are in
 - **Logos shown at 56px or less use `Logo_TParent_56.webp` (4KB), not
   `Logo_TParent.png` (1.6MB).** Same artwork. Every page loaded the 1.6MB file
   twice for a 48px circle until 2026-11-01. Keep the PNG for JSON-LD `logo` and large uses.
+
+### SEO — merges, the Christmas page, and `/cakes` (2026-11-12)
+
+Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-07/`.
+- **A page Google drops gets merged, never re-requested.** Round 2 (2026-11-12)
+  merged the 14 pages that fell out of the index between 10 Oct and 7 Nov, by
+  `seo-baseline/2026-11-07/merge_round2.py` (the mapping is in there; reuse it for
+  round 3). Suburb pages → the location hub; anniversary/graduation/housewarming/
+  Father's Day → `best-cake-sydney` (which gained an occasions card naming them);
+  `wedding-cake-sydney-north-west` → `tiered-cakes-sydney`; vegan-vs-eggless,
+  recipe-vs-bakery and why-we-chose-eggless → `eggless-cake-vs-regular-cake`.
+  Retired pages are deleted, 301'd in both forms, and every older redirect that
+  pointed at them was repointed to the final survivor: **no redirect chains**.
+  Check with the netlify.toml resolver in that folder's notes. `serve.mjs` does
+  **not** read netlify.toml rules, so a local curl 404 on a merged URL proves nothing.
+- **A merge target must be a blog post.** `verify-blog.mjs` only accepts
+  `/blog/<slug>` survivors; a redirect to `/about` reads as an orphan.
+- **The nav-count gate follows the post count** (`posts + 1`), not a fixed 230.
+  The fixed floor failed the build the day posts were merged away.
+- **`eggless-cakes-christmas-sydney` is the Christmas owner page**, rewritten
+  2026-11-12: order-by dates for 2026 (two days' notice, so Tue 22 Dec for
+  Christmas Eve), the size/serves/price table from `ops/catalog.mjs`, shop and
+  custom paths, our own product photos. It says Christmas-period hours may differ
+  and to confirm them, because nobody has told us the 25th/26th hours. **Update the
+  dates each November**, and never put invented "December order data" back.
+- **Google still has the old `/cakes` page indexed** (last crawl 19 Sep, before the
+  301 went live on 8 Oct), so it keeps the brand searches and `/order` looks
+  weaker than it is. The fix is a recrawl: Search Console URL Inspection →
+  Request indexing on `/cakes`. The API cannot request indexing for this.
 
 ### `/shop` — the offer, said where the choosing happens (Hormozi audit, 2026-10-06)
 
