@@ -54,7 +54,7 @@ pages go to `tiered-cakes-sydney`.
 
 ### E. Technical
 - [x] E1 2026-11-12 URL Inspection (`e1_cakes_inspect.json`): `/cakes` is still "Submitted and indexed", **last crawl 2026-09-19**, Google canonical = itself, so Google has not yet seen the 301 to `/order` that went live on 8 Oct. `/cakes` is not in our sitemap (the "Submitted" label is Google's stale record). `/order` was crawled on 9 Nov and is indexed. No code change; the Request-indexing ask under Needs Vaidik stands, now confirmed on 12 Nov.
-- [ ] E2 Run the netlify.toml redirect resolver after every merge round: no chains, no dead targets.
+- [x] E2 2026-11-12 Resolver run after rounds 3 (C1), 3b (C2) and the Mother's Day merge (C3): **568 redirects, 0 chains, 0 dead blog targets**. Saved as `seo-baseline/2026-11-12/resolve_redirects.py` (exits 1 on a chain or dead target) so the next merge round can run it in one line. Note it does not read `serve.mjs`, and a local curl of a merged URL proves nothing (CLAUDE.md).
 
 ## Needs Vaidik
 - [ ] **Request indexing for `/cakes` in Search Console** (URL Inspection → Request indexing). Google still serves the pre-301 page for "eggless cake sydney" (116 impr, pos 10.8) and "eggless cakes sydney" (167, pos 12.3), with 0 clicks, which is also what pushed `best-eggless-cake-shops-sydney-2026` down for those terms (B1). The API cannot request indexing. Added 2026-11-12.
