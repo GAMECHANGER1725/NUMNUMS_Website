@@ -1730,6 +1730,8 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
   Indian sweets (A3): the blog hub owns the local "near me / Harris Park sweet shop" queries, so its
   title names the shop and suburbs; `/indian-sweet` is the product page (A4: its title names kaju katli
   and gulab jamun, its top product queries). Neither page should be retargeted at the other's queries.
+  Same split for eggless-cake posts: the myths post (A5) owns "do eggless cakes taste different", the vs-regular
+  post (A6) owns "egg vs eggless / meaning / does cake contain egg". Keep their titles on those lanes.
   The SEO loop works `seo-baseline/LOOP-BACKLOG.md` one item at a time; per-page GSC pulls use
   `seo-baseline/2026-11-12/page_queries.py <path>`.
 - **Google still has the old `/cakes` page indexed** (last crawl 19 Sep, before the
