@@ -128,6 +128,20 @@ no merges, redirects or sitemap removals exist in the repo. The 15 Oct improve j
 `eggless-chocolate-cake-sydney`, one of the six "leave alone" pages — it is no longer
 untouched. Full numbers: `seo-baseline/2026-10-18/CHECKPOINT-REVIEW.md`.
 
+## Status — 2026-11-12 (Phase 3 done)
+
+Checkpoint 7 Nov (`seo-baseline/2026-11-07/CHECKPOINT-REVIEW.md`): clicks flat at
+171–215/week, non-brand 31–54/week, positions better (non-brand impressions in
+positions 4–10: 4,918 → 6,568), 199 of 240 indexed with 14 dropped and 13 gained
+since 10 Oct. Acted on the branch "stable → round 2 only for dropped pages":
+- **Round 2 shipped:** the 14 dropped pages merged (240 → 226 sitemap URLs,
+  220 posts), via `seo-baseline/2026-11-07/merge_round2.py`. No chains: 501 blog
+  redirects resolve in one hop.
+- **Christmas page rewritten** as the real owner (dates, prices, own photos).
+  Mother's Day stays unindexed with no owner; decide before March.
+- **`/cakes` → `/order`:** Google last crawled `/cakes` on 19 Sep, before the 301.
+  Needs a manual Request indexing in Search Console.
+
 ## Phase 3 — 3 Nov decision
 
 | If… | Then… |

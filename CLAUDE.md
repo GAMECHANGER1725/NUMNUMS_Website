@@ -740,6 +740,15 @@ Nothing gates it yet.
   transfer falls back to a callback after ~25 seconds (2026-11-07).
 - **No stock lookups**: nothing records stock, so "cake today or
   tomorrow" calls go to a person. Don't invent a `check_stock` answer.
+- **Alternatives to ElevenLabs researched 2026-11-07 and not adopted** (Vaidik asked
+  for cheaper with great Indian voices). Vapi ($0.05/min hosting + STT/LLM/TTS/telephony
+  at cost, realistic all-in $0.13-0.22), Retell ($0.07-0.31, own-Twilio no extra fee),
+  Bolna (India-focused, $0.04-0.10 claimed, telephony via Exotel, prices unconfirmed) and
+  Sarvam Bulbul (Indian TTS, ~INR 3/1k chars, no documented Indian-*English*/Australian
+  accent) were checked. Retell's own docs say ElevenLabs handles niche accents best, and
+  at ~600-1,200 min/month the saving is tens of dollars while a move costs the built
+  agent, tests and native Twilio warm transfer. Sources were mostly vendor blogs; revisit
+  only if the bill actually hurts or the voice shortlist fails by ear.
 - Order status uses the real `order_status` enum (placed, baked, arrived,
   picked_up, cancelled). There is no "ready".
 - `privacy-policy.html` describes the assistant (§1 Phone calls, §5) and
@@ -1688,6 +1697,35 @@ could not see from outside the repo. The research and the parked items are in
 - **Logos shown at 56px or less use `Logo_TParent_56.webp` (4KB), not
   `Logo_TParent.png` (1.6MB).** Same artwork. Every page loaded the 1.6MB file
   twice for a 48px circle until 2026-11-01. Keep the PNG for JSON-LD `logo` and large uses.
+
+### SEO — merges, the Christmas page, and `/cakes` (2026-11-12)
+
+Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-07/`.
+- **A page Google drops gets merged, never re-requested.** Round 2 (2026-11-12)
+  merged the 14 pages that fell out of the index between 10 Oct and 7 Nov, by
+  `seo-baseline/2026-11-07/merge_round2.py` (the mapping is in there; reuse it for
+  round 3). Suburb pages → the location hub; anniversary/graduation/housewarming/
+  Father's Day → `best-cake-sydney` (which gained an occasions card naming them);
+  `wedding-cake-sydney-north-west` → `tiered-cakes-sydney`; vegan-vs-eggless,
+  recipe-vs-bakery and why-we-chose-eggless → `eggless-cake-vs-regular-cake`.
+  Retired pages are deleted, 301'd in both forms, and every older redirect that
+  pointed at them was repointed to the final survivor: **no redirect chains**.
+  Check with the netlify.toml resolver in that folder's notes. `serve.mjs` does
+  **not** read netlify.toml rules, so a local curl 404 on a merged URL proves nothing.
+- **A merge target must be a blog post.** `verify-blog.mjs` only accepts
+  `/blog/<slug>` survivors; a redirect to `/about` reads as an orphan.
+- **The nav-count gate follows the post count** (`posts + 1`), not a fixed 230.
+  The fixed floor failed the build the day posts were merged away.
+- **`eggless-cakes-christmas-sydney` is the Christmas owner page**, rewritten
+  2026-11-12: order-by dates for 2026 (two days' notice, so Tue 22 Dec for
+  Christmas Eve), the size/serves/price table from `ops/catalog.mjs`, shop and
+  custom paths, our own product photos. It says Christmas-period hours may differ
+  and to confirm them, because nobody has told us the 25th/26th hours. **Update the
+  dates each November**, and never put invented "December order data" back.
+- **Google still has the old `/cakes` page indexed** (last crawl 19 Sep, before the
+  301 went live on 8 Oct), so it keeps the brand searches and `/order` looks
+  weaker than it is. The fix is a recrawl: Search Console URL Inspection →
+  Request indexing on `/cakes`. The API cannot request indexing for this.
 
 ### `/shop` — the offer, said where the choosing happens (Hormozi audit, 2026-10-06)
 

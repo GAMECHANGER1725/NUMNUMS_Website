@@ -720,7 +720,9 @@ const FACTS = {
     // after that entry was removed only matched a FOOTER heading — the check
     // went on passing while measuring the wrong thing.
     .filter((f) => /<a href="\/shop"[^>]*class="nav-link/.test(read(f)));
-  if (navPages.length < 230) fail(`only ${navPages.length} pages carry the nav — expected every static page`);
+  // Floor follows the real post count (every post + the blog index), not a
+  // fixed number: a fixed 230 failed the build the day 14 posts were merged away.
+  if (navPages.length < posts.length + 1) fail(`only ${navPages.length} pages carry the nav — expected every post plus the blog index (${posts.length + 1})`);
   // /cakes was folded into /order. An internal link to it costs a redirect hop
   // on every page load, so none should remain.
   //
