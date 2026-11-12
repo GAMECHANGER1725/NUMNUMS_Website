@@ -1725,6 +1725,8 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
 - **The storage guide's snippet answers fresh cream, not eggless** (SEO loop A1, 2026-11-12). Its 510
   monthly impressions are "how long does fresh cream cake last in the fridge"; the old meta said "~5 days in
   the fridge" (buttercream's figure) and earned 0 clicks. Keep the title/meta leading with 2–3 days at 5°C.
+  Same for the serving-size guide (A2): its title answers "how many does an 8 inch cake feed" with the
+  catalogue's numbers; do not put the old label title back.
   The SEO loop works `seo-baseline/LOOP-BACKLOG.md` one item at a time; per-page GSC pulls use
   `seo-baseline/2026-11-12/page_queries.py <path>`.
 - **Google still has the old `/cakes` page indexed** (last crawl 19 Sep, before the
