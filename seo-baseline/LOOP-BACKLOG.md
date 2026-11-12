@@ -29,7 +29,10 @@ sentence. Use the page's own top queries (pull them per page from the GSC API).
 - [x] A8 2026-11-12 Unsourced "In blind tests, most people cannot tell the difference" removed from the A5 post's FAQ (visible answer + FAQ schema), replaced with the qualitative "Not in a way most people notice." No study was cited and none is ours. It was the only post carrying it.
 
 ### B. Diagnose losses
-- [ ] B1 `/blog/best-eggless-cake-shops-sydney-2026`: clicks 56 → 15, position 9.5 → 10.4. Find which queries left (GSC query × page) and whether another of our pages took them (cannibalisation) or a competitor did. Fix only if the cause is ours.
+- [x] B1 2026-11-12 `/blog/best-eggless-cake-shops-sydney-2026`: **diagnosed, no page change.** 16 Sep–13 Oct vs 14 Oct–10 Nov: clicks 50 → 13, impr 2,232 → 1,584, pos 10.0 → 11.7 (`seo-baseline/2026-11-12/b1_loss.py`, `b1_loss.json`, `b1_sydney_queries.json`). Two causes:
+  1. **"eggless cake near me" (10 → 0 clicks, pos 7.7 → 10.3)** is the biggest single loss. Google now spreads that query over our own local pages: `/blog/eggless-cakes-schofields` (203 impr, pos 6.1, 5 clicks), `/` (152, pos 10.5, 8 clicks), `/blog/eggless-cakes-dean-park` (154, pos 10.0). The clicks moved to other pages of ours rather than to a competitor, and near-me is local, so per fix-plan rule 4 this is not a fix. B2 measures the query site-wide.
+  2. **"eggless cake sydney" (pos 9.7 → 16.3) and "eggless cakes sydney" (12.2 → 22.2)** went to the **old `/cakes` URL**, which Google still holds: `/cakes` rose to pos 10.8 / 12.3 on 116 / 167 impr with 0 clicks, although it has 301'd to `/order` since 8 Oct. Ours, but the fix is a recrawl, not code: see E1 and Needs Vaidik.
+  Watch: `/blog/eggless-cakes-near-me-sydney` newly ranks for "eggless cake shop" (80 impr, pos 8.3) beside this page (108, pos 6.6). One month is not a pattern; re-check in December before treating it as cannibalisation.
 - [ ] B2 "eggless cake near me": 849 impr, pos 10.0, clicks 35 → 20. Which URL ranks for it, per device? Near-me queries are local, so many URLs is normal (fix plan rule 4). Only act on a clear signal.
 
 ### C. Round 3 merges: pages that are unindexed and earn nothing
@@ -50,6 +53,9 @@ pages go to `tiered-cakes-sydney`.
 ### E. Technical
 - [ ] E1 Re-check `/cakes` with URL Inspection. If it still shows the 19 Sep crawl, note it for Vaidik (manual Request indexing). Do not change code for it.
 - [ ] E2 Run the netlify.toml redirect resolver after every merge round: no chains, no dead targets.
+
+## Needs Vaidik
+- [ ] **Request indexing for `/cakes` in Search Console** (URL Inspection → Request indexing). Google still serves the pre-301 page for "eggless cake sydney" (116 impr, pos 10.8) and "eggless cakes sydney" (167, pos 12.3), with 0 clicks, which is also what pushed `best-eggless-cake-shops-sydney-2026` down for those terms (B1). The API cannot request indexing. Added 2026-11-12.
 
 ## Done
 - [x] 2026-11-12 Christmas page rewritten as owner (`e5164e05`).
