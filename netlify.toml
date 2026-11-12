@@ -504,7 +504,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-beaumont-hills.html"
-  to = "/blog/eggless-cakes-beaumont-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-beaumont-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -666,7 +672,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-clyde.html"
-  to = "/blog/eggless-cakes-clyde"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-clyde"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -1074,7 +1086,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-rydalmere.html"
-  to = "/blog/eggless-cakes-rydalmere"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-rydalmere"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -1116,7 +1134,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-westmead.html"
-  to = "/blog/eggless-cakes-westmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-westmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -1874,7 +1898,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-northmead.html"
-  to = "/blog/eggless-cakes-northmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-northmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -1934,7 +1964,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-pendle-hill.html"
-  to = "/blog/eggless-cakes-pendle-hill"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-pendle-hill"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -2012,7 +2048,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-seven-hills.html"
-  to = "/blog/eggless-cakes-seven-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-seven-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -2114,7 +2156,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-winston-hills.html"
-  to = "/blog/eggless-cakes-winston-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-winston-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
