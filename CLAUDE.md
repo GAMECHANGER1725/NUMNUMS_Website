@@ -1715,6 +1715,8 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
 - **Round 3 (SEO loop C1, 2026-11-12)** merged 8 more suburb pages (rydalmere, clyde, westmead, beaumont-hills,
   seven-hills, northmead, pendle-hill, winston-hills) into the location hub with `seo-baseline/2026-11-12/merge_round3.py`.
   The merge script does not touch the Topics chip counts in `blog/index.html`; fix them after any merge or verify-blog fails.
+  Round 3b (C2, same day) merged 11 topic pages (`merge_round3b.py`). verify-blog does not check the **All** chip, so set
+  it to the post count by hand after a merge.
 - **A merge target must be a blog post.** `verify-blog.mjs` only accepts
   `/blog/<slug>` survivors; a redirect to `/about` reads as an orphan.
 - **The nav-count gate follows the post count** (`posts + 1`), not a fixed 230.
