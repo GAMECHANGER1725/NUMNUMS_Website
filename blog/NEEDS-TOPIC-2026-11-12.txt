@@ -1,0 +1,25 @@
+NEEDS TOPIC — 2026-11-12 (automated content routine). No content published this run.
+
+Credential: GSC OK (Tier 2, Search Console [OK]). Not a credential problem.
+(Setup note: system python3 on this sandbox is 3.11 with a broken cffi; the
+google libs only work under /usr/bin/python3 -- use that for gsc_query.py.)
+
+Path 1 (ledger new-URL gap): none. Tier 3 rasmalai row was claimed 2026-09-03.
+Path 2 (live GSC gap, 28d to 2026-11-12): none. Every non-brand query with
+  real impressions is owned by an existing page:
+  - gender reveal cake sydney 96 impr, pos 7.2 -> blog/eggless-cakes-gender-reveal-sydney
+  - 1st birthday cake(s) 84 impr, pos 13-23, 0 clicks -> blog/first-birthday-cake-sydney
+  - photo cakes 26 -> blog/photo-cake-sydney ; smash cakes -> blog/cake-smash-cakes-sydney
+  - indian sweets / barfi / mithai near me -> /indian-sweet (local-pack, per ledger)
+  - eggless cake(s) (near me) / eggless cakes sydney -> pillar pages; per-suburb/near-me
+    expansion is permanently rejected in the ledger.
+Path 3 (ledger improve rows): every Tier 1 / Tier 2 row is already DONE.
+  Chocolate row (DONE 2026-10-15) still shows "best chocolate cake sydney" 71 impr,
+  pos 23.6 on best-cake-sydney with the owner at 0 impr, but the fix is only 4 weeks
+  old and already carries the retitle, FAQ and exact-anchor link; redoing it now
+  would be churn. Re-check after ~2026-12-10.
+Path 4: ledger exhausted, GSC shows no unowned demand.
+
+Suggested ledger rows for the owner to add (not added by the routine):
+  - first-birthday-cake-sydney: 84 impr/0 clicks at pos 13-23 on "1st birthday cake(s)"
+    (title/meta/FAQ + exact-anchor links from cake-smash pages).
