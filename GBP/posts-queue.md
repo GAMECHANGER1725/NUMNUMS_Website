@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-13
+
+```yaml
+id: post-rs-2026-11-13
+status: published
+published_at: 2026-11-13
+location: riverstone
+post_type: "Call to action"
+title: "Christmas cake near Oakville or Grantham Farm? 100% eggless, Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5594.jpeg"
+keywords_baited:
+  - eggless Christmas cake Oakville
+  - Christmas cake without eggs Grantham Farm
+  - vegetarian Christmas cake Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-12
 
 ```yaml
