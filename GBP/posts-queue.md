@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-14
+
+```yaml
+id: post-rs-2026-11-14
+status: published
+published_at: 2026-11-14
+location: riverstone
+post_type: "Call to action"
+title: "Naming ceremony cake near Glenwood or Parklea? 100% eggless, Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1927.jpg"
+keywords_baited:
+  - eggless naming ceremony cake Glenwood
+  - namkaran cake Parklea
+  - custom eggless cake pickup Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-13
 
 ```yaml
