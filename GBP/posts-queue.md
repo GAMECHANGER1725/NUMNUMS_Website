@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-14
+
+```yaml
+id: post-hp-2026-11-14
+status: published
+published_at: 2026-11-14
+location: harris-park
+post_type: "Call to action"
+title: "Got a cake screenshot? Mays Hill and South Granville, send it to Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1883.jpg"
+keywords_baited:
+  - custom cake from photo Mays Hill
+  - eggless cake from Instagram picture South Granville
+  - custom eggless cake WhatsApp order Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-14
 
 ```yaml
