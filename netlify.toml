@@ -189,7 +189,7 @@
 # Old blog slugs that were renamed → current URLs
 [[redirects]]
   from = "/skip-the-science-experiment-why-we-choose-natural-ingredients-in-every-cake/"
-  to = "/blog/natural-ingredients-eggless-cakes"
+  to = "/blog/eggless-cake-ingredients-sydney"
   status = 301
 
 [[redirects]]
@@ -354,7 +354,13 @@
 
 [[redirects]]
   from = "/blog/celebration-cake-sydney.html"
-  to = "/blog/celebration-cake-sydney"
+  to = "/blog/best-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/celebration-cake-sydney"
+  to = "/blog/best-cake-sydney"
   status = 301
   force = true
 
@@ -378,7 +384,13 @@
 
 [[redirects]]
   from = "/blog/eggless-birthday-cakes-every-age-sydney.html"
-  to = "/blog/eggless-birthday-cakes-every-age-sydney"
+  to = "/blog/unique-birthday-cake-ideas-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-birthday-cakes-every-age-sydney"
+  to = "/blog/unique-birthday-cake-ideas-sydney"
   status = 301
   force = true
 
@@ -402,7 +414,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cake-flavours.html"
-  to = "/blog/eggless-cake-flavours"
+  to = "/blog/eggless-cake-flavour-pairing-guide"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-flavours"
+  to = "/blog/eggless-cake-flavour-pairing-guide"
   status = 301
   force = true
 
@@ -504,7 +522,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-beaumont-hills.html"
-  to = "/blog/eggless-cakes-beaumont-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-beaumont-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -666,7 +690,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-clyde.html"
-  to = "/blog/eggless-cakes-clyde"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-clyde"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -690,7 +720,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-eid-sydney.html"
-  to = "/blog/eggless-cakes-eid-sydney"
+  to = "/blog/eggless-cakes-eid-ul-adha-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-eid-sydney"
+  to = "/blog/eggless-cakes-eid-ul-adha-sydney"
   status = 301
   force = true
 
@@ -786,7 +822,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-mothers-day-sydney.html"
-  to = "/blog/eggless-cakes-mothers-day-sydney"
+  to = "/blog/best-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-mothers-day-sydney"
+  to = "/blog/best-cake-sydney"
   status = 301
   force = true
 
@@ -1074,7 +1116,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-rydalmere.html"
-  to = "/blog/eggless-cakes-rydalmere"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-rydalmere"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -1116,19 +1164,37 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-westmead.html"
-  to = "/blog/eggless-cakes-westmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-westmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
 [[redirects]]
   from = "/blog/eggless-cupcakes-kids-birthday-party-sydney.html"
-  to = "/blog/eggless-cupcakes-kids-birthday-party-sydney"
+  to = "/blog/eggless-cupcakes-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cupcakes-kids-birthday-party-sydney"
+  to = "/blog/eggless-cupcakes-sydney"
   status = 301
   force = true
 
 [[redirects]]
   from = "/blog/eggless-wedding-cakes-sydney.html"
-  to = "/blog/eggless-wedding-cakes-sydney"
+  to = "/blog/tiered-cakes-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-wedding-cakes-sydney"
+  to = "/blog/tiered-cakes-sydney"
   status = 301
   force = true
 
@@ -1176,7 +1242,13 @@
 
 [[redirects]]
   from = "/blog/natural-ingredients-eggless-cakes.html"
-  to = "/blog/natural-ingredients-eggless-cakes"
+  to = "/blog/eggless-cake-ingredients-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/natural-ingredients-eggless-cakes"
+  to = "/blog/eggless-cake-ingredients-sydney"
   status = 301
   force = true
 
@@ -1268,13 +1340,13 @@
 
 [[redirects]]
   from = "/blog/cake-flavour-guide-sydney.html"
-  to = "/blog/eggless-cake-flavours"
+  to = "/blog/eggless-cake-flavour-pairing-guide"
   status = 301
   force = true
 
 [[redirects]]
   from = "/blog/cake-flavour-guide-sydney"
-  to = "/blog/eggless-cake-flavours"
+  to = "/blog/eggless-cake-flavour-pairing-guide"
   status = 301
   force = true
 
@@ -1358,7 +1430,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cake-design-ideas-sydney.html"
-  to = "/blog/eggless-cake-design-ideas-sydney"
+  to = "/blog/unique-birthday-cake-ideas-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-design-ideas-sydney"
+  to = "/blog/unique-birthday-cake-ideas-sydney"
   status = 301
   force = true
 
@@ -1394,7 +1472,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cake-for-seniors-sydney.html"
-  to = "/blog/eggless-cake-for-seniors-sydney"
+  to = "/blog/eggless-cake-lower-sugar-options-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cake-for-seniors-sydney"
+  to = "/blog/eggless-cake-lower-sugar-options-sydney"
   status = 301
   force = true
 
@@ -1628,7 +1712,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-engagement-sydney.html"
-  to = "/blog/eggless-cakes-engagement-sydney"
+  to = "/blog/tiered-cakes-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-engagement-sydney"
+  to = "/blog/tiered-cakes-sydney"
   status = 301
   force = true
 
@@ -1874,7 +1964,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-northmead.html"
-  to = "/blog/eggless-cakes-northmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-northmead"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -1934,7 +2030,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-pendle-hill.html"
-  to = "/blog/eggless-cakes-pendle-hill"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-pendle-hill"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -2012,7 +2114,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-seven-hills.html"
-  to = "/blog/eggless-cakes-seven-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-seven-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -2114,7 +2222,13 @@
 
 [[redirects]]
   from = "/blog/eggless-cakes-winston-hills.html"
-  to = "/blog/eggless-cakes-winston-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/eggless-cakes-winston-hills"
+  to = "/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
   status = 301
   force = true
 
@@ -2216,7 +2330,13 @@
 
 [[redirects]]
   from = "/blog/theme-cakes-sydney.html"
-  to = "/blog/theme-cakes-sydney"
+  to = "/blog/kids-birthday-cake-sydney"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blog/theme-cakes-sydney"
+  to = "/blog/kids-birthday-cake-sydney"
   status = 301
   force = true
 

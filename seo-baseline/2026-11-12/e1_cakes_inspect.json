@@ -1,0 +1,35 @@
+{
+ "https://numnumsbakery.com.au/cakes": {
+  "verdict": "PASS",
+  "coverageState": "Submitted and indexed",
+  "robotsTxtState": "ALLOWED",
+  "indexingState": "INDEXING_ALLOWED",
+  "lastCrawlTime": "2026-09-19T08:37:18Z",
+  "pageFetchState": "SUCCESSFUL",
+  "googleCanonical": "https://numnumsbakery.com.au/cakes",
+  "userCanonical": "https://numnumsbakery.com.au/order",
+  "referringUrls": [
+   "https://numnumsbakery.com.au/order",
+   "https://numnumsbakery.com.au/blog/celebration-cake-sydney",
+   "https://www.numnumsbakery.com.au/"
+  ],
+  "crawledAs": "MOBILE"
+ },
+ "https://numnumsbakery.com.au/order": {
+  "verdict": "PASS",
+  "coverageState": "Submitted and indexed",
+  "robotsTxtState": "ALLOWED",
+  "indexingState": "INDEXING_ALLOWED",
+  "lastCrawlTime": "2026-11-09T15:22:46Z",
+  "pageFetchState": "SUCCESSFUL",
+  "googleCanonical": "https://numnumsbakery.com.au/order",
+  "userCanonical": "https://numnumsbakery.com.au/order",
+  "sitemap": [
+   "https://numnumsbakery.com.au/sitemap_index.xml"
+  ],
+  "referringUrls": [
+   "https://numnumsbakery.com.au/blog/celebration-cake-sydney"
+  ],
+  "crawledAs": "MOBILE"
+ }
+}

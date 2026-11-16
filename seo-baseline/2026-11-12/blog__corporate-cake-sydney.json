@@ -1,0 +1,87 @@
+{
+ "page": "/blog/corporate-cake-sydney",
+ "start": "2026-08-13",
+ "end": "2026-11-10",
+ "total": [
+  {
+   "clicks": 0,
+   "impressions": 897,
+   "ctr": 0,
+   "position": 12.147157190635452
+  }
+ ],
+ "queries": [
+  {
+   "keys": [
+    "corporake cake sydney"
+   ],
+   "clicks": 0,
+   "impressions": 1,
+   "ctr": 0,
+   "position": 12
+  },
+  {
+   "keys": [
+    "corporake cakes sydney"
+   ],
+   "clicks": 0,
+   "impressions": 1,
+   "ctr": 0,
+   "position": 1
+  },
+  {
+   "keys": [
+    "corporate cake delivery sydney"
+   ],
+   "clicks": 0,
+   "impressions": 55,
+   "ctr": 0,
+   "position": 18.2
+  },
+  {
+   "keys": [
+    "office cakes sydney"
+   ],
+   "clicks": 0,
+   "impressions": 354,
+   "ctr": 0,
+   "position": 10.423728813559322
+  },
+  {
+   "keys": [
+    "sydney corporate cake"
+   ],
+   "clicks": 0,
+   "impressions": 1,
+   "ctr": 0,
+   "position": 10
+  },
+  {
+   "keys": [
+    "sydney corporate cake delivery"
+   ],
+   "clicks": 0,
+   "impressions": 86,
+   "ctr": 0,
+   "position": 18.61627906976744
+  },
+  {
+   "keys": [
+    "sydney office cake delivery"
+   ],
+   "clicks": 0,
+   "impressions": 15,
+   "ctr": 0,
+   "position": 54.06666666666667
+  },
+  {
+   "keys": [
+    "sydney office cakes"
+   ],
+   "clicks": 0,
+   "impressions": 278,
+   "ctr": 0,
+   "position": 10.431654676258994
+  }
+ ]
+}

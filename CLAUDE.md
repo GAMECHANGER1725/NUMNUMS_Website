@@ -1712,6 +1712,13 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
   pointed at them was repointed to the final survivor: **no redirect chains**.
   Check with the netlify.toml resolver in that folder's notes. `serve.mjs` does
   **not** read netlify.toml rules, so a local curl 404 on a merged URL proves nothing.
+- **Round 3 (SEO loop C1, 2026-11-12)** merged 8 more suburb pages (rydalmere, clyde, westmead, beaumont-hills,
+  seven-hills, northmead, pendle-hill, winston-hills) into the location hub with `seo-baseline/2026-11-12/merge_round3.py`.
+  The merge script does not touch the Topics chip counts in `blog/index.html`; fix them after any merge or verify-blog fails.
+  Round 3b (C2, same day) merged 11 topic pages (`merge_round3b.py`). verify-blog does not check the **All** chip, so set
+  it to the post count by hand after a merge.
+  The Mother's Day page was merged into `best-cake-sydney` (C3): no "mother" query reached the site in Mar–May 2026.
+  Answer Mother's Day there; do not write a new page for it.
 - **A merge target must be a blog post.** `verify-blog.mjs` only accepts
   `/blog/<slug>` survivors; a redirect to `/about` reads as an orphan.
 - **The nav-count gate follows the post count** (`posts + 1`), not a fixed 230.
@@ -1722,6 +1729,18 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
   custom paths, our own product photos. It says Christmas-period hours may differ
   and to confirm them, because nobody has told us the 25th/26th hours. **Update the
   dates each November**, and never put invented "December order data" back.
+- **The storage guide's snippet answers fresh cream, not eggless** (SEO loop A1, 2026-11-12). Its 510
+  monthly impressions are "how long does fresh cream cake last in the fridge"; the old meta said "~5 days in
+  the fridge" (buttercream's figure) and earned 0 clicks. Keep the title/meta leading with 2–3 days at 5°C.
+  Same for the serving-size guide (A2): its title answers "how many does an 8 inch cake feed" with the
+  catalogue's numbers; do not put the old label title back.
+  Indian sweets (A3): the blog hub owns the local "near me / Harris Park sweet shop" queries, so its
+  title names the shop and suburbs; `/indian-sweet` is the product page (A4: its title names kaju katli
+  and gulab jamun, its top product queries). Neither page should be retargeted at the other's queries.
+  Same split for eggless-cake posts: the myths post (A5) owns "do eggless cakes taste different", the vs-regular
+  post (A6) owns "egg vs eggless / meaning / does cake contain egg". Keep their titles on those lanes.
+  The SEO loop works `seo-baseline/LOOP-BACKLOG.md` one item at a time; per-page GSC pulls use
+  `seo-baseline/2026-11-12/page_queries.py <path>`.
 - **Google still has the old `/cakes` page indexed** (last crawl 19 Sep, before the
   301 went live on 8 Oct), so it keeps the brand searches and `/order` looks
   weaker than it is. The fix is a recrawl: Search Console URL Inspection →

@@ -1,0 +1,723 @@
+{
+ "totals": {
+  "before": [
+   {
+    "clicks": 50,
+    "impressions": 2232,
+    "ctr": 0.022401433691756272,
+    "position": 10.012544802867383
+   }
+  ],
+  "after": [
+   {
+    "clicks": 13,
+    "impressions": 1584,
+    "ctr": 0.008207070707070708,
+    "position": 11.668560606060606
+   }
+  ]
+ },
+ "rows": [
+  [
+   10,
+   "eggless cake near me",
+   10,
+   0,
+   427,
+   221,
+   7.672131147540983,
+   10.253393665158372
+  ],
+  [
+   2,
+   "eggless chocolate cake near me",
+   2,
+   0,
+   8,
+   0,
+   6.75,
+   null
+  ],
+  [
+   2,
+   "eggless cakes near me",
+   2,
+   0,
+   143,
+   146,
+   12.426573426573427,
+   10.047945205479452
+  ],
+  [
+   2,
+   "eggless cake shops",
+   2,
+   0,
+   4,
+   1,
+   5.25,
+   11
+  ],
+  [
+   1,
+   "where to buy eggless cake near me",
+   1,
+   0,
+   4,
+   0,
+   6.5,
+   null
+  ],
+  [
+   1,
+   "where to buy eggless cake",
+   1,
+   0,
+   2,
+   1,
+   5.5,
+   5
+  ],
+  [
+   1,
+   "near me eggless cake shop",
+   1,
+   0,
+   1,
+   0,
+   1,
+   null
+  ],
+  [
+   1,
+   "indian cake shop near me",
+   1,
+   0,
+   2,
+   0,
+   3,
+   null
+  ],
+  [
+   1,
+   "eggless cakes sydney",
+   2,
+   1,
+   126,
+   60,
+   12.198412698412698,
+   22.25
+  ],
+  [
+   1,
+   "eggless cake sydney",
+   1,
+   0,
+   149,
+   70,
+   9.684563758389261,
+   16.3
+  ],
+  [
+   1,
+   "eggless cake shop",
+   1,
+   0,
+   197,
+   108,
+   7.522842639593908,
+   6.62962962962963
+  ],
+  [
+   1,
+   "eggless brownies near me",
+   1,
+   0,
+   2,
+   0,
+   9,
+   null
+  ],
+  [
+   1,
+   "buy eggless cake",
+   1,
+   0,
+   3,
+   2,
+   9,
+   7.5
+  ],
+  [
+   0,
+   "who sells eggless cakes",
+   0,
+   0,
+   0,
+   1,
+   null,
+   8
+  ],
+  [
+   0,
+   "where to get eggless cake near me",
+   0,
+   0,
+   2,
+   0,
+   4.5,
+   null
+  ],
+  [
+   0,
+   "where can i get an eggless cake near me",
+   0,
+   0,
+   0,
+   1,
+   null,
+   5
+  ],
+  [
+   0,
+   "where can i buy eggless cake near me",
+   0,
+   0,
+   1,
+   1,
+   5,
+   5
+  ],
+  [
+   0,
+   "where can i buy eggless cake",
+   0,
+   0,
+   1,
+   0,
+   5,
+   null
+  ],
+  [
+   0,
+   "where can i buy an eggless cake",
+   0,
+   0,
+   3,
+   1,
+   8,
+   8
+  ],
+  [
+   0,
+   "vegetarian cakes near me",
+   0,
+   0,
+   1,
+   2,
+   8,
+   6
+  ],
+  [
+   0,
+   "vegetarian cake shops near me",
+   0,
+   0,
+   1,
+   0,
+   4,
+   null
+  ],
+  [
+   0,
+   "vegetarian cake shop near me",
+   0,
+   0,
+   1,
+   5,
+   7,
+   15.8
+  ],
+  [
+   0,
+   "vegetarian cake near me",
+   0,
+   0,
+   0,
+   5,
+   null,
+   10
+  ],
+  [
+   0,
+   "vegetarian cake delivery",
+   0,
+   0,
+   0,
+   1,
+   null,
+   10
+  ],
+  [
+   0,
+   "vegan eggless cake near me",
+   0,
+   0,
+   2,
+   0,
+   5.5,
+   null
+  ],
+  [
+   0,
+   "vegan desserts sydney",
+   0,
+   0,
+   0,
+   2,
+   null,
+   39
+  ],
+  [
+   0,
+   "vegan cakes sydney delivery",
+   0,
+   0,
+   0,
+   1,
+   null,
+   20
+  ],
+  [
+   0,
+   "vegan cakes parramatta",
+   0,
+   0,
+   0,
+   1,
+   null,
+   25
+  ],
+  [
+   0,
+   "vegan cakes near me",
+   0,
+   0,
+   0,
+   3,
+   null,
+   15
+  ],
+  [
+   0,
+   "vegan cakes castle hill",
+   0,
+   0,
+   0,
+   2,
+   null,
+   8.5
+  ],
+  [
+   0,
+   "vegan cake sydney cbd",
+   0,
+   0,
+   0,
+   1,
+   null,
+   19
+  ],
+  [
+   0,
+   "vegan cake sydney / gluten free cake sydney",
+   0,
+   0,
+   0,
+   1,
+   null,
+   20
+  ],
+  [
+   0,
+   "vegan cake shops",
+   0,
+   0,
+   2,
+   6,
+   12.5,
+   12.5
+  ],
+  [
+   0,
+   "vegan cake shop near me",
+   0,
+   0,
+   0,
+   1,
+   null,
+   24
+  ],
+  [
+   0,
+   "vegan cake near me",
+   0,
+   0,
+   0,
+   6,
+   null,
+   15.833333333333334
+  ],
+  [
+   0,
+   "vegan cake delivery sydney",
+   0,
+   0,
+   10,
+   18,
+   30.5,
+   43.22222222222222
+  ],
+  [
+   0,
+   "vegan birthday cakes sydney",
+   0,
+   0,
+   0,
+   1,
+   null,
+   20
+  ],
+  [
+   0,
+   "vegan birthday cake sydney",
+   0,
+   0,
+   0,
+   1,
+   null,
+   14
+  ],
+  [
+   0,
+   "veg cakes near me",
+   0,
+   0,
+   1,
+   2,
+   6,
+   10
+  ],
+  [
+   0,
+   "veg cake shop near me",
+   0,
+   0,
+   0,
+   1,
+   null,
+   12
+  ]
+ ],
+ "who_ranks": {
+  "eggless cake near me": [
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/"
+    ],
+    "clicks": 8,
+    "impressions": 152,
+    "ctr": 0.05263157894736842,
+    "position": 10.519736842105264
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-schofields"
+    ],
+    "clicks": 5,
+    "impressions": 203,
+    "ctr": 0.024630541871921183,
+    "position": 6.1330049261083746
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+    ],
+    "clicks": 3,
+    "impressions": 130,
+    "ctr": 0.023076923076923078,
+    "position": 8.423076923076923
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-mays-hill"
+    ],
+    "clicks": 2,
+    "impressions": 84,
+    "ctr": 0.023809523809523808,
+    "position": 11.083333333333334
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-quakers-hill"
+    ],
+    "clicks": 1,
+    "impressions": 87,
+    "ctr": 0.011494252873563218,
+    "position": 8.183908045977011
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/best-eggless-cake-shops-sydney-2026"
+    ],
+    "clicks": 0,
+    "impressions": 221,
+    "ctr": 0,
+    "position": 10.253393665158372
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-baulkham-hills"
+    ],
+    "clicks": 0,
+    "impressions": 4,
+    "ctr": 0,
+    "position": 9.25
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-dean-park"
+    ],
+    "clicks": 0,
+    "impressions": 154,
+    "ctr": 0,
+    "position": 9.993506493506494
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-near-me-sydney"
+    ],
+    "clicks": 0,
+    "impressions": 134,
+    "ctr": 0,
+    "position": 8.335820895522389
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-riverstone"
+    ],
+    "clicks": 0,
+    "impressions": 88,
+    "ctr": 0,
+    "position": 29.636363636363637
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-rouse-hill"
+    ],
+    "clicks": 0,
+    "impressions": 1,
+    "ctr": 0,
+    "position": 1
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-telopea"
+    ],
+    "clicks": 0,
+    "impressions": 5,
+    "ctr": 0,
+    "position": 10.8
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/cakes"
+    ],
+    "clicks": 0,
+    "impressions": 26,
+    "ctr": 0,
+    "position": 41.46153846153846
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/order"
+    ],
+    "clicks": 0,
+    "impressions": 63,
+    "ctr": 0,
+    "position": 19.603174603174605
+   }
+  ],
+  "eggless chocolate cake near me": [
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-dean-park"
+    ],
+    "clicks": 0,
+    "impressions": 1,
+    "ctr": 0,
+    "position": 4
+   }
+  ],
+  "eggless cakes near me": [
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/"
+    ],
+    "clicks": 1,
+    "impressions": 69,
+    "ctr": 0.014492753623188406,
+    "position": 21.91304347826087
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-schofields"
+    ],
+    "clicks": 1,
+    "impressions": 25,
+    "ctr": 0.04,
+    "position": 6.04
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/best-eggless-cake-shops-sydney-2026"
+    ],
+    "clicks": 0,
+    "impressions": 146,
+    "ctr": 0,
+    "position": 10.047945205479452
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cake-bakery-harris-park-riverstone-sydney"
+    ],
+    "clicks": 0,
+    "impressions": 32,
+    "ctr": 0,
+    "position": 11.8125
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-baulkham-hills"
+    ],
+    "clicks": 0,
+    "impressions": 3,
+    "ctr": 0,
+    "position": 8
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-dean-park"
+    ],
+    "clicks": 0,
+    "impressions": 16,
+    "ctr": 0,
+    "position": 9.625
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-mays-hill"
+    ],
+    "clicks": 0,
+    "impressions": 3,
+    "ctr": 0,
+    "position": 10
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-near-me-sydney"
+    ],
+    "clicks": 0,
+    "impressions": 43,
+    "ctr": 0,
+    "position": 9.953488372093023
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-quakers-hill"
+    ],
+    "clicks": 0,
+    "impressions": 16,
+    "ctr": 0,
+    "position": 11.8125
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-riverstone"
+    ],
+    "clicks": 0,
+    "impressions": 5,
+    "ctr": 0,
+    "position": 10.4
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-rouse-hill"
+    ],
+    "clicks": 0,
+    "impressions": 1,
+    "ctr": 0,
+    "position": 1
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-windsor"
+    ],
+    "clicks": 0,
+    "impressions": 2,
+    "ctr": 0,
+    "position": 14
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/cakes"
+    ],
+    "clicks": 0,
+    "impressions": 5,
+    "ctr": 0,
+    "position": 41
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/order"
+    ],
+    "clicks": 0,
+    "impressions": 1,
+    "ctr": 0,
+    "position": 7
+   }
+  ],
+  "eggless cake shops": [
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/best-eggless-cake-shops-sydney-2026"
+    ],
+    "clicks": 0,
+    "impressions": 1,
+    "ctr": 0,
+    "position": 11
+   },
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/eggless-cakes-baulkham-hills"
+    ],
+    "clicks": 0,
+    "impressions": 1,
+    "ctr": 0,
+    "position": 5
+   }
+  ],
+  "where to buy eggless cake near me": [],
+  "where to buy eggless cake": [
+   {
+    "keys": [
+     "https://numnumsbakery.com.au/blog/best-eggless-cake-shops-sydney-2026"
+    ],
+    "clicks": 0,
+    "impressions": 1,
+    "ctr": 0,
+    "position": 5
+   }
+  ]
+ }
+}
