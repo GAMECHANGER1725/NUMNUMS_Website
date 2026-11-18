@@ -1722,6 +1722,11 @@ Fix plan: `plans/SEO Fix Plan — 2026-10.md`. Evidence: `seo-baseline/2026-11-0
   custom paths, our own product photos. It says Christmas-period hours may differ
   and to confirm them, because nobody has told us the 25th/26th hours. **Update the
   dates each November**, and never put invented "December order data" back.
+- **No structural SEO changes until the 8 Dec 2026 read** (decided 2026-11-18). Google's
+  November 2026 core update (10 Nov, ~2 weeks) moved our desktop head terms while nothing
+  of ours was live, and the 12 Nov work went live 18 Nov in the middle of it. Merges,
+  retitles of earning pages, or new pages before 8 Dec make both effects unreadable.
+  The 1 Dec SEO routine reports; it does not restructure. Factual fixes are still fine.
 - **Google still has the old `/cakes` page indexed** (last crawl 19 Sep, before the
   301 went live on 8 Oct), so it keeps the brand searches and `/order` looks
   weaker than it is. The fix is a recrawl: Search Console URL Inspection →
