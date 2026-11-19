@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-19
+
+```yaml
+id: post-hp-2026-11-19
+status: published
+published_at: 2026-11-19
+location: harris-park
+post_type: "Call to action"
+title: "End-of-year work party for 50 near North Rocks or Holroyd? Eggless 16-inch"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1569.jpg"
+keywords_baited:
+  - eggless office party cake North Rocks
+  - 16-inch cake for 50 people Holroyd
+  - end-of-year work Christmas party cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-19
 
 ```yaml
