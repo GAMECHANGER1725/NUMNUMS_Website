@@ -1,0 +1,18 @@
+NEEDS-TOPIC 2026-11-19 - no work published this run.
+
+GSC credentials: OK (Search Console API [OK], Tier 2). Note: the sandbox's
+system python had a broken cffi/cryptography, so GSC was queried from a venv.
+This is NOT a credential problem.
+
+Path 1 (ledger gap): FAILED - no open gap. Tier 3 rasmalai row is claimed.
+Path 2 (live GSC gap, 28d, 300 queries): FAILED - every non-brand query with
+  volume has an owner page: eggless cake/s near me, indian sweets near me (/indian-sweet),
+  gender reveal (eggless-cakes-gender-reveal-sydney, 102 impr pos 7.1), smash cake
+  (cake-smash-cakes-sydney), number cakes (number-cakes-sydney, 76 impr pos 20.8),
+  photo cake (photo-cake-sydney), 1st birthday cakes (first-birthday-cake-sydney, 81 impr).
+Path 3 (improve rows): FAILED - every Tier 1/Tier 2 row is DONE or CLOSED in the ledger.
+  "indian sweets near me" (609 impr, 3 clicks, pos 8.9) is local-pack intent -> GBP problem.
+Candidates for a human to add as ledger rows (not actioned, per the gate):
+  - first-birthday-cake-sydney: "1st birthday cakes" 51 impr pos 13.5 + "1st birthday cake" 30 impr pos 22.1, 0 clicks
+  - number-cakes-sydney: still pos ~21 after the 2026-10-01 internal-link job
+  - chocolate owner re-check (ledger asked for ~4 weeks after 2026-10-15)
