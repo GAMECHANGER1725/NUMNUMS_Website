@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-19
+
+```yaml
+id: post-rs-2026-11-19
+status: published
+published_at: 2026-11-19
+location: riverstone
+post_type: "Call to action"
+title: "Engagement or roka cake near Box Hill or Rouse Hill? 100% eggless, Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1623.jpg"
+keywords_baited:
+  - eggless engagement cake Box Hill
+  - roka cake Rouse Hill
+  - custom eggless cake pickup Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-14
 
 ```yaml
