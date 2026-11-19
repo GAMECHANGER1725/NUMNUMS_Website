@@ -6,6 +6,138 @@
 
 ---
 
+### post-hp-2026-11-19
+
+```yaml
+id: post-hp-2026-11-19
+status: published
+published_at: 2026-11-19
+location: harris-park
+post_type: "Call to action"
+title: "End-of-year work party for 50 near North Rocks or Holroyd? Eggless 16-inch"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1569.jpg"
+keywords_baited:
+  - eggless office party cake North Rocks
+  - 16-inch cake for 50 people Holroyd
+  - end-of-year work Christmas party cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
+### post-rs-2026-11-19
+
+```yaml
+id: post-rs-2026-11-19
+status: published
+published_at: 2026-11-19
+location: riverstone
+post_type: "Call to action"
+title: "Engagement or roka cake near Box Hill or Rouse Hill? 100% eggless, Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1623.jpg"
+keywords_baited:
+  - eggless engagement cake Box Hill
+  - roka cake Rouse Hill
+  - custom eggless cake pickup Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
+### post-hp-2026-11-14
+
+```yaml
+id: post-hp-2026-11-14
+status: published
+published_at: 2026-11-14
+location: harris-park
+post_type: "Call to action"
+title: "Got a cake screenshot? Mays Hill and South Granville, send it to Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1883.jpg"
+keywords_baited:
+  - custom cake from photo Mays Hill
+  - eggless cake from Instagram picture South Granville
+  - custom eggless cake WhatsApp order Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
+### post-rs-2026-11-14
+
+```yaml
+id: post-rs-2026-11-14
+status: published
+published_at: 2026-11-14
+location: riverstone
+post_type: "Call to action"
+title: "Naming ceremony cake near Glenwood or Parklea? 100% eggless, Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1927.jpg"
+keywords_baited:
+  - eggless naming ceremony cake Glenwood
+  - namkaran cake Parklea
+  - custom eggless cake pickup Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
+### post-hp-2026-11-13
+
+```yaml
+id: post-hp-2026-11-13
+status: published
+published_at: 2026-11-13
+location: harris-park
+post_type: "Call to action"
+title: "Order your cake in Hindi or Gujarati near Pendle Hill and Girraween"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1803.jpg"
+keywords_baited:
+  - Hindi speaking cake shop Pendle Hill
+  - Gujarati custom cake order Girraween
+  - eggless custom birthday cake Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
+### post-rs-2026-11-13
+
+```yaml
+id: post-rs-2026-11-13
+status: published
+published_at: 2026-11-13
+location: riverstone
+post_type: "Call to action"
+title: "Christmas cake near Oakville or Grantham Farm? 100% eggless, Riverstone"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_5594.jpeg"
+keywords_baited:
+  - eggless Christmas cake Oakville
+  - Christmas cake without eggs Grantham Farm
+  - vegetarian Christmas cake Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-12
 
 ```yaml
