@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-20
+
+```yaml
+id: post-rs-2026-11-20
+status: published
+published_at: 2026-11-20
+location: riverstone
+post_type: "Call to action"
+title: "Carrying a cake home to Colebee or Nelson in summer heat? Riverstone tips"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1646.jpg"
+keywords_baited:
+  - summer cake pickup Riverstone
+  - eggless cake Colebee
+  - stop cake melting in the car Nelson
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-19
 
 ```yaml
