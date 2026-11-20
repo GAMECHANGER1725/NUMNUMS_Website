@@ -1,3 +1,5 @@
+> SUPERSEDED (2026-11-20): replaced by context/00-context.md and the live Claude Code memory index. Stale: it still says "never push" and "Lenis required", and both were reversed.
+
 # Memory Index
 
 - [Business type & product scope](project_business_type.md) — 100% eggless bakery: custom eggless cakes + Indian sweets only (no snacks/savoury)
