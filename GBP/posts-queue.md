@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-20
+
+```yaml
+id: post-hp-2026-11-20
+status: published
+published_at: 2026-11-20
+location: harris-park
+post_type: "Call to action"
+title: "Family visiting from India this summer? Eggless cakes near Merrylands"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1283.jpg"
+keywords_baited:
+  - eggless cake Merrylands
+  - cake for vegetarian grandparents visiting from India
+  - Harris Park eggless bakery Wigram Street
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-20
 
 ```yaml
