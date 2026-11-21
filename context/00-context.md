@@ -109,6 +109,9 @@ Project-level calls only. The detailed rule behind each is in the file named on 
 ### No structural SEO changes until the 8 Dec read (2026-11-18)
 - **Why:** the November core update and the 12 Nov work landed together; more changes would make both unreadable. **Source:** root `CLAUDE.md` → *SEO*.
 
+### The homepage keeps "custom slots are limited each week" (2026-11-21)
+- **Why:** Vaidik: "keep it". Raised because the no-cap decision (2026-10-07) says there is nothing true to count; the line is about peak dates (Diwali, Eid, long weekends) booking out, not a daily cap. **Source:** Vaidik, 2026-11-21. Do not flag it again.
+
 ### CLAUDE.md split by area; this context file added (2026-11-20)
 - **Why:** the single file was 146 KB and loaded in full every session. Root is now ~46 KB, and the area files load only where they apply. Moved word for word. **Source:** /restructure, Vaidik 2026-11-20.
 
@@ -145,7 +148,6 @@ Project-level calls only. The detailed rule behind each is in the file named on 
 | Sign-up marketing tick: pick one of the compliant opt-in lifts (AI Brain *Shop Checkout Build* 2026-10-08) | Vaidik | marketing list | open |
 | Request indexing for `/cakes` in Search Console (the API cannot) | Vaidik | SEO | after 8 Dec |
 | `/shop` is still `noindex` (`shop-app/app/layout.tsx`) and missing from the sitemap, though live since 2026-10-13. Flip it + add to sitemap/`llms.txt`? (found 2026-11-21) | Vaidik | SEO, the only page that takes money | after 8 Dec |
-| Approve the `orders.heard_from` column (SQL in `shop-app/CLAUDE.md`)? Until then the answer lives in order notes | Vaidik | counting AI referrals | open |
 | Re-run the AI test for the failed questions (Indian sweets, wedding, Jain, Diwali, "tell me about Num Num's") + Perplexity, Copilot, AI Overview | Vaidik | complete baseline | 2026-12-08 |
 | Every `.md` in the repo root is publicly fetchable (`noindex` only, netlify.toml). Accept, or block internal paths? | Vaidik | privacy of strategy docs | open |
 
@@ -169,3 +171,4 @@ Project-level calls only. The detailed rule behind each is in the file named on 
 | 2026-11-20 | Restructured from history: CLAUDE.md split by area, context/ workspace added | /restructure | Vaidik |
 | 2026-11-21 | AI-visibility baseline; review counts sourced and ratings labelled per shop; WhatsApp review asks per shop in ops; "How did you hear about us?" on cart + `/order` | AI-SEO video, Vaidik: "do all 4" | Vaidik |
 | 2026-11-21 | Bing Webmaster Tools set up (Vaidik) | ChatGPT search draws on Bing's index | Vaidik |
+| 2026-11-21 | `orders.heard_from` column added and written by the webhook; scarcity line kept | Vaidik: "yes. keep it" | Vaidik |

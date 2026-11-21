@@ -267,18 +267,17 @@ content link to the shop at all. It stays a text link, never a third button.
   An AI assistant that recommends us arrives in GA4 as a Google search (the customer
   reads the answer, then googles the name), so asking is the only way to count it.
   Cart → `body.heard` → `create-checkout` keeps it only if it is a key of `HEARD_FROM`
-  (`netlify/lib/shared.mjs`) → Stripe metadata `h` → `fulfilSession` appends
-  "Heard about us: …" to the order's **notes**. Notes, not a column, because an
-  `orders.heard_from` migration was refused by the permission check and needs Vaidik's
-  yes; never write a column the live table does not have, or every paid order fails
-  its insert. `/order` puts the answer in the WhatsApp message and on the
+  (`netlify/lib/shared.mjs`) → Stripe metadata `h` → `fulfilSession` writes
+  **`orders.heard_from`** (column added 2026-11-21 with Vaidik's yes, migration
+  `ops/supabase/2026-11-21-heard-from.sql`) **and** appends "Heard about us: …" to the
+  notes so staff see it on the docket. Never write a column the live table does not
+  have, or every paid order fails its insert; the column has a CHECK, so the webhook
+  re-allowlists the value. `/order` puts the answer in the WhatsApp message and on the
   `order_form_submit` event as `heard_from`. The labels are in three places
   (`HEARD_FROM`, `HEARD_OPTIONS` in `cart.ts`, the `<select>` in `order.html`); add
   an answer to `HEARD_FROM` first. Count them with
-  `select count(*) from orders where notes ilike '%Heard about us: ChatGPT%'`.
-  The column, once approved (apply it **before** pointing `fulfilSession` at it):
-  `alter table public.orders add column if not exists heard_from text check
-  (heard_from in ('google','maps','ai','instagram','facebook','friend','walk-by','ubereats','other'));`
+  `select heard_from, count(*) from orders where from_website group by 1`.
+  Orders before 2026-11-21 are null, which means "not asked", not "other".
 - **Rebuilding `shop/`: if Turbopack fails on `next/font/google queries have exactly
   one entry`**, the `.next` cache is stale (hit 2026-11-21, a month after the last
   build). Move `shop-app/.next` aside and rebuild; the code is fine.

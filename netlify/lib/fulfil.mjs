@@ -76,6 +76,10 @@ export async function fulfilSession(db, session) {
         // Re-checked against the list: a stale session or a renamed key must
         // never write a code nobody can read.
         + (Object.hasOwn(HEARD_FROM, m.h ?? '') ? ` Heard about us: ${HEARD_FROM[m.h]}.` : ''),
+      // Allowlisted again here; the column's own CHECK would otherwise fail the
+      // whole insert on a stale or renamed key, and a paid cake must never be
+      // refused over an optional question.
+      heard_from: Object.hasOwn(HEARD_FROM, m.h ?? '') ? m.h : null,
       stripe_session_id: session.id,
       order_group_id: groupId,
       cart_line: i,
