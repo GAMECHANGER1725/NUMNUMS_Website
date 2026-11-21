@@ -145,7 +145,6 @@ Project-level calls only. The detailed rule behind each is in the file named on 
 | Sign-up marketing tick: pick one of the compliant opt-in lifts (AI Brain *Shop Checkout Build* 2026-10-08) | Vaidik | marketing list | open |
 | Request indexing for `/cakes` in Search Console (the API cannot) | Vaidik | SEO | after 8 Dec |
 | `/shop` is still `noindex` (`shop-app/app/layout.tsx`) and missing from the sitemap, though live since 2026-10-13. Flip it + add to sitemap/`llms.txt`? (found 2026-11-21) | Vaidik | SEO, the only page that takes money | after 8 Dec |
-| Is Bing Webmaster Tools verified? No `msvalidate` tag, no BingSiteAuth.xml, no Bing TXT record (checked 2026-11-21). If not: Bing WMT → Import from Google Search Console | Vaidik | ChatGPT search uses Bing's index | open |
 | Approve the `orders.heard_from` column (SQL in `shop-app/CLAUDE.md`)? Until then the answer lives in order notes | Vaidik | counting AI referrals | open |
 | Re-run the AI test for the failed questions (Indian sweets, wedding, Jain, Diwali, "tell me about Num Num's") + Perplexity, Copilot, AI Overview | Vaidik | complete baseline | 2026-12-08 |
 | Every `.md` in the repo root is publicly fetchable (`noindex` only, netlify.toml). Accept, or block internal paths? | Vaidik | privacy of strategy docs | open |
@@ -169,3 +168,4 @@ Project-level calls only. The detailed rule behind each is in the file named on 
 | 2026-11-18 | SEO hold until 8 Dec | core update | from history |
 | 2026-11-20 | Restructured from history: CLAUDE.md split by area, context/ workspace added | /restructure | Vaidik |
 | 2026-11-21 | AI-visibility baseline; review counts sourced and ratings labelled per shop; WhatsApp review asks per shop in ops; "How did you hear about us?" on cart + `/order` | AI-SEO video, Vaidik: "do all 4" | Vaidik |
+| 2026-11-21 | Bing Webmaster Tools set up (Vaidik) | ChatGPT search draws on Bing's index | Vaidik |
