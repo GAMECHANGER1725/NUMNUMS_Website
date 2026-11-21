@@ -8,8 +8,9 @@ import { CheckoutSteps } from "@/components/ui/checkout-steps";
 import { QtyStepper } from "@/components/ui/qty-stepper";
 import {
   cartStore, writeCart, cartCount, capLines, minDueDate, maxDueDate,
-  money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, SHOP_PHONE, type Cart,
+  money, depositCents, DEPOSIT_RATE, MAX_CAKES, STORES, SHOP_PHONE, HEARD_OPTIONS, type Cart,
 } from "@/lib/cart";
+import { NnSelect } from "@/components/ui/select";
 import {
   listPriceCents, flavourSlug, urlSlug, COLLECTION, collectionSlots, slotLabel,
 } from "@/lib/catalog";
@@ -44,6 +45,9 @@ export default function CartPage() {
   const loaded = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [picked, setPicked] = useState<number[]>([]);
   const [email, setEmail] = useState("");
+  // Optional, never blocks paying: it exists to count AI-assistant referrals,
+  // which GA4 files under Google search.
+  const [heard, setHeard] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // The summary's pay button; when it is off screen on a phone, the sticky
@@ -101,6 +105,7 @@ export default function CartPage() {
         body: JSON.stringify({
           email,
           cart,
+          heard: heard || undefined,
         }),
       });
       const body = await res.json().catch(() => null);
@@ -404,6 +409,13 @@ export default function CartPage() {
               <p className="mt-2 text-[0.76rem] text-muted-foreground">
                 Baked to order, so the earliest we can have it ready is {prettyDate(minDueDate())}.
               </p>
+              <div className="mt-5 max-w-sm">
+                <p className="field-label" id="c-heard-label">
+                  How did you hear about us? <span className="font-normal text-muted-foreground">(optional)</span>
+                </p>
+                <NnSelect id="c-heard" value={heard} onChange={setHeard}
+                  options={HEARD_OPTIONS} placeholder="Choose one…" ariaLabel="How did you hear about us? (optional)" />
+              </div>
             </section>
           </section>
 

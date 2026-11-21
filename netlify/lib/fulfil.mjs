@@ -20,6 +20,7 @@
  * Throws on any other failure, so the webhook can answer 500 and be retried.
  */
 import { notifyStaff } from './push.mjs';
+import { HEARD_FROM } from './shared.mjs';
 
 const DUPLICATE = '23505';
 
@@ -71,7 +72,10 @@ export async function fulfilSession(db, session) {
       notes: (session.livemode === false ? 'TEST ORDER (Stripe sandbox, no real payment). Delete once checked. ' : '')
         + (l.p == null
           ? 'Paid online via website.'
-          : `Paid online via website — 50% deposit. Balance $${((l.c - l.d - l.p) / 100).toFixed(2)} due on collection.`),
+          : `Paid online via website — 50% deposit. Balance $${((l.c - l.d - l.p) / 100).toFixed(2)} due on collection.`)
+        // Re-checked against the list: a stale session or a renamed key must
+        // never write a code nobody can read.
+        + (Object.hasOwn(HEARD_FROM, m.h ?? '') ? ` Heard about us: ${HEARD_FROM[m.h]}.` : ''),
       stripe_session_id: session.id,
       order_group_id: groupId,
       cart_line: i,

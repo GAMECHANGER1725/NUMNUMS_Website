@@ -24,6 +24,7 @@ import {
   missingPrice, searchOrders, byWeekday, leadTimes, missingPhone, WEEKDAYS, weekdayIndex, inDateRange,
   printSections, storeBreakdown, exportRanges, toCsv, productMix, sortMix, staleOpen, photoHealth, cancellationStats, pricingGaps,
   dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm, reviewAsks,
+  reviewWhatsAppUrl,
 } from './stats.mjs';
 import { SIZES, FLAVOURS, basePrice, isPremium, cakeImage, TIERED, tierLabel, tierText, parseTiers, isTiered, toNinetyNine, PAV, pavSize, PUSH_PUBLIC_KEY }
   from './catalog.mjs';
@@ -3490,14 +3491,17 @@ async function renderReviews() {
     <div class="panel">
       <div class="panel-title">${rows.length} customer${plural} to ask for a review</div>
       <div class="panel-note">Collected cakes nobody has asked about yet, one line per number.
-        Copy them, send them on, then mark them sent so they leave the list.</div>
+        <strong>Ask on WhatsApp</strong> opens a message with the review link for the shop they
+        collected from, and ticks that customer off. Or copy the numbers, send them on, then mark them sent.</div>
       <div class="row-2">
         <button class="btn btn-primary" id="rv-copy">Copy ${rows.length} number${plural}</button>
         <button class="btn btn-outline" id="rv-sent">Mark as sent</button>
       </div>
     </div>
     <div id="review-list">
-      ${rows.map((r) => `
+      ${rows.map((r, i) => {
+        const wa = reviewWhatsAppUrl(r, STORES.find((st) => st.code === r.store));
+        return `<div class="rv-item">
         <button class="cust-row" data-cust="${esc(r.key)}">
           <div class="cust-head">
             <span class="cust-name">${esc(r.name || 'No name')}</span>
@@ -3508,7 +3512,10 @@ async function renderReviews() {
             <span>picked up ${esc(dateFmt.format(new Date(r.due_at)))}</span>
             <span>${esc(storeLabel(r.store))}</span>
           </div>
-        </button>`).join('')}
+        </button>
+        ${wa ? `<a class="btn btn-outline rv-wa" href="${esc(wa)}" target="_blank" rel="noopener" data-i="${i}">Ask on WhatsApp</a>`
+             : '<span class="rv-nowa">Not an Australian number — copy it instead</span>'}
+      </div>`; }).join('')}
     </div>`;
 
   $('rv-copy').addEventListener('click', async () => {
@@ -3541,6 +3548,18 @@ async function renderReviews() {
       toast(`Could not mark them sent: ${err.message}`, 'error');
     }
   });
+
+  // Opening WhatsApp is the send: the message is written and addressed, so this
+  // customer is ticked off there and then. The link still opens if the stamp
+  // fails — asking twice is better than not asking.
+  root.querySelectorAll('.rv-wa').forEach((a) => a.addEventListener('click', async () => {
+    const r = rows[Number(a.dataset.i)];
+    a.closest('.rv-item').classList.add('is-sent');
+    a.textContent = 'Opened in WhatsApp ✓';
+    try { await markReviewsAsked(r.ids); } catch (err) {
+      toast(`Could not tick ${r.name || 'them'} off: ${err.message}`, 'error');
+    }
+  }));
 
   // The directory's own sheet, so "what did they have" is one tap before asking.
   root.querySelectorAll('[data-cust]').forEach((b) => b.addEventListener('click', async () => {

@@ -561,6 +561,36 @@ export function reviewAsks(orders) {
 }
 
 /**
+ * WhatsApp wants the number in international form with no plus or spaces.
+ * phoneKey already keeps the last nine digits, which for an Australian mobile
+ * or landline is everything after the 0 / +61, so the two cannot disagree
+ * about who a number belongs to.
+ */
+export function waNumber(phone) {
+  const k = phoneKey(phone);
+  return k && k.length === 9 ? '61' + k : null;
+}
+
+/**
+ * The review ask, as the customer reads it. Straight to Google for everyone:
+ * no rating question first and no reward, because Google's policy forbids
+ * both (gating, incentives) and a filtered profile is the one it removes.
+ * First name only — it is a text from the shop, not a letter.
+ */
+export function reviewMessage(name, storeLabel, link) {
+  const first = String(name ?? '').trim().split(/\s+/)[0] || '';
+  return `Hi${first ? ' ' + first : ''}, thank you for choosing Num Num's Bakery ${storeLabel}! `
+    + `We hope everyone enjoyed the cake. If you have a minute, a quick Google review `
+    + `would mean a lot to our family bakery: ${link}\n\nThank you! - Num Num's Bakery`;
+}
+
+export function reviewWhatsAppUrl(row, store) {
+  const n = waNumber(row.phone);
+  if (!n || !store?.review) return null;
+  return `https://wa.me/${n}?text=${encodeURIComponent(reviewMessage(row.name, store.label, store.review))}`;
+}
+
+/**
  * Print jobs grouped the same way the baker's queue is: by the pickup day of
  * the cake they belong to, soonest first, so "what has to be printed before
  * Saturday" is one glance rather than a scan of every job.

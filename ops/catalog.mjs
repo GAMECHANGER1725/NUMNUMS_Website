@@ -214,11 +214,18 @@ export const listPriceCents = (code, flavour) => {
 // so the legal identity on a tax invoice belongs to the BUSINESS below, not to
 // the store — an earlier version put a second entity on Harris Park, guessed
 // from a name match on the ABN register, and it was wrong. Never infer these.
+// `review` opens Google's "write a review" box for THAT shop's profile. Built from
+// each profile's CID (the g.page/r code is base64 of 0x09 + CID little-endian +
+// 0x10 0x13); both were followed to the right place on 2026-11-21. A customer
+// must be sent to the shop they collected from: Harris Park is 4.2 on 666
+// reviews and Riverstone 4.6 on 88, so a misrouted review helps the wrong one.
 export const STORES = [
   { code: 'harris-park', label: 'Harris Park', short: 'HP',
-    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150' },
+    address: 'Shop 1, 96–98 Wigram Street, Harris Park NSW 2150',
+    review: 'https://g.page/r/CTvgBZl3A2CGEBM/review' },
   { code: 'riverstone',  label: 'Riverstone',  short: 'RV',
-    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765' },
+    address: 'Shop 8, Riverstone Shopping Centre, Riverstone NSW 2765',
+    review: 'https://g.page/r/CSN5zpgK6QGoEBM/review' },
 ];
 
 /**

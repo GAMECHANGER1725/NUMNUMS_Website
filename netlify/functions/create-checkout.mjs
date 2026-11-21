@@ -11,7 +11,7 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { flavourSlug } from '../../ops/catalog.mjs';
 import { siteFor } from '../lib/email-shell.mjs';
-import { BadRequest, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey, dailyCap, webOrdersOn } from '../lib/shared.mjs';
+import { BadRequest, json, priceCart, requireEnv, splitCents, depositCents, DEPOSIT_RATE, dueDayKey, dailyCap, webOrdersOn, heardFrom } from '../lib/shared.mjs';
 
 const SITE = 'https://numnumsbakery.com.au';
 
@@ -152,6 +152,10 @@ export default async (req) => {
       due_at: cart.dueAt,
       lines: String(cart.lines.length),
     };
+    // Optional answer to "How did you hear about us?". Unknown values are
+    // dropped, so the webhook only ever sees one of HEARD_FROM's keys.
+    const heard = heardFrom(body?.heard);
+    if (heard) metadata.h = heard;
     cart.lines.forEach((l, i) => {
       // `p` is what was actually charged for this cake today. The webhook must
       // never recompute it: a rounding rule that changes between deploy and

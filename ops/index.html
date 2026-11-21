@@ -1175,6 +1175,12 @@ details[open] > .collapse-head > svg { transform: rotate(180deg); }
 }
 .cust-row:hover  { box-shadow: var(--shadow-lift); }
 .cust-row:active { transform: scale(.99); }
+/* Reviews: each customer carries its own ask. */
+.rv-item { margin-bottom: 10px; }
+.rv-item .cust-row { margin-bottom: 6px; }
+.rv-wa { display: flex; width: 100%; justify-content: center; }
+.rv-item.is-sent { opacity: .55; }
+.rv-nowa { display: block; font-size: .78rem; color: var(--taupe); padding: 2px 4px; }
 .cust-head { display: flex; align-items: center; gap: 8px; }
 .cust-name { font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cust-phone {

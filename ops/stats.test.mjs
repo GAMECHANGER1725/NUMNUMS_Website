@@ -14,10 +14,10 @@ import {
   storeBreakdown, exportRanges, csvCell, toCsv,
   dailyTakings, dailyTakingsBetween, takingsMetrics, weeklyByStore, customerLeaderboard, forwardBook, weekdayNorm,
   productMix, sortMix, staleOpen, photosToPurge, photoHealth, cancellationStats, pricingGaps,
-  netPrice, discountOn, reviewAsks,
+  netPrice, discountOn, reviewAsks, waNumber, reviewMessage, reviewWhatsAppUrl,
 } from './stats.mjs';
 import { receiptSource } from './receipt.mjs';
-import { toNinetyNine } from './catalog.mjs';
+import { toNinetyNine, STORES } from './catalog.mjs';
 
 let passed = 0;
 const test = (name, fn) => {
@@ -579,6 +579,24 @@ test('the review list sends each number once, newest pickup first', () => {
   ]);
   assert.deepEqual(rows.map((r) => r.name), ['Sam', 'Priya']);
   assert.deepEqual(rows[1].ids, ['c', 'a'], 'marking Priya asked must close both cakes');
+});
+
+test('a review ask goes to that customer\'s own shop, by WhatsApp', () => {
+  for (const p of ['0425 697 725', '+61 425 697 725', '61425697725', '(04) 2569-7725'])
+    assert.equal(waNumber(p), '61425697725', p);
+  assert.equal(waNumber('12345'), null, 'too short to be anyone');
+  const [hp, rv] = STORES;
+  assert.match(hp.review, /^https:\/\/g\.page\/r\/CTvgBZl3A2CGEBM\/review$/);
+  assert.match(rv.review, /^https:\/\/g\.page\/r\/CSN5zpgK6QGoEBM\/review$/);
+  assert.notEqual(hp.review, rv.review);
+  const msg = reviewMessage('Priya Shah', 'Riverstone', rv.review);
+  assert.ok(msg.startsWith('Hi Priya,'), 'first name only');
+  assert.ok(msg.includes(rv.review) && !msg.includes(hp.review));
+  assert.ok(reviewMessage('', 'Harris Park', hp.review).startsWith('Hi, '));
+  const url = reviewWhatsAppUrl({ name: 'Sam', phone: '0411 222 333' }, hp);
+  assert.ok(url.startsWith('https://wa.me/61411222333?text='));
+  assert.ok(decodeURIComponent(url).includes(hp.review));
+  assert.equal(reviewWhatsAppUrl({ name: 'X', phone: '' }, hp), null);
 });
 
 test('print jobs group by their cake\'s pickup day, printed ones last', () => {

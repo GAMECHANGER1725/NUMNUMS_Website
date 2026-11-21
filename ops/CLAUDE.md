@@ -187,6 +187,15 @@ main site.
   clipboard, and **Mark as sent** (two taps) stamps them. `review_asked_at` is in
   `log_order_event`'s skip list, so a batch writes no Edits rows. Everything collected before
   2026-09-28 was backfilled as asked, because the old routine had already covered it.
+  **Each row has Ask on WhatsApp (2026-11-21)**: `wa.me/61…` with `reviewMessage` filled in
+  and **that shop's** Google review link (`STORES[].review` in `catalog.mjs`), and the tap
+  stamps that row. Harris Park customers must land on Harris Park: it is 4.2★ on 666 reviews
+  against Riverstone's 4.6 on 88, and AI assistants quote the Harris Park figure in every
+  answer (AI-visibility baseline, 2026-11-21). The links are the profile CIDs encoded
+  (`0x09` + CID little-endian + `0x10 0x13`, base64url) and were followed to the right
+  profile. **The ask goes straight to Google for everyone** — no rating question first, no
+  reward — because Google removes gated or incentivised reviews. `waNumber` returns null for
+  anything that is not nine digits after the 0/+61, and that row says to copy it instead.
 - **A status stamp is cleared when the status moves back past it.** `stamp_order_status()` used to
   write `baked_at` and never clear it, so a cake put back to *placed* kept a Baked row on its
   timeline, and a second bake kept the first one's time (the `is null` guard) — which would have

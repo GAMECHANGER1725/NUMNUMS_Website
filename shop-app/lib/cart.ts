@@ -216,6 +216,23 @@ export const STORES = [
 export const SHOP_PHONE = { display: "0425 697 725", tel: "+61425697725" };
 export const SHOP_EMAIL = "info.numnumsbakery@gmail.com";
 
+/**
+ * "How did you hear about us?" — display copy only. The server allowlist is
+ * HEARD_FROM in netlify/lib/shared.mjs; a value here that is not there is
+ * silently dropped, so add new answers there first.
+ */
+export const HEARD_OPTIONS = [
+  { value: "google", label: "Google search" },
+  { value: "maps", label: "Google Maps" },
+  { value: "ai", label: "ChatGPT or another AI assistant" },
+  { value: "instagram", label: "Instagram" },
+  { value: "facebook", label: "Facebook" },
+  { value: "friend", label: "Friend or family" },
+  { value: "walk-by", label: "Walked past the shop" },
+  { value: "ubereats", label: "Uber Eats" },
+  { value: "other", label: "Other" },
+];
+
 export const money = (cents: number) =>
   `$${(cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 

@@ -1,4 +1,4 @@
-Version 1 · Updated 2026-11-20 · Master copy: local folder (this repo, `main`)
+Version 3 · Updated 2026-11-21 · Master copy: local folder (this repo, `main`)
 
 # Num Num's Bakery website — context (READ THIS FIRST)
 
@@ -44,8 +44,8 @@ links to both and copies neither.
 | AOV | A$93.05 (custom A$102.86, normal A$58.75) | AI Brain *Num Nums Bakery*, 19 orders | known, small sample | 2026-09-11 |
 | Custom share / Fri–Sat share | 79% / 74% | same 19 orders | known, small sample | 2026-09-11 |
 | Phone share of sessions | 70% (3,264 of 4,671) | GA4, 90 days | known | 2026-10-08 |
-| Google rating | 4.6, Riverstone only | read off the profile by Vaidik | known | 2026-10-06 |
-| Google review count | unsourced ("50+" on homepage, `reviewCount: 50` in schema) | none | unverified | — |
+| Google rating / reviews | Harris Park 4.2 (666), Riverstone 4.6 (88) | read off both Maps profiles | known | 2026-11-21 |
+| AI share of voice | named in 20/20 answers, #1 in 19 (ChatGPT 11, Gemini 9; 7 buying questions) | logged-out test, AI Brain *SEO & GEO Status* | known, partial | 2026-11-21 |
 | SEO health | 86/100 | seo-audit routine | known | 2026-09-01 |
 | Blog posts on disk | 221 | `ls blog/*.html` | known | 2026-11-20 |
 | Prices, sizes, flavours, hours | — | `ops/catalog.mjs` (gated against `verify-blog.mjs` FACTS) | known | live |
@@ -140,11 +140,14 @@ Project-level calls only. The detailed rule behind each is in the file named on 
 | [FILL: hours per week Vaidik spends on the website] | Vaidik | Plan | 2026-12-08 review |
 | The popup promises a festival pre-order email that is parked. Send it, or change the copy in `festPanel`/`done()`. | Vaidik | honest copy | before the next festival pre-order opens |
 | Founding year: 2019 on the site and in Wikidata, 2017 elsewhere | Vaidik / Tarun | schema, About | open |
-| Google review count, read off the profile (homepage says "50+", schema says 50) | Vaidik | ACL-safe claims | open |
 | Should `create-checkout` refuse `sk_test_` keys on the production host? | Vaidik | no free orders on test keys | open |
 | Drop the unused `coupons` table and `coupon_person_status()`? | Vaidik | tidy schema | open |
 | Sign-up marketing tick: pick one of the compliant opt-in lifts (AI Brain *Shop Checkout Build* 2026-10-08) | Vaidik | marketing list | open |
 | Request indexing for `/cakes` in Search Console (the API cannot) | Vaidik | SEO | after 8 Dec |
+| `/shop` is still `noindex` (`shop-app/app/layout.tsx`) and missing from the sitemap, though live since 2026-10-13. Flip it + add to sitemap/`llms.txt`? (found 2026-11-21) | Vaidik | SEO, the only page that takes money | after 8 Dec |
+| Is Bing Webmaster Tools verified? No `msvalidate` tag, no BingSiteAuth.xml, no Bing TXT record (checked 2026-11-21). If not: Bing WMT → Import from Google Search Console | Vaidik | ChatGPT search uses Bing's index | open |
+| Approve the `orders.heard_from` column (SQL in `shop-app/CLAUDE.md`)? Until then the answer lives in order notes | Vaidik | counting AI referrals | open |
+| Re-run the AI test for the failed questions (Indian sweets, wedding, Jain, Diwali, "tell me about Num Num's") + Perplexity, Copilot, AI Overview | Vaidik | complete baseline | 2026-12-08 |
 | Every `.md` in the repo root is publicly fetchable (`noindex` only, netlify.toml). Accept, or block internal paths? | Vaidik | privacy of strategy docs | open |
 
 ## Ideas parking lot (never in the plan until chosen)
@@ -165,3 +168,4 @@ Project-level calls only. The detailed rule behind each is in the file named on 
 | 2026-11-07 | Phone assistant built (not live) | — | from history |
 | 2026-11-18 | SEO hold until 8 Dec | core update | from history |
 | 2026-11-20 | Restructured from history: CLAUDE.md split by area, context/ workspace added | /restructure | Vaidik |
+| 2026-11-21 | AI-visibility baseline; review counts sourced and ratings labelled per shop; WhatsApp review asks per shop in ops; "How did you hear about us?" on cart + `/order` | AI-SEO video, Vaidik: "do all 4" | Vaidik |

@@ -647,7 +647,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </p>
       <div class="hero-proof">
         <span class="hp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <span class="hp-rating">4.6 &middot; 50+ Google reviews</span>
+        <span class="hp-rating">Riverstone 4.6 (88) &middot; 750+ Google reviews</span>
         <span class="hp-sep">|</span>
         <span class="hp-note">100% eggless &middot; we match your photo</span>
       </div>
@@ -829,6 +829,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div style="margin-bottom:0.85rem;">
             <label for="cake-notes" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">Notes <span style="font-weight:300;text-transform:none;font-size:0.71rem;">(optional)</span></label>
             <textarea id="cake-notes" rows="2" placeholder="Design ideas, allergies, anything else…" style="width:100%;padding:8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;outline:none;resize:vertical;min-height:56px;"></textarea>
+          </div>
+
+          <!-- HEARD FROM (optional, 2026-11-21). An AI assistant that recommends
+               us arrives in GA4 as a Google search, so asking is the only way to
+               count it. Rides in the WhatsApp message and the lead event. Same
+               answers as the shop cart (HEARD_FROM in netlify/lib/shared.mjs). -->
+          <div style="margin-bottom:0.85rem;">
+            <label for="cake-heard" style="display:block;font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:rgba(44,26,14,0.45);margin-bottom:0.4rem;">How did you hear about us? <span style="font-weight:300;text-transform:none;font-size:0.71rem;">(optional)</span></label>
+            <div style="position:relative;">
+              <select id="cake-heard" style="width:100%;padding:8px 24px 8px 10px;border:1px solid rgba(200,84,120,0.18);border-radius:0.6rem;background:#fff;font-family:'Jost',sans-serif;font-size:0.82rem;color:#2C1A0E;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;">
+                <option value="">Choose one…</option>
+                <option value="google">Google search</option>
+                <option value="maps">Google Maps</option>
+                <option value="ai">ChatGPT or another AI assistant</option>
+                <option value="instagram">Instagram</option>
+                <option value="facebook">Facebook</option>
+                <option value="friend">Friend or family</option>
+                <option value="walk-by">Walked past the shop</option>
+                <option value="ubereats">Uber Eats</option>
+                <option value="other">Other</option>
+              </select>
+              <svg style="position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(92,58,34,0.4);" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
           </div>
 
           <!-- CUSTOM DESIGN NOTE -->
@@ -2145,7 +2168,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           var custName = (document.getElementById('cake-name').value||'').trim();
           var wording  = (document.getElementById('cake-wording').value||'').trim();
           var notes    = (document.getElementById('cake-notes').value||'').trim();
-          var msg = "Hi! I'd like to order a custom cake from Num Num's Bakery. Here are my details:\n" +
+          var heardEl  = document.getElementById('cake-heard');
+          var heard    = heardEl ? heardEl.value : '';
+          var heardTxt = heard && heardEl.selectedIndex > 0 ? heardEl.options[heardEl.selectedIndex].text : '';
+          var msg ="Hi! I'd like to order a custom cake from Num Num's Bakery. Here are my details:\n" +
             'Name: '             + custName                       + '\n' +
             'Flavour: '          + flavour                        + '\n' +
             'Wording on cake: '  + (wording||'None')              + '\n' +
@@ -2156,6 +2182,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             'Date needed: '      + fmtDate(selDate)               + '\n' +
             'Pickup time: '      + pickupTime                     + '\n' +
             'Notes: '            + (notes||'None')                + '\n' +
+            (heardTxt ? 'Heard about you: ' + heardTxt + '\n' : '') +
             // The customer sends this, so it speaks as them — it used to tell
             // the bakery to "please attach" a photo and quote "your final quote".
             'Reference photo: I\'ll attach one below if I have it.' +
@@ -2167,8 +2194,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           if (!leadSent) {
             leadSent = true;
             try {
-              if (typeof gtag === 'function') { gtag('event', 'order_form_submit', { method: 'whatsapp', transport: 'beacon' }); }
-              if (window.dataLayer) { window.dataLayer.push({ event: 'order_form_submit', enquiry_method: 'whatsapp' }); }
+              if (typeof gtag === 'function') { gtag('event', 'order_form_submit', { method: 'whatsapp', heard_from: heard || 'unanswered', transport: 'beacon' }); }
+              if (window.dataLayer) { window.dataLayer.push({ event: 'order_form_submit', enquiry_method: 'whatsapp', heard_from: heard || 'unanswered' }); }
               if (typeof fbq === 'function') { fbq('track', 'Lead', { content_name: 'order_form' }); }
             } catch (e) {}
           }

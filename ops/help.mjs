@@ -972,9 +972,15 @@ export const HELP = [
       <p><strong>Reviews</strong> lists everyone whose cake has been collected and who has
         not been asked for a review yet, one line per phone number — two cakes to the same
         person is still one number.</p>
-      <p>Tap <strong>Copy</strong>, paste the numbers wherever they are going, then tap
+      <p>Under each customer, <strong>Ask on WhatsApp</strong> opens WhatsApp with the message
+        already written, carrying the Google review link for the shop they collected from — Harris
+        Park customers review Harris Park. Press send in WhatsApp. That customer is ticked off as
+        soon as you tap it.</p>
+      <p>Or tap <strong>Copy</strong>, paste the numbers wherever they are going, then tap
         <strong>Mark as sent</strong> twice. They leave the list, and the next batch starts
-        from there.</p>`,
+        from there.</p>
+      <p>Ask everyone, happy or not, and never offer anything for a review: Google removes
+        reviews it thinks were filtered or paid for.</p>`,
   },
   {
     title: 'The numbers',
