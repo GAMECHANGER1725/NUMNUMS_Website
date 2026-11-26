@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-26
+
+```yaml
+id: post-hp-2026-11-26
+status: published
+published_at: 2026-11-26
+location: harris-park
+post_type: "Call to action"
+title: "New Year's Eve at home in Telopea or Old Toongabbie? 100% eggless cake"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0758.jpg"
+keywords_baited:
+  - eggless New Year's Eve cake Telopea
+  - NYE party cake Old Toongabbie
+  - cake vegetarian and Jain guests can all eat Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-26
 
 ```yaml
