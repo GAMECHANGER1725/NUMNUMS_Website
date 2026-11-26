@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-26
+
+```yaml
+id: post-rs-2026-11-26
+status: published
+published_at: 2026-11-26
+location: riverstone
+post_type: "Call to action"
+title: "Egg-allergic kid at a Marsden Park party? One eggless cake for the whole class"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/2c503159-e591-4e16-bea5-6aabda8958aa.jpg"
+keywords_baited:
+  - egg allergy birthday cake Marsden Park
+  - eggless class party cake Shanes Park
+  - cake the whole class can eat egg allergy Riverstone
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-21
 
 ```yaml
