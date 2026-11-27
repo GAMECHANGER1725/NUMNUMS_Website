@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-27
+
+```yaml
+id: post-hp-2026-11-27
+status: published
+published_at: 2026-11-27
+location: harris-park
+post_type: "Call to action"
+title: "Dadi's 70th near Seven Hills or Prospect? A cake every elder can eat"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_1844.jpg"
+keywords_baited:
+  - eggless 70th birthday cake Seven Hills
+  - grandparent milestone birthday cake Prospect
+  - cake vegetarian elders can eat Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-27
 
 ```yaml
