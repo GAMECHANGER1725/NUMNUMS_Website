@@ -6,6 +6,28 @@
 
 ---
 
+### post-rs-2026-11-28
+
+```yaml
+id: post-rs-2026-11-28
+status: published
+published_at: 2026-11-28
+location: riverstone
+post_type: "Call to action"
+title: "A White Forest cake for a December lunch in Vineyard or Riverstone, eggless"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/931bb63f-057f-4a2f-8e8e-4fd2cb310bd8.jpg"
+keywords_baited:
+  - eggless White Forest cake Vineyard
+  - White Forest cake Riverstone Tallawong
+  - cake vegetarian and egg-allergic guests can all eat
+webhook: "https://hook.eu1.make.com/ln75oiz3e6gy3wj2m71wuol9ngstu48o"
+```
+
+---
+
 ### post-hp-2026-11-27
 
 ```yaml
