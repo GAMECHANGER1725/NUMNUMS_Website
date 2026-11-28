@@ -6,6 +6,28 @@
 
 ---
 
+### post-hp-2026-11-28
+
+```yaml
+id: post-hp-2026-11-28
+status: published
+published_at: 2026-11-28
+location: harris-park
+post_type: "Call to action"
+title: "Mehndi night near Newington or Wentworth Point? 100% eggless, Harris Park"
+cta_action: LEARN_MORE
+cta_url: "https://numnumsbakery.com.au/#order"
+media_items:
+  - "https://numnums-images.netlify.app/IMG_0825.jpg"
+keywords_baited:
+  - eggless mehndi night cake Newington
+  - sangeet cake Wentworth Point vegetarian guests
+  - cake for guests who don't eat eggs Harris Park
+webhook: "https://hook.eu1.make.com/6eti0dap0suc96rq2kj815bifuzkow3r"
+```
+
+---
+
 ### post-rs-2026-11-28
 
 ```yaml
